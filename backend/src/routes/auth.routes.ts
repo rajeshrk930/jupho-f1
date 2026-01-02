@@ -49,7 +49,7 @@ router.post(
       const token = jwt.sign(
         { userId: user.id, email: user.email },
         process.env.JWT_SECRET!,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+        { expiresIn: '7d' }
       );
 
       // Set token as httpOnly cookie (safer than localStorage)
@@ -116,7 +116,7 @@ router.post(
       const token = jwt.sign(
         { userId: user.id, email: user.email },
         process.env.JWT_SECRET!,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+        { expiresIn: '7d' }
       );
 
       // Set token as httpOnly cookie
