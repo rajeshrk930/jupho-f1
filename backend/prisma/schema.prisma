@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String?
+  plan          Plan      @default(FREE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  analyses      Analysis[]
+  payments      Payment[]
+}
+
+model Analysis {
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Creative details
+  creativeUrl     String?
+  creativeType    CreativeType
+  primaryText     String?
+  headline        String?
+  objective       Objective
+  industry        Industry
+  
+  // Metrics
+  cpm             Float?
+  ctr             Float?
+  cpc             Float?
+  cpa             Float?
+  
+  // Analysis result
+  primaryReason   String
+  supportingLogic String[]
+  singleFix       String
+  
+  // Pattern tagging (for future use)
+  failureReason   String?
+  resultType      ResultType    @default(AVERAGE)
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([industry])
+  @@index([resultType])
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  razorpayOrderId String        @unique
+  razorpayPaymentId String?
+  amount          Int
+  currency        String        @default("INR")
+  status          PaymentStatus @default(PENDING)
+  plan            Plan
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([userId])
+}
+
+enum Plan {
+  FREE
+  PRO
+  AGENCY
+}
+
+enum CreativeType {
+  IMAGE
+  VIDEO
+}
+
+enum Objective {
+  AWARENESS
+  TRAFFIC
+  ENGAGEMENT
+  LEADS
+  APP_PROMOTION
+  SALES
+}
+
+enum Industry {
+  ECOMMERCE
+  SAAS
+  FINANCE
+  HEALTH
+  EDUCATION
+  REAL_ESTATE
+  TRAVEL
+  FOOD
+  FASHION
+  TECHNOLOGY
+  OTHER
+}
+
+enum ResultType {
+  DEAD
+  AVERAGE
+  WINNING
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
