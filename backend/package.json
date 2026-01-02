@@ -5,10 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "DATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" npx prisma generate && tsc",
     "start": "npx prisma generate && npx prisma migrate deploy && node dist/index.js",
-    "lint": "eslint src --ext .ts",
-    "postinstall": "prisma generate || true"
+    "lint": "eslint src --ext .ts"
   },
   "dependencies": {
     "cookie-parser": "^1.4.6",
