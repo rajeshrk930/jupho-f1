@@ -7,10 +7,13 @@ import { authenticate, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!
-});
+// Initialize Razorpay only if credentials are provided
+const razorpay = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
+  ? new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET
+    })
+  : null;
 
 const PLANS = {
   PRO: {
@@ -32,6 +35,13 @@ router.post(
   [body('plan').isIn(['PRO', 'AGENCY'])],
   async (req: AuthRequest, res: Response) => {
     try {
+      if (!razorpay) {
+        return res.status(503).json({
+          success: false,
+          message: 'Payment service is not configured'
+        });
+      }
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ success: false, errors: errors.array() });
@@ -88,6 +98,13 @@ router.post(
   ],
   async (req: AuthRequest, res: Response) => {
     try {
+      if (!razorpay || !process.env.RAZORPAY_KEY_SECRET) {
+        return res.status(503).json({
+          success: false,
+          message: 'Payment service is not configured'
+        });
+      }
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ success: false, errors: errors.array() });
@@ -102,7 +119,7 @@ router.post(
       // Verify signature
       const sign = razorpay_order_id + '|' + razorpay_payment_id;
       const expectedSign = crypto
-        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
         .update(sign)
         .digest('hex');
 
