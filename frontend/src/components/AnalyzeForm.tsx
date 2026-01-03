@@ -269,7 +269,7 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
         disabled={isLoading}
         className="btn-primary w-full py-3"
       >
-        {isLoading ? 'Analyzing...' : 'Analyze Creative'}
+        {isLoading ? 'Analyzing...' : 'Analyze Creative!'}
       </button>
     </form>
   );
