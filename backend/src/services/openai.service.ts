@@ -1,19 +1,24 @@
 import OpenAI from 'openai';
+import { DecisionEngine } from './decisionEngine.service';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const decisionEngine = new DecisionEngine();
+
 interface AnalysisInput {
+  creativeUrl?: string;
   creativeType: 'IMAGE' | 'VIDEO';
   primaryText?: string;
   headline?: string;
-  objective: string;
-  industry: string;
-  cpm?: number;
-  ctr?: number;
-  cpc?: number;
-  cpa?: number;
+  objective: 'LEADS' | 'WHATSAPP' | 'SALES';
+  problemFaced: 'LOW_CLICKS' | 'CLICKS_NO_ACTION' | 'MESSAGES_NO_CONVERSION';
+  whatChanged: 'CREATIVE_CHANGED' | 'AUDIENCE_CHANGED' | 'BUDGET_CHANGED' | 'NOTHING_NEW_AD';
+  audienceType: 'BROAD' | 'INTEREST_BASED' | 'LOOKALIKE';
+  cpm: number;
+  ctr: number;
+  cpa: number;
 }
 
 interface AnalysisResult {
@@ -22,59 +27,76 @@ interface AnalysisResult {
   singleFix: string;
   resultType: 'DEAD' | 'AVERAGE' | 'WINNING';
   failureReason: string;
+  decision?: any; // Include decision context for debugging
 }
 
 export async function analyzeCreative(input: AnalysisInput): Promise<AnalysisResult> {
-  const prompt = `You are an expert Meta Ads creative analyst. Analyze this ad creative and provide actionable insights.
+  // Step 1: Run deterministic decision engine
+  const decision = decisionEngine.decide({
+    objective: input.objective,
+    problemFaced: input.problemFaced,
+    whatChanged: input.whatChanged,
+    audienceType: input.audienceType,
+    ctr: input.ctr,
+    cpm: input.cpm,
+    cpa: input.cpa,
+  });
 
-Creative Details:
-- Type: ${input.creativeType}
-- Primary Text: ${input.primaryText || 'Not provided'}
-- Headline: ${input.headline || 'Not provided'}
+  // Step 2: Build context for GPT (GPT explains, doesn't decide)
+  const prompt = `You are explaining backend analysis to a client. The system has already determined:
+
+**Decision:**
+- Status: ${decision.status}
+- Primary Issue Layer: ${decision.primaryLayer}
+- Root Cause: ${decision.rootCause}
+${decision.audienceIssue ? `- Audience Issue: ${decision.audienceIssue}` : ''}
+
+**Metrics vs Targets:**
+- CTR: ${input.ctr}% (target: ${decision.thresholds.targetCTR}%) - ${decision.metrics.ctrStatus}
+- CPM: ₹${input.cpm} (target: ₹${decision.thresholds.targetCPM}) - ${decision.metrics.cpmStatus}
+- Cost per ${decision.successMetric}: ₹${input.cpa} (target: ₹${decision.thresholds.targetCPA}) - ${decision.metrics.cpaStatus}
+
+**Context:**
 - Objective: ${input.objective}
-- Industry: ${input.industry}
+- Problem Faced: ${input.problemFaced}
+- What Changed: ${input.whatChanged}
+- Audience Type: ${input.audienceType}
 
-Performance Metrics:
-- CPM: ${input.cpm ? `$${input.cpm}` : 'Not provided'}
-- CTR: ${input.ctr ? `${input.ctr}%` : 'Not provided'}
-- CPC: ${input.cpc ? `$${input.cpc}` : 'Not provided'}
-- CPA: ${input.cpa ? `$${input.cpa}` : 'Not provided'}
+${input.primaryText ? `**Ad Copy:**\nPrimary Text: ${input.primaryText}` : ''}
+${input.headline ? `Headline: ${input.headline}` : ''}
 
-Based on these details and metrics, provide your analysis in EXACTLY this JSON format:
+Output ONLY valid JSON:
 {
-  "primaryReason": "One clear sentence explaining the main reason for success or failure",
-  "supportingLogic": ["Point 1", "Point 2", "Point 3"],
-  "singleFix": "One specific, actionable recommendation",
-  "resultType": "DEAD or AVERAGE or WINNING",
-  "failureReason": "A short tag categorizing the issue (e.g., 'weak_hook', 'unclear_cta', 'wrong_audience', 'strong_emotion')"
-}
+  "primaryReason": "One sentence explaining the main reason (focus on ${decision.primaryLayer})",
+  "supportingLogic": ["Bullet 1 (metric evidence)", "Bullet 2 (context evidence)"],
+  "singleFix": "One clear action based on ${decision.rootCause}",
+  "failureReason": "${decision.status === 'BROKEN' ? 'Brief detail why it cannot be fixed easily' : 'none'}"
+}`;
 
-Rules:
-1. Primary Reason: MUST be one sentence only. No scores, no percentages.
-2. Supporting Logic: Maximum 3 bullet points. Be specific, not vague.
-3. Single Fix: Only ONE recommendation. No multiple options.
-4. Result Type: 
-   - DEAD = Very poor performance, needs major overhaul
-   - AVERAGE = Mediocre results, has potential
-   - WINNING = Strong performer
-5. Be direct and actionable. Users are experienced advertisers.
+  const messages: any[] = [
+    {
+      role: 'system',
+      content: 'You explain technical ad analysis decisions in clear client language. You do NOT decide, you explain what the system decided.',
+    },
+    {
+      role: 'user',
+      content: prompt,
+    },
+  ];
 
-Respond ONLY with valid JSON.`;
+  // Add image if available (GPT-4 Vision)
+  if (input.creativeUrl && input.creativeType === 'IMAGE') {
+    messages[1].content = [
+      { type: 'text', text: prompt },
+      { type: 'image_url', image_url: { url: input.creativeUrl } },
+    ];
+  }
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4',
-    messages: [
-      {
-        role: 'system',
-        content: 'You are a Meta Ads creative analysis expert. Always respond with valid JSON only.'
-      },
-      {
-        role: 'user',
-        content: prompt
-      }
-    ],
-    temperature: 0.7,
-    max_tokens: 500
+    model: input.creativeUrl && input.creativeType === 'IMAGE' ? 'gpt-4o' : 'gpt-4',
+    messages,
+    temperature: 0.5, // Lower temperature for consistent explanations
+    max_tokens: 400
   });
 
   const content = response.choices[0]?.message?.content;
@@ -91,16 +113,22 @@ Respond ONLY with valid JSON.`;
       throw new Error('Invalid response structure');
     }
 
+    // Map decision status to result type
+    const resultTypeMapping = {
+      BROKEN: 'DEAD',
+      FIXABLE: 'AVERAGE',
+      SCALE_READY: 'WINNING',
+    } as const;
+
     return {
       primaryReason: result.primaryReason,
       supportingLogic: Array.isArray(result.supportingLogic) 
         ? result.supportingLogic.slice(0, 3) 
         : [result.supportingLogic],
       singleFix: result.singleFix,
-      resultType: ['DEAD', 'AVERAGE', 'WINNING'].includes(result.resultType) 
-        ? result.resultType 
-        : 'AVERAGE',
-      failureReason: result.failureReason || 'unclassified'
+      resultType: resultTypeMapping[decision.status],
+      failureReason: result.failureReason || 'unclassified',
+      decision, // Include decision context
     };
   } catch (parseError) {
     console.error('Failed to parse AI response:', content);

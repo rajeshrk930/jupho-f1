@@ -14,11 +14,12 @@ export interface Analysis {
   primaryText: string | null;
   headline: string | null;
   objective: Objective;
-  industry: Industry;
-  cpm: number | null;
-  ctr: number | null;
-  cpc: number | null;
-  cpa: number | null;
+  problemFaced: ProblemFaced;
+  whatChanged: WhatChanged;
+  audienceType: AudienceType;
+  cpm: number;
+  ctr: number;
+  cpa: number;
   primaryReason: string;
   supportingLogic: string[];
   singleFix: string;
@@ -29,25 +30,25 @@ export interface Analysis {
 }
 
 export type Objective = 
-  | 'AWARENESS'
-  | 'TRAFFIC'
-  | 'ENGAGEMENT'
   | 'LEADS'
-  | 'APP_PROMOTION'
+  | 'WHATSAPP'
   | 'SALES';
 
-export type Industry =
-  | 'ECOMMERCE'
-  | 'SAAS'
-  | 'FINANCE'
-  | 'HEALTH'
-  | 'EDUCATION'
-  | 'REAL_ESTATE'
-  | 'TRAVEL'
-  | 'FOOD'
-  | 'FASHION'
-  | 'TECHNOLOGY'
-  | 'OTHER';
+export type ProblemFaced =
+  | 'LOW_CLICKS'
+  | 'CLICKS_NO_ACTION'
+  | 'MESSAGES_NO_CONVERSION';
+
+export type WhatChanged =
+  | 'CREATIVE_CHANGED'
+  | 'AUDIENCE_CHANGED'
+  | 'BUDGET_CHANGED'
+  | 'NOTHING_NEW_AD';
+
+export type AudienceType =
+  | 'BROAD'
+  | 'INTEREST_BASED'
+  | 'LOOKALIKE';
 
 export interface AnalysisInput {
   creative?: File;
@@ -55,11 +56,12 @@ export interface AnalysisInput {
   primaryText?: string;
   headline?: string;
   objective: Objective;
-  industry: Industry;
-  cpm?: number;
-  ctr?: number;
-  cpc?: number;
-  cpa?: number;
+  problemFaced: ProblemFaced;
+  whatChanged: WhatChanged;
+  audienceType: AudienceType;
+  cpm: number;
+  ctr: number;
+  cpa: number;
 }
 
 export interface ApiResponse<T> {

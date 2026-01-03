@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Industry, Objective } from '@/types';
+import { Objective, ProblemFaced, WhatChanged, AudienceType } from '@/types';
 
 interface AnalyzeFormProps {
   onSubmit: (data: FormData) => void;
@@ -10,26 +10,28 @@ interface AnalyzeFormProps {
 }
 
 const OBJECTIVES: { value: Objective; label: string }[] = [
-  { value: 'AWARENESS', label: 'Awareness' },
-  { value: 'TRAFFIC', label: 'Traffic' },
-  { value: 'ENGAGEMENT', label: 'Engagement' },
   { value: 'LEADS', label: 'Leads' },
-  { value: 'APP_PROMOTION', label: 'App Promotion' },
+  { value: 'WHATSAPP', label: 'WhatsApp' },
   { value: 'SALES', label: 'Sales' },
 ];
 
-const INDUSTRIES: { value: Industry; label: string }[] = [
-  { value: 'ECOMMERCE', label: 'E-commerce' },
-  { value: 'SAAS', label: 'SaaS' },
-  { value: 'FINANCE', label: 'Finance' },
-  { value: 'HEALTH', label: 'Health' },
-  { value: 'EDUCATION', label: 'Education' },
-  { value: 'REAL_ESTATE', label: 'Real Estate' },
-  { value: 'TRAVEL', label: 'Travel' },
-  { value: 'FOOD', label: 'Food' },
-  { value: 'FASHION', label: 'Fashion' },
-  { value: 'TECHNOLOGY', label: 'Technology' },
-  { value: 'OTHER', label: 'Other' },
+const PROBLEMS: { value: ProblemFaced; label: string }[] = [
+  { value: 'LOW_CLICKS', label: 'Low clicks' },
+  { value: 'CLICKS_NO_ACTION', label: 'Clicks but no action' },
+  { value: 'MESSAGES_NO_CONVERSION', label: 'Messages but no conversion' },
+];
+
+const CHANGES: { value: WhatChanged; label: string }[] = [
+  { value: 'CREATIVE_CHANGED', label: 'Creative changed' },
+  { value: 'AUDIENCE_CHANGED', label: 'Audience changed' },
+  { value: 'BUDGET_CHANGED', label: 'Budget changed' },
+  { value: 'NOTHING_NEW_AD', label: 'Nothing (new ad)' },
+];
+
+const AUDIENCE_TYPES: { value: AudienceType; label: string }[] = [
+  { value: 'BROAD', label: 'Broad' },
+  { value: 'INTEREST_BASED', label: 'Interest-based' },
+  { value: 'LOOKALIKE', label: 'Lookalike' },
 ];
 
 export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
@@ -37,11 +39,12 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
   const [creativeType, setCreativeType] = useState<'IMAGE' | 'VIDEO'>('IMAGE');
   const [primaryText, setPrimaryText] = useState('');
   const [headline, setHeadline] = useState('');
-  const [objective, setObjective] = useState<Objective>('SALES');
-  const [industry, setIndustry] = useState<Industry>('ECOMMERCE');
+  const [objective, setObjective] = useState<Objective>('LEADS');
+  const [problemFaced, setProblemFaced] = useState<ProblemFaced>('LOW_CLICKS');
+  const [whatChanged, setWhatChanged] = useState<WhatChanged>('NOTHING_NEW_AD');
+  const [audienceType, setAudienceType] = useState<AudienceType>('BROAD');
   const [ctr, setCtr] = useState('');
   const [cpm, setCpm] = useState('');
-  const [cpc, setCpc] = useState('');
   const [cpa, setCpa] = useState('');
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -64,17 +67,28 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate required fields
+    if (!file) {
+      alert('Please upload a creative file');
+      return;
+    }
+    if (!ctr || !cpm || !cpa) {
+      alert('Please fill in all required metrics: CTR, CPM, and Cost per Result');
+      return;
+    }
+    
     const formData = new FormData();
-    if (file) formData.append('creative', file);
+    formData.append('creative', file);
     formData.append('creativeType', creativeType);
     formData.append('primaryText', primaryText);
     formData.append('headline', headline);
     formData.append('objective', objective);
-    formData.append('industry', industry);
-    if (ctr) formData.append('ctr', ctr);
-    if (cpm) formData.append('cpm', cpm);
-    if (cpc) formData.append('cpc', cpc);
-    if (cpa) formData.append('cpa', cpa);
+    formData.append('problemFaced', problemFaced);
+    formData.append('whatChanged', whatChanged);
+    formData.append('audienceType', audienceType);
+    formData.append('ctr', ctr);
+    formData.append('cpm', cpm);
+    formData.append('cpa', cpa);
 
     onSubmit(formData);
   };
@@ -83,7 +97,9 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Creative Upload */}
       <div>
-        <label className="label">Creative (Image or Video)</label>
+        <label className="label">
+          Creative (Image or Video) <span className="text-red-500">*</span>
+        </label>
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
@@ -131,11 +147,14 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Objective */}
       <div>
-        <label className="label">Objective (required)</label>
+        <label className="label">
+          Objective <span className="text-red-500">*</span>
+        </label>
         <select
           value={objective}
           onChange={(e) => setObjective(e.target.value as Objective)}
           className="input"
+          required
         >
           {OBJECTIVES.map((obj) => (
             <option key={obj.value} value={obj.value}>
@@ -145,26 +164,69 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
         </select>
       </div>
 
-      {/* Industry */}
+      {/* Problem Faced */}
       <div>
-        <label className="label">Industry (required)</label>
+        <label className="label">
+          Problem Faced <span className="text-red-500">*</span>
+        </label>
         <select
-          value={industry}
-          onChange={(e) => setIndustry(e.target.value as Industry)}
+          value={problemFaced}
+          onChange={(e) => setProblemFaced(e.target.value as ProblemFaced)}
           className="input"
+          required
         >
-          {INDUSTRIES.map((ind) => (
-            <option key={ind.value} value={ind.value}>
-              {ind.label}
+          {PROBLEMS.map((prob) => (
+            <option key={prob.value} value={prob.value}>
+              {prob.label}
             </option>
           ))}
         </select>
       </div>
 
-      {/* Metrics */}
+      {/* What Changed Recently */}
       <div>
-        <label className="label">Metrics</label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label className="label">
+          What Changed Recently? <span className="text-red-500">*</span>
+        </label>
+        <select
+          value={whatChanged}
+          onChange={(e) => setWhatChanged(e.target.value as WhatChanged)}
+          className="input"
+          required
+        >
+          {CHANGES.map((change) => (
+            <option key={change.value} value={change.value}>
+              {change.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Audience Type */}
+      <div>
+        <label className="label">
+          Audience Type <span className="text-red-500">*</span>
+        </label>
+        <select
+          value={audienceType}
+          onChange={(e) => setAudienceType(e.target.value as AudienceType)}
+          className="input"
+          required
+        >
+          {AUDIENCE_TYPES.map((aud) => (
+            <option key={aud.value} value={aud.value}>
+              {aud.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Metrics - REQUIRED */}
+      <div>
+        <label className="label">
+          Metrics <span className="text-red-500">*</span>
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <input
               type="number"
@@ -172,7 +234,8 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
               value={ctr}
               onChange={(e) => setCtr(e.target.value)}
               className="input"
-              placeholder="CTR %"
+              placeholder="CTR % *"
+              required
             />
           </div>
           <div>
@@ -182,17 +245,8 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
               value={cpm}
               onChange={(e) => setCpm(e.target.value)}
               className="input"
-              placeholder="CPM $"
-            />
-          </div>
-          <div>
-            <input
-              type="number"
-              step="0.01"
-              value={cpc}
-              onChange={(e) => setCpc(e.target.value)}
-              className="input"
-              placeholder="CPC $"
+              placeholder="CPM ($) *"
+              required
             />
           </div>
           <div>
@@ -202,7 +256,8 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
               value={cpa}
               onChange={(e) => setCpa(e.target.value)}
               className="input"
-              placeholder="CPA $"
+              placeholder="Cost per Result ($) *"
+              required
             />
           </div>
         </div>

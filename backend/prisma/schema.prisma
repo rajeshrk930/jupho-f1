@@ -31,13 +31,14 @@ model Analysis {
   primaryText     String?
   headline        String?
   objective       Objective
-  industry        Industry
+  problemFaced    ProblemFaced
+  whatChanged     WhatChanged
+  audienceType    AudienceType
   
-  // Metrics
-  cpm             Float?
-  ctr             Float?
-  cpc             Float?
-  cpa             Float?
+  // Metrics (now required)
+  cpm             Float
+  ctr             Float
+  cpa             Float
   
   // Analysis result
   primaryReason   String
@@ -52,7 +53,8 @@ model Analysis {
   updatedAt       DateTime      @updatedAt
 
   @@index([userId])
-  @@index([industry])
+  @@index([objective])
+  @@index([problemFaced])
   @@index([resultType])
 }
 
@@ -86,26 +88,28 @@ enum CreativeType {
 }
 
 enum Objective {
-  AWARENESS
-  TRAFFIC
-  ENGAGEMENT
   LEADS
-  APP_PROMOTION
+  WHATSAPP
   SALES
 }
 
-enum Industry {
-  ECOMMERCE
-  SAAS
-  FINANCE
-  HEALTH
-  EDUCATION
-  REAL_ESTATE
-  TRAVEL
-  FOOD
-  FASHION
-  TECHNOLOGY
-  OTHER
+enum ProblemFaced {
+  LOW_CLICKS
+  CLICKS_NO_ACTION
+  MESSAGES_NO_CONVERSION
+}
+
+enum WhatChanged {
+  CREATIVE_CHANGED
+  AUDIENCE_CHANGED
+  BUDGET_CHANGED
+  NOTHING_NEW_AD
+}
+
+enum AudienceType {
+  BROAD
+  INTEREST_BASED
+  LOOKALIKE
 }
 
 enum ResultType {

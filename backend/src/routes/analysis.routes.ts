@@ -16,14 +16,15 @@ router.post(
   upload.single('creative'),
   [
     body('creativeType').isIn(['IMAGE', 'VIDEO']),
-    body('objective').isIn(['AWARENESS', 'TRAFFIC', 'ENGAGEMENT', 'LEADS', 'APP_PROMOTION', 'SALES']),
-    body('industry').isIn(['ECOMMERCE', 'SAAS', 'FINANCE', 'HEALTH', 'EDUCATION', 'REAL_ESTATE', 'TRAVEL', 'FOOD', 'FASHION', 'TECHNOLOGY', 'OTHER']),
+    body('objective').isIn(['LEADS', 'WHATSAPP', 'SALES']),
+    body('problemFaced').isIn(['LOW_CLICKS', 'CLICKS_NO_ACTION', 'MESSAGES_NO_CONVERSION']),
+    body('whatChanged').isIn(['CREATIVE_CHANGED', 'AUDIENCE_CHANGED', 'BUDGET_CHANGED', 'NOTHING_NEW_AD']),
+    body('audienceType').isIn(['BROAD', 'INTEREST_BASED', 'LOOKALIKE']),
     body('primaryText').optional().trim(),
     body('headline').optional().trim(),
-    body('cpm').optional().isFloat({ min: 0 }),
-    body('ctr').optional().isFloat({ min: 0 }),
-    body('cpc').optional().isFloat({ min: 0 }),
-    body('cpa').optional().isFloat({ min: 0 })
+    body('cpm').isFloat({ min: 0 }),
+    body('ctr').isFloat({ min: 0 }),
+    body('cpa').isFloat({ min: 0 })
   ],
   async (req: AuthRequest, res: Response) => {
     try {
@@ -37,32 +38,35 @@ router.post(
         primaryText,
         headline,
         objective,
-        industry,
+        problemFaced,
+        whatChanged,
+        audienceType,
         cpm,
         ctr,
-        cpc,
         cpa
       } = req.body;
 
-      // Analyze with rule engine if enabled, otherwise use AI
+      // Build creative URL for GPT-4 Vision
+      const creativeUrl = req.file 
+        ? `${process.env.API_URL || 'http://localhost:5000'}/uploads/${req.file.filename}`
+        : undefined;
+
+      // Analyze with new decision engine
       const normalizedInput = {
+        creativeUrl,
         creativeType,
         primaryText,
         headline,
         objective,
-        industry,
-        cpm: cpm ? parseFloat(cpm) : undefined,
-        ctr: ctr ? parseFloat(ctr) : undefined,
-        cpc: cpc ? parseFloat(cpc) : undefined,
-        cpa: cpa ? parseFloat(cpa) : undefined
+        problemFaced,
+        whatChanged,
+        audienceType,
+        cpm: parseFloat(cpm),
+        ctr: parseFloat(ctr),
+        cpa: parseFloat(cpa)
       };
 
-      let analysisResult;
-      if (process.env.USE_RULE_ENGINE === 'true') {
-        analysisResult = await evaluateRule(normalizedInput);
-      } else {
-        analysisResult = await analyzeCreative(normalizedInput);
-      }
+      const analysisResult = await analyzeCreative(normalizedInput);
 
       // Save to database
       const analysis = await prisma.analysis.create({
@@ -73,11 +77,12 @@ router.post(
           primaryText,
           headline,
           objective,
-          industry,
-          cpm: cpm ? parseFloat(cpm) : null,
-          ctr: ctr ? parseFloat(ctr) : null,
-          cpc: cpc ? parseFloat(cpc) : null,
-          cpa: cpa ? parseFloat(cpa) : null,
+          problemFaced,
+          whatChanged,
+          audienceType,
+          cpm: parseFloat(cpm),
+          ctr: parseFloat(ctr),
+          cpa: parseFloat(cpa),
           primaryReason: analysisResult.primaryReason,
           supportingLogic: analysisResult.supportingLogic,
           singleFix: analysisResult.singleFix,
@@ -104,7 +109,8 @@ router.get(
   [
     query('page').optional().isInt({ min: 1 }),
     query('limit').optional().isInt({ min: 1, max: 50 }),
-    query('industry').optional().isIn(['ECOMMERCE', 'SAAS', 'FINANCE', 'HEALTH', 'EDUCATION', 'REAL_ESTATE', 'TRAVEL', 'FOOD', 'FASHION', 'TECHNOLOGY', 'OTHER']),
+    query('objective').optional().isIn(['LEADS', 'WHATSAPP', 'SALES']),
+    query('problemFaced').optional().isIn(['LOW_CLICKS', 'CLICKS_NO_ACTION', 'MESSAGES_NO_CONVERSION']),
     query('resultType').optional().isIn(['DEAD', 'AVERAGE', 'WINNING']),
     query('search').optional().trim()
   ],
@@ -116,8 +122,12 @@ router.get(
 
       const where: any = { userId: req.user!.id };
 
-      if (req.query.industry) {
-        where.industry = req.query.industry;
+      if (req.query.objective) {
+        where.objective = req.query.objective;
+      }
+
+      if (req.query.problemFaced) {
+        where.problemFaced = req.query.problemFaced;
       }
 
       if (req.query.resultType) {
