@@ -100,7 +100,7 @@ export default function HistoryPage() {
                         {formatDate(analysis.createdAt)}
                       </span>
                       <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                        {analysis.industry.replace('_', ' ')}
+                        {analysis.industry ? analysis.industry.replace('_', ' ') : 'Unknown'}
                       </span>
                     </div>
                     <p className="text-gray-900 text-sm line-clamp-2">
