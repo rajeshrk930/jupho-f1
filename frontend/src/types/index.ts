@@ -20,6 +20,7 @@ export interface Analysis {
   cpm: number;
   ctr: number;
   cpa: number;
+  industry?: string | null;
   primaryReason: string;
   supportingLogic: string[];
   singleFix: string;
