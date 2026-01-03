@@ -68,7 +68,8 @@ router.post(
             email: user.email,
             name: user.name,
             plan: user.plan
-          }
+          },
+          token // return token as fallback for dev / third-party clients
         }
       });
     } catch (error) {
@@ -135,7 +136,8 @@ router.post(
             email: user.email,
             name: user.name,
             plan: user.plan
-          }
+          },
+          token // return token as fallback for dev / third-party clients
         }
       });
     } catch (error) {

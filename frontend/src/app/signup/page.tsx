@@ -26,8 +26,8 @@ export default function SignupPage() {
     try {
       const response = await authApi.register(email, password, name);
       if (response.success) {
-        // Backend sets httpOnly cookie; set client user state from response
-        setAuth(response.data.user);
+        // Backend sets httpOnly cookie; if a token is returned (dev fallback) store it
+        setAuth(response.data.user, response.data.token ?? null);
         toast.success('Account created');
         router.push(redirect);
       }
