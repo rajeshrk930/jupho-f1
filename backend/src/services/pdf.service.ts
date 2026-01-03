@@ -1,30 +1,7 @@
 import PDFDocument from 'pdfkit';
-import { Prisma } from '@prisma/client';
+import { Analysis as PrismaAnalysis } from '@prisma/client';
 
-// Define the Analysis type based on Prisma schema
-type Analysis = {
-  id: string;
-  userId: string;
-  creativeUrl: string | null;
-  creativeType: string;
-  primaryText: string | null;
-  headline: string | null;
-  objective: string;
-  industry: string;
-  cpm: number | null;
-  ctr: number | null;
-  cpc: number | null;
-  cpa: number | null;
-  primaryReason: string;
-  supportingLogic: string[];
-  singleFix: string;
-  failureReason: string | null;
-  resultType: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export function generateAnalysisPDF(analysis: Analysis): Promise<Buffer> {
+export function generateAnalysisPDF(analysis: PrismaAnalysis): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ margin: 50 });
     const chunks: Buffer[] = [];
@@ -69,10 +46,9 @@ export function generateAnalysisPDF(analysis: Analysis): Promise<Buffer> {
     doc.fontSize(11).font('Helvetica');
     
     const metrics = [];
-    if (analysis.cpm) metrics.push(`CPM: $${analysis.cpm.toFixed(2)}`);
-    if (analysis.ctr) metrics.push(`CTR: ${analysis.ctr.toFixed(2)}%`);
-    if (analysis.cpc) metrics.push(`CPC: $${analysis.cpc.toFixed(2)}`);
-    if (analysis.cpa) metrics.push(`CPA: $${analysis.cpa.toFixed(2)}`);
+    if (typeof analysis.cpm === 'number') metrics.push(`CPM: $${analysis.cpm.toFixed(2)}`);
+    if (typeof analysis.ctr === 'number') metrics.push(`CTR: ${analysis.ctr.toFixed(2)}%`);
+    if (typeof analysis.cpa === 'number') metrics.push(`CPA: $${analysis.cpa.toFixed(2)}`);
     
     if (metrics.length > 0) {
       doc.text(metrics.join('  |  '));
