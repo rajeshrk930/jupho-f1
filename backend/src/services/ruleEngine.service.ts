@@ -3,7 +3,7 @@ export interface AnalysisInput {
   primaryText?: string;
   headline?: string;
   objective: string;
-  industry: string;
+  industry?: string;
   cpm?: number;
   ctr?: number;
   cpc?: number;

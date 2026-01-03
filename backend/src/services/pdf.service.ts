@@ -46,7 +46,8 @@ export function generateAnalysisPDF(analysis: Analysis): Promise<Buffer> {
     doc.moveDown(0.5);
     doc.fontSize(11).font('Helvetica');
     
-    doc.text(`Industry: ${analysis.industry.replace('_', ' ')}`);
+    const industryText = analysis.industry ? String(analysis.industry).replace('_', ' ') : 'N/A';
+    doc.text(`Industry: ${industryText}`);
     doc.text(`Objective: ${analysis.objective.replace('_', ' ')}`);
     doc.text(`Creative Type: ${analysis.creativeType}`);
     
