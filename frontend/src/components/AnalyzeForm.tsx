@@ -108,7 +108,7 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Primary Text */}
       <div>
-        <label className="label">Primary Text</label>
+        <label className="label">Primary Text (optional)</label>
         <textarea
           value={primaryText}
           onChange={(e) => setPrimaryText(e.target.value)}
@@ -119,7 +119,7 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Headline */}
       <div>
-        <label className="label">Headline</label>
+        <label className="label">Headline (optional)</label>
         <input
           type="text"
           value={headline}
@@ -131,7 +131,7 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Objective */}
       <div>
-        <label className="label">Objective</label>
+        <label className="label">Objective (required)</label>
         <select
           value={objective}
           onChange={(e) => setObjective(e.target.value as Objective)}
@@ -147,7 +147,7 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Industry */}
       <div>
-        <label className="label">Industry</label>
+        <label className="label">Industry (required)</label>
         <select
           value={industry}
           onChange={(e) => setIndustry(e.target.value as Industry)}

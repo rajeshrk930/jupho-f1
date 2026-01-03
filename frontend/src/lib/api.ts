@@ -33,6 +33,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // If the failed request was the "get current user" endpoint, don't
+      // trigger a logout/redirect — let callers handle it. This avoids
+      // redirect loops when probing auth state on app load.
+      const reqUrl = error.config?.url || '';
+      if (reqUrl.includes('/auth/me')) {
+        return Promise.reject(error);
+      }
       try {
         // clear client auth state and redirect to login
         useAuthStore.getState().logout();
