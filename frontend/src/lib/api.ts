@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '@/lib/store';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -7,15 +8,22 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Send httpOnly cookies for auth (backend sets the JWT cookie)
+  withCredentials: true,
 });
 
 // Add auth token to requests
 api.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
+  // If an explicit token exists in the client store, attach it.
+  // In cookie-based auth this will normally be undefined and cookies are sent automatically.
+  try {
+    const token = useAuthStore.getState().token;
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      // only attach if non-empty string
+      (config.headers as any).Authorization = `Bearer ${token}`;
     }
+  } catch (e) {
+    // ignore when running outside of React environment
   }
   return config;
 });
@@ -25,9 +33,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      try {
+        // clear client auth state and redirect to login
+        useAuthStore.getState().logout();
+      } catch (e) {
+        // ignore
+      }
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
         window.location.href = '/login';
       }
     }

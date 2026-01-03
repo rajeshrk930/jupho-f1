@@ -146,9 +146,9 @@ export default function AnalyzePage() {
 
       {/* Main Content - Split Layout */}
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex gap-8">
+        <div className="flex flex-col md:flex-row gap-8">
           {/* Left Side - Input (40%) */}
-          <div className="w-2/5 shrink-0">
+          <div className="w-full md:w-2/5 shrink-0">
             <div className="bg-white rounded-md border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 Creative Details

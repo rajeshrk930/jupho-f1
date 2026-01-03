@@ -21,7 +21,8 @@ export default function LoginPage() {
     try {
       const response = await authApi.login(email, password);
       if (response.success) {
-        setAuth(response.data.user, response.data.token);
+        // Backend sets httpOnly cookie; set client user state from response
+        setAuth(response.data.user);
         toast.success('Welcome back');
         router.push(redirect);
       }

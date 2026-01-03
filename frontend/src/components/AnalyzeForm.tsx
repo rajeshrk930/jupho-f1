@@ -164,7 +164,7 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
       {/* Metrics */}
       <div>
         <label className="label">Metrics</label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <input
               type="number"

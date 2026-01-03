@@ -6,7 +6,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string) => void;
+  setAuth: (user: User, token?: string | null) => void;
   logout: () => void;
 }
 
@@ -16,18 +16,18 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
-      setAuth: (user, token) => {
-        localStorage.setItem('token', token);
+      setAuth: (user, token = null) => {
+        // In cookie-based auth we do not persist the JWT in localStorage.
         set({ user, token, isAuthenticated: true });
       },
       logout: () => {
-        localStorage.removeItem('token');
         set({ user: null, token: null, isAuthenticated: false });
       },
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ user: state.user, token: state.token, isAuthenticated: state.isAuthenticated }),
+      // Persist only the minimal client state (user + auth flag). Do not persist token.
+      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
     }
   )
 );
