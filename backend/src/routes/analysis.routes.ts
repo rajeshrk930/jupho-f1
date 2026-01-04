@@ -84,7 +84,9 @@ router.post(
           ctr: parseFloat(ctr),
           cpa: parseFloat(cpa),
           primaryReason: analysisResult.primaryReason,
-          supportingLogic: analysisResult.supportingLogic,
+          supportingLogic: Array.isArray(analysisResult.supportingLogic)
+            ? JSON.stringify(analysisResult.supportingLogic)
+            : analysisResult.supportingLogic,
           singleFix: analysisResult.singleFix,
           resultType: analysisResult.resultType,
           failureReason: analysisResult.failureReason
@@ -96,8 +98,13 @@ router.post(
         data: analysis
       });
     } catch (error) {
-      console.error('Analysis error:', error);
-      res.status(500).json({ success: false, message: 'Analysis failed' });
+      // Log full stack in development for easier debugging
+      // eslint-disable-next-line no-console
+      console.error('Analysis error:', error && (error.stack || error));
+      const message = process.env.NODE_ENV === 'development' && error instanceof Error
+        ? error.message
+        : 'Analysis failed';
+      res.status(500).json({ success: false, message });
     }
   }
 );

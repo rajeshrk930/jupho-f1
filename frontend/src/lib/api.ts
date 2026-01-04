@@ -1,7 +1,19 @@
 import axios from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/lib/store';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+if (!process.env.NEXT_PUBLIC_API_URL && process.env.NODE_ENV === 'production') {
+  // In production we want an explicit API URL configured — warn loudly so builds/ops catch it.
+  // Falling back to localhost in production would be surprising and hard to debug.
+  // Keep this as a runtime warning rather than throwing to avoid breaking builds.
+  // Ensure ops/devs notice this in logs.
+  // eslint-disable-next-line no-console
+  console.error(
+    'NEXT_PUBLIC_API_URL is not defined and the app is running in production. Please set NEXT_PUBLIC_API_URL to your backend API URL.'
+  );
+}
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -13,42 +25,59 @@ export const api = axios.create({
 });
 
 // Add auth token to requests
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: AxiosRequestConfig) => {
   // If an explicit token exists in the client store, attach it.
   // In cookie-based auth this will normally be undefined and cookies are sent automatically.
   try {
     const token = useAuthStore.getState().token;
     if (token) {
-      // only attach if non-empty string
-      (config.headers as any).Authorization = `Bearer ${token}`;
+      // ensure headers object exists and use a simple typed map for assignment
+      config.headers = config.headers ?? {};
+      const headers = config.headers as Record<string, string>;
+      headers.Authorization = `Bearer ${token}`;
     }
   } catch (e) {
-    // ignore when running outside of React environment
+    // When running outside of React (eg. during SSR or in tests) accessing the store
+    // may throw — surface a debug message rather than silently swallowing it.
+    // eslint-disable-next-line no-console
+    console.warn('api request interceptor: could not read auth token from store', e);
   }
   return config;
 });
 
 // Handle auth errors
+let isHandling401 = false;
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // If the failed request was the "get current user" endpoint, don't
-      // trigger a logout/redirect — let callers handle it. This avoids
-      // redirect loops when probing auth state on app load.
       const reqUrl = error.config?.url || '';
+      // Don't trigger logout/redirect for the auth/me probe — let callers handle it.
       if (reqUrl.includes('/auth/me')) {
         return Promise.reject(error);
       }
+
+      // Prevent duplicate logout/redirect attempts when multiple requests fail.
+      if (isHandling401) return Promise.reject(error);
+      isHandling401 = true;
+
       try {
-        // clear client auth state and redirect to login
         useAuthStore.getState().logout();
       } catch (e) {
-        // ignore
+        // eslint-disable-next-line no-console
+        console.error('Error during logout from response interceptor', e);
       }
+
       if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+        // Use direct location replacement so browser history isn't polluted.
+        // If you prefer client-side routing integration, replace this with Router.push in a component.
+        window.location.replace('/login');
       }
+
+      // allow subsequent 401s to be handled later after a short delay
+      setTimeout(() => {
+        isHandling401 = false;
+      }, 1000);
     }
     return Promise.reject(error);
   }
