@@ -12,7 +12,7 @@ model User {
   email         String    @unique
   password      String
   name          String?
-  plan          String    @default("FREE")
+  plan          Plan      @default(FREE)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
@@ -27,13 +27,13 @@ model Analysis {
   
   // Creative details
   creativeUrl     String?
-  creativeType    String
+  creativeType    CreativeType
   primaryText     String?
   headline        String?
-  objective       String
-  problemFaced    String
-  whatChanged     String
-  audienceType    String
+  objective       Objective
+  problemFaced    ProblemFaced
+  whatChanged     WhatChanged
+  audienceType    AudienceType
   
   // Metrics (now required)
   cpm             Float
@@ -42,12 +42,12 @@ model Analysis {
   
   // Analysis result
   primaryReason   String
-  supportingLogic String
+  supportingLogic String[]
   singleFix       String
   
   // Pattern tagging (for future use)
   failureReason   String?
-  resultType      String    @default("AVERAGE")
+  resultType      ResultType    @default(AVERAGE)
   
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -67,8 +67,8 @@ model Payment {
   razorpayPaymentId String?
   amount          Int
   currency        String        @default("INR")
-  status          String        @default("PENDING")
-  plan            String
+  status          PaymentStatus @default(PENDING)
+  plan            Plan
   
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -76,4 +76,50 @@ model Payment {
   @@index([userId])
 }
 
+enum Plan {
+  FREE
+  PRO
+  AGENCY
+}
 
+enum CreativeType {
+  IMAGE
+  VIDEO
+}
+
+enum Objective {
+  LEADS
+  WHATSAPP
+  SALES
+}
+
+enum ProblemFaced {
+  LOW_CLICKS
+  CLICKS_NO_ACTION
+  MESSAGES_NO_CONVERSION
+}
+
+enum WhatChanged {
+  CREATIVE_CHANGED
+  AUDIENCE_CHANGED
+  BUDGET_CHANGED
+  NOTHING_NEW_AD
+}
+
+enum AudienceType {
+  BROAD
+  INTEREST_BASED
+  LOOKALIKE
+}
+
+enum ResultType {
+  DEAD
+  AVERAGE
+  WINNING
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}

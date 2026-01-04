@@ -1,9 +1,16 @@
 import OpenAI from 'openai';
 import { DecisionEngine } from './decisionEngine.service';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: any | undefined;
+function getOpenAIClient() {
+  if (!openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY not set');
+    }
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return openai;
+}
 
 const decisionEngine = new DecisionEngine();
 
@@ -41,6 +48,28 @@ export async function analyzeCreative(input: AnalysisInput): Promise<AnalysisRes
     cpm: input.cpm,
     cpa: input.cpa,
   });
+
+  // If USE_RULE_ENGINE is true, skip OpenAI and return decision engine results
+  if (process.env.USE_RULE_ENGINE === 'true') {
+    const resultTypeMapping = {
+      BROKEN: 'DEAD',
+      FIXABLE: 'AVERAGE',
+      SCALE_READY: 'WINNING',
+    } as const;
+
+    return {
+      primaryReason: `${decision.primaryLayer} issue detected: ${decision.rootCause}`,
+      supportingLogic: [
+        `CTR: ${input.ctr}% (${decision.metrics.ctrStatus})`,
+        `CPM: ₹${input.cpm} (${decision.metrics.cpmStatus})`,
+        `Cost per result: ₹${input.cpa} (${decision.metrics.cpaStatus})`
+      ],
+      singleFix: decision.recommendedAction || 'Optimize based on the metrics analysis',
+      resultType: resultTypeMapping[decision.status],
+      failureReason: decision.status === 'BROKEN' ? decision.rootCause : 'none',
+      decision,
+    };
+  }
 
   // Step 2: Build context for GPT (GPT explains, doesn't decide)
   const prompt = `You are explaining backend analysis to a client. The system has already determined:
@@ -92,7 +121,8 @@ Output ONLY valid JSON:
     ];
   }
 
-  const response = await openai.chat.completions.create({
+  const client = getOpenAIClient();
+  const response = await client.chat.completions.create({
     model: input.creativeUrl && input.creativeType === 'IMAGE' ? 'gpt-4o' : 'gpt-4',
     messages,
     temperature: 0.5, // Lower temperature for consistent explanations
