@@ -12,7 +12,7 @@ This is a Meta Ads Creative Failure Analyzer SaaS MVP. The tool analyzes ad crea
 - **Frontend**: Next.js 14 + TypeScript + Tailwind CSS
 - **Backend**: Node.js + Express + TypeScript
 - **Database**: PostgreSQL + Prisma ORM
-- **AI**: OpenAI GPT-4
+- **Analysis Engine**: Rule-based Decision Engine
 - **Auth**: JWT (email + password)
 - **Payments**: Razorpay
 
@@ -21,7 +21,7 @@ This is a Meta Ads Creative Failure Analyzer SaaS MVP. The tool analyzes ad crea
 ├── backend/           # Express API server
 │   ├── src/
 │   │   ├── routes/    # API routes (auth, analysis, payments)
-│   │   ├── services/  # Business logic (OpenAI, PDF generation)
+│   │   ├── services/  # Business logic (Decision Engine, PDF generation)
 │   │   ├── middleware/# Auth, upload, error handling
 │   │   └── lib/       # Prisma client
 │   └── prisma/        # Database schema

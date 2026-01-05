@@ -8,24 +8,22 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String
-  name          String?
-  plan          String    @default("FREE")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  analyses      Analysis[]
-  payments      Payment[]
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String
+  name      String?
+  plan      String     @default("FREE")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  analyses  Analysis[]
+  payments  Payment[]
+  conversations Conversation[]
+  messages  Message[]
 }
 
 model Analysis {
-  id              String        @id @default(uuid())
+  id              String   @id @default(uuid())
   userId          String
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Creative details
   creativeUrl     String?
   creativeType    String
   primaryText     String?
@@ -34,23 +32,18 @@ model Analysis {
   problemFaced    String
   whatChanged     String
   audienceType    String
-  
-  // Metrics (now required)
   cpm             Float
   ctr             Float
   cpa             Float
-  
-  // Analysis result
   primaryReason   String
   supportingLogic String
   singleFix       String
-  
-  // Pattern tagging (for future use)
   failureReason   String?
-  resultType      String    @default("AVERAGE")
-  
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  resultType      String   @default("AVERAGE")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversations   Conversation[]
 
   @@index([userId])
   @@index([objective])
@@ -59,21 +52,48 @@ model Analysis {
 }
 
 model Payment {
-  id              String        @id @default(uuid())
-  userId          String
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  razorpayOrderId String        @unique
+  id                String   @id @default(uuid())
+  userId            String
+  razorpayOrderId   String   @unique
   razorpayPaymentId String?
-  amount          Int
-  currency        String        @default("INR")
-  status          String        @default("PENDING")
-  plan            String
-  
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  amount            Int
+  currency          String   @default("INR")
+  status            String   @default("PENDING")
+  plan              String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
+model Conversation {
+  id         String    @id @default(uuid())
+  userId     String
+  title      String?
+  analysisId String?
+  goal       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysis   Analysis? @relation(fields: [analysisId], references: [id], onDelete: SetNull)
+  messages   Message[]
 
+  @@index([userId, createdAt])
+  @@index([analysisId])
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  conversationId String
+  userId         String
+  role           String
+  content        String
+  feedback       String?
+  createdAt      DateTime @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([userId, createdAt])
+}

@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import { authRoutes } from './routes/auth.routes';
 import { analysisRoutes } from './routes/analysis.routes';
 import { paymentRoutes } from './routes/payment.routes';
+import { chatRoutes } from './routes/chat.routes';
 import { errorHandler } from './middleware/errorHandler';
 import path from 'path';
 
@@ -15,9 +16,14 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
+  origin: process.env.NODE_ENV === 'production'
     ? [process.env.FRONTEND_URL || 'https://jupho-f1.vercel.app', 'https://jupho-f1-*.vercel.app']
-    : 'http://localhost:3000',
+    : [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://localhost:3003'
+      ],
   credentials: true
 }));
 app.use(express.json());
@@ -31,6 +37,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/analysis', analysisRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

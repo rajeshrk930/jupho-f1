@@ -23,8 +23,6 @@ export function generateAnalysisPDF(analysis: PrismaAnalysis): Promise<Buffer> {
     doc.moveDown(0.5);
     doc.fontSize(11).font('Helvetica');
     
-    const industryText = analysis.industry ? String(analysis.industry).replace('_', ' ') : 'N/A';
-    doc.text(`Industry: ${industryText}`);
     doc.text(`Objective: ${analysis.objective.replace('_', ' ')}`);
     doc.text(`Creative Type: ${analysis.creativeType}`);
     
@@ -86,9 +84,15 @@ export function generateAnalysisPDF(analysis: PrismaAnalysis): Promise<Buffer> {
     doc.moveDown(0.3);
     doc.fontSize(11).font('Helvetica');
     
-    (analysis.supportingLogic as string[]).forEach((point: string) => {
-      doc.text(`• ${point}`);
-    });
+    const supportingLogic = typeof analysis.supportingLogic === 'string' 
+      ? JSON.parse(analysis.supportingLogic) 
+      : analysis.supportingLogic;
+    
+    if (Array.isArray(supportingLogic)) {
+      supportingLogic.forEach((point: string) => {
+        doc.text(`• ${point}`);
+      });
+    }
 
     doc.moveDown(1);
 

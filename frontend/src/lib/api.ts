@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AxiosRequestConfig } from 'axios';
+import type { InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/lib/store';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -25,16 +25,13 @@ export const api = axios.create({
 });
 
 // Add auth token to requests
-api.interceptors.request.use((config: AxiosRequestConfig) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   // If an explicit token exists in the client store, attach it.
   // In cookie-based auth this will normally be undefined and cookies are sent automatically.
   try {
     const token = useAuthStore.getState().token;
-    if (token) {
-      // ensure headers object exists and use a simple typed map for assignment
-      config.headers = config.headers ?? {};
-      const headers = config.headers as Record<string, string>;
-      headers.Authorization = `Bearer ${token}`;
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
   } catch (e) {
     // When running outside of React (eg. during SSR or in tests) accessing the store
@@ -154,5 +151,29 @@ export const paymentApi = {
   getHistory: async () => {
     const response = await api.get('/payments/history');
     return response.data;
+  },
+};
+
+// Chat API
+export const chatApi = {
+  sendMessage: async (message: string, conversationId?: string, analysisId?: string) => {
+    const response = await api.post('/chat', { message, conversationId, analysisId });
+    return response.data;
+  },
+  getConversation: async (conversationId: string) => {
+    const response = await api.get(`/chat/${conversationId}`);
+    return response.data;
+  },
+  getHistory: async () => {
+    const response = await api.get('/chat/history');
+    return response.data;
+  },
+  sendFeedback: async (messageId: string, feedback: 'up' | 'down') => {
+    const response = await api.post(`/chat/${messageId}/feedback`, { feedback });
+    return response.data;
+  },
+  exportJsonl: async () => {
+    const response = await api.get('/chat/export/jsonl', { responseType: 'blob' });
+    return response.data as Blob;
   },
 };

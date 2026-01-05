@@ -22,7 +22,7 @@ export interface Analysis {
   cpa: number;
   industry?: string | null;
   primaryReason: string;
-  supportingLogic: string[];
+  supportingLogic: string | string[];
   singleFix: string;
   failureReason: string | null;
   resultType: 'DEAD' | 'AVERAGE' | 'WINNING';
@@ -70,6 +70,27 @@ export interface ApiResponse<T> {
   data?: T;
   message?: string;
   errors?: Array<{ msg: string; param: string }>;
+}
+
+export interface ConversationSummary {
+  id: string;
+  title: string;
+  lastMessage: string;
+  updatedAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  feedback?: 'up' | 'down' | null;
+  createdAt: string;
+}
+
+export interface ConversationDetail {
+  conversationId: string;
+  title?: string | null;
+  messages: ChatMessage[];
 }
 
 export interface PaginatedResponse<T> {
