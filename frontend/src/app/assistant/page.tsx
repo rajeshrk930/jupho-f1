@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { chatApi } from '@/lib/api';
 import { ConversationDetail, ConversationSummary, ChatMessage } from '@/types';
@@ -130,7 +130,7 @@ function MessageBubble({ message, onFeedback }: { message: ChatMessage; onFeedba
   );
 }
 
-export default function AssistantPage() {
+function AssistantPage() {
   const [history, setHistory] = useState<ConversationSummary[]>([]);
   const [current, setCurrent] = useState<ConversationDetail | null>(null);
   const [input, setInput] = useState('');
@@ -245,6 +245,15 @@ export default function AssistantPage() {
       setIsSending(false);
     }
   };
+
+// Wrap in Suspense to satisfy Next.js requirement for useSearchParams during prerender
+export default function AssistantPageWrapper() {
+  return (
+    <Suspense fallback={<div className="p-8 text-sm text-gray-500">Loading assistant...</div>}>
+      <AssistantPage />
+    </Suspense>
+  );
+}
 
   const handleFeedback = async (messageId: string, feedback: 'up' | 'down') => {
     try {
