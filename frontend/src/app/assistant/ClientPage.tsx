@@ -1,15 +1,6 @@
-import dynamic from 'next/dynamic';
+'use client';
 
-const AssistantPage = dynamic(() => import('./ClientPage'), {
-  ssr: false,
-  loading: () => <div className="p-8 text-sm text-gray-500">Loading assistant...</div>,
-});
-
-export default function Page() {
-  return <AssistantPage />;
-}'use client';
-
-import { useEffect, useMemo, useState, useRef, Suspense } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { chatApi } from '@/lib/api';
 import { ConversationDetail, ConversationSummary, ChatMessage } from '@/types';
@@ -61,9 +52,7 @@ function MessageBubble({ message, onFeedback }: { message: ChatMessage; onFeedba
                                         content.toLowerCase().includes('ensure') ||
                                         content.toLowerCase().includes('analyze') ||
                                         content.toLowerCase().includes('check');
-                    
-                    const isOrdered = (props.node?.tagName === 'li' && props.node?.parent?.tagName === 'ol');
-                    
+                    const isOrdered = props.node?.tagName === 'li' && props.node?.parent?.tagName === 'ol';
                     return (
                       <li className="flex items-start gap-2 p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                         {isOrdered ? (
@@ -100,7 +89,6 @@ function MessageBubble({ message, onFeedback }: { message: ChatMessage; onFeedba
             <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
           )}
 
-          {/* Copy button on hover */}
           {!isUser && (
             <button
               onClick={copyMessage}
@@ -139,7 +127,7 @@ function MessageBubble({ message, onFeedback }: { message: ChatMessage; onFeedba
   );
 }
 
-function AssistantPage() {
+export default function AssistantPage() {
   const [history, setHistory] = useState<ConversationSummary[]>([]);
   const [current, setCurrent] = useState<ConversationDetail | null>(null);
   const [input, setInput] = useState('');
@@ -189,42 +177,37 @@ function AssistantPage() {
     if (urlAnalysisId) {
       setAnalysisId(urlAnalysisId);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  // Auto-start: Send ghost message when analysisId is present
   useEffect(() => {
     if (analysisId && !current?.conversationId && !autoStartedRef.current) {
       autoStartedRef.current = true;
-      // 300ms delay allows page to settle before AI starts typing
       setTimeout(() => {
-        void handleSend(true); // Pass true to indicate auto-start
+        void handleSend(true);
       }, 300);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [analysisId, current?.conversationId]);
 
   const handleSend = async (isAutoStart = false) => {
-    // For auto-start, use hidden trigger message
-    const message = isAutoStart 
-      ? "Please review the analysis context and provide immediate actionable advice to improve the metrics."
+    const message = isAutoStart
+      ? 'Please review the analysis context and provide immediate actionable advice to improve the metrics.'
       : input.trim();
-    
+
     if (!message) return;
     setIsSending(true);
     try {
       const resp = await chatApi.sendMessage(message, current?.conversationId, analysisId || undefined);
       const convoId = resp.data.conversationId as string;
       const newMessages = resp.data.messages as ChatMessage[];
-      
-      // Clear analysisId after first message is sent
+
       if (analysisId) setAnalysisId(null);
-      
-      // For auto-start, only show the assistant's response, hide the user's trigger message
-      const displayMessages = isAutoStart 
-        ? newMessages.filter(m => m.role === 'assistant')
+
+      const displayMessages = isAutoStart
+        ? newMessages.filter((m) => m.role === 'assistant')
         : newMessages;
-      
+
       setCurrent((prev) => ({
         conversationId: convoId,
         title: prev?.title,
@@ -243,9 +226,8 @@ function AssistantPage() {
           ...others,
         ];
       });
-      if (!isAutoStart) setInput(''); // Only clear input for manual sends
+      if (!isAutoStart) setInput('');
     } catch (e: any) {
-      // Silent fallback for auto-start errors - don't scare user with error toast
       if (!isAutoStart) {
         const msg = e?.response?.data?.message || 'Failed to send message';
         toast.error(msg);
@@ -255,22 +237,17 @@ function AssistantPage() {
     }
   };
 
-// Wrap in Suspense to satisfy Next.js requirement for useSearchParams during prerender
-export default function AssistantPageWrapper() {
-  return (
-    <Suspense fallback={<div className="p-8 text-sm text-gray-500">Loading assistant...</div>}>
-      <AssistantPage />
-    </Suspense>
-  );
-}
-
   const handleFeedback = async (messageId: string, feedback: 'up' | 'down') => {
     try {
       await chatApi.sendFeedback(messageId, feedback);
-      setCurrent((prev) => prev && ({
-        ...prev,
-        messages: prev.messages.map((m) => (m.id === messageId ? { ...m, feedback } : m)),
-      }));
+      setCurrent((prev) =>
+        prev
+          ? {
+              ...prev,
+              messages: prev.messages.map((m) => (m.id === messageId ? { ...m, feedback } : m)),
+            }
+          : prev
+      );
     } catch (e) {
       toast.error('Failed to save feedback');
     }
@@ -296,7 +273,6 @@ export default function AssistantPageWrapper() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 pt-4">
       <main className="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Mobile overlay - Hidden on mobile */}
         <div
           className={`fixed inset-0 bg-black/30 z-40 transition-opacity hidden md:block ${isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
           onClick={() => setIsSidebarOpen(false)}
@@ -336,8 +312,8 @@ export default function AssistantPageWrapper() {
                 key={item.id}
                 onClick={() => void loadConversation(item.id)}
                 className={`w-full text-left p-3 rounded-xl border-2 transition-all group relative overflow-hidden ${
-                  current?.conversationId === item.id 
-                    ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md' 
+                  current?.conversationId === item.id
+                    ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
                     : 'border-gray-200 hover:border-blue-300 bg-white hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50/30 shadow-sm hover:shadow-md'
                 }`}
                 style={{ animationDelay: `${index * 50}ms` }}
