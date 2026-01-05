@@ -27,7 +27,6 @@ ALTER TABLE "Analysis" ALTER COLUMN "objective" TYPE "Objective" USING (
   END
 )::"Objective";
 
--- Step 6: Drop old columns and enums (order matters!)
 DROP TYPE "Objective_old";
 ALTER TABLE "Analysis" DROP COLUMN "industry";
 ALTER TABLE "Analysis" DROP COLUMN "cpc";

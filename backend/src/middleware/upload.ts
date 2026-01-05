@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
   const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
   const allowedTypes = [...allowedImageTypes, ...allowedVideoTypes];
 

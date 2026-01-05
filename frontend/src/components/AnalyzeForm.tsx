@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Objective, ProblemFaced, WhatChanged, AudienceType } from '@/types';
+import { Target, AlertCircle, Users, TrendingUp, DollarSign, Upload, FileText, Type } from 'lucide-react';
 
 interface AnalyzeFormProps {
   onSubmit: (data: FormData) => void;
@@ -102,29 +103,45 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
         </label>
         <div
           {...getRootProps()}
-          className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
-            isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+          className={`border-2 border-dashed rounded-xl p-6 md:p-8 text-center cursor-pointer transition-all ${
+            isDragActive 
+              ? 'border-blue-500 bg-blue-50 shadow-md' 
+              : file
+              ? 'border-green-400 bg-green-50'
+              : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
           }`}
         >
           <input {...getInputProps()} />
           {file ? (
-            <div>
+            <div className="space-y-2">
+              <div className="w-12 h-12 mx-auto rounded-full bg-green-100 flex items-center justify-center">
+                <Upload size={24} className="text-green-600" />
+              </div>
               <p className="font-medium text-gray-900">{file.name}</p>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500">
                 {creativeType} • {(file.size / 1024 / 1024).toFixed(1)} MB
               </p>
             </div>
           ) : (
-            <p className="text-gray-500">
-              Drop your creative here or click to browse
-            </p>
+            <div className="space-y-3">
+              <div className="w-12 h-12 mx-auto rounded-full bg-gray-100 flex items-center justify-center">
+                <Upload size={24} className="text-gray-500" />
+              </div>
+              <div>
+                <p className="text-gray-700 font-medium">Drop your creative here</p>
+                <p className="text-sm text-gray-500 mt-1">or click to browse</p>
+              </div>
+            </div>
           )}
         </div>
       </div>
 
       {/* Primary Text */}
       <div>
-        <label className="label">Primary Text (optional)</label>
+        <label className="label flex items-center gap-2">
+          <FileText size={16} className="text-gray-500" />
+          Primary Text (optional)
+        </label>
         <textarea
           value={primaryText}
           onChange={(e) => setPrimaryText(e.target.value)}
@@ -135,7 +152,10 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Headline */}
       <div>
-        <label className="label">Headline (optional)</label>
+        <label className="label flex items-center gap-2">
+          <Type size={16} className="text-gray-500" />
+          Headline (optional)
+        </label>
         <input
           type="text"
           value={headline}
@@ -147,7 +167,8 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Objective */}
       <div>
-        <label className="label">
+        <label className="label flex items-center gap-2">
+          <Target size={16} className="text-gray-500" />
           Objective <span className="text-red-500">*</span>
         </label>
         <select
@@ -166,7 +187,8 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Problem Faced */}
       <div>
-        <label className="label">
+        <label className="label flex items-center gap-2">
+          <AlertCircle size={16} className="text-gray-500" />
           Problem Faced <span className="text-red-500">*</span>
         </label>
         <select
@@ -204,7 +226,8 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Audience Type */}
       <div>
-        <label className="label">
+        <label className="label flex items-center gap-2">
+          <Users size={16} className="text-gray-500" />
           Audience Type <span className="text-red-500">*</span>
         </label>
         <select
@@ -223,42 +246,52 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
       {/* Metrics - REQUIRED */}
       <div>
-        <label className="label">
+        <label className="label flex items-center gap-2">
+          <TrendingUp size={16} className="text-gray-500" />
           Metrics <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <input
-              type="number"
-              step="0.01"
-              value={ctr}
-              onChange={(e) => setCtr(e.target.value)}
-              className="input"
-              placeholder="CTR % *"
-              required
-            />
+            <div className="relative">
+              <input
+                type="number"
+                step="0.01"
+                value={ctr}
+                onChange={(e) => setCtr(e.target.value)}
+                className="input pr-8"
+                placeholder="CTR *"
+                required
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">%</span>
+            </div>
           </div>
           <div>
-            <input
-              type="number"
-              step="0.01"
-              value={cpm}
-              onChange={(e) => setCpm(e.target.value)}
-              className="input"
-              placeholder="CPM ($) *"
-              required
-            />
+            <div className="relative">
+              <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="number"
+                step="0.01"
+                value={cpm}
+                onChange={(e) => setCpm(e.target.value)}
+                className="input pl-10"
+                placeholder="CPM *"
+                required
+              />
+            </div>
           </div>
           <div>
-            <input
-              type="number"
-              step="0.01"
-              value={cpa}
-              onChange={(e) => setCpa(e.target.value)}
-              className="input"
-              placeholder="Cost per Result ($) *"
-              required
-            />
+            <div className="relative">
+              <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="number"
+                step="0.01"
+                value={cpa}
+                onChange={(e) => setCpa(e.target.value)}
+                className="input pl-10"
+                placeholder="Cost/Result *"
+                required
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -267,8 +300,14 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
       <button
         type="submit"
         disabled={isLoading}
-        className="btn-primary w-full py-3"
+        className="btn-primary w-full py-3 flex items-center justify-center gap-2"
       >
+        {isLoading && (
+          <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        )}
         {isLoading ? 'Analyzing...' : 'Analyze Creative!'}
       </button>
     </form>

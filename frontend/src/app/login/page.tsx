@@ -1,15 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
+import { Lock, Mail } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const redirect = '/analyze';
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const ALLOWED_REDIRECTS = ['/dashboard', '/analyze', '/assistant', '/history', '/assistant/history'];
+  const safeRedirect = redirectParam && ALLOWED_REDIRECTS.some((path) => redirectParam.startsWith(path))
+    ? redirectParam
+    : '/dashboard';
   const setAuth = useAuthStore((state) => state.setAuth);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -24,7 +30,7 @@ export default function LoginPage() {
         // Backend sets httpOnly cookie; if a token is returned (dev fallback) store it
         setAuth(response.data.user, response.data.token ?? null);
         toast.success('Welcome back');
-        router.push(redirect);
+        router.push(safeRedirect);
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Login failed');
@@ -34,45 +40,61 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-xl font-semibold text-gray-900">Jupho</h1>
+          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+            <Lock className="md:hidden text-white" size={24} />
+            <Lock className="hidden md:block text-white" size={28} />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
           <p className="text-gray-600 mt-1">Sign in to your account</p>
         </div>
 
-        <div className="bg-white rounded-md border border-gray-200 p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-white/90 backdrop-blur rounded-2xl border border-gray-200 p-6 md:p-8 shadow-xl">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="label">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input"
-                required
-              />
+              <div className="relative">
+                <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input pl-10"
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
             </div>
 
             <div>
               <label className="label">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input"
-                required
-              />
+              <div className="relative">
+                <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input pl-10"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary w-full">
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-600 mt-4">
+          <p className="text-center text-sm text-gray-600 mt-6">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-blue-600 hover:underline">
+            <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
               Sign up
             </Link>
           </p>

@@ -3,9 +3,9 @@ import { body, query, validationResult } from 'express-validator';
 import { prisma } from '../lib/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { upload } from '../middleware/upload';
-import { analyzeCreative } from '../services/openai.service';
-import { evaluateRule } from '../services/ruleEngine.service';
+import { DecisionEngine } from '../services/decisionEngine.service';
 import { generateAnalysisPDF } from '../services/pdf.service';
+import { buildHumanizedCopy } from '../services/copyDeck';
 
 const router = Router();
 
@@ -46,17 +46,11 @@ router.post(
         cpa
       } = req.body;
 
-      // Build creative URL for GPT-4 Vision
-      const creativeUrl = req.file 
-        ? `${process.env.API_URL || 'http://localhost:5000'}/uploads/${req.file.filename}`
-        : undefined;
-
-      // Analyze with new decision engine
-      const normalizedInput = {
-        creativeUrl,
-        creativeType,
-        primaryText,
-        headline,
+      // Initialize decision engine
+      const decisionEngine = new DecisionEngine();
+      
+      // Run decision engine analysis
+      const decision = decisionEngine.decide({
         objective,
         problemFaced,
         whatChanged,
@@ -64,9 +58,34 @@ router.post(
         cpm: parseFloat(cpm),
         ctr: parseFloat(ctr),
         cpa: parseFloat(cpa)
+      });
+
+      // Map decision status to result type
+      const resultTypeMapping = {
+        BROKEN: 'DEAD',
+        FIXABLE: 'AVERAGE',
+        SCALE_READY: 'WINNING',
+      } as const;
+
+      const metricsParsed = {
+        cpm: parseFloat(cpm),
+        ctr: parseFloat(ctr),
+        cpa: parseFloat(cpa)
       };
 
-      const analysisResult = await analyzeCreative(normalizedInput);
+      const copy = buildHumanizedCopy({
+        decision,
+        metrics: metricsParsed,
+      });
+
+      // Format analysis result using locked combo: headline, one-line reason with metric, 1–3 actions
+      const analysisResult = {
+        primaryReason: copy.headline,
+        supportingLogic: [copy.reason],
+        singleFix: copy.actions.join(' | '),
+        resultType: resultTypeMapping[decision.status],
+        failureReason: decision.status === 'BROKEN' ? decision.rootCause : 'none'
+      };
 
       // Save to database
       const analysis = await prisma.analysis.create({
@@ -97,8 +116,13 @@ router.post(
         data: analysis
       });
     } catch (error) {
-      console.error('Analysis error:', error);
-      res.status(500).json({ success: false, message: 'Analysis failed' });
+      // Log full stack in development for easier debugging
+      // eslint-disable-next-line no-console
+      console.error('Analysis error:', error instanceof Error ? error.stack : error);
+      const message = process.env.NODE_ENV === 'development' && error instanceof Error
+        ? error.message
+        : 'Analysis failed';
+      res.status(500).json({ success: false, message });
     }
   }
 );

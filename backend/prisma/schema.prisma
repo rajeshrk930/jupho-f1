@@ -3,54 +3,47 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String
-  name          String?
-  plan          Plan      @default(FREE)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  analyses      Analysis[]
-  payments      Payment[]
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String
+  name      String?
+  plan      String     @default("FREE")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  analyses  Analysis[]
+  payments  Payment[]
+  conversations Conversation[]
+  messages  Message[]
 }
 
 model Analysis {
-  id              String        @id @default(uuid())
+  id              String   @id @default(uuid())
   userId          String
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Creative details
   creativeUrl     String?
-  creativeType    CreativeType
+  creativeType    String
   primaryText     String?
   headline        String?
-  objective       Objective
-  problemFaced    ProblemFaced
-  whatChanged     WhatChanged
-  audienceType    AudienceType
-  
-  // Metrics (now required)
+  objective       String
+  problemFaced    String
+  whatChanged     String
+  audienceType    String
   cpm             Float
   ctr             Float
   cpa             Float
-  
-  // Analysis result
   primaryReason   String
-  supportingLogic String[]
+  supportingLogic String
   singleFix       String
-  
-  // Pattern tagging (for future use)
   failureReason   String?
-  resultType      ResultType    @default(AVERAGE)
-  
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  resultType      String   @default("AVERAGE")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversations   Conversation[]
 
   @@index([userId])
   @@index([objective])
@@ -59,67 +52,48 @@ model Analysis {
 }
 
 model Payment {
-  id              String        @id @default(uuid())
-  userId          String
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  razorpayOrderId String        @unique
+  id                String   @id @default(uuid())
+  userId            String
+  razorpayOrderId   String   @unique
   razorpayPaymentId String?
-  amount          Int
-  currency        String        @default("INR")
-  status          PaymentStatus @default(PENDING)
-  plan            Plan
-  
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  amount            Int
+  currency          String   @default("INR")
+  status            String   @default("PENDING")
+  plan              String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
-enum Plan {
-  FREE
-  PRO
-  AGENCY
+model Conversation {
+  id         String    @id @default(uuid())
+  userId     String
+  title      String?
+  analysisId String?
+  goal       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysis   Analysis? @relation(fields: [analysisId], references: [id], onDelete: SetNull)
+  messages   Message[]
+
+  @@index([userId, createdAt])
+  @@index([analysisId])
 }
 
-enum CreativeType {
-  IMAGE
-  VIDEO
-}
+model Message {
+  id             String   @id @default(uuid())
+  conversationId String
+  userId         String
+  role           String
+  content        String
+  feedback       String?
+  createdAt      DateTime @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-enum Objective {
-  LEADS
-  WHATSAPP
-  SALES
-}
-
-enum ProblemFaced {
-  LOW_CLICKS
-  CLICKS_NO_ACTION
-  MESSAGES_NO_CONVERSION
-}
-
-enum WhatChanged {
-  CREATIVE_CHANGED
-  AUDIENCE_CHANGED
-  BUDGET_CHANGED
-  NOTHING_NEW_AD
-}
-
-enum AudienceType {
-  BROAD
-  INTEREST_BASED
-  LOOKALIKE
-}
-
-enum ResultType {
-  DEAD
-  AVERAGE
-  WINNING
-}
-
-enum PaymentStatus {
-  PENDING
-  COMPLETED
-  FAILED
+  @@index([conversationId])
+  @@index([userId, createdAt])
 }

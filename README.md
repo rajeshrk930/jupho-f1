@@ -38,7 +38,7 @@ Every analysis outputs exactly 3 sections:
 - **Frontend**: Next.js + TypeScript + Tailwind CSS
 - **Backend**: Node.js + Express
 - **Database**: PostgreSQL + Prisma ORM
-- **AI**: OpenAI GPT-4
+- **Analysis Engine**: Rule-based Decision Engine
 - **Auth**: JWT (Email + Password)
 - **Payments**: Razorpay
 
@@ -47,7 +47,6 @@ Every analysis outputs exactly 3 sections:
 ### Prerequisites
 - Node.js 18+
 - PostgreSQL database
-- OpenAI API key
 - Razorpay account (for payments)
 
 ### Installation
