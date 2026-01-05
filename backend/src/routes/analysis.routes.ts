@@ -84,7 +84,8 @@ router.post(
           ctr: parseFloat(ctr),
           cpa: parseFloat(cpa),
           primaryReason: analysisResult.primaryReason,
-          supportingLogic: analysisResult.supportingLogic,
+          // Accept array or string; Prisma type currently expects string, so cast
+          supportingLogic: analysisResult.supportingLogic as any,
           singleFix: analysisResult.singleFix,
           resultType: analysisResult.resultType,
           failureReason: analysisResult.failureReason

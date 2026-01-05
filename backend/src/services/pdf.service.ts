@@ -23,8 +23,6 @@ export function generateAnalysisPDF(analysis: PrismaAnalysis): Promise<Buffer> {
     doc.moveDown(0.5);
     doc.fontSize(11).font('Helvetica');
     
-    const industryText = analysis.industry ? String(analysis.industry).replace('_', ' ') : 'N/A';
-    doc.text(`Industry: ${industryText}`);
     doc.text(`Objective: ${analysis.objective.replace('_', ' ')}`);
     doc.text(`Creative Type: ${analysis.creativeType}`);
     
@@ -85,10 +83,27 @@ export function generateAnalysisPDF(analysis: PrismaAnalysis): Promise<Buffer> {
     doc.fontSize(12).font('Helvetica-Bold').text('Supporting Logic:');
     doc.moveDown(0.3);
     doc.fontSize(11).font('Helvetica');
-    
-    (analysis.supportingLogic as string[]).forEach((point: string) => {
-      doc.text(`• ${point}`);
-    });
+
+    const logic = Array.isArray(analysis.supportingLogic)
+      ? analysis.supportingLogic
+      : analysis.supportingLogic
+      ? (() => {
+          try {
+            const parsed = JSON.parse(analysis.supportingLogic as unknown as string);
+            return Array.isArray(parsed) ? parsed : [String(analysis.supportingLogic)];
+          } catch {
+            return [String(analysis.supportingLogic)];
+          }
+        })()
+      : [];
+
+    if (!logic.length) {
+      doc.text('No supporting points provided');
+    } else {
+      logic.forEach((point: string) => {
+        doc.text(`• ${point}`);
+      });
+    }
 
     doc.moveDown(1);
 
