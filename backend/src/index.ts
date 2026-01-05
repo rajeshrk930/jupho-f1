@@ -12,6 +12,8 @@ import path from 'path';
 dotenv.config();
 
 const app = express();
+// Trust proxy so secure cookies (SameSite=None + Secure) work behind Railway/Vercel proxies
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
 
 // Middleware
