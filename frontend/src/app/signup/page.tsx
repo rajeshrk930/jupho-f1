@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { authApi } from '@/lib/api';
@@ -8,7 +8,7 @@ import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 import { UserPlus, Mail, Lock, User } from 'lucide-react';
 
-export default function SignupPage() {
+function SignupPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get('redirect');
@@ -122,5 +122,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-sm text-gray-500">Loading...</div>}>
+      <SignupPageInner />
+    </Suspense>
   );
 }
