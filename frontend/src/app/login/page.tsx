@@ -31,8 +31,7 @@ function LoginPageInner() {
         // Backend sets httpOnly cookie; if a token is returned (dev fallback) store it
         setAuth(response.data.user, response.data.token ?? null);
         toast.success('Welcome back');
-        // Use window.location for hard redirect to ensure state is updated
-        window.location.href = safeRedirect;
+        router.replace(safeRedirect);
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Login failed');
@@ -44,9 +43,9 @@ function LoginPageInner() {
   // If already authenticated, redirect immediately to the requested page
   useEffect(() => {
     if (user) {
-      window.location.href = safeRedirect;
+      router.replace(safeRedirect);
     }
-  }, [user, safeRedirect]);
+  }, [user, safeRedirect, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
