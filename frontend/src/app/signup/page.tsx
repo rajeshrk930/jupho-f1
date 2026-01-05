@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { authApi } from '@/lib/api';
@@ -17,6 +17,7 @@ function SignupPageInner() {
     ? redirectParam
     : '/dashboard';
   const setAuth = useAuthStore((state) => state.setAuth);
+  const user = useAuthStore((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -44,6 +45,13 @@ function SignupPageInner() {
       setLoading(false);
     }
   };
+
+  // If already authenticated, redirect immediately to the requested page
+  useEffect(() => {
+    if (user) {
+      window.location.href = safeRedirect;
+    }
+  }, [user, safeRedirect]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
