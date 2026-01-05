@@ -12,26 +12,15 @@ const PROTECTED_PATHS = [
 const AUTH_FREE_PATHS = ['/login', '/signup'];
 
 export function middleware(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
   const isProtected = PROTECTED_PATHS.some((path) => pathname.startsWith(path));
-  const isAuthPage = AUTH_FREE_PATHS.some((path) => pathname.startsWith(path));
 
   if (!isProtected) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get('token')?.value;
-
-  if (!token) {
-    const redirectTarget = `/login?redirect=${encodeURIComponent(pathname + search)}`;
-    return NextResponse.redirect(new URL(redirectTarget, request.url));
-  }
-
-  if (isAuthPage) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
+  // Middleware can't read localStorage, so let client-side handle auth
   return NextResponse.next();
 }
 

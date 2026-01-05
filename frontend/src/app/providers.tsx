@@ -18,27 +18,32 @@ export function Providers({ children }: { children: React.ReactNode }) {
       })
   );
 
-  // On app load, try to populate client auth state from the server-side cookie.
+  // On app load, check localStorage for token and validate with /auth/me
   useEffect(() => {
     let mounted = true;
-    authApi
-      .getMe()
+    
+    // Check if token exists in localStorage
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    
+    if (!token) {
+      return; // No token, user not authenticated
+    }
+    
+    // Validate token with backend
+    authApi.getMe()
       .then((res) => {
         if (!mounted) return;
         if (res?.success && res.data) {
-          try {
-            useAuthStore.getState().setAuth(res.data, res.data.token ?? null);
-          } catch (e) {
-            // ignore
-          }
+          useAuthStore.getState().setAuth(res.data, token);
+        } else {
+          localStorage.removeItem('token');
         }
       })
       .catch(() => {
-        // ignore failures silently (user not logged in)
+        localStorage.removeItem('token');
       });
-    return () => {
-      mounted = false;
-    };
+      
+    return () => { mounted = false; };
   }, []);
 
   return (
