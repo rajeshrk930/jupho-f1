@@ -38,6 +38,10 @@ coverage/
 *.pem
 *.log
 
+# Local dev artifacts
+backend/prisma/dev.db
+backend/uploads/
+
 # Uploads
 uploads/*
 !uploads/.gitkeep
