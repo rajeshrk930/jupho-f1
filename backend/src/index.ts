@@ -14,6 +14,8 @@ dotenv.config();
 const app = express();
 // Trust proxy so secure cookies (SameSite=None + Secure) work behind Railway/Vercel proxies
 app.set('trust proxy', 1);
+// Disable etag to avoid 304/Not Modified on auth/me causing empty bodies on the client
+app.disable('etag');
 const PORT = process.env.PORT || 5000;
 
 // Middleware

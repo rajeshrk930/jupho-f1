@@ -171,6 +171,8 @@ router.get('/me', authenticate, async (req: AuthRequest, res) => {
       });
     }
 
+    // Prevent caching so clients always get a fresh 200 with the user payload
+    res.set('Cache-Control', 'no-store');
     res.json({ success: true, data: user });
   } catch (error) {
     console.error('Get user error:', error);
