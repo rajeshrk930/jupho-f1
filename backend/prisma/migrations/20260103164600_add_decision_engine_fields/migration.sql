@@ -27,11 +27,11 @@ ALTER TABLE "Analysis" ALTER COLUMN "objective" TYPE "Objective" USING (
   END
 )::"Objective";
 
--- Step 6: Drop old enum and columns
+-- Step 6: Drop old columns and enums (order matters!)
 DROP TYPE "Objective_old";
-DROP TYPE "Industry";
 ALTER TABLE "Analysis" DROP COLUMN "industry";
 ALTER TABLE "Analysis" DROP COLUMN "cpc";
+DROP TYPE "Industry";
 
 -- Step 7: Update indexes
 DROP INDEX IF EXISTS "Analysis_industry_idx";
