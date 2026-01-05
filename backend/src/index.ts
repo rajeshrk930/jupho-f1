@@ -17,7 +17,11 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? [process.env.FRONTEND_URL || 'https://jupho-f1.vercel.app', 'https://jupho-f1-*.vercel.app']
+    ? [
+        process.env.FRONTEND_URL || 'https://jupho-f1.vercel.app',
+        'https://jupho-f1.vercel.app',
+        'https://jupho-f1-v2.vercel.app'
+      ]
     : [
         'http://localhost:3000',
         'http://localhost:3001',
