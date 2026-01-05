@@ -35,7 +35,8 @@ function SignupPageInner() {
         // Backend sets httpOnly cookie; if a token is returned (dev fallback) store it
         setAuth(response.data.user, response.data.token ?? null);
         toast.success('Account created');
-        router.push(safeRedirect);
+        // Use window.location for hard redirect to ensure state is updated
+        window.location.href = safeRedirect;
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Signup failed');
