@@ -34,7 +34,11 @@ function LoginPageInner() {
         }
         setAuth(response.data.user, response.data.token ?? null);
         toast.success('Welcome back');
-        router.replace(safeRedirect);
+        
+        // Use window.location for reliable redirect after login
+        setTimeout(() => {
+          window.location.href = safeRedirect;
+        }, 100);
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Login failed');
@@ -46,9 +50,9 @@ function LoginPageInner() {
   // If already authenticated, redirect immediately to the requested page
   useEffect(() => {
     if (user) {
-      router.replace(safeRedirect);
+      window.location.href = safeRedirect;
     }
-  }, [user, safeRedirect, router]);
+  }, [user, safeRedirect]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
