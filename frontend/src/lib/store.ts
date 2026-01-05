@@ -1,6 +1,18 @@
+"use client";
+
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { User } from '@/types';
+
+// Avoid accessing localStorage during SSR by providing a no-op storage fallback
+const createNoopStorage = (): Storage => ({
+  getItem: () => null,
+  setItem: () => undefined,
+  removeItem: () => undefined,
+  clear: () => undefined,
+  key: () => null,
+  length: 0,
+});
 
 interface AuthState {
   user: User | null;
@@ -29,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : createNoopStorage())),
       // Persist only the minimal client state (user + auth flag). Do not persist token.
       partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
     }
