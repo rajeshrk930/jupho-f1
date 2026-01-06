@@ -9,6 +9,24 @@ import { buildHumanizedCopy } from '../services/copyDeck';
 
 const router = Router();
 
+// Helper function to transform analysis with parsed supportingLogic
+const transformAnalysis = (analysis: any) => {
+  try {
+    return {
+      ...analysis,
+      supportingLogic: typeof analysis.supportingLogic === 'string' 
+        ? JSON.parse(analysis.supportingLogic)
+        : analysis.supportingLogic
+    };
+  } catch {
+    // If parsing fails, return as array with original string
+    return {
+      ...analysis,
+      supportingLogic: [analysis.supportingLogic]
+    };
+  }
+};
+
 // Create new analysis
 router.post(
   '/',
@@ -103,8 +121,8 @@ router.post(
           ctr: parseFloat(ctr),
           cpa: parseFloat(cpa),
           primaryReason: analysisResult.primaryReason,
-          // Accept array or string; Prisma type currently expects string, so cast
-          supportingLogic: analysisResult.supportingLogic as any,
+          // Store array as JSON string for compatibility with String field
+          supportingLogic: JSON.stringify(analysisResult.supportingLogic),
           singleFix: analysisResult.singleFix,
           resultType: analysisResult.resultType,
           failureReason: analysisResult.failureReason
@@ -113,7 +131,7 @@ router.post(
 
       res.status(201).json({
         success: true,
-        data: analysis
+        data: transformAnalysis(analysis)
       });
     } catch (error) {
       // Log full stack in development for easier debugging
@@ -180,7 +198,7 @@ router.get(
       res.json({
         success: true,
         data: {
-          analyses,
+          analyses: analyses.map(transformAnalysis),
           pagination: {
             page,
             limit,
@@ -213,7 +231,7 @@ router.get('/:id', authenticate, async (req: AuthRequest, res) => {
       });
     }
 
-    res.json({ success: true, data: analysis });
+    res.json({ success: true, data: transformAnalysis(analysis) });
   } catch (error) {
     console.error('Get analysis error:', error);
     res.status(500).json({ success: false, message: 'Failed to get analysis' });
