@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { analysisApi } from '@/lib/api';
 import { Analysis } from '@/types';
 import { AnalyzeForm } from '@/components/AnalyzeForm';
@@ -8,6 +9,7 @@ import { AnalysisDrawer } from '@/components/AnalysisDrawer';
 import toast from 'react-hot-toast';
 
 export default function AnalyzePage() {
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<Analysis | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -34,6 +36,9 @@ export default function AnalyzePage() {
       if (response.success) {
         setResult(response.data);
         toast.success('Analysis complete');
+        // Invalidate queries to refresh history page
+        queryClient.invalidateQueries({ queryKey: ['analyses'] });
+        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Analysis failed');

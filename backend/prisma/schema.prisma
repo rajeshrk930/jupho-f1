@@ -47,6 +47,8 @@ model Analysis {
   conversations   Conversation[]
 
   @@index([userId])
+  @@index([userId, createdAt])
+  @@index([createdAt])
   @@index([objective])
   @@index([problemFaced])
   @@index([resultType])

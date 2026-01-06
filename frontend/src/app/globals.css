@@ -131,6 +131,17 @@ h1, h2, h3, h4, h5, h6 {
   to { transform: translateX(0); }
 }
 
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .fade-in {
   animation: fadeIn 300ms ease-out forwards;
 }
@@ -149,6 +160,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-slideInRight {
   animation: slideInRight 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform;
 }
 
 @keyframes slideUp {

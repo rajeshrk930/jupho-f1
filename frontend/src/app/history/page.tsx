@@ -23,7 +23,7 @@ export default function HistoryPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['analyses'],
-    queryFn: () => analysisApi.getAll({ limit: 50 }),
+    queryFn: () => analysisApi.getAll({ limit: 15, page: 1 }),
     enabled: isAuthenticated,
   });
 
