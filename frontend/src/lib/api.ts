@@ -132,15 +132,21 @@ export const analysisApi = {
 
 // Payment API
 export const paymentApi = {
-  createOrder: async () => {
-    const response = await api.post('/payments/create-order');
+  createOrder: async (plan: 'PRO' | 'AGENCY' = 'PRO') => {
+    const response = await api.post('/payments/create-order', { plan });
     return response.data;
   },
-  verifyPayment: async (data: { orderId: string; paymentId: string; signature: string }) => {
+  verifyPayment: async (data: {
+    orderId?: string;
+    subscriptionId?: string;
+    paymentId: string;
+    signature: string;
+  }) => {
     const response = await api.post('/payments/verify', {
-      orderId: data.orderId,
-      paymentId: data.paymentId,
-      signature: data.signature,
+      razorpay_order_id: data.orderId,
+      razorpay_subscription_id: data.subscriptionId,
+      razorpay_payment_id: data.paymentId,
+      razorpay_signature: data.signature,
     });
     return response.data;
   },

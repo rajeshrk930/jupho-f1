@@ -21,7 +21,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
     setError('');
 
     try {
-      const { orderId, amount, currency, keyId } = await paymentApi.createOrder();
+      const { orderId, subscriptionId, amount, currency, keyId, mode } = await paymentApi.createOrder('PRO');
 
       const options = {
         key: keyId,
@@ -29,11 +29,13 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
         currency,
         name: 'Jupho',
         description: 'Jupho Pro - Monthly Subscription',
-        order_id: orderId,
+        order_id: mode === 'order' ? orderId : undefined,
+        subscription_id: mode === 'subscription' ? subscriptionId : undefined,
         handler: async (response: any) => {
           try {
             await paymentApi.verifyPayment({
               orderId: response.razorpay_order_id,
+              subscriptionId: response.razorpay_subscription_id,
               paymentId: response.razorpay_payment_id,
               signature: response.razorpay_signature,
             });

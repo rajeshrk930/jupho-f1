@@ -17,7 +17,7 @@ const razorpay = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
 
 const PLANS = {
   PRO: {
-    amount: 99900, // ₹999 in paise
+    amount: 99900, // ₹999 in paise (fallback for one-time)
     currency: 'INR',
     name: 'Pro Plan'
   },
@@ -28,7 +28,7 @@ const PLANS = {
   }
 };
 
-// Create order
+// Create order / subscription
 router.post(
   '/create-order',
   authenticate,
@@ -50,25 +50,62 @@ router.post(
       const { plan } = req.body;
       const planDetails = PLANS[plan as keyof typeof PLANS];
 
+      // For PRO, prefer subscription via plan_id; fallback to one-time order if plan_id missing
+      if (plan === 'PRO' && process.env.RAZORPAY_PRO_PLAN_ID) {
+        const subscription = await razorpay.subscriptions.create({
+          plan_id: process.env.RAZORPAY_PRO_PLAN_ID,
+          customer_notify: 1,
+          quantity: 1,
+          total_count: 1, // monthly charge, single cycle (renew via Razorpay)
+          notes: {
+            userId: req.user!.id,
+            plan,
+          },
+        });
+
+        await prisma.payment.create({
+          data: {
+            userId: req.user!.id,
+            razorpayOrderId: subscription.id, // storing subscription id in this field
+            amount: planDetails.amount,
+            currency: planDetails.currency,
+            plan: 'PRO',
+            status: 'PENDING',
+          },
+        });
+
+        return res.json({
+          success: true,
+          data: {
+            subscriptionId: subscription.id,
+            amount: planDetails.amount,
+            currency: planDetails.currency,
+            keyId: process.env.RAZORPAY_KEY_ID,
+            mode: 'subscription',
+          },
+        });
+      }
+
+      // Fallback: one-time order (AGENCY or missing plan_id)
       const order = await razorpay.orders.create({
         amount: planDetails.amount,
         currency: planDetails.currency,
         receipt: `order_${Date.now()}`,
         notes: {
           userId: req.user!.id,
-          plan
-        }
+          plan,
+        },
       });
 
-      // Save payment record
       await prisma.payment.create({
         data: {
           userId: req.user!.id,
           razorpayOrderId: order.id,
           amount: planDetails.amount,
           currency: planDetails.currency,
-          plan: plan as 'PRO' | 'AGENCY'
-        }
+          plan: plan as 'PRO' | 'AGENCY',
+          status: 'PENDING',
+        },
       });
 
       res.json({
@@ -77,8 +114,9 @@ router.post(
           orderId: order.id,
           amount: planDetails.amount,
           currency: planDetails.currency,
-          keyId: process.env.RAZORPAY_KEY_ID
-        }
+          keyId: process.env.RAZORPAY_KEY_ID,
+          mode: 'order',
+        },
       });
     } catch (error) {
       console.error('Create order error:', error);
@@ -92,9 +130,14 @@ router.post(
   '/verify',
   authenticate,
   [
-    body('razorpay_order_id').notEmpty(),
     body('razorpay_payment_id').notEmpty(),
-    body('razorpay_signature').notEmpty()
+    body('razorpay_signature').notEmpty(),
+    body().custom((value) => {
+      if (!value.razorpay_order_id && !value.razorpay_subscription_id) {
+        throw new Error('Either razorpay_order_id or razorpay_subscription_id is required');
+      }
+      return true;
+    }),
   ],
   async (req: AuthRequest, res: Response) => {
     try {
@@ -112,15 +155,23 @@ router.post(
 
       const {
         razorpay_order_id,
+        razorpay_subscription_id,
         razorpay_payment_id,
         razorpay_signature
       } = req.body;
 
+      // Determine mode
+      const isSubscription = Boolean(razorpay_subscription_id);
+      const entityId = razorpay_subscription_id || razorpay_order_id;
+
       // Verify signature
-      const sign = razorpay_order_id + '|' + razorpay_payment_id;
+      const signPayload = isSubscription
+        ? `${razorpay_subscription_id}|${razorpay_payment_id}`
+        : `${razorpay_order_id}|${razorpay_payment_id}`;
+
       const expectedSign = crypto
         .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-        .update(sign)
+        .update(signPayload)
         .digest('hex');
 
       if (razorpay_signature !== expectedSign) {
@@ -130,9 +181,9 @@ router.post(
         });
       }
 
-      // Update payment record
+      // Update payment record (we store subscriptionId in razorpayOrderId for subscriptions)
       const payment = await prisma.payment.update({
-        where: { razorpayOrderId: razorpay_order_id },
+        where: { razorpayOrderId: entityId },
         data: {
           razorpayPaymentId: razorpay_payment_id,
           status: 'COMPLETED'
