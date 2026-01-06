@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const SYSTEM_PROMPT = `You are an expert Meta Ads consultant. Be concise, practical, and avoid jargon. Format short bullets only when needed. Focus on creative, targeting, budget pacing, and troubleshooting. Assume the user wants clear, non-technical steps.`;
+const SYSTEM_PROMPT = `You are an expert Meta Ads consultant powered by GPT-4o-mini. Be concise, practical, and avoid jargon. Format short bullets only when needed. Focus on creative, targeting, budget pacing, and troubleshooting. Assume the user wants clear, non-technical steps.`;
 
 export type ChatRole = 'user' | 'assistant';
 
