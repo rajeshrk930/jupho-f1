@@ -349,7 +349,7 @@ export default function BillingPage() {
                 </div>
               </div>
               <button 
-                onClick={() => toast.info('Payment method management coming soon')}
+                onClick={() => toast.success('Payment method management coming soon')}
                 className="text-teal-700 hover:text-teal-600 font-medium text-sm"
               >
                 Update
