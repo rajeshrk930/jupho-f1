@@ -71,24 +71,24 @@ ${analysis.singleFix}`;
     <div className="space-y-6">
       {/* Metrics Cards */}
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-2 sm:p-3">
-          <p className="text-xs font-semibold text-blue-600 mb-1">CTR</p>
+        <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 shadow-sm">
+          <p className="text-xs font-medium text-gray-600 mb-1">CTR</p>
           <p className="text-lg sm:text-xl font-bold text-gray-900">{analysis.ctr}%</p>
         </div>
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100 rounded-xl p-2 sm:p-3">
-          <p className="text-xs font-semibold text-purple-600 mb-1">CPM</p>
+        <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 shadow-sm">
+          <p className="text-xs font-medium text-gray-600 mb-1">CPM</p>
           <p className="text-lg sm:text-xl font-bold text-gray-900">₹{analysis.cpm}</p>
         </div>
-        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-2 sm:p-3">
-          <p className="text-xs font-semibold text-emerald-600 mb-1">CPA</p>
+        <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 shadow-sm">
+          <p className="text-xs font-medium text-gray-600 mb-1">CPA</p>
           <p className="text-lg sm:text-xl font-bold text-gray-900">₹{analysis.cpa}</p>
         </div>
       </div>
 
       {/* Status Badge */}
-      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${typeConfig.bg} ${typeConfig.border} border`}>
+      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded ${typeConfig.bg} ${typeConfig.border} border`}>
         <TypeIcon size={16} className={typeConfig.color} />
-        <span className={`text-sm font-semibold ${typeConfig.color}`}>
+        <span className={`text-sm font-medium ${typeConfig.color}`}>
           {analysis.resultType === 'WINNING' ? 'Winning Creative' : analysis.resultType === 'DEAD' ? 'Needs Work' : 'Average Performance'}
         </span>
       </div>
@@ -99,11 +99,11 @@ ${analysis.singleFix}`;
           <Target size={14} className="text-white" />
         </div>
         <div className="inline-flex items-center gap-2 mb-3">
-          <span className="px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wide">
+          <span className="px-2.5 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium">
             Primary Reason
           </span>
         </div>
-        <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
+        <p className="text-xl sm:text-2xl font-semibold text-gray-900 leading-tight">
           {analysis.primaryReason}
         </p>
       </div>
@@ -114,7 +114,7 @@ ${analysis.singleFix}`;
           <Lightbulb size={14} className="text-white" />
         </div>
         <div className="inline-flex items-center gap-2 mb-4">
-          <span className="px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wide">
+          <span className="px-2.5 py-1 rounded bg-indigo-100 text-indigo-700 text-xs font-medium">
             Why This Happened
           </span>
         </div>
@@ -131,13 +131,13 @@ ${analysis.singleFix}`;
       </div>
 
       {/* Section 3: What to Change */}
-      <div className="relative pl-6 border-l-4 border-gradient-to-b from-blue-500 to-indigo-600">
-        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+      <div className="relative pl-6 border-l-4 border-blue-500">
+        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center">
           <Zap size={14} className="text-white" />
         </div>
-        <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 rounded-xl p-5 shadow-sm">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-5 shadow-sm">
           <div className="inline-flex items-center gap-2 mb-3">
-            <span className="px-2.5 py-1 rounded-full bg-blue-600 text-white text-xs font-bold uppercase tracking-wide">
+            <span className="px-2.5 py-1 rounded bg-blue-600 text-white text-xs font-medium">
               Action Required
             </span>
           </div>
@@ -152,7 +152,7 @@ ${analysis.singleFix}`;
         {/* Ask AI Button - Full Width */}
         <button 
           onClick={askAI} 
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:via-indigo-700 hover:to-blue-700 text-white font-semibold transition-all shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:-translate-y-0.5 text-sm sm:text-base"
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-sm text-sm sm:text-base"
         >
           <Sparkles size={18} />
           Ask AI About This Analysis
@@ -162,14 +162,14 @@ ${analysis.singleFix}`;
         <div className="flex gap-3">
           <button 
             onClick={copyToClipboard} 
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold transition-all hover:shadow-md hover:-translate-y-0.5 text-sm sm:text-base"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors shadow-sm text-sm sm:text-base"
           >
             <Copy size={16} />
             Copy
           </button>
           <button 
             onClick={downloadPdf} 
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold transition-all shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 text-sm sm:text-base"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-sm text-sm sm:text-base"
           >
             <Download size={16} />
             PDF

@@ -56,10 +56,10 @@ function SignupPageInner() {
   }, [user, safeRedirect, router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-blue-600 flex items-center justify-center shadow-sm">
             <UserPlus className="md:hidden text-white" size={24} />
             <UserPlus className="hidden md:block text-white" size={28} />
           </div>
@@ -67,7 +67,7 @@ function SignupPageInner() {
           <p className="text-gray-600 mt-1">Create your account</p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur rounded-2xl border border-gray-200 p-6 md:p-8 shadow-xl">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 md:p-8 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="label">Name</label>
@@ -118,7 +118,7 @@ function SignupPageInner() {
             <button 
               type="submit" 
               disabled={loading} 
-              className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account...' : 'Create Account'}
             </button>

@@ -24,14 +24,14 @@ function MessageBubble({ message, onFeedback }: { message: ChatMessage; onFeedba
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} animate-slideUp opacity-0`} style={{ animation: 'slideUp 0.4s ease-out forwards' }}>
       <div className="flex flex-col gap-1 max-w-2xl w-full">
-        <span className={`text-xs md:text-[11px] uppercase tracking-[0.08em] font-semibold ${isUser ? 'text-blue-600' : 'text-gray-500'}`}>
+        <span className={`text-xs font-medium ${isUser ? 'text-blue-600' : 'text-gray-500'}`}>
           {isUser ? 'You' : 'Assistant'}
         </span>
         <div
-          className={`rounded-2xl px-5 py-4 shadow-md border transition-all hover:shadow-lg group relative ${
+          className={`rounded-lg px-5 py-4 shadow-sm border transition-colors group relative ${
             isUser
-              ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-blue-500/50 shadow-blue-100'
-              : 'bg-white text-gray-900 border-gray-200 shadow-gray-100'
+              ? 'bg-blue-600 text-white border-blue-500'
+              : 'bg-white text-gray-900 border-gray-200'
           }`}
         >
           {!isUser ? (
@@ -303,7 +303,7 @@ export default function AssistantPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 pt-4">
+    <div className="min-h-screen bg-gray-50 pt-4">
       <main className="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
         <div
           className={`fixed inset-0 bg-black/30 z-40 transition-opacity hidden md:block ${isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
@@ -311,7 +311,7 @@ export default function AssistantPage() {
         />
 
         <aside
-          className={`bg-gradient-to-b from-white to-gray-50/50 backdrop-blur border border-gray-200 rounded-2xl p-4 md:col-span-1 hidden md:block`}
+          className={`bg-white border border-gray-200 rounded-lg p-4 md:col-span-1 hidden md:block`}
           aria-label="Conversations"
         >
           <div className="flex items-center justify-between mb-4">
@@ -326,7 +326,7 @@ export default function AssistantPage() {
                   setInput('');
                   setIsSidebarOpen(false);
                 }}
-                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+                className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors shadow-sm"
               >
                 + New
               </button>
@@ -343,10 +343,10 @@ export default function AssistantPage() {
               <button
                 key={item.id}
                 onClick={() => void loadConversation(item.id)}
-                className={`w-full text-left p-3 rounded-xl border-2 transition-all group relative overflow-hidden ${
+                className={`w-full text-left p-3 rounded-lg border transition-colors group relative overflow-hidden ${
                   current?.conversationId === item.id
-                    ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
-                    : 'border-gray-200 hover:border-blue-300 bg-white hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50/30 shadow-sm hover:shadow-md'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-blue-600 bg-white'
                 }`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
@@ -357,9 +357,6 @@ export default function AssistantPage() {
                   </span>
                 </div>
                 <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{item.lastMessage}</p>
-                {current?.conversationId === item.id && (
-                  <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-500 to-indigo-600 rounded-l-xl" />
-                )}
               </button>
             ))}
             {!history.length && (
@@ -380,7 +377,7 @@ export default function AssistantPage() {
           </div>
         </aside>
 
-        <section className="md:col-span-3 bg-white/90 backdrop-blur border border-gray-200 rounded-2xl p-5 flex flex-col gap-4 min-h-[70vh] shadow-sm">
+        <section className="md:col-span-3 bg-white border border-gray-200 rounded-lg p-5 flex flex-col gap-4 min-h-[70vh] shadow-sm">
           <div className="flex-1 overflow-y-auto space-y-4 pr-1" aria-live="polite">
             {isLoading && (
               <div className="space-y-3" aria-label="Loading messages">
@@ -399,7 +396,7 @@ export default function AssistantPage() {
                 <div className="max-w-2xl w-full space-y-6">
                   {/* Hero Section */}
                   <div className="text-center space-y-3">
-                    <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                    <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-lg bg-blue-600 flex items-center justify-center shadow-sm">
                       <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-white" />
                     </div>
                     <h2 className="text-xl md:text-2xl font-bold text-gray-900">How can I help you today?</h2>
@@ -414,7 +411,7 @@ export default function AssistantPage() {
                     <div className="grid grid-cols-1 gap-2.5">
                       <button
                         onClick={() => setInput("Rewrite my hook for a fashion reel.")}
-                        className="group flex items-start gap-3 p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50/50 transition-all text-left shadow-sm hover:shadow-md active:scale-[0.98]"
+                        className="group flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white hover:border-blue-600 hover:bg-blue-50 transition-colors text-left shadow-sm"
                       >
                         <span className="text-2xl">✍️</span>
                         <div className="flex-1">
@@ -424,7 +421,7 @@ export default function AssistantPage() {
                       </button>
                       <button
                         onClick={() => setInput("Give me one fix for low CTR.")}
-                        className="group flex items-start gap-3 p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-green-400 hover:bg-green-50/50 transition-all text-left shadow-sm hover:shadow-md active:scale-[0.98]"
+                        className="group flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white hover:border-green-600 hover:bg-green-50 transition-colors text-left shadow-sm"
                       >
                         <span className="text-2xl">🎯</span>
                         <div className="flex-1">
@@ -434,7 +431,7 @@ export default function AssistantPage() {
                       </button>
                       <button
                         onClick={() => setInput("Suggest a 3-asset test plan.")}
-                        className="group flex items-start gap-3 p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-purple-400 hover:bg-purple-50/50 transition-all text-left shadow-sm hover:shadow-md active:scale-[0.98]"
+                        className="group flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white hover:border-purple-600 hover:bg-purple-50 transition-colors text-left shadow-sm"
                       >
                         <span className="text-2xl">🧪</span>
                         <div className="flex-1">
@@ -446,7 +443,7 @@ export default function AssistantPage() {
                   </div>
 
                   {/* Info Banner */}
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 md:p-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                         <AlertCircle size={16} className="text-blue-600" />
@@ -481,9 +478,9 @@ export default function AssistantPage() {
             )}
           </div>
 
-          <div className="border-t border-gray-200 pt-4 sticky bottom-0 bg-white/95 backdrop-blur-sm">
+          <div className="border-t border-gray-200 pt-4 sticky bottom-0 bg-white">
             {analysisId && (
-              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg px-3 py-2 flex items-center justify-between mb-3">
+              <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
                   <span className="text-xs font-medium text-purple-800">
@@ -501,7 +498,7 @@ export default function AssistantPage() {
             
             <div className="relative">
               <textarea
-                className="w-full border-2 border-gray-300 rounded-xl p-3 pr-24 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none shadow-sm transition-all bg-white placeholder:text-gray-400"
+                className="w-full border-2 border-gray-300 rounded-lg p-3 pr-24 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none shadow-sm transition-colors bg-white placeholder:text-gray-400"
                 rows={3}
                 placeholder="Ask about creating or optimizing Meta ads…"
                 value={input}
@@ -527,7 +524,7 @@ export default function AssistantPage() {
                 <button
                   onClick={() => void handleSend()}
                   disabled={isSending || !input.trim()}
-                  className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md flex items-center gap-1.5"
+                  className="px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                   title={isSending ? 'Sending...' : 'Send message (Enter)'}
                 >
                   {isSending ? (

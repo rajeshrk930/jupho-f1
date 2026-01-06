@@ -53,10 +53,10 @@ function LoginPageInner() {
   }, [user, safeRedirect, router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-blue-600 flex items-center justify-center shadow-sm">
             <Lock className="md:hidden text-white" size={24} />
             <Lock className="hidden md:block text-white" size={28} />
           </div>

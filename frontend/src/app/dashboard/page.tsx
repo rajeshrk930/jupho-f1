@@ -37,12 +37,12 @@ export default function DashboardPage() {
   const recent = analyses.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 pt-6">
+    <div className="min-h-screen bg-gray-50 pt-6">
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         <div className="surface-card p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.08em] text-blue-600 font-semibold">Dashboard</p>
+              <p className="text-xs text-blue-600 font-medium">Dashboard</p>
               <h1 className="text-2xl font-bold text-gray-900">Welcome back{user?.name ? `, ${user.name}` : ''}.</h1>
               <p className="text-sm text-gray-600">See your recent analyses and jump back into the work.</p>
             </div>
@@ -56,7 +56,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
           {isLoading || isFetching ? (
             [...Array(3)].map((_, i) => (
-              <div key={i} className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-4 shadow-sm">
+              <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                 <div className="skeleton h-3 w-20 mb-2" />
                 <div className="skeleton h-8 w-16 mb-1" />
                 <div className="skeleton h-3 w-24" />
@@ -74,7 +74,7 @@ export default function DashboardPage() {
         <section className="surface-card p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.08em] text-blue-600 font-semibold">Recent</p>
+              <p className="text-xs text-blue-600 font-medium">Recent</p>
               <h2 className="text-lg font-semibold text-gray-900">Recent analyses</h2>
             </div>
             <Link href="/history" className="text-sm text-blue-600 hover:text-blue-700">View all</Link>
@@ -91,19 +91,19 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : !recent.length ? (
-            <div className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-300 rounded-xl p-6 md:p-8 text-center bg-gradient-to-br from-gray-50 to-gray-100">
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-300 rounded-lg p-6 md:p-8 text-center bg-gray-50">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-100 flex items-center justify-center">
                 <BarChart3 size={24} className="md:hidden text-blue-600" />
                 <BarChart3 size={28} className="hidden md:block text-blue-600" />
               </div>
               <p className="text-gray-700 font-medium">No analyses yet</p>
               <p className="text-sm text-gray-500">Start your first one to see insights here.</p>
-              <Link href="/analyze" className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all font-medium text-sm">Start first analysis</Link>
+              <Link href="/analyze" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm">Start first analysis</Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
               {recent.map((analysis) => (
-                <article key={analysis.id} className="bg-white border border-gray-200 rounded-xl p-4 md:p-5 space-y-3 hover:shadow-md hover:border-blue-300 transition-all group">
+                <article key={analysis.id} className="bg-white border border-gray-200 rounded-lg p-4 md:p-5 space-y-3 hover:border-blue-600 transition-colors group">
                   <div className="flex items-center justify-between text-xs md:text-sm">
                     <span className="text-gray-500">{new Date(analysis.createdAt).toLocaleDateString()}</span>
                     <StatusBadge status={analysis.resultType as 'WINNING' | 'AVERAGE' | 'DEAD'} size="sm" />
@@ -134,7 +134,7 @@ export default function DashboardPage() {
           <section className="surface-card p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.08em] text-blue-600 font-semibold">Details</p>
+                <p className="text-xs text-blue-600 font-medium">Details</p>
                 <h2 className="text-lg font-semibold text-gray-900">Latest analysis</h2>
               </div>
               <Link href="/assistant" className="text-sm text-blue-600 hover:text-blue-700">Ask AI about this</Link>

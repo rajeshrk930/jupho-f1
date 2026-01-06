@@ -48,7 +48,7 @@ export default function BillingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-gray-200 rounded w-64"></div>
@@ -63,7 +63,7 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <div>
@@ -74,24 +74,24 @@ export default function BillingPage() {
         {/* Current Plan Card */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Plan Status */}
-          <div className={`rounded-2xl p-6 border-2 ${isPro ? 'bg-gradient-to-br from-blue-500 to-purple-600 border-purple-600' : 'bg-white border-gray-200'}`}>
+          <div className={`rounded-lg p-6 border-2 ${isPro ? 'bg-white border-blue-600' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isPro ? 'bg-white/20' : 'bg-gray-100'}`}>
-                  <Zap className={`w-6 h-6 ${isPro ? 'text-white' : 'text-gray-600'}`} />
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isPro ? 'bg-blue-100' : 'bg-gray-100'}`}>
+                  <Zap className={`w-6 h-6 ${isPro ? 'text-blue-600' : 'text-gray-600'}`} />
                 </div>
                 <div>
-                  <h2 className={`text-2xl font-bold ${isPro ? 'text-white' : 'text-gray-900'}`}>
+                  <h2 className={`text-2xl font-bold ${isPro ? 'text-blue-600' : 'text-gray-900'}`}>
                     {isPro ? 'Jupho Pro' : 'Free Plan'}
                   </h2>
-                  <p className={`text-sm ${isPro ? 'text-blue-100' : 'text-gray-600'}`}>
+                  <p className={`text-sm ${isPro ? 'text-gray-600' : 'text-gray-600'}`}>
                     {isPro ? '₹999 / month' : 'No payment required'}
                   </p>
                 </div>
               </div>
               {isPro && (
-                <div className="bg-white/20 px-3 py-1 rounded-full">
-                  <span className="text-white text-sm font-medium">Active</span>
+                <div className="bg-blue-100 px-3 py-1 rounded">
+                  <span className="text-blue-700 text-sm font-medium">Active</span>
                 </div>
               )}
             </div>
@@ -100,24 +100,24 @@ export default function BillingPage() {
               {isPro ? (
                 <>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
-                    <span className="text-white text-sm">Unlimited AI assistant questions</span>
+                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700 text-sm">Unlimited AI assistant questions</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
-                    <span className="text-white text-sm">Priority response time</span>
+                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700 text-sm">Priority response time</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
-                    <span className="text-white text-sm">Advanced analysis features</span>
+                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700 text-sm">Advanced analysis features</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
-                    <span className="text-white text-sm">Export unlimited reports</span>
+                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700 text-sm">Export unlimited reports</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
-                    <span className="text-white text-sm">Email support</span>
+                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700 text-sm">Email support</span>
                   </div>
                 </>
               ) : (
@@ -143,17 +143,17 @@ export default function BillingPage() {
             </div>
 
             {isPro ? (
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="w-4 h-4 text-white" />
-                  <span className="text-white text-sm font-medium">Subscription Details</span>
+                  <Calendar className="w-4 h-4 text-blue-600" />
+                  <span className="text-blue-900 text-sm font-medium">Subscription Details</span>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-blue-100 text-xs">
-                    Expires in: <span className="font-semibold text-white">{daysLeft} days</span>
+                  <p className="text-blue-700 text-xs">
+                    Expires in: <span className="font-semibold text-blue-900">{daysLeft} days</span>
                   </p>
-                  <p className="text-blue-100 text-xs">
-                    Next renewal: <span className="font-semibold text-white">
+                  <p className="text-blue-700 text-xs">
+                    Next renewal: <span className="font-semibold text-blue-900">
                       {usageStats?.proExpiresAt ? new Date(usageStats.proExpiresAt).toLocaleDateString('en-US', { 
                         month: 'long', 
                         day: 'numeric', 
@@ -166,7 +166,7 @@ export default function BillingPage() {
             ) : (
               <button
                 onClick={() => setShowUpgradeModal(true)}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm"
               >
                 Upgrade to Pro
               </button>
@@ -174,7 +174,7 @@ export default function BillingPage() {
           </div>
 
           {/* Usage Stats */}
-          <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 space-y-6">
+          <div className="bg-white rounded-lg p-6 border-2 border-gray-200 space-y-6">
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-1">Usage Statistics</h3>
               <p className="text-sm text-gray-600">Your current usage this period</p>
@@ -194,7 +194,7 @@ export default function BillingPage() {
               {!isPro && (
                 <div className="w-full bg-gray-200 rounded-full h-3">
                   <div
-                    className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all"
+                    className="h-3 rounded-full bg-blue-600 transition-all"
                     style={{ 
                       width: `${Math.min(((usageStats?.apiUsageCount || 0) / (usageStats?.limit || 10)) * 100, 100)}%` 
                     }}
@@ -253,9 +253,9 @@ export default function BillingPage() {
 
         {/* Upgrade CTA for Free Users */}
         {!isPro && (
-          <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 text-center">
+          <div className="bg-blue-600 border-2 border-blue-700 rounded-lg p-8 text-center">
             <div className="max-w-2xl mx-auto">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-blue-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">Ready to unlock unlimited potential?</h2>
@@ -264,7 +264,7 @@ export default function BillingPage() {
               </p>
               <button
                 onClick={() => setShowUpgradeModal(true)}
-                className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors shadow-sm inline-flex items-center gap-2"
               >
                 <Zap className="w-5 h-5" />
                 Upgrade to Pro Now

@@ -34,9 +34,9 @@ export default function ChatHistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 pt-4">
+    <div className="min-h-screen bg-gray-50 pt-4">
       <main className="max-w-6xl mx-auto px-4 py-6">
-        <div className="bg-white/90 backdrop-blur border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
             <div>
               <h1 className="text-lg font-semibold text-gray-900">Chat history</h1>
@@ -47,7 +47,7 @@ export default function ChatHistoryPage() {
 
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-gray-50 text-left text-gray-600 uppercase text-xs tracking-wide">
+              <thead className="bg-gray-50 text-left text-gray-600 text-xs font-medium">
                 <tr>
                   <th className="px-4 py-3 w-[32%]">Title</th>
                   <th className="px-4 py-3 w-[40%]">Last message</th>

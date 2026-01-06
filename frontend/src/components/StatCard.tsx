@@ -10,21 +10,21 @@ interface StatCardProps {
 }
 
 export function StatCard({ title, value, subtext, icon: Icon, trend, gradient = true }: StatCardProps) {
-  const baseClasses = "rounded-xl p-4 shadow-sm hover:shadow-md transition-all group";
+  const baseClasses = "rounded-lg p-4 shadow-sm transition-colors group";
   const gradientClasses = gradient 
-    ? "bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100" 
-    : "bg-white border border-gray-200";
+    ? "bg-white border border-gray-200 hover:border-blue-600" 
+    : "bg-white border border-gray-200 hover:border-gray-300";
 
   return (
     <div className={`${baseClasses} ${gradientClasses}`}>
       <div className="flex items-center justify-between mb-2">
-        <p className={`text-xs font-semibold uppercase tracking-wide ${gradient ? 'text-blue-600' : 'text-gray-600'}`}>
+        <p className={`text-xs font-medium ${gradient ? 'text-gray-600' : 'text-gray-600'}`}>
           {title}
         </p>
         {Icon && (
           <Icon 
             size={18} 
-            className={`${gradient ? 'text-blue-500' : 'text-gray-500'} group-hover:scale-110 transition-transform`} 
+            className={`${gradient ? 'text-blue-600' : 'text-gray-500'}`} 
           />
         )}
       </div>

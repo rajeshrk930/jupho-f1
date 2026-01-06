@@ -54,13 +54,13 @@ export default function AnalyzePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 pt-6">
+    <div className="min-h-screen bg-gray-50 pt-6">
       {/* Centered Form */}
       <main className="max-w-2xl mx-auto px-4 py-8">
-        <div className="bg-white/90 backdrop-blur rounded-2xl border border-gray-200 p-6 shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.08em] text-blue-600 font-semibold">Analysis</p>
+              <p className="text-xs text-blue-600 font-medium">Analysis</p>
               <h1 className="text-2xl font-bold text-gray-900">Analyze Your Creative</h1>
               <p className="text-sm text-gray-600 mt-1">Upload your ad creative and get instant insights</p>
             </div>
