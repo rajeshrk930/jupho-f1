@@ -12,6 +12,7 @@ export interface User {
 export interface Analysis {
   id: string;
   userId: string;
+  imageUrl?: string | null;
   creativeUrl: string | null;
   creativeType: 'IMAGE' | 'VIDEO';
   primaryText: string | null;
