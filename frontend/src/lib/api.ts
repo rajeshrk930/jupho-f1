@@ -134,7 +134,8 @@ export const analysisApi = {
 export const paymentApi = {
   createOrder: async (plan: 'PRO' | 'AGENCY' = 'PRO') => {
     const response = await api.post('/payments/create-order', { plan });
-    return response.data;
+    // Backend wraps payload as { success, data }, we only need the data block for the modal
+    return response.data.data;
   },
   verifyPayment: async (data: {
     orderId?: string;
