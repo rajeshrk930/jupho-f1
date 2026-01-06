@@ -38,8 +38,8 @@ function SignupPageInner() {
           localStorage.setItem("token", response.data.token);
         }        setAuth(response.data.user, response.data.token ?? null);
         toast.success('Account created');
-        // Use window.location for hard redirect to ensure state is updated
-        router.replace(safeRedirect);
+        // Use Next.js router for navigation
+        router.push(safeRedirect);
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Signup failed');
@@ -51,9 +51,9 @@ function SignupPageInner() {
   // If already authenticated, redirect immediately to the requested page
   useEffect(() => {
     if (user) {
-      router.replace(safeRedirect);
+      router.push(safeRedirect);
     }
-  }, [user, safeRedirect]);
+  }, [user, safeRedirect, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
