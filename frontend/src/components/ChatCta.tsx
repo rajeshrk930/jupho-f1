@@ -15,15 +15,15 @@ export function ChatCta() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-xs drop-shadow-lg">
-      <div className="rounded-2xl bg-white/95 backdrop-blur border border-blue-100 p-4 space-y-2 animate-[fadeIn_240ms_ease-out]">
-        <div className="text-xs uppercase tracking-[0.08em] text-blue-600 font-semibold">Need a hand?</div>
+      <div className="rounded-2xl bg-white/95 backdrop-blur border border-teal-100 p-4 space-y-2 animate-[fadeIn_240ms_ease-out]">
+        <div className="text-xs uppercase tracking-[0.08em] text-teal-600 font-semibold">Need a hand?</div>
         <div className="text-sm text-gray-800 leading-snug">
           Ask the AI assistant for a quick fix before you launch.
         </div>
         <div className="flex items-center justify-between gap-2">
           <Link
             href="/assistant"
-            className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+            className="inline-flex items-center justify-center bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
           >
             Open Assistant
           </Link>

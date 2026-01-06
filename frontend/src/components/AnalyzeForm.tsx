@@ -105,10 +105,10 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
           {...getRootProps()}
           className={`border-2 border-dashed rounded-xl p-6 md:p-8 text-center cursor-pointer transition-all ${
             isDragActive 
-              ? 'border-blue-500 bg-blue-50 shadow-md' 
+              ? 'border-teal-500 bg-teal-50 shadow-md' 
               : file
               ? 'border-green-400 bg-green-50'
-              : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+              : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
           }`}
         >
           <input {...getInputProps()} />

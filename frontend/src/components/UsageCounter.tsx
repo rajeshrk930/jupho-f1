@@ -15,12 +15,12 @@ export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick 
 
   if (isPro) {
     return (
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-4 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-teal-500 to-purple-600 rounded-lg p-4 flex items-center justify-between">
         <div className="flex items-center">
           <Zap className="w-5 h-5 text-white mr-2" />
           <div>
             <p className="text-white font-semibold text-sm">Jupho Pro</p>
-            <p className="text-blue-100 text-xs">Unlimited questions</p>
+            <p className="text-teal-100 text-xs">Unlimited questions</p>
           </div>
         </div>
         <div className="bg-white/20 px-3 py-1 rounded-full">
@@ -49,7 +49,7 @@ export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick 
           className={`h-2 rounded-full transition-all ${
             isNearLimit
               ? 'bg-gradient-to-r from-orange-500 to-red-500'
-              : 'bg-gradient-to-r from-blue-500 to-purple-500'
+              : 'bg-gradient-to-r from-teal-500 to-purple-500'
           }`}
           style={{ width: `${percentage}%` }}
         />
@@ -58,14 +58,14 @@ export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick 
       {usageCount >= limit ? (
         <button
           onClick={onUpgradeClick}
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all"
+          className="w-full bg-gradient-to-r from-teal-600 to-purple-600 text-white py-2 rounded-lg text-sm font-semibold hover:from-teal-700 hover:to-purple-700 transition-all"
         >
           Upgrade to Pro
         </button>
       ) : isNearLimit ? (
         <button
           onClick={onUpgradeClick}
-          className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50 transition-all"
+          className="w-full border border-teal-600 text-teal-600 py-2 rounded-lg text-sm font-semibold hover:bg-teal-50 transition-all"
         >
           Get Unlimited
         </button>

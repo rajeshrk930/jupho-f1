@@ -111,7 +111,7 @@ export function TopNav() {
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold text-gray-900">{displayName}</p>
                     {user?.proExpiresAt && new Date(user.proExpiresAt) > new Date() && (
-                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-600 text-white">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-teal-600 text-white">
                         PRO
                       </span>
                     )}

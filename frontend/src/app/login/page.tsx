@@ -56,7 +56,7 @@ function LoginPageInner() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-blue-600 flex items-center justify-center shadow-sm">
+          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-teal-600 flex items-center justify-center shadow-sm">
             <Lock className="md:hidden text-white" size={24} />
             <Lock className="hidden md:block text-white" size={28} />
           </div>
@@ -99,7 +99,7 @@ function LoginPageInner() {
             <button 
               type="submit" 
               disabled={loading} 
-              className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-gradient-to-r from-teal-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -107,7 +107,7 @@ function LoginPageInner() {
 
           <p className="text-center text-sm text-gray-600 mt-6">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/signup" className="text-teal-700 hover:text-teal-800 font-medium">
               Sign up
             </Link>
           </p>

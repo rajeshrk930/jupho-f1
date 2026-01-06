@@ -9,7 +9,7 @@ export function EnhancedListItem({ children, type = 'success' }: EnhancedListIte
   const icons = {
     success: <CheckCircle2 size={16} className="text-green-500" />,
     warning: <AlertCircle size={16} className="text-orange-500" />,
-    info: <Lightbulb size={16} className="text-blue-500" />,
+    info: <Lightbulb size={16} className="text-teal-500" />,
   };
 
   return (

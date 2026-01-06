@@ -94,12 +94,12 @@ ${analysis.singleFix}`;
       </div>
 
       {/* Section 1: Primary Reason */}
-      <div className="relative pl-6 border-l-4 border-blue-500">
-        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+      <div className="relative pl-6 border-l-4 border-teal-500">
+        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center">
           <Target size={14} className="text-white" />
         </div>
         <div className="inline-flex items-center gap-2 mb-3">
-          <span className="px-2.5 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium">
+          <span className="px-2.5 py-1 rounded bg-teal-100 text-teal-700 text-xs font-medium">
             Primary Reason
           </span>
         </div>
@@ -131,13 +131,13 @@ ${analysis.singleFix}`;
       </div>
 
       {/* Section 3: What to Change */}
-      <div className="relative pl-6 border-l-4 border-blue-500">
-        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center">
+      <div className="relative pl-6 border-l-4 border-teal-500">
+        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-teal-600 flex items-center justify-center">
           <Zap size={14} className="text-white" />
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-5 shadow-sm">
+        <div className="bg-teal-50 border border-teal-200 rounded-lg p-5 shadow-sm">
           <div className="inline-flex items-center gap-2 mb-3">
-            <span className="px-2.5 py-1 rounded bg-blue-600 text-white text-xs font-medium">
+            <span className="px-2.5 py-1 rounded bg-teal-600 text-white text-xs font-medium">
               Action Required
             </span>
           </div>
@@ -152,7 +152,7 @@ ${analysis.singleFix}`;
         {/* Ask AI Button - Full Width */}
         <button 
           onClick={askAI} 
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-sm text-sm sm:text-base"
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium transition-colors shadow-sm text-sm sm:text-base"
         >
           <Sparkles size={18} />
           Ask AI About This Analysis
@@ -169,7 +169,7 @@ ${analysis.singleFix}`;
           </button>
           <button 
             onClick={downloadPdf} 
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-sm text-sm sm:text-base"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium transition-colors shadow-sm text-sm sm:text-base"
           >
             <Download size={16} />
             PDF

@@ -79,7 +79,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
         </button>
 
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <Zap className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -90,7 +90,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
           </p>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
+        <div className="bg-gradient-to-br from-teal-50 to-purple-50 rounded-xl p-6 mb-6">
           <div className="flex items-baseline justify-center mb-4">
             <span className="text-4xl font-bold text-gray-900">₹999</span>
             <span className="text-gray-600 ml-2">/month</span>
@@ -121,7 +121,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
         <button
           onClick={handleUpgrade}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-teal-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-teal-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Processing...' : 'Upgrade Now'}
         </button>

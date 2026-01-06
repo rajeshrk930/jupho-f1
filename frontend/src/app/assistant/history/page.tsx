@@ -69,7 +69,7 @@ export default function ChatHistoryPage() {
                     <td className="px-4 py-3 text-right">
                       <Link
                         href={`/assistant?conversationId=${row.id}`}
-                        className="text-blue-600 hover:underline font-medium"
+                        className="text-teal-600 hover:underline font-medium"
                       >
                         Open
                       </Link>

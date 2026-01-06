@@ -9,7 +9,7 @@ import { AnalysisResult } from '@/components/AnalysisResult';
 import { StatCard } from '@/components/StatCard';
 import { StatusBadge } from '@/components/StatusBadge';
 import { Analysis } from '@/types';
-import { BarChart3, Calendar, TrendingUp } from 'lucide-react';
+import { BarChart3, Calendar, TrendingUp, Zap, MessageSquare, FileText, Crown, Sparkles, Clock } from 'lucide-react';
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
@@ -42,7 +42,7 @@ export default function DashboardPage() {
         <div className="surface-card p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <p className="text-xs text-blue-600 font-medium">Dashboard</p>
+              <p className="text-xs text-teal-700 font-medium">Dashboard</p>
               <h1 className="text-2xl font-bold text-gray-900">Welcome back{user?.name ? `, ${user.name}` : ''}.</h1>
               <p className="text-sm text-gray-600">See your recent analyses and jump back into the work.</p>
             </div>
@@ -52,6 +52,74 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Link
+            href="/analyze"
+            className="bg-white border border-gray-200 rounded-lg p-6 hover:border-teal-600 transition-colors group shadow-sm"
+          >
+            <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center mb-4 group-hover:bg-teal-200 transition-colors">
+              <Zap size={24} className="text-teal-700" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-1">New Analysis</h3>
+            <p className="text-sm text-gray-600">Analyze your next ad creative</p>
+          </Link>
+
+          <Link
+            href="/assistant"
+            className="bg-white border border-gray-200 rounded-lg p-6 hover:border-purple-600 transition-colors group shadow-sm"
+          >
+            <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
+              <MessageSquare size={24} className="text-purple-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-1">AI Assistant</h3>
+            <p className="text-sm text-gray-600">Get instant strategy help</p>
+          </Link>
+
+          <Link
+            href="/history"
+            className="bg-white border border-gray-200 rounded-lg p-6 hover:border-green-600 transition-colors group shadow-sm"
+          >
+            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4 group-hover:bg-green-200 transition-colors">
+              <FileText size={24} className="text-green-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-1">View Reports</h3>
+            <p className="text-sm text-gray-600">Browse all your analyses</p>
+          </Link>
+
+          <Link
+            href="/billing"
+            className="bg-white border border-gray-200 rounded-lg p-6 hover:border-orange-600 transition-colors group shadow-sm"
+          >
+            <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mb-4 group-hover:bg-orange-200 transition-colors">
+              <Crown size={24} className="text-orange-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-1">Upgrade Pro</h3>
+            <p className="text-sm text-gray-600">Unlock unlimited features</p>
+          </Link>
+        </div>
+
+        {/* Tips & Insights Section */}
+        {analyses.length > 0 && (
+          <div className="bg-white border-l-4 border-teal-600 rounded-lg p-6 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                <Sparkles size={20} className="text-teal-700" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-2">💡 Quick Tip</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {avgCtr && parseFloat(avgCtr) > 1.5
+                    ? "Great work! Your average CTR is above industry standards. Keep testing new creative variations to maintain momentum."
+                    : avgCtr && parseFloat(avgCtr) < 1
+                    ? "Your CTR could use improvement. Try analyzing your winning creatives to identify what works, then apply those insights to new ads."
+                    : "You're off to a good start! Analyze more creatives to identify patterns in what drives performance."}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
           {isLoading || isFetching ? (
@@ -74,10 +142,10 @@ export default function DashboardPage() {
         <section className="surface-card p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-blue-600 font-medium">Recent</p>
+              <p className="text-xs text-teal-700 font-medium">Recent</p>
               <h2 className="text-lg font-semibold text-gray-900">Recent analyses</h2>
             </div>
-            <Link href="/history" className="text-sm text-blue-600 hover:text-blue-700">View all</Link>
+            <Link href="/history" className="text-sm text-teal-700 hover:text-teal-800">View all</Link>
           </div>
 
           {isLoading ? (
@@ -92,26 +160,26 @@ export default function DashboardPage() {
             </div>
           ) : !recent.length ? (
             <div className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-300 rounded-lg p-6 md:p-8 text-center bg-gray-50">
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-100 flex items-center justify-center">
-                <BarChart3 size={24} className="md:hidden text-blue-600" />
-                <BarChart3 size={28} className="hidden md:block text-blue-600" />
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-teal-100 flex items-center justify-center">
+                <BarChart3 size={24} className="md:hidden text-teal-700" />
+                <BarChart3 size={28} className="hidden md:block text-teal-700" />
               </div>
               <p className="text-gray-700 font-medium">No analyses yet</p>
               <p className="text-sm text-gray-500">Start your first one to see insights here.</p>
-              <Link href="/analyze" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm">Start first analysis</Link>
+              <Link href="/analyze" className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors font-medium text-sm">Start first analysis</Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
               {recent.map((analysis) => (
-                <article key={analysis.id} className="bg-white border border-gray-200 rounded-lg p-4 md:p-5 space-y-3 hover:border-blue-600 transition-colors group">
+                <article key={analysis.id} className="bg-white border border-gray-200 rounded-lg p-4 md:p-5 space-y-3 hover:border-teal-600 transition-colors group">
                   <div className="flex items-center justify-between text-xs md:text-sm">
                     <span className="text-gray-500">{new Date(analysis.createdAt).toLocaleDateString()}</span>
                     <StatusBadge status={analysis.resultType as 'WINNING' | 'AVERAGE' | 'DEAD'} size="sm" />
                   </div>
-                  <p className="text-sm md:text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">{analysis.primaryReason}</p>
+                  <p className="text-sm md:text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-teal-700 transition-colors">{analysis.primaryReason}</p>
                   <p className="text-xs md:text-sm text-gray-600 line-clamp-2">{Array.isArray(analysis.supportingLogic) ? analysis.supportingLogic[0] : analysis.supportingLogic}</p>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-gray-100">
-                    <Link href={`/history`} className="text-sm md:text-base text-blue-600 hover:text-blue-700 font-medium">View Details</Link>
+                    <Link href={`/history`} className="text-sm md:text-base text-teal-700 hover:text-teal-800 font-medium">View Details</Link>
                     <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500 flex-wrap">
                       <span>CTR {analysis.ctr}%</span>
                       {analysis.industry && (
@@ -134,10 +202,10 @@ export default function DashboardPage() {
           <section className="surface-card p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-blue-600 font-medium">Details</p>
+                <p className="text-xs text-teal-700 font-medium">Details</p>
                 <h2 className="text-lg font-semibold text-gray-900">Latest analysis</h2>
               </div>
-              <Link href="/assistant" className="text-sm text-blue-600 hover:text-blue-700">Ask AI about this</Link>
+              <Link href="/assistant" className="text-sm text-teal-700 hover:text-teal-800">Ask AI about this</Link>
             </div>
             <AnalysisResult analysis={recent[0]} />
           </section>

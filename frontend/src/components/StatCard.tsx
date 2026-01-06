@@ -12,7 +12,7 @@ interface StatCardProps {
 export function StatCard({ title, value, subtext, icon: Icon, trend, gradient = true }: StatCardProps) {
   const baseClasses = "rounded-lg p-4 shadow-sm transition-colors group";
   const gradientClasses = gradient 
-    ? "bg-white border border-gray-200 hover:border-blue-600" 
+    ? "bg-white border border-gray-200 hover:border-teal-600" 
     : "bg-white border border-gray-200 hover:border-gray-300";
 
   return (
@@ -24,7 +24,7 @@ export function StatCard({ title, value, subtext, icon: Icon, trend, gradient = 
         {Icon && (
           <Icon 
             size={18} 
-            className={`${gradient ? 'text-blue-600' : 'text-gray-500'}`} 
+            className={`${gradient ? 'text-teal-600' : 'text-gray-500'}`} 
           />
         )}
       </div>

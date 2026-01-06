@@ -59,7 +59,7 @@ function SignupPageInner() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-blue-600 flex items-center justify-center shadow-sm">
+          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-teal-600 flex items-center justify-center shadow-sm">
             <UserPlus className="md:hidden text-white" size={24} />
             <UserPlus className="hidden md:block text-white" size={28} />
           </div>
@@ -118,7 +118,7 @@ function SignupPageInner() {
             <button 
               type="submit" 
               disabled={loading} 
-              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
@@ -126,7 +126,7 @@ function SignupPageInner() {
 
           <p className="text-center text-sm text-gray-600 mt-6">
             Already have an account?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/login" className="text-teal-700 hover:text-teal-800 font-medium">
               Sign in
             </Link>
           </p>

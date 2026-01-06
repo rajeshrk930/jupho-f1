@@ -29,7 +29,7 @@ export function AnalysisDrawer({ isOpen, onClose, isLoading, result }: AnalysisD
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
           <div>
-            <p className="text-xs uppercase tracking-[0.08em] text-blue-600 font-semibold">Report</p>
+            <p className="text-xs uppercase tracking-[0.08em] text-teal-600 font-semibold">Report</p>
             <h2 className="text-lg font-semibold text-gray-900">Analysis Result</h2>
           </div>
           <button
