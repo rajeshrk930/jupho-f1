@@ -354,16 +354,69 @@ export default function AssistantPage() {
               </div>
             )}
             {!isLoading && !hasMessages && (
-              <div className="text-sm text-gray-600 space-y-3">
-                <div>
-                  <p className="font-semibold text-gray-800 mb-1">Quick prompts</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>"Rewrite my hook for a fashion reel."</li>
-                    <li>"Give me one fix for low CTR."</li>
-                    <li>"Suggest a 3-asset test plan."</li>
-                  </ul>
+              <div className="flex flex-col items-center justify-center h-full py-8 md:py-12">
+                <div className="max-w-2xl w-full space-y-6">
+                  {/* Hero Section */}
+                  <div className="text-center space-y-3">
+                    <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                      <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                    </div>
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">How can I help you today?</h2>
+                    <p className="text-sm text-gray-600 max-w-md mx-auto">
+                      I'm Jupho AI, your Meta Ads expert. Ask me anything about creative strategy, targeting, or campaign optimization.
+                    </p>
+                  </div>
+
+                  {/* Quick Prompts */}
+                  <div className="space-y-3">
+                    <p className="text-xs md:text-sm font-semibold text-gray-700 px-2">✨ Try these quick prompts:</p>
+                    <div className="grid grid-cols-1 gap-2.5">
+                      <button
+                        onClick={() => setInput("Rewrite my hook for a fashion reel.")}
+                        className="group flex items-start gap-3 p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50/50 transition-all text-left shadow-sm hover:shadow-md active:scale-[0.98]"
+                      >
+                        <span className="text-2xl">✍️</span>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900 group-hover:text-blue-700">"Rewrite my hook for a fashion reel."</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Get creative copy suggestions</p>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setInput("Give me one fix for low CTR.")}
+                        className="group flex items-start gap-3 p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-green-400 hover:bg-green-50/50 transition-all text-left shadow-sm hover:shadow-md active:scale-[0.98]"
+                      >
+                        <span className="text-2xl">🎯</span>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900 group-hover:text-green-700">"Give me one fix for low CTR."</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Quick performance improvements</p>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setInput("Suggest a 3-asset test plan.")}
+                        className="group flex items-start gap-3 p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-purple-400 hover:bg-purple-50/50 transition-all text-left shadow-sm hover:shadow-md active:scale-[0.98]"
+                      >
+                        <span className="text-2xl">🧪</span>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900 group-hover:text-purple-700">"Suggest a 3-asset test plan."</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Strategic testing frameworks</p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Info Banner */}
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 md:p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <AlertCircle size={16} className="text-blue-600" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs md:text-sm font-medium text-blue-900">💡 Last 5 messages kept for context</p>
+                        <p className="text-xs text-blue-700">Free plan: 10 questions/day</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500">We keep the last 5 turns for context. Free plan: 10 questions/day.</p>
               </div>
             )}
             {!isLoading && current?.messages?.map((m) => (
@@ -387,9 +440,9 @@ export default function AssistantPage() {
             )}
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-gray-200 pt-3 md:pt-0 md:border-none md:mt-0 sticky bottom-0 bg-white/95 backdrop-blur rounded-xl">
+          <div className="border-t border-gray-200 pt-4 sticky bottom-0 bg-white/95 backdrop-blur-sm">
             {analysisId && (
-              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg px-3 py-2 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg px-3 py-2 flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
                   <span className="text-xs font-medium text-purple-800">
@@ -398,45 +451,61 @@ export default function AssistantPage() {
                 </div>
                 <button
                   onClick={() => setAnalysisId(null)}
-                  className="text-xs text-purple-600 hover:text-purple-800"
+                  className="text-xs text-purple-600 hover:text-purple-800 font-medium"
                 >
                   ✕
                 </button>
               </div>
             )}
-            <textarea
-              className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-inner bg-white"
-              rows={3}
-              placeholder="Ask about creating or optimizing Meta ads…"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  if (!isSending) void handleSend();
-                }
-              }}
-            />
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 md:justify-between">
-              <p className="text-xs text-gray-500">Context: last 5 messages are sent to the assistant. Free plan: 10 questions/day.</p>
-              <div className="flex items-center gap-2 justify-end">
+            
+            <div className="relative">
+              <textarea
+                className="w-full border-2 border-gray-300 rounded-xl p-3 pr-24 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none shadow-sm transition-all bg-white placeholder:text-gray-400"
+                rows={3}
+                placeholder="Ask about creating or optimizing Meta ads…"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (!isSending && input.trim()) void handleSend();
+                  }
+                }}
+              />
+              <div className="absolute bottom-3 right-3 flex items-center gap-2">
                 <button
                   onClick={() => {
                     setCurrent(null);
                     setInput('');
                   }}
-                  className="text-xs text-gray-600 underline"
+                  className="text-xs text-gray-500 hover:text-gray-700 font-medium px-2 py-1 hover:bg-gray-100 rounded transition-colors"
+                  title="Clear chat"
                 >
-                  Clear chat
+                  Clear
                 </button>
                 <button
                   onClick={() => void handleSend()}
-                  disabled={isSending}
-                  className="btn-primary"
+                  disabled={isSending || !input.trim()}
+                  className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md flex items-center gap-1.5"
+                  title={isSending ? 'Sending...' : 'Send message (Enter)'}
                 >
-                  {isSending ? 'Sending…' : 'Send'}
+                  {isSending ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Sending</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send</span>
+                      <span className="text-xs opacity-75">↵</span>
+                    </>
+                  )}
                 </button>
               </div>
+            </div>
+            
+            <div className="mt-2 px-1 flex items-center justify-between text-xs text-gray-500">
+              <span>💬 Last 5 messages kept • Free: 10 questions/day</span>
             </div>
           </div>
         </section>
