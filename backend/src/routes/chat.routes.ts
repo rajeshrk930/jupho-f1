@@ -272,9 +272,9 @@ router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
       success: true,
       data: {
         plan: user.plan,
-        usage: user.apiUsageCount,
-        limit,
-        unlimited: isProActive,
+        apiUsageCount: user.apiUsageCount,
+        isPro: isProActive,
+        limit: limit || 10,
         resetsAt: getNextResetTime(user.lastResetDate),
         proExpiresAt: user.proExpiresAt,
       },
