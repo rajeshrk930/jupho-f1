@@ -259,10 +259,13 @@ router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
     }
 
     const isProActive = user.plan === 'PRO' && user.proExpiresAt && new Date(user.proExpiresAt) > new Date();
-    const limit = isProActive ? null : 10;
+    const limit = 10; // Frontend expects a number; PRO ignores it
 
-    const getNextResetTime = (lastReset: Date): string => {
-      const nextReset = new Date(lastReset);
+    // Guard against any null/legacy values by falling back to "now"
+    const safeLastReset = user.lastResetDate ? new Date(user.lastResetDate) : new Date();
+
+    const getNextResetTime = (): string => {
+      const nextReset = new Date(safeLastReset);
       nextReset.setDate(nextReset.getDate() + 1);
       nextReset.setHours(0, 0, 0, 0);
       return nextReset.toISOString();
@@ -272,11 +275,11 @@ router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
       success: true,
       data: {
         plan: user.plan,
-        apiUsageCount: user.apiUsageCount,
+        apiUsageCount: user.apiUsageCount ?? 0,
         isPro: isProActive,
-        limit: limit || 10,
-        resetsAt: getNextResetTime(user.lastResetDate),
-        proExpiresAt: user.proExpiresAt,
+        limit,
+        resetsAt: getNextResetTime(),
+        proExpiresAt: user.proExpiresAt || null,
       },
     });
   } catch (error) {
