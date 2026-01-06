@@ -139,10 +139,18 @@ router.post(
         }
       });
 
-      // Update user plan
+      // Update user plan with expiry date (30 days for monthly subscription)
+      const proExpiresAt = payment.plan === 'PRO' 
+        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        : null;
+        
       await prisma.user.update({
         where: { id: req.user!.id },
-        data: { plan: payment.plan }
+        data: { 
+          plan: payment.plan,
+          proExpiresAt,
+          apiUsageCount: 0 // Reset usage count on upgrade
+        }
       });
 
       res.json({

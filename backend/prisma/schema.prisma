@@ -8,17 +8,20 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  email     String     @unique
-  password  String
-  name      String?
-  plan      String     @default("FREE")
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  analyses  Analysis[]
-  payments  Payment[]
+  id            String     @id @default(uuid())
+  email         String     @unique
+  password      String
+  name          String?
+  plan          String     @default("FREE")
+  apiUsageCount Int        @default(0)
+  lastResetDate DateTime   @default(now())
+  proExpiresAt  DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  analyses      Analysis[]
+  payments      Payment[]
   conversations Conversation[]
-  messages  Message[]
+  messages      Message[]
 }
 
 model Analysis {

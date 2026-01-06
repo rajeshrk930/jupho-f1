@@ -8,6 +8,8 @@ import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CheckCircle2, Lightbulb, AlertCircle, Copy } from 'lucide-react';
+import UpgradeModal from '@/components/UpgradeModal';
+import UsageCounter from '@/components/UsageCounter';
 
 function MessageBubble({ message, onFeedback }: { message: ChatMessage; onFeedback: (id: string, f: 'up' | 'down') => void }) {
   const isUser = message.role === 'user';
@@ -139,6 +141,9 @@ export default function AssistantPage() {
   const [analysisId, setAnalysisId] = useState<string | null>(null);
   const autoStartedRef = useRef(false);
 
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [usageStats, setUsageStats] = useState({ apiUsageCount: 0, isPro: false });
+
   const hasMessages = useMemo(() => (current?.messages?.length || 0) > 0, [current]);
 
   const loadHistory = async (preferredId?: string | null) => {
@@ -171,8 +176,21 @@ export default function AssistantPage() {
     }
   };
 
+  const loadUsageStats = async () => {
+    try {
+      const resp = await chatApi.getUsage();
+      setUsageStats({
+        apiUsageCount: resp.data.apiUsageCount || 0,
+        isPro: resp.data.isPro || false,
+      });
+    } catch (e) {
+      // Silently fail
+    }
+  };
+
   useEffect(() => {
     void loadHistory(searchParams.get('conversationId'));
+    void loadUsageStats();
     const urlAnalysisId = searchParams.get('analysisId');
     if (urlAnalysisId) {
       setAnalysisId(urlAnalysisId);
@@ -227,10 +245,19 @@ export default function AssistantPage() {
         ];
       });
       if (!isAutoStart) setInput('');
+      void loadUsageStats(); // Refresh usage stats
     } catch (e: any) {
       if (!isAutoStart) {
+        const status = e?.response?.status;
         const msg = e?.response?.data?.message || 'Failed to send message';
-        toast.error(msg);
+        
+        if (status === 429) {
+          // Daily limit reached
+          setShowUpgradeModal(true);
+          toast.error('Daily limit reached. Upgrade to Pro for unlimited questions!');
+        } else {
+          toast.error(msg);
+        }
       }
     } finally {
       setIsSending(false);
@@ -251,6 +278,11 @@ export default function AssistantPage() {
     } catch (e) {
       toast.error('Failed to save feedback');
     }
+  };
+
+  const handleUpgradeComplete = () => {
+    void loadUsageStats();
+    toast.success('Welcome to Jupho Pro! You now have unlimited questions.');
   };
 
   const handleExport = async () => {
@@ -336,6 +368,15 @@ export default function AssistantPage() {
                 <p className="text-xs text-gray-400">Start chatting to see your history here</p>
               </div>
             )}
+          </div>
+
+          <div className="mt-4">
+            <UsageCounter
+              isPro={usageStats.isPro}
+              usageCount={usageStats.apiUsageCount}
+              limit={10}
+              onUpgradeClick={() => setShowUpgradeModal(true)}
+            />
           </div>
         </aside>
 
@@ -510,6 +551,12 @@ export default function AssistantPage() {
           </div>
         </section>
       </main>
+
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onUpgradeComplete={handleUpgradeComplete}
+      />
     </div>
   );
 }

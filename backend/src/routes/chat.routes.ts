@@ -2,16 +2,10 @@ import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { prisma } from '../lib/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { checkUsageLimit } from '../middleware/usageLimit';
 import { getAssistantReply } from '../services/openai.service';
 
 const router = Router();
-const DAILY_FREE_LIMIT = 10;
-
-const startOfToday = () => {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
-};
 
 const buildTitle = (message: string) => message.slice(0, 80);
 
@@ -25,6 +19,7 @@ const buildAnalysisTitle = (diagnosis: string) => {
 router.post(
   '/',
   authenticate,
+  checkUsageLimit,
   [
     body('message').isString().isLength({ min: 1 }),
     body('conversationId').optional().isString(),
@@ -77,20 +72,8 @@ router.post(
       }
     }
 
-    // Rate limit for FREE users: max 10 user messages per day
-    if (user.plan === 'FREE') {
-      const count = await prisma.message.count({
-        where: {
-          userId: user.id,
-          role: 'user',
-          createdAt: { gte: startOfToday() },
-        },
-      });
-      if (count >= DAILY_FREE_LIMIT) {
-        return res.status(429).json({ success: false, message: 'Daily limit reached (10 messages for free plan).' });
-      }
-    }
-
+    // Usage limit is now handled by checkUsageLimit middleware
+    
     let conversation = conversationId
       ? await prisma.conversation.findFirst({ where: { id: conversationId, userId: user.id } })
       : null;
@@ -257,5 +240,49 @@ router.post(
     res.json({ success: true, data: updated });
   }
 );
+
+// Get usage stats
+router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user!.id },
+      select: {
+        plan: true,
+        apiUsageCount: true,
+        lastResetDate: true,
+        proExpiresAt: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const isProActive = user.plan === 'PRO' && user.proExpiresAt && new Date(user.proExpiresAt) > new Date();
+    const limit = isProActive ? null : 10;
+
+    const getNextResetTime = (lastReset: Date): string => {
+      const nextReset = new Date(lastReset);
+      nextReset.setDate(nextReset.getDate() + 1);
+      nextReset.setHours(0, 0, 0, 0);
+      return nextReset.toISOString();
+    };
+
+    res.json({
+      success: true,
+      data: {
+        plan: user.plan,
+        usage: user.apiUsageCount,
+        limit,
+        unlimited: isProActive,
+        resetsAt: getNextResetTime(user.lastResetDate),
+        proExpiresAt: user.proExpiresAt,
+      },
+    });
+  } catch (error) {
+    console.error('Get usage error:', error);
+    res.status(500).json({ success: false, message: 'Failed to get usage stats' });
+  }
+});
 
 export { router as chatRoutes };

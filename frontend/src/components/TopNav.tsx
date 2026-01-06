@@ -108,7 +108,14 @@ export function TopNav() {
                 className="profile-trigger"
               >
                 <div className="text-left leading-tight">
-                  <p className="text-sm font-semibold text-gray-900">{displayName}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-gray-900">{displayName}</p>
+                    {user?.proExpiresAt && new Date(user.proExpiresAt) > new Date() && (
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                        PRO
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500">{emailLabel}</p>
                 </div>
                 <ChevronDown size={16} className="text-gray-500" />

@@ -3,6 +3,9 @@ export interface User {
   email: string;
   name: string | null;
   plan: 'FREE' | 'PRO' | 'AGENCY';
+  proExpiresAt?: string | null;
+  apiUsageCount?: number;
+  lastResetDate?: string;
   createdAt: string;
 }
 
