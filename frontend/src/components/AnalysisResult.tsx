@@ -4,14 +4,13 @@ import { Analysis } from '@/types';
 import { analysisApi } from '@/lib/api';
 import { Target, Lightbulb, Zap, Copy, Download, CheckCircle2, TrendingUp, TrendingDown, Minus, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { InlineChat } from './InlineChat';
 
 interface AnalysisResultProps {
   analysis: Analysis;
 }
 
 export function AnalysisResult({ analysis }: AnalysisResultProps) {
-  const router = useRouter();
   
   // Normalize supportingLogic because API sometimes returns a JSON string
   const supportingPoints = Array.isArray(analysis.supportingLogic)
@@ -56,10 +55,6 @@ ${analysis.singleFix}`;
     } catch {
       toast.error('Failed to download PDF');
     }
-  };
-
-  const askAI = () => {
-    router.push(`/assistant?analysisId=${analysis.id}`);
   };
 
   // Determine result type styling
@@ -174,15 +169,6 @@ ${analysis.singleFix}`;
 
       {/* Export Actions */}
       <div className="flex flex-col gap-3 pt-6 border-t border-gray-200">
-        {/* Ask AI Button - Full Width */}
-        <button 
-          onClick={askAI} 
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium transition-colors shadow-sm text-sm sm:text-base"
-        >
-          <Sparkles size={18} />
-          Ask AI About This Analysis
-        </button>
-        
         {/* Copy and Download - Side by Side */}
         <div className="flex gap-3">
           <button 
@@ -201,6 +187,9 @@ ${analysis.singleFix}`;
           </button>
         </div>
       </div>
+
+      {/* Inline AI Chat - NEW */}
+      <InlineChat analysis={analysis} />
     </div>
   );
 }
