@@ -45,7 +45,7 @@ function MessageBubble({ message, onFeedback }: { message: ChatMessage; onFeedba
                   p: ({ children }) => <p className="text-gray-800 leading-relaxed mb-3">{children}</p>,
                   strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
                   ul: ({ children }) => <ul className="space-y-2 my-3">{children}</ul>,
-                  ol: ({ children }) => <ol className="space-y-2 my-3 list-decimal list-inside">{children}</ol>,
+                  ol: ({ children }) => <ol className="space-y-1.5 my-3 list-decimal list-inside">{children}</ol>,
                   li: ({ children, ...props }: any) => {
                     const content = String(children);
                     const isActionItem = content.toLowerCase().includes('pause') || 
@@ -56,21 +56,21 @@ function MessageBubble({ message, onFeedback }: { message: ChatMessage; onFeedba
                                         content.toLowerCase().includes('check');
                     const isOrdered = props.node?.tagName === 'li' && props.node?.parent?.tagName === 'ol';
                     return (
-                      <li className="flex items-start gap-2 p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                      <li className="flex items-start gap-2.5 py-1">
                         {isOrdered ? (
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-100 text-teal-700 text-xs font-bold flex items-center justify-center mt-0.5">
+                          <span className="flex-shrink-0 text-teal-700 font-semibold text-sm mt-0.5">
                             {content.match(/^\d+/)?.[0] || '•'}
                           </span>
                         ) : (
                           <span className="flex-shrink-0 mt-1">
                             {isActionItem ? (
-                              <AlertCircle size={16} className="text-orange-500" />
+                              <AlertCircle size={14} className="text-orange-500" />
                             ) : (
-                              <CheckCircle2 size={16} className="text-green-500" />
+                              <CheckCircle2 size={14} className="text-teal-600" />
                             )}
                           </span>
                         )}
-                        <span className="flex-1 text-gray-800 text-sm">{children}</span>
+                        <span className="flex-1 text-gray-800 text-sm leading-relaxed">{children}</span>
                       </li>
                     );
                   },
@@ -501,14 +501,14 @@ export default function AssistantPage() {
             {isSending && (
               <div className="flex justify-start">
                 <div className="flex flex-col gap-1 max-w-xl">
-                  <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-gray-500">
+                  <span className="text-xs font-medium text-gray-500">
                     Assistant
                   </span>
                   <div className="rounded-2xl px-4 py-3 shadow-sm border bg-white text-gray-900 border-gray-200">
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                   </div>
                 </div>
