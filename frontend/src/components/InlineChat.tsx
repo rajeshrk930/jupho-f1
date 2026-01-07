@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { MessageSquare, Send, X, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
-import { chatApi } from '@/lib/api';
+import { MessageSquare, Send, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { chatApi, trackingApi } from '@/lib/api';
 import { Analysis, ChatMessage } from '@/types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -18,6 +18,7 @@ export function InlineChat({ analysis }: InlineChatProps) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [hasTrackedOpen, setHasTrackedOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -27,6 +28,13 @@ export function InlineChat({ analysis }: InlineChatProps) {
 
   useEffect(() => {
     if (isExpanded && messages.length === 0) {
+      // Track AI chat opened for training data
+      if (!hasTrackedOpen) {
+        trackingApi.trackAction(analysis.id, 'openedAI');
+        trackingApi.trackAction(analysis.id, 'clickedImplement');
+        setHasTrackedOpen(true);
+      }
+
       // Add initial AI message
       const initialMessage: ChatMessage = {
         id: 'initial',
@@ -36,7 +44,7 @@ export function InlineChat({ analysis }: InlineChatProps) {
       };
       setMessages([initialMessage]);
     }
-  }, [isExpanded, messages.length, analysis]);
+  }, [isExpanded, messages.length, analysis, hasTrackedOpen]);
 
   useEffect(() => {
     scrollToBottom();

@@ -184,3 +184,22 @@ export const chatApi = {
     return response.data;
   },
 };
+
+// Behavioral Tracking API (for AI training data)
+export const trackingApi = {
+  trackAction: async (analysisId: string, action: 'openedAI' | 'downloadedPDF' | 'copiedText' | 'clickedImplement') => {
+    try {
+      await api.post('/tracking/action', { analysisId, action });
+    } catch (error) {
+      // Silent failure - tracking should never interrupt UX
+      console.error('[Tracking] Failed to track action:', error);
+    }
+  },
+  trackFeedback: async (analysisId: string, fixWorked: boolean) => {
+    try {
+      await api.post('/tracking/feedback', { analysisId, fixWorked });
+    } catch (error) {
+      console.error('[Tracking] Failed to track feedback:', error);
+    }
+  },
+};

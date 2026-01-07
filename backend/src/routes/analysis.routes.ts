@@ -6,6 +6,7 @@ import { upload } from '../middleware/upload';
 import { DecisionEngine } from '../services/decisionEngine.service';
 import { generateAnalysisPDF } from '../services/pdf.service';
 import { buildHumanizedCopy } from '../services/copyDeck';
+import { BehaviorTrackingService } from '../services/behaviorTracking.service';
 
 const router = Router();
 
@@ -64,6 +65,8 @@ router.post(
         cpa
       } = req.body;
 
+      const creativeUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
       // Initialize decision engine
       const decisionEngine = new DecisionEngine();
       
@@ -77,6 +80,21 @@ router.post(
         ctr: parseFloat(ctr),
         cpa: parseFloat(cpa)
       });
+
+      // Detect return visits with the same creative (last 30 days)
+      try {
+        if (creativeUrl) {
+          const previous = await BehaviorTrackingService.findPreviousAnalysis(req.user!.id, creativeUrl);
+          if (previous?.id) {
+            await BehaviorTrackingService.trackReturn({
+              previousAnalysisId: previous.id,
+              newCTR: parseFloat(ctr)
+            });
+          }
+        }
+      } catch (trackingError) {
+        console.error('[Tracking] Failed to track return visit:', trackingError);
+      }
 
       // Map decision status to result type
       const resultTypeMapping = {
@@ -110,7 +128,7 @@ router.post(
       const analysis = await prisma.analysis.create({
         data: {
           userId: req.user!.id,
-          creativeUrl: req.file ? `/uploads/${req.file.filename}` : null,
+          creativeUrl,
           creativeType,
           primaryText,
           headline,
@@ -130,6 +148,33 @@ router.post(
           additionalNotes: analysisResult.creativeBrief
         }
       });
+
+      // Track behavior for AI training data
+      try {
+        // decision.primaryLayer may include broader literals; map to CREATIVE | FUNNEL | SALES for tracking
+        const problemType: 'CREATIVE' | 'FUNNEL' | 'SALES' =
+          decision.primaryLayer === 'FUNNEL'
+            ? 'FUNNEL'
+            : decision.primaryLayer === 'SALES'
+              ? 'SALES'
+              : 'CREATIVE';
+
+        await BehaviorTrackingService.createBehaviorRecord({
+          analysisId: analysis.id,
+          userId: req.user!.id,
+          problemType,
+          metrics: {
+            ctr: parseFloat(ctr),
+            cpm: parseFloat(cpm),
+            cpa: parseFloat(cpa),
+            objective
+          },
+          suggestedFix: analysisResult.singleFix
+        });
+      } catch (trackingError) {
+        // Silent failure - tracking should never break analysis
+        console.error('[Tracking] Failed to create behavior record:', trackingError);
+      }
 
       res.status(201).json({
         success: true,

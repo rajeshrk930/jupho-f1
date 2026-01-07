@@ -103,3 +103,33 @@ model Message {
   @@index([conversationId])
   @@index([userId, createdAt])
 }
+
+model AnalysisBehavior {
+  id          String   @id @default(uuid())
+  analysisId  String   @unique
+  userId      String
+  
+  // Labels from analysis
+  problemType String   // CREATIVE, FUNNEL, SALES
+  metrics     String   // JSON: { ctr, cpm, cpa, objective }
+  suggestedFix String
+  
+  // User actions (tracked)
+  clickedImplement Boolean @default(false)
+  openedAI        Boolean @default(false)
+  downloadedPDF   Boolean @default(false)
+  copiedText      Boolean @default(false)
+  
+  // Outcome signals (tracked later)
+  userReturnedWithSameAd Boolean?
+  newCTR                 Float?
+  fixWorked              Boolean?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([problemType])
+  @@index([fixWorked])
+  @@index([createdAt])
+}

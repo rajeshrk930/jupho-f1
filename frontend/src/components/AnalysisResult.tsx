@@ -1,10 +1,12 @@
 'use client';
 
 import { Analysis } from '@/types';
-import { analysisApi } from '@/lib/api';
+import { analysisApi, trackingApi } from '@/lib/api';
 import { Target, Lightbulb, Zap, Copy, Download, CheckCircle2, TrendingUp, TrendingDown, Minus, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { InlineChat } from './InlineChat';
+import { FeedbackButtons } from './FeedbackButtons';
+import { FeedbackButtons } from './FeedbackButtons';
 
 interface AnalysisResultProps {
   analysis: Analysis;
@@ -40,6 +42,9 @@ ${analysis.singleFix}`;
 
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard');
+    
+    // Track copy action for AI training data
+    trackingApi.trackAction(analysis.id, 'copiedText');
   };
 
   const downloadPdf = async () => {
@@ -52,6 +57,9 @@ ${analysis.singleFix}`;
       a.click();
       window.URL.revokeObjectURL(url);
       toast.success('PDF downloaded');
+      
+      // Track PDF download for AI training data
+      trackingApi.trackAction(analysis.id, 'downloadedPDF');
     } catch {
       toast.error('Failed to download PDF');
     }
@@ -169,6 +177,9 @@ ${analysis.singleFix}`;
 
       {/* Inline AI Chat - Primary CTA */}
       <InlineChat analysis={analysis} />
+
+      {/* Feedback Buttons - Track if fix worked */}
+      <FeedbackButtons analysisId={analysis.id} />
 
       {/* Secondary Actions - Below chat */}
       <div className="flex gap-3 mt-4">

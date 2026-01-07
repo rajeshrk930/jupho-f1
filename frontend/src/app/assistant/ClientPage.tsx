@@ -139,12 +139,27 @@ export default function AssistantPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const searchParams = useSearchParams();
   const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [manualContext, setManualContext] = useState<{
+    objective: 'LEADS' | 'WHATSAPP' | 'SALES';
+    problemType: 'CREATIVE' | 'FUNNEL' | 'SALES';
+    ctr: string;
+    cpm: string;
+    cpa: string;
+  } | null>(null);
+  const [contextForm, setContextForm] = useState({
+    objective: 'LEADS' as 'LEADS' | 'WHATSAPP' | 'SALES',
+    problemType: 'CREATIVE' as 'CREATIVE' | 'FUNNEL' | 'SALES',
+    ctr: '',
+    cpm: '',
+    cpa: '',
+  });
   const autoStartedRef = useRef(false);
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [usageStats, setUsageStats] = useState({ apiUsageCount: 0, isPro: false });
 
   const hasMessages = useMemo(() => (current?.messages?.length || 0) > 0, [current]);
+  const hasContext = useMemo(() => !!analysisId || manualContext !== null, [analysisId, manualContext]);
 
   const loadHistory = async (preferredId?: string | null) => {
     try {
@@ -209,11 +224,24 @@ export default function AssistantPage() {
   }, [analysisId, current?.conversationId]);
 
   const handleSend = async (isAutoStart = false) => {
-    const message = isAutoStart
+    if (!hasContext) {
+      toast.error('Add an analysis or fill quick metrics before using the assistant.');
+      return;
+    }
+
+    const baseMessage = isAutoStart
       ? 'Please review the analysis context and provide immediate actionable advice to improve the metrics.'
       : input.trim();
 
-    if (!message) return;
+    if (!baseMessage) return;
+
+    const contextPrefix = analysisId
+      ? ''
+      : manualContext
+        ? `Context: objective ${manualContext.objective}, problem ${manualContext.problemType}, CTR ${manualContext.ctr}%, CPM ${manualContext.cpm}, CPA ${manualContext.cpa}. `
+        : '';
+
+    const message = `${contextPrefix}${baseMessage}`;
     setIsSending(true);
     try {
       const resp = await chatApi.sendMessage(message, current?.conversationId, analysisId || undefined);
@@ -443,6 +471,95 @@ export default function AssistantPage() {
                     </p>
                   </div>
 
+                  {/* Context Gate */}
+                  {!analysisId && !manualContext && (
+                    <div className="bg-white border border-teal-200 rounded-lg p-4 shadow-sm">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">Add quick context to start</p>
+                          <p className="text-xs text-gray-600">Required so the assistant gives precise fixes.</p>
+                        </div>
+                        <span className="text-[11px] font-semibold text-teal-700 bg-teal-50 px-2 py-1 rounded">Required</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-gray-700">Objective</label>
+                          <select
+                            value={contextForm.objective}
+                            onChange={(e) => setContextForm((prev) => ({ ...prev, objective: e.target.value as any }))}
+                            className="w-full border border-gray-300 rounded-md text-sm px-2 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-200"
+                          >
+                            <option value="LEADS">Leads</option>
+                            <option value="WHATSAPP">WhatsApp</option>
+                            <option value="SALES">Sales</option>
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-gray-700">Problem</label>
+                          <select
+                            value={contextForm.problemType}
+                            onChange={(e) => setContextForm((prev) => ({ ...prev, problemType: e.target.value as any }))}
+                            className="w-full border border-gray-300 rounded-md text-sm px-2 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-200"
+                          >
+                            <option value="CREATIVE">Creative</option>
+                            <option value="FUNNEL">Funnel</option>
+                            <option value="SALES">Sales/Follow-up</option>
+                          </select>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="space-y-1">
+                            <label className="text-xs font-medium text-gray-700">CTR %</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={contextForm.ctr}
+                              onChange={(e) => setContextForm((prev) => ({ ...prev, ctr: e.target.value }))}
+                              className="w-full border border-gray-300 rounded-md text-sm px-2 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-200"
+                              placeholder="1.2"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-xs font-medium text-gray-700">CPM</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={contextForm.cpm}
+                              onChange={(e) => setContextForm((prev) => ({ ...prev, cpm: e.target.value }))}
+                              className="w-full border border-gray-300 rounded-md text-sm px-2 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-200"
+                              placeholder="280"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-xs font-medium text-gray-700">CPA</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={contextForm.cpa}
+                              onChange={(e) => setContextForm((prev) => ({ ...prev, cpa: e.target.value }))}
+                              className="w-full border border-gray-300 rounded-md text-sm px-2 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-200"
+                              placeholder="120"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex justify-end mt-3">
+                        <button
+                          onClick={() => {
+                            if (!contextForm.ctr || !contextForm.cpm || !contextForm.cpa) {
+                              toast.error('Fill CTR, CPM, and CPA to start.');
+                              return;
+                            }
+                            setManualContext(contextForm);
+                            toast.success('Context added. You can start chatting.');
+                          }}
+                          className="px-4 py-2 rounded-lg bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 transition-colors"
+                        >
+                          Enable assistant
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Quick Prompts */}
                   <div className="space-y-3">
                     <p className="text-xs md:text-sm font-semibold text-gray-700 px-2">✨ Example decisions I help with:</p>
@@ -528,6 +645,22 @@ export default function AssistantPage() {
                 <button
                   onClick={() => setAnalysisId(null)}
                   className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {!analysisId && manualContext && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span className="text-xs font-medium text-amber-800">
+                    Manual metrics attached: {manualContext.problemType} | CTR {manualContext.ctr}% | CPM {manualContext.cpm} | CPA {manualContext.cpa}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setManualContext(null)}
+                  className="text-xs text-amber-700 hover:text-amber-900 font-medium"
                 >
                   ✕
                 </button>

@@ -6,6 +6,7 @@ import { authRoutes } from './routes/auth.routes';
 import { analysisRoutes } from './routes/analysis.routes';
 import { paymentRoutes } from './routes/payment.routes';
 import { chatRoutes } from './routes/chat.routes';
+import trackingRoutes from './routes/tracking.routes';
 import { errorHandler } from './middleware/errorHandler';
 import path from 'path';
 
@@ -46,6 +47,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/analysis', analysisRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
