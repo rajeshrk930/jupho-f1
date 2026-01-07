@@ -102,7 +102,8 @@ router.post(
         supportingLogic: [copy.reason],
         singleFix: copy.actions.join(' | '),
         resultType: resultTypeMapping[decision.status],
-        failureReason: decision.status === 'BROKEN' ? decision.rootCause : 'none'
+        failureReason: decision.status === 'BROKEN' ? decision.rootCause : 'none',
+        creativeBrief: copy.creativeBrief || null
       };
 
       // Save to database
@@ -125,7 +126,8 @@ router.post(
           supportingLogic: JSON.stringify(analysisResult.supportingLogic),
           singleFix: analysisResult.singleFix,
           resultType: analysisResult.resultType,
-          failureReason: analysisResult.failureReason
+          failureReason: analysisResult.failureReason,
+          additionalNotes: analysisResult.creativeBrief
         }
       });
 
@@ -245,6 +247,14 @@ router.get('/:id/export/pdf', authenticate, async (req: AuthRequest, res) => {
       where: {
         id: req.params.id,
         userId: req.user!.id
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
       }
     });
 
@@ -255,7 +265,8 @@ router.get('/:id/export/pdf', authenticate, async (req: AuthRequest, res) => {
       });
     }
 
-    const pdfBuffer = await generateAnalysisPDF(analysis);
+    const userName = analysis.user.name || analysis.user.email?.split('@')[0] || 'Your Agency';
+    const pdfBuffer = await generateAnalysisPDF(analysis, userName);
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=analysis-${analysis.id}.pdf`);

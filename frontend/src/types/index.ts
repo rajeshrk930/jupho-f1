@@ -28,6 +28,7 @@ export interface Analysis {
   primaryReason: string;
   supportingLogic: string | string[];
   singleFix: string;
+  additionalNotes?: string | null;
   failureReason: string | null;
   resultType: 'DEAD' | 'AVERAGE' | 'WINNING';
   createdAt: string;

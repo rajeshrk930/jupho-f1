@@ -13,6 +13,7 @@ interface UpgradeModalProps {
 export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: UpgradeModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('annual');
 
   if (!isOpen) return null;
 
@@ -90,11 +91,61 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
           </p>
         </div>
 
-        <div className="bg-gradient-to-br from-teal-50 to-purple-50 rounded-xl p-6 mb-6">
-          <div className="flex items-baseline justify-center mb-4">
-            <span className="text-4xl font-bold text-gray-900">₹999</span>
-            <span className="text-gray-600 ml-2">/month</span>
-          </div>
+        {/* Plan Toggle */}
+        <div className="flex gap-2 bg-gray-100 rounded-lg p-1 mb-6">
+          <button
+            onClick={() => setSelectedPlan('monthly')}
+            className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+              selectedPlan === 'monthly'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => setSelectedPlan('annual')}
+            className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all relative ${
+              selectedPlan === 'annual'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Annual
+            <span className="absolute -top-2 -right-2 bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+              SAVE 58%
+            </span>
+          </button>
+        </div>
+
+        <div className="bg-gradient-to-br from-teal-50 to-purple-50 rounded-xl p-6 mb-6 border-2 border-teal-200">
+          {selectedPlan === 'monthly' ? (
+            <>
+              <div className="flex items-baseline justify-center mb-4">
+                <span className="text-4xl font-bold text-gray-900">₹999</span>
+                <span className="text-gray-600 ml-2">/month</span>
+              </div>
+              <p className="text-center text-sm text-gray-600 mb-4">
+                Billed monthly • ₹11,988/year
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="flex items-baseline justify-center mb-2">
+                <span className="text-4xl font-bold text-gray-900">₹4,999</span>
+                <span className="text-gray-600 ml-2">/year</span>
+              </div>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="text-sm line-through text-gray-500">₹11,988</span>
+                <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">
+                  Save ₹6,989
+                </span>
+              </div>
+              <p className="text-center text-sm text-teal-700 font-medium mb-4">
+                Just ₹416/month • Limited to first 50 founders
+              </p>
+            </>
+          )}
 
           <ul className="space-y-3">
             {[
@@ -121,13 +172,13 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
         <button
           onClick={handleUpgrade}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-teal-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-teal-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-teal-600 to-purple-600 text-white py-3.5 rounded-lg font-semibold hover:from-teal-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
         >
-          {loading ? 'Processing...' : 'Upgrade Now'}
+          {loading ? 'Processing...' : selectedPlan === 'annual' ? 'Get Annual Plan - ₹4,999' : 'Get Monthly Plan - ₹999'}
         </button>
 
         <p className="text-xs text-gray-500 text-center mt-4">
-          Secure payment powered by Razorpay. Cancel anytime.
+          Secure payment powered by Razorpay. {selectedPlan === 'monthly' ? 'Cancel anytime.' : '30-day money-back guarantee.'}
         </p>
       </div>
     </div>

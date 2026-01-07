@@ -26,7 +26,7 @@ export function AnalysisResult({ analysis }: AnalysisResultProps) {
       })();
 
   const copyToClipboard = () => {
-    const text = `PRIMARY REASON
+    let text = `PRIMARY REASON
 ${analysis.primaryReason}
 
 WHY THIS HAPPENED
@@ -34,6 +34,10 @@ ${supportingPoints.map((p) => `• ${p}`).join('\n')}
 
 WHAT TO CHANGE
 ${analysis.singleFix}`;
+
+    if (analysis.additionalNotes) {
+      text += `\n\n${'='.repeat(50)}\nCREATIVE DIRECTOR'S BRIEF\n${'='.repeat(50)}\n\n${analysis.additionalNotes}`;
+    }
 
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard');
@@ -146,6 +150,27 @@ ${analysis.singleFix}`;
           </p>
         </div>
       </div>
+
+      {/* Creative Brief Section - Only show if available */}
+      {analysis.additionalNotes && (
+        <div className="relative pl-6 border-l-4 border-purple-500">
+          <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center">
+            <Sparkles size={14} className="text-white" />
+          </div>
+          <div className="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6 shadow-sm">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <span className="px-3 py-1.5 rounded bg-purple-600 text-white text-xs font-bold">
+                🎨 CREATIVE DIRECTOR'S BRIEF
+              </span>
+            </div>
+            <div className="prose prose-sm max-w-none">
+              <pre className="whitespace-pre-wrap font-sans text-gray-800 text-[15px] leading-relaxed bg-white/50 p-4 rounded-lg border border-purple-100">
+                {analysis.additionalNotes}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Export Actions */}
       <div className="flex flex-col gap-3 pt-6 border-t border-gray-200">
