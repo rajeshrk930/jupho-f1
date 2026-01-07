@@ -6,7 +6,6 @@ import { Target, Lightbulb, Zap, Copy, Download, CheckCircle2, TrendingUp, Trend
 import toast from 'react-hot-toast';
 import { InlineChat } from './InlineChat';
 import { FeedbackButtons } from './FeedbackButtons';
-import { FeedbackButtons } from './FeedbackButtons';
 
 interface AnalysisResultProps {
   analysis: Analysis;
