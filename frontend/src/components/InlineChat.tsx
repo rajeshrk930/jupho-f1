@@ -113,10 +113,10 @@ export function InlineChat({ analysis }: InlineChatProps) {
             </div>
             <div className="text-left">
               <p className="font-semibold text-gray-900 flex items-center gap-2">
-                Need help implementing this?
+                Need help implementing this fix?
                 <ChevronDown className="w-4 h-4 text-purple-600 group-hover:translate-y-0.5 transition-transform" />
               </p>
-              <p className="text-sm text-gray-600">Chat with AI about this analysis</p>
+              <p className="text-sm text-gray-600">Step-by-step guidance • ⏱ 5-10 min</p>
             </div>
           </div>
           <MessageSquare className="w-5 h-5 text-purple-600" />

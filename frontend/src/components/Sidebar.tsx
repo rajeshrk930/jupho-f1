@@ -33,7 +33,7 @@ export function Sidebar() {
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/analyze', label: 'Analyze', icon: Zap },
-    { href: '/assistant', label: 'AI Assistant', icon: MessageSquare },
+    { href: '/assistant', label: 'Implementation Help', icon: MessageSquare },
     { href: '/history', label: 'History', icon: History },
   ];
 

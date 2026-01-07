@@ -167,29 +167,26 @@ ${analysis.singleFix}`;
         </div>
       )}
 
-      {/* Export Actions */}
-      <div className="flex flex-col gap-3 pt-6 border-t border-gray-200">
-        {/* Copy and Download - Side by Side */}
-        <div className="flex gap-3">
-          <button 
-            onClick={copyToClipboard} 
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors shadow-sm text-sm sm:text-base"
-          >
-            <Copy size={16} />
-            Copy
-          </button>
-          <button 
-            onClick={downloadPdf} 
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium transition-colors shadow-sm text-sm sm:text-base"
-          >
-            <Download size={16} />
-            PDF
-          </button>
-        </div>
-      </div>
-
-      {/* Inline AI Chat - NEW */}
+      {/* Inline AI Chat - Primary CTA */}
       <InlineChat analysis={analysis} />
+
+      {/* Secondary Actions - Below chat */}
+      <div className="flex gap-3 mt-4">
+        <button 
+          onClick={copyToClipboard} 
+          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors text-sm"
+        >
+          <Copy size={16} />
+          Copy Text
+        </button>
+        <button 
+          onClick={downloadPdf} 
+          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium transition-colors text-sm"
+        >
+          <Download size={16} />
+          Client Report (PDF)
+        </button>
+      </div>
     </div>
   );
 }

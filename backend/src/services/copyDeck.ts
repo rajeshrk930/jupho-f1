@@ -43,10 +43,12 @@ const ROOT_COPY: Record<string, { headline: string; baseReason: string; metricPr
     baseReason: 'People are not stopping to look',
     metricPreference: 'ctr',
     actions: [
-      'Try a new opening visual or headline.',
-      'Test a different preview image; keep the same offer/CTA.'
+      'Change ONLY the opening visual. Keep your offer and CTA exactly the same.',
+      'Use a bold color (#FF6B35 orange or #10B981 green) with high contrast text.'
     ],
-    creativeBrief: `📋 CREATIVE BRIEF FOR YOUR DESIGNER:
+    creativeBrief: `⏱️ ESTIMATED EFFORT: 15-20 minutes
+
+📋 CREATIVE BRIEF FOR YOUR DESIGNER:
 
 🎨 Background/Visual:
 • Remove busy patterns or dull colors
@@ -72,9 +74,9 @@ const ROOT_COPY: Record<string, { headline: string; baseReason: string; metricPr
 💡 Canva Quick Start:
 1. Search: "Bold Sales Ad Template" or "Modern Ad Design"
 2. Pick templates with: minimal text, strong colors, clear hierarchy
-3. Implementation time: 15-20 minutes
+3. Replace only the visual - keep all text the same
 
-⏱️ Estimated Time to Fix: 15-20 minutes
+⏱️ Total Time: 15-20 minutes
 📱 Test on Mobile First: 80% of users will see this on phones`
   },
   AUDIENCE: {
@@ -100,10 +102,12 @@ const ROOT_COPY: Record<string, { headline: string; baseReason: string; metricPr
     baseReason: 'Clicks are not turning into results',
     metricPreference: 'cpa',
     actions: [
-      'Speed up the page/form and remove extra steps.',
-      'Make the page headline and button match the ad promise.'
+      'Remove ALL unnecessary form fields. Keep only: Name, Phone, Email.',
+      'Make your landing page headline match your ad promise EXACTLY.'
     ],
-    creativeBrief: `📋 LANDING PAGE OPTIMIZATION BRIEF:
+    creativeBrief: `⏱️ ESTIMATED EFFORT: 30-45 minutes
+
+📋 LANDING PAGE OPTIMIZATION BRIEF:
 
 🎯 Above the Fold (First Screen):
 • Headline: Must match your ad's promise exactly
@@ -146,10 +150,12 @@ const ROOT_COPY: Record<string, { headline: string; baseReason: string; metricPr
     baseReason: 'Leads are not converting after contact',
     metricPreference: 'cpa',
     actions: [
-      'Reply faster and make pricing clear up front.',
-      'Add a short proof line (testimonial/stat) before the first ask.'
+      'Respond to EVERY lead within 15 minutes. Set up auto-reply if needed.',
+      'Show pricing upfront in your first message. Stop hiding it.'
     ],
-    creativeBrief: `📋 SALES FOLLOW-UP OPTIMIZATION BRIEF:
+    creativeBrief: `⏱️ ESTIMATED EFFORT: 1-2 hours (one-time setup)
+
+📋 SALES FOLLOW-UP OPTIMIZATION BRIEF:
 
 ⚡ Speed Response Protocol:
 • Target: Respond within 15 minutes (while intent is hot)

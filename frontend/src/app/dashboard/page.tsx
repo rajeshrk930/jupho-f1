@@ -34,7 +34,25 @@ export default function DashboardPage() {
     return (sum / analyses.length).toFixed(2);
   }, [analyses]);
 
-  const recent = analyses.slice(0, 3);
+  // Generate personalized tip based on last analysis
+  const quickTip = useMemo(() => {
+    if (!analyses.length) return "Upload your first ad creative to get personalized insights.";
+    
+    const lastAnalysis = analyses[0];
+    const tipMap: Record<string, string> = {
+      'LAUNCH_PHASE': `Your last ad is in launch phase. Give it 48-72 hours before making changes.`,
+      'CREATIVE': `Your last ad's CTR was ${lastAnalysis.ctr}%. Fixing just the opening visual can lift CTR by 30-50%.`,
+      'FUNNEL': `You're getting clicks (${lastAnalysis.ctr}% CTR) but no conversions. Optimize your landing page to capture those leads.`,
+      'SALES': `Leads are coming in but not converting. Faster follow-up (within 15 min) can increase sales by 40-60%.`,
+      'AUDIENCE': `Your ad is experiencing audience fatigue. Broaden your targeting or refresh the creative.`,
+      'DELIVERY': `Budget changes are inflating your costs. Adjust in 20-30% increments every 2-3 days.`,
+    };
+    
+    const failureType = lastAnalysis.failureReason || 'CREATIVE';
+    return tipMap[failureType] || `Great work! Your average CTR is ${avgCtr}%. Keep testing new variations.`;
+  }, [analyses, avgCtr]);
+
+  const recentSlice = analyses.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,7 +65,7 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-600">See your recent analyses and jump back into the work.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/assistant" className="btn-secondary text-sm">AI Assistant</Link>
+              <Link href="/assistant" className="btn-secondary text-sm">Implementation Help</Link>
               <Link href="/analyze" className="btn-primary text-sm">+ New Analysis</Link>
             </div>
           </div>
@@ -73,7 +91,7 @@ export default function DashboardPage() {
             <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
               <MessageSquare size={24} className="text-purple-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-1">AI Assistant</h3>
+            <h3 className="font-semibold text-gray-900 mb-1">Implementation Help</h3>
             <p className="text-sm text-gray-600">Get instant strategy help</p>
           </Link>
 
@@ -110,11 +128,7 @@ export default function DashboardPage() {
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 mb-2">💡 Quick Tip</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  {avgCtr && parseFloat(avgCtr) > 1.5
-                    ? "Great work! Your average CTR is above industry standards. Keep testing new creative variations to maintain momentum."
-                    : avgCtr && parseFloat(avgCtr) < 1
-                    ? "Your CTR could use improvement. Try analyzing your winning creatives to identify what works, then apply those insights to new ads."
-                    : "You're off to a good start! Analyze more creatives to identify patterns in what drives performance."}
+                  {quickTip}
                 </p>
               </div>
             </div>
@@ -158,7 +172,7 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-          ) : !recent.length ? (
+          ) : !recentSlice.length ? (
             <div className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-300 rounded-lg p-6 md:p-8 text-center bg-gray-50">
               <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-teal-100 flex items-center justify-center">
                 <BarChart3 size={24} className="md:hidden text-teal-700" />
@@ -170,7 +184,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-              {recent.map((analysis) => (
+              {recentSlice.map((analysis) => (
                 <article key={analysis.id} className="bg-white border border-gray-200 rounded-lg p-4 md:p-5 space-y-3 hover:border-teal-600 transition-colors group">
                   <div className="flex items-center justify-between text-xs md:text-sm">
                     <span className="text-gray-500">{new Date(analysis.createdAt).toLocaleDateString()}</span>
@@ -198,7 +212,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {recent.length > 0 && (
+        {recentSlice.length > 0 && (
           <section className="surface-card p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
@@ -207,7 +221,7 @@ export default function DashboardPage() {
               </div>
               <Link href="/assistant" className="text-sm text-teal-700 hover:text-teal-800">Ask AI about this</Link>
             </div>
-            <AnalysisResult analysis={recent[0]} />
+            <AnalysisResult analysis={recentSlice[0]} />
           </section>
         )}
       </div>
