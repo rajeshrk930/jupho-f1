@@ -37,8 +37,8 @@ export default function DashboardPage() {
   const recent = analyses.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6">
-      <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <div className="min-h-screen bg-gray-50">
+      <div className="px-6 py-6 space-y-6">
         <div className="surface-card p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
@@ -54,7 +54,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           <Link
             href="/analyze"
             className="bg-white border border-gray-200 rounded-lg p-6 hover:border-teal-600 transition-colors group shadow-sm"
@@ -210,7 +210,7 @@ export default function DashboardPage() {
             <AnalysisResult analysis={recent[0]} />
           </section>
         )}
-      </main>
+      </div>
     </div>
   );
 }

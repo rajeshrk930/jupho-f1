@@ -68,9 +68,9 @@ export default function AnalyzePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main Form - Left Side */}
           <div className="flex-1 max-w-2xl">
