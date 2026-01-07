@@ -41,8 +41,20 @@ interface DecisionOutput {
 
 export class DecisionEngine {
   
-  // Step 1: Trust intent first (problemFaced decides primary layer)
-  private getPrimaryLayer(problemFaced: string): 'CREATIVE' | 'FUNNEL' | 'SALES' {
+  // Step 1: Check metrics first, then trust intent
+  // Metrics override self-diagnosis when data is clear
+  private getPrimaryLayer(
+    problemFaced: string,
+    ctr: number,
+    thresholds: { ctr: number }
+  ): 'CREATIVE' | 'FUNNEL' | 'SALES' {
+    // CRITICAL: If CTR is very low, it's ALWAYS a creative problem first
+    // Don't let users blame follow-up when people aren't even clicking
+    if (ctr < thresholds.ctr * 0.5) {
+      return 'CREATIVE';
+    }
+
+    // If CTR is decent, trust the user's diagnosis
     switch (problemFaced) {
       case 'LOW_CLICKS':
         return 'CREATIVE';
@@ -192,11 +204,11 @@ export class DecisionEngine {
 
   // Main decision function
   public decide(input: DecisionInput): DecisionOutput {
-    // Step 1: Trust intent first
-    const primaryLayer = this.getPrimaryLayer(input.problemFaced);
-
-    // Step 2: Get thresholds
+    // Step 1: Get thresholds first (needed for smart diagnosis)
     const thresholds = this.getThresholds(input.objective, input.audienceType);
+
+    // Step 2: Diagnose with metrics override
+    const primaryLayer = this.getPrimaryLayer(input.problemFaced, input.ctr, thresholds);
 
     // Step 3: Validate with metrics
     const confirmed = this.validateWithMetrics(primaryLayer, input.ctr, input.cpa, thresholds);
