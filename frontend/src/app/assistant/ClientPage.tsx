@@ -303,15 +303,15 @@ export default function AssistantPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-4">
-      <main className="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+      <main className="flex-1 max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6 w-full overflow-hidden">
         <div
           className={`fixed inset-0 bg-black/30 z-40 transition-opacity hidden md:block ${isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
           onClick={() => setIsSidebarOpen(false)}
         />
 
         <aside
-          className={`bg-white border border-gray-200 rounded-lg p-4 md:col-span-1 hidden md:block`}
+          className={`bg-white border border-gray-200 rounded-lg p-4 md:col-span-1 hidden md:block overflow-y-auto h-full`}
           aria-label="Conversations"
         >
           <div className="flex items-center justify-between mb-4">
@@ -415,7 +415,7 @@ export default function AssistantPage() {
           </div>
         </aside>
 
-        <section className="md:col-span-3 bg-white border border-gray-200 rounded-lg p-5 flex flex-col gap-4 min-h-[70vh] shadow-sm">
+        <section className="md:col-span-3 bg-white border border-gray-200 rounded-lg p-5 flex flex-col gap-4 h-full shadow-sm overflow-hidden">
           <div className="flex-1 overflow-y-auto space-y-4 pr-1" aria-live="polite">
             {isLoading && (
               <div className="space-y-3" aria-label="Loading messages">
