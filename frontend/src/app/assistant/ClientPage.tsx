@@ -375,32 +375,32 @@ export default function AssistantPage() {
             </div>
             <div className="space-y-2">
               <button
-                onClick={() => setInput("Why is my ad CTR low? What should I improve?")}
+                onClick={() => setInput("My CTR is 0.8%. Should I change the visual or the headline first?")}
                 className="w-full text-left px-3 py-2 rounded-lg border border-gray-200 hover:border-teal-400 hover:bg-teal-50 transition-colors group"
               >
-                <p className="text-xs font-medium text-gray-900 group-hover:text-teal-700">💡 Low CTR Analysis</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">Get insights on CTR issues</p>
+                <p className="text-xs font-medium text-gray-900 group-hover:text-teal-700">⚡ CTR Decision</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">Visual or headline first?</p>
               </button>
               <button
-                onClick={() => setInput("What makes a winning creative for Indian audience?")}
+                onClick={() => setInput("I changed my budget from ₹500 to ₹1500. CPA jumped from ₹80 to ₹180. Should I revert?")}
                 className="w-full text-left px-3 py-2 rounded-lg border border-gray-200 hover:border-teal-400 hover:bg-teal-50 transition-colors group"
               >
-                <p className="text-xs font-medium text-gray-900 group-hover:text-teal-700">🎯 Winning Patterns</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">Learn what works best</p>
+                <p className="text-xs font-medium text-gray-900 group-hover:text-teal-700">💰 Budget Fix</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">CPA spiked after change</p>
               </button>
               <button
-                onClick={() => setInput("Compare performance across my last 5 creatives")}
+                onClick={() => setInput("My ad has been running 4 days. CTR is 1.2%, no conversions yet. Pause or keep running?")}
                 className="w-full text-left px-3 py-2 rounded-lg border border-gray-200 hover:border-teal-400 hover:bg-teal-50 transition-colors group"
               >
-                <p className="text-xs font-medium text-gray-900 group-hover:text-teal-700">📊 Compare Creatives</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">Side-by-side analysis</p>
+                <p className="text-xs font-medium text-gray-900 group-hover:text-teal-700">⏸️ Pause Decision</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">4 days, no conversions</p>
               </button>
               <button
-                onClick={() => setInput("Suggest 3 creative ideas based on my best performing ads")}
+                onClick={() => setInput("Which CTA converts better for coaching: 'Book Free Call' or 'Download Guide'?")}
                 className="w-full text-left px-3 py-2 rounded-lg border border-gray-200 hover:border-teal-400 hover:bg-teal-50 transition-colors group"
               >
-                <p className="text-xs font-medium text-gray-900 group-hover:text-teal-700">✨ Creative Ideas</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">Get new suggestions</p>
+                <p className="text-xs font-medium text-gray-900 group-hover:text-teal-700">🎯 CTA Choice</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">Pick winning CTA</p>
               </button>
             </div>
           </div>
@@ -437,44 +437,44 @@ export default function AssistantPage() {
                     <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-lg bg-teal-600 flex items-center justify-center shadow-sm">
                       <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-white" />
                     </div>
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">How can I help you today?</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">What decision can I help you make?</h2>
                     <p className="text-sm text-gray-600 max-w-md mx-auto">
-                      I'm Jupho AI, your Meta Ads expert. Ask me anything about creative strategy, targeting, or campaign optimization.
+                      I help you execute fixes and make decisions. Not teaching basics—helping you act fast.
                     </p>
                   </div>
 
                   {/* Quick Prompts */}
                   <div className="space-y-3">
-                    <p className="text-xs md:text-sm font-semibold text-gray-700 px-2">✨ Try these quick prompts:</p>
+                    <p className="text-xs md:text-sm font-semibold text-gray-700 px-2">✨ Example decisions I help with:</p>
                     <div className="grid grid-cols-1 gap-2.5">
                       <button
-                        onClick={() => setInput("Rewrite my hook for a fashion reel.")}
+                        onClick={() => setInput("My CTR dropped from 2% to 0.9% after changing the hook. Should I revert or wait 48 hours?")}
                         className="group flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white hover:border-teal-600 hover:bg-teal-50 transition-colors text-left shadow-sm"
                       >
-                        <span className="text-2xl">✍️</span>
+                        <span className="text-2xl">🔄</span>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 group-hover:text-teal-700">"Rewrite my hook for a fashion reel."</p>
-                          <p className="text-xs text-gray-500 mt-0.5">Get creative copy suggestions</p>
+                          <p className="text-sm font-medium text-gray-900 group-hover:text-teal-700">"CTR dropped from 2% to 0.9%. Revert or wait?"</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Fast decisions on performance drops</p>
                         </div>
                       </button>
                       <button
-                        onClick={() => setInput("Give me one fix for low CTR.")}
+                        onClick={() => setInput("Which headline converts better for a ₹500 product: 'Save 40%' or 'Limited Stock'?")}
                         className="group flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white hover:border-green-600 hover:bg-green-50 transition-colors text-left shadow-sm"
+                      >
+                        <span className="text-2xl">⚖️</span>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900 group-hover:text-green-700">"Which headline converts better: 'Save 40%' or 'Limited Stock'?"</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Compare specific options</p>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setInput("I'm getting 2% CTR but 0 conversions. Should I fix the landing page or creative first?")}
+                        className="group flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white hover:border-purple-600 hover:bg-purple-50 transition-colors text-left shadow-sm"
                       >
                         <span className="text-2xl">🎯</span>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 group-hover:text-green-700">"Give me one fix for low CTR."</p>
-                          <p className="text-xs text-gray-500 mt-0.5">Quick performance improvements</p>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => setInput("Suggest a 3-asset test plan.")}
-                        className="group flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white hover:border-purple-600 hover:bg-purple-50 transition-colors text-left shadow-sm"
-                      >
-                        <span className="text-2xl">🧪</span>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 group-hover:text-purple-700">"Suggest a 3-asset test plan."</p>
-                          <p className="text-xs text-gray-500 mt-0.5">Strategic testing frameworks</p>
+                          <p className="text-sm font-medium text-gray-900 group-hover:text-purple-700">"2% CTR but 0 conversions. Fix landing page or creative first?"</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Prioritize fixes</p>
                         </div>
                       </button>
                     </div>
@@ -538,7 +538,7 @@ export default function AssistantPage() {
               <textarea
                 className="w-full border-2 border-gray-300 rounded-lg p-3 pr-24 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200 resize-none shadow-sm transition-colors bg-white placeholder:text-gray-400"
                 rows={3}
-                placeholder="Ask about creating or optimizing Meta ads…"
+                placeholder="Ask about a specific decision or fix (e.g., 'Should I pause this ad?')..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
