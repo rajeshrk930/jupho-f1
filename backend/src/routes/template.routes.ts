@@ -1,11 +1,11 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { prisma } from '../lib/prisma';
-import { authenticate } from '../middleware/auth';
+import { authenticate, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
 // GET /api/templates - Get all templates for authenticated user
-router.get('/', authenticate, async (req, res) => {
+router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const { category } = req.query;
     const userId = req.user!.id;
@@ -32,7 +32,7 @@ router.get('/', authenticate, async (req, res) => {
 
     res.json({
       success: true,
-      data: templates.map(t => ({
+      data: templates.map((t: any) => ({
         ...t,
         tags: JSON.parse(t.tags || '[]'),
       })),
@@ -44,7 +44,7 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // POST /api/templates - Create new template
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const { category, title, content, tags, analysisId } = req.body;
     const userId = req.user!.id;
@@ -83,7 +83,7 @@ router.post('/', authenticate, async (req, res) => {
 });
 
 // DELETE /api/templates/:id - Delete template
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const userId = req.user!.id;
