@@ -34,6 +34,13 @@ export default function BillingPage() {
 
   useEffect(() => {
     void loadUsageStats();
+    
+    // Auto-refresh usage stats every 10 seconds
+    const interval = setInterval(() => {
+      void loadUsageStats();
+    }, 10000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const handleUpgradeComplete = () => {
