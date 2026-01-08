@@ -110,3 +110,26 @@ export interface PaginatedResponse<T> {
     };
   };
 }
+
+export type TemplateCategory = 'COPY' | 'SCRIPT' | 'REPORT';
+
+export interface SavedTemplate {
+  id: string;
+  userId: string;
+  category: TemplateCategory;
+  title: string;
+  content: string;
+  tags: string[];
+  analysisId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTemplateInput {
+  category: TemplateCategory;
+  title: string;
+  content: string;
+  tags?: string[];
+  analysisId?: string;
+}
+

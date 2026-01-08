@@ -6,7 +6,7 @@ import { useAuthStore } from '@/lib/store';
 import { 
   LayoutDashboard, 
   Zap, 
-  MessageSquare, 
+  BookMarked, 
   History, 
   User, 
   Settings, 
@@ -40,7 +40,7 @@ export function Sidebar() {
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/analyze', label: 'Analyze', icon: Zap },
-    { href: '/assistant', label: 'Implementation Help', icon: MessageSquare },
+    { href: '/templates', label: 'Saved Templates', icon: BookMarked },
     { href: '/history', label: 'History', icon: History },
   ];
 

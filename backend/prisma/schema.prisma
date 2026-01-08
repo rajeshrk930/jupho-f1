@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -22,6 +22,7 @@ model User {
   payments      Payment[]
   conversations Conversation[]
   messages      Message[]
+  savedTemplates SavedTemplate[]
 }
 
 model Analysis {
@@ -132,4 +133,21 @@ model AnalysisBehavior {
   @@index([problemType])
   @@index([fixWorked])
   @@index([createdAt])
+}
+
+model SavedTemplate {
+  id         String   @id @default(uuid())
+  userId     String
+  category   String   // COPY, SCRIPT, REPORT
+  title      String
+  content    String   // The actual generated text
+  tags       String   // Stored as JSON string array
+  analysisId String?  // Optional link to source analysis
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, category])
+  @@index([userId, createdAt])
+  @@index([category])
 }

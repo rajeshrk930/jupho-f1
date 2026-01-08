@@ -203,3 +203,27 @@ export const trackingApi = {
     }
   },
 };
+
+// Template Library API
+export const templateApi = {
+  getAll: async (category?: 'COPY' | 'SCRIPT' | 'REPORT') => {
+    const params = category ? { category } : {};
+    const response = await api.get('/templates', { params });
+    return response.data;
+  },
+  create: async (template: {
+    category: 'COPY' | 'SCRIPT' | 'REPORT';
+    title: string;
+    content: string;
+    tags?: string[];
+    analysisId?: string;
+  }) => {
+    const response = await api.post('/templates', template);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/templates/${id}`);
+    return response.data;
+  },
+};
+

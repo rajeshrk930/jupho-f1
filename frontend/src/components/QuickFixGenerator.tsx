@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Zap, Wand2, FileText, Palette, CheckCircle2, Loader2 } from 'lucide-react';
+import { Zap, Wand2, FileText, Palette, CheckCircle2, Loader2, Save } from 'lucide-react';
 import { Analysis } from '@/types';
-import { chatApi } from '@/lib/api';
+import { chatApi, templateApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -23,6 +23,7 @@ export function QuickFixGenerator({ analysis }: QuickFixGeneratorProps) {
   const [activeGenerator, setActiveGenerator] = useState<string | null>(null);
   const [generatedContent, setGeneratedContent] = useState<Record<string, string>>({});
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Map problem types to generator buttons
   const getGenerators = (): GeneratorButton[] => {
@@ -176,6 +177,42 @@ Be specific with numbers.`
 
   const generators = getGenerators();
 
+  const handleSave = async () => {
+    if (!activeGenerator || !generatedContent[activeGenerator]) return;
+
+    setIsSaving(true);
+    try {
+      const generator = generators.find(g => g.id === activeGenerator);
+      if (!generator) return;
+
+      // Determine category based on generator type
+      let category: 'COPY' | 'SCRIPT' | 'REPORT' = 'COPY';
+      if (activeGenerator === 'scripts' || activeGenerator === 'templates' || activeGenerator === 'landing') {
+        category = 'SCRIPT';
+      } else if (activeGenerator === 'budget') {
+        category = 'REPORT';
+      }
+
+      // Auto-generate title
+      const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const title = `${generator.label} - ${analysis.objective} - ${date}`;
+
+      await templateApi.create({
+        category,
+        title,
+        content: generatedContent[activeGenerator],
+        tags: [analysis.objective, analysis.problemFaced],
+        analysisId: analysis.id,
+      });
+
+      toast.success('Saved to your template library!');
+    } catch (error) {
+      toast.error('Failed to save template');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleGenerate = async (generator: GeneratorButton) => {
     // If already generated, just show it
     if (generatedContent[generator.id]) {
@@ -279,15 +316,34 @@ Be specific with numbers.`
               <CheckCircle2 className="w-5 h-5 text-green-600" />
               Generated Solution
             </h4>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(generatedContent[activeGenerator]);
-                toast.success('Copied to clipboard!');
-              }}
-              className="text-xs text-purple-700 hover:text-purple-900 font-medium px-3 py-1.5 rounded-lg bg-white/50 hover:bg-white transition-colors"
-            >
-              Copy
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex items-center gap-1.5 text-xs text-teal-700 hover:text-teal-900 font-medium px-3 py-1.5 rounded-lg bg-white/50 hover:bg-white transition-colors disabled:opacity-50"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-3.5 h-3.5" />
+                    Save to Library
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(generatedContent[activeGenerator]);
+                  toast.success('Copied to clipboard!');
+                }}
+                className="text-xs text-purple-700 hover:text-purple-900 font-medium px-3 py-1.5 rounded-lg bg-white/50 hover:bg-white transition-colors"
+              >
+                Copy
+              </button>
+            </div>
           </div>
           <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-800 prose-strong:font-bold prose-li:text-gray-800 bg-white/70 rounded-lg p-4">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
