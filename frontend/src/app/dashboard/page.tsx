@@ -9,35 +9,20 @@ import { AnalysisResult } from '@/components/AnalysisResult';
 import { StatCard } from '@/components/StatCard';
 import { StatusBadge } from '@/components/StatusBadge';
 import MobileTopBar from '@/components/MobileTopBar';
-import UsageCounter from '@/components/UsageCounter';
-import UpgradeModal from '@/components/UpgradeModal';
-import { chatApi } from '@/lib/api';
 import { Analysis } from '@/types';
 import { BarChart3, Calendar, TrendingUp, Zap, MessageSquare, FileText, Crown, Sparkles, Clock, ChevronDown } from 'lucide-react';
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
   const [showLatestAnalysis, setShowLatestAnalysis] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['dashboard-analyses'],
     queryFn: () => analysisApi.getAll({ limit: 5 }),
   });
 
-  // Fetch usage stats
-  const { data: usageData } = useQuery({
-    queryKey: ['usage-stats'],
-    queryFn: async () => {
-      const response = await chatApi.getUsage();
-      return response.data;
-    },
-  });
-
   const analyses: Analysis[] = data?.data?.analyses || [];
   const total = data?.data?.pagination?.total ?? analyses.length;
-  const isPro = user?.proExpiresAt && new Date(user.proExpiresAt) > new Date();
-  const usageCount = usageData?.apiUsageCount || 0;
 
   const monthlyCount = useMemo(() => {
     const now = Date.now();
@@ -75,27 +60,18 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <MobileTopBar 
-        title="Dashboard" 
-        rightContent={<UsageCounter isPro={!!isPro} usageCount={usageCount} limit={3} onUpgradeClick={() => setShowUpgradeModal(true)} compact />}
-      />
+      <MobileTopBar title="Dashboard" />
       <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-6 pb-20 lg:pb-6">
         {/* Simple Header */}
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hidden lg:block">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
               <p className="text-xs text-teal-600 font-medium uppercase tracking-wider">Dashboard</p>
               <h1 className="text-2xl font-semibold text-gray-900">Welcome back{user?.name ? `, ${user.name}` : ''}!</h1>
               <p className="text-sm text-gray-600">See your recent analyses and jump back into the work.</p>
             </div>
-            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
-              <UsageCounter 
-                isPro={!!isPro} 
-                usageCount={usageCount} 
-                limit={3} 
-                onUpgradeClick={() => setShowUpgradeModal(true)} 
-              />
-              <Link href="/analyze" className="btn-primary whitespace-nowrap">+ New Analysis</Link>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link href="/analyze" className="btn-primary">+ New Analysis</Link>
             </div>
           </div>
         </div>
@@ -115,10 +91,10 @@ export default function DashboardPage() {
 
           <Link
             href="/history"
-            className="bg-white border-l-[3px] border-slate-600 rounded-lg p-5 lg:p-6 hover:shadow-md transition-all group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
+            className="bg-white border-l-[3px] border-teal-600 rounded-lg p-5 lg:p-6 hover:shadow-md transition-all group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
           >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-slate-50 flex items-center justify-center mb-3 lg:mb-4">
-              <FileText size={20} className="lg:w-6 lg:h-6 text-slate-600" />
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-teal-50 flex items-center justify-center mb-3 lg:mb-4">
+              <FileText size={20} className="lg:w-6 lg:h-6 text-teal-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-1 text-base lg:text-lg">View Reports</h3>
             <p className="text-sm text-gray-600">Browse all your analyses</p>
@@ -126,10 +102,10 @@ export default function DashboardPage() {
 
           <Link
             href="/billing"
-            className="bg-white border-l-[3px] border-indigo-600 rounded-lg p-5 lg:p-6 hover:shadow-md transition-all group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
+            className="bg-white border-l-[3px] border-teal-600 rounded-lg p-5 lg:p-6 hover:shadow-md transition-all group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
           >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-indigo-50 flex items-center justify-center mb-3 lg:mb-4">
-              <Crown size={20} className="lg:w-6 lg:h-6 text-indigo-600" />
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-teal-50 flex items-center justify-center mb-3 lg:mb-4">
+              <Crown size={20} className="lg:w-6 lg:h-6 text-teal-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-1 text-base lg:text-lg">Upgrade Pro</h3>
             <p className="text-sm text-gray-600">Unlock unlimited features</p>
@@ -138,10 +114,10 @@ export default function DashboardPage() {
 
         {/* Tips & Insights Section */}
         {analyses.length > 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-5 lg:p-6 shadow-sm">
+          <div className="bg-teal-50 border border-teal-200 rounded-lg p-5 lg:p-6 shadow-sm">
             <div className="flex items-start gap-3 lg:gap-4">
-              <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <Sparkles size={20} className="lg:w-6 lg:h-6 text-blue-600" />
+              <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0">
+                <Sparkles size={20} className="lg:w-6 lg:h-6 text-teal-600" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 mb-1 lg:mb-2 text-base lg:text-lg">💡 Quick Tip</h3>
@@ -175,20 +151,20 @@ export default function DashboardPage() {
                 <p className="text-2xl lg:text-3xl font-semibold text-gray-900 mb-1">{total}</p>
                 <p className="text-xs lg:text-sm text-gray-500">All time</p>
               </div>
-              <div className="stat-card border-indigo-600 min-w-[160px] lg:min-w-0">
+              <div className="stat-card border-teal-600 min-w-[160px] lg:min-w-0">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center">
-                    <Calendar size={18} className="text-indigo-600" />
+                  <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center">
+                    <Calendar size={18} className="text-teal-600" />
                   </div>
                   <p className="text-sm text-gray-600 font-medium">This month</p>
                 </div>
                 <p className="text-2xl lg:text-3xl font-semibold text-gray-900 mb-1">{monthlyCount}</p>
                 <p className="text-xs lg:text-sm text-gray-500">Past 30 days</p>
               </div>
-              <div className="stat-card border-slate-600 min-w-[160px] lg:min-w-0">
+              <div className="stat-card border-teal-600 min-w-[160px] lg:min-w-0">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center">
-                    <TrendingUp size={18} className="text-slate-600" />
+                  <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center">
+                    <TrendingUp size={18} className="text-teal-600" />
                   </div>
                   <p className="text-sm text-gray-600 font-medium">Avg CTR</p>
                 </div>
@@ -231,11 +207,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {/* Show 2 cards on mobile/tablet, all 3 on desktop */}
               {recentSlice.map((analysis, idx) => (
-                <article key={analysis.id} className={`bg-white border-l-[3px] rounded-lg p-4 lg:p-5 space-y-3 shadow-sm hover:shadow-md group ${
-                  analysis.resultType === 'WINNING' ? 'border-emerald-600' : 
-                  analysis.resultType === 'AVERAGE' ? 'border-amber-600' : 
-                  'border-rose-600'
-                } ${idx >= 2 ? 'hidden lg:block' : ''}`}>
+                <article key={analysis.id} className={`bg-white border-l-[3px] border-teal-600 rounded-lg p-4 lg:p-5 space-y-3 shadow-sm hover:shadow-md group ${idx >= 2 ? 'hidden lg:block' : ''}`}>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500 font-medium">{new Date(analysis.createdAt).toLocaleDateString()}</span>
                     <StatusBadge status={analysis.resultType as 'WINNING' | 'AVERAGE' | 'DEAD'} size="sm" showLabel />
@@ -282,11 +254,6 @@ export default function DashboardPage() {
           </section>
         )}
       </div>
-      <UpgradeModal
-        isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        onUpgradeComplete={() => setShowUpgradeModal(false)}
-      />
     </div>
   );
 }
