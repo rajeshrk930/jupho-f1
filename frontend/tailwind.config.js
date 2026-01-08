@@ -25,6 +25,10 @@ module.exports = {
           surface: '#111827',  // Card/panel background
           elevated: '#1F2937', // Hover/elevated surfaces
         },
+        // Flat border tokens to support border-border-default classes
+        'border-default': '#1F2937',
+        'border-subtle': '#374151',
+        'border-signal': '#22D3EE',
         signal: {
           primary: '#22D3EE',   // Muted cyan for UI chrome
           electric: '#00E5FF',  // Electric cyan for critical actions

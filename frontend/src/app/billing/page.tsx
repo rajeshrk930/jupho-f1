@@ -330,7 +330,6 @@ export default function BillingPage() {
                       <button 
                         onClick={() => toast.success('Invoice download will be available soon')}
                         className="text-signal-primary hover:text-signal-primary/80 font-medium text-sm inline-flex items-center gap-1">
-                      >
                         <Download size={14} />
                         PDF
                       </button>
