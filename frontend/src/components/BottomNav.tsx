@@ -2,10 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, History, BookTemplate, User } from 'lucide-react';
+import { LayoutDashboard, FileText, History, BookTemplate, User, Shield } from 'lucide-react';
+import { useAuthStore } from '@/lib/store';
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { user } = useAuthStore();
+
+  // Check if user is admin
+  const isAdmin = user?.email && process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',')
+    .map(email => email.trim().toLowerCase())
+    .includes(user.email.toLowerCase());
 
   const tabs = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -15,9 +22,16 @@ export default function BottomNav() {
     { href: '/profile', label: 'Profile', icon: User },
   ];
 
+  // Add admin tab for admin users
+  if (isAdmin) {
+    tabs.splice(4, 0, { href: '/admin', label: 'Admin', icon: Shield });
+  }
+
+  const gridCols = isAdmin ? 'grid-cols-6' : 'grid-cols-5';
+
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-pb">
-      <div className="grid grid-cols-5 h-16">
+      <div className={`grid ${gridCols} h-16`}>
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/');
