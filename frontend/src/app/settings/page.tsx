@@ -132,23 +132,23 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6">
+    <div className="min-h-screen bg-base-surface pt-6">
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-1">Manage your account and preferences</p>
+          <h1 className="text-3xl font-bold text-text-primary">Settings</h1>
+          <p className="text-text-secondary mt-1">Manage your account and preferences</p>
         </div>
 
         {/* Profile Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
-              <User size={20} className="text-teal-700" />
+            <div className="w-10 h-10 rounded-md bg-signal-primary/10 flex items-center justify-center">
+              <User size={20} className="text-signal-primary" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Profile Information</h2>
-              <p className="text-sm text-gray-600">Update your personal details</p>
+              <h2 className="text-lg font-semibold text-text-primary">Profile Information</h2>
+              <p className="text-sm text-text-secondary">Update your personal details</p>
             </div>
           </div>
 
@@ -187,13 +187,13 @@ export default function SettingsPage() {
         </div>
 
         {/* Password Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-              <Lock size={20} className="text-purple-600" />
+            <div className="w-10 h-10 rounded-md bg-signal-primary/10 flex items-center justify-center">
+              <Lock size={20} className="text-signal-primary" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Change Password</h2>
+              <h2 className="text-lg font-semibold text-text-primary">Change Password</h2>
               <p className="text-sm text-gray-600">Update your password to keep your account secure</p>
             </div>
           </div>
@@ -246,13 +246,13 @@ export default function SettingsPage() {
         </div>
 
         {/* Notifications Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-              <Bell size={20} className="text-green-600" />
+            <div className="w-10 h-10 rounded-md bg-base-surface flex items-center justify-center">
+              <Bell size={20} className="text-text-secondary" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
+              <h2 className="text-lg font-semibold text-text-primary">Notifications</h2>
               <p className="text-sm text-gray-600">Manage how you receive updates</p>
             </div>
           </div>
@@ -260,8 +260,8 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-gray-900">Email Notifications</p>
-                <p className="text-sm text-gray-600">Receive notifications via email</p>
+                <p className="font-medium text-text-primary">Email Notifications</p>
+                <p className="text-sm text-text-secondary">Receive notifications via email</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -270,14 +270,14 @@ export default function SettingsPage() {
                   onChange={(e) => setEmailNotifications(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                <div className="w-11 h-6 bg-base-elevated peer-focus:ring-2 peer-focus:ring-signal-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-base after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base-surface after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-signal-primary"></div>
               </label>
             </div>
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-gray-900">Analysis Complete</p>
-                <p className="text-sm text-gray-600">Get notified when analysis is done</p>
+                <p className="font-medium text-text-primary">Analysis Complete</p>
+                <p className="text-sm text-text-secondary">Get notified when analysis is done</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -286,14 +286,14 @@ export default function SettingsPage() {
                   onChange={(e) => setAnalysisComplete(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                <div className="w-11 h-6 bg-base-elevated peer-focus:ring-2 peer-focus:ring-signal-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-base after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base-surface after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-signal-primary"></div>
               </label>
             </div>
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-gray-900">Usage Alerts</p>
-                <p className="text-sm text-gray-600">Alert when reaching usage limits</p>
+                <p className="font-medium text-text-primary">Usage Alerts</p>
+                <p className="text-sm text-text-secondary">Alert when reaching usage limits</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -302,14 +302,14 @@ export default function SettingsPage() {
                   onChange={(e) => setUsageAlerts(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                <div className="w-11 h-6 bg-base-elevated peer-focus:ring-2 peer-focus:ring-signal-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-base after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base-surface after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-signal-primary"></div>
               </label>
             </div>
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-gray-900">Weekly Report</p>
-                <p className="text-sm text-gray-600">Summary of your activity each week</p>
+                <p className="font-medium text-text-primary">Weekly Report</p>
+                <p className="text-sm text-text-secondary">Summary of your activity each week</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -318,30 +318,30 @@ export default function SettingsPage() {
                   onChange={(e) => setWeeklyReport(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                <div className="w-11 h-6 bg-base-elevated peer-focus:ring-2 peer-focus:ring-signal-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-base after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base-surface after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-signal-primary"></div>
               </label>
             </div>
           </div>
         </div>
 
         {/* Data & Privacy Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-              <Shield size={20} className="text-orange-600" />
+            <div className="w-10 h-10 rounded-md bg-signal-warning/10 flex items-center justify-center">
+              <Shield size={20} className="text-signal-warning" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Data & Privacy</h2>
+              <h2 className="text-lg font-semibold text-text-primary">Data & Privacy</h2>
               <p className="text-sm text-gray-600">Manage your data and account</p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="border border-gray-200 rounded-lg p-4">
+            <div className="border border-border-default rounded-md p-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 mb-1">Export Your Data</h3>
-                  <p className="text-sm text-gray-600">Download all your analyses, conversations, and account data</p>
+                  <h3 className="font-medium text-text-primary mb-1">Export Your Data</h3>
+                  <p className="text-sm text-text-secondary">Download all your analyses, conversations, and account data</p>
                 </div>
                 <button
                   onClick={handleExportData}
@@ -353,15 +353,15 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="border border-red-200 rounded-lg p-4 bg-red-50">
+            <div className="border border-signal-danger/20 rounded-md p-4 bg-signal-danger/10">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <h3 className="font-medium text-red-900 mb-1">Delete Account</h3>
-                  <p className="text-sm text-red-700">Permanently delete your account and all associated data</p>
+                  <h3 className="font-medium text-signal-danger mb-1">Delete Account</h3>
+                  <p className="text-sm text-signal-danger">Permanently delete your account and all associated data</p>
                 </div>
                 <button
                   onClick={handleDeleteAccount}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium inline-flex items-center gap-2 whitespace-nowrap shadow-sm"
+                  className="px-4 py-2 bg-signal-danger text-white rounded-md hover:bg-signal-danger/90 transition-colors font-medium inline-flex items-center gap-2 whitespace-nowrap shadow-sm"
                 >
                   <Trash2 size={16} />
                   Delete

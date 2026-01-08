@@ -44,28 +44,28 @@ export default function ProfilePage() {
   const displayName = user?.name || user?.email?.split('@')[0] || 'User';
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
+    <div className="min-h-screen bg-base-surface pb-20 lg:pb-0">
       <MobileTopBar title="Profile" />
       
       <div className="max-w-2xl mx-auto p-4 space-y-4">
         {/* User Info Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+        <div className="bg-base-elevated rounded-md p-6 shadow-sm border border-border-default">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-              <User size={28} className="text-white" />
+            <div className="w-16 h-16 rounded-full bg-signal-primary/10 flex items-center justify-center flex-shrink-0">
+              <User size={28} className="text-signal-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-bold text-gray-900 truncate">{displayName}</h2>
-              <p className="text-sm text-gray-600 truncate">{user?.email}</p>
+              <h2 className="text-xl font-bold text-text-primary truncate">{displayName}</h2>
+              <p className="text-sm text-text-secondary truncate">{user?.email}</p>
               <div className="flex items-center gap-2 mt-2">
                 {isPro ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-300">
-                    <Crown size={14} className="text-purple-600" />
-                    <span className="text-xs font-bold text-purple-900">PRO Member</span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-signal-primary/10 border border-signal-primary/20">
+                    <Crown size={14} className="text-signal-primary" />
+                    <span className="text-xs font-bold text-signal-primary">PRO Member</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 border border-gray-300">
-                    <span className="text-xs font-semibold text-gray-700">Free Plan</span>
+                  <span className="inline-flex items-center px-3 py-1 rounded-sm bg-base-surface border border-border-default">
+                    <span className="text-xs font-semibold text-text-secondary">Free Plan</span>
                   </span>
                 )}
               </div>
@@ -74,77 +74,77 @@ export default function ProfilePage() {
         </div>
 
         {/* Account Settings */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Account</h3>
+        <div className="bg-base-elevated rounded-md shadow-sm border border-border-default overflow-hidden">
+          <div className="px-4 py-3 border-b border-border-default">
+            <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wide">Account</h3>
           </div>
           
           <button
             onClick={() => router.push('/billing')}
-            className="w-full flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100"
+            className="w-full flex items-center justify-between px-4 py-4 hover:bg-base-surface transition-colors border-b border-border-default"
           >
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                isPro ? 'bg-purple-100' : 'bg-gray-100'
+              <div className={`w-10 h-10 rounded-md flex items-center justify-center ${
+                isPro ? 'bg-signal-primary/10' : 'bg-base-surface'
               }`}>
-                <CreditCard size={20} className={isPro ? 'text-purple-600' : 'text-gray-600'} />
+                <CreditCard size={20} className={isPro ? 'text-signal-primary' : 'text-text-secondary'} />
               </div>
               <div className="text-left">
-                <p className="text-sm font-medium text-gray-900">Billing & Plans</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-sm font-medium text-text-primary">Billing & Plans</p>
+                <p className="text-xs text-text-tertiary">
                   {isPro ? 'Manage your Pro subscription' : 'Upgrade to Pro'}
                 </p>
               </div>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={20} className="text-text-tertiary" />
           </button>
 
           <button
             onClick={() => router.push('/settings')}
-            className="w-full flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-4 hover:bg-base-surface transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <Settings size={20} className="text-gray-600" />
+              <div className="w-10 h-10 rounded-md bg-base-surface flex items-center justify-center">
+                <Settings size={20} className="text-text-secondary" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-medium text-gray-900">Settings</p>
-                <p className="text-xs text-gray-500">Account preferences</p>
+                <p className="text-sm font-medium text-text-primary">Settings</p>
+                <p className="text-xs text-text-tertiary">Account preferences</p>
               </div>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={20} className="text-text-tertiary" />
           </button>
         </div>
 
         {/* Preferences */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Preferences</h3>
+        <div className="bg-base-elevated rounded-md shadow-sm border border-border-default overflow-hidden">
+          <div className="px-4 py-3 border-b border-border-default">
+            <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wide">Preferences</h3>
           </div>
           
           <button
             onClick={handleThemeToggle}
-            className="w-full flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-4 hover:bg-base-surface transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-base-surface flex items-center justify-center">
                 {theme === 'dark' ? (
-                  <Moon size={20} className="text-gray-600" />
+                  <Moon size={20} className="text-text-secondary" />
                 ) : (
-                  <Sun size={20} className="text-gray-600" />
+                  <Sun size={20} className="text-text-secondary" />
                 )}
               </div>
               <div className="text-left">
-                <p className="text-sm font-medium text-gray-900">Dark Mode</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-sm font-medium text-text-primary">Dark Mode</p>
+                <p className="text-xs text-text-tertiary">
                   {theme === 'dark' ? 'Enabled' : 'Disabled'}
                 </p>
               </div>
             </div>
-            <div className={`w-12 h-6 rounded-full transition-colors ${
-              theme === 'dark' ? 'bg-teal-600' : 'bg-gray-300'
+            <div className={`w-12 h-6 rounded-sm transition-colors ${
+              theme === 'dark' ? 'bg-signal-primary' : 'bg-base-surface border border-border-default'
             } relative`}>
-              <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
+              <div className={`absolute top-0.5 w-5 h-5 rounded-sm bg-white shadow-sm transition-transform ${
                 theme === 'dark' ? 'translate-x-6' : 'translate-x-0.5'
               }`} />
             </div>
@@ -152,41 +152,41 @@ export default function ProfilePage() {
         </div>
 
         {/* Support */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Support</h3>
+        <div className="bg-base-elevated rounded-md shadow-sm border border-border-default overflow-hidden">
+          <div className="px-4 py-3 border-b border-border-default">
+            <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wide">Support</h3>
           </div>
           
           <button
             onClick={() => router.push('/help')}
-            className="w-full flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-4 hover:bg-base-surface transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <HelpCircle size={20} className="text-gray-600" />
+              <div className="w-10 h-10 rounded-md bg-base-surface flex items-center justify-center">
+                <HelpCircle size={20} className="text-text-secondary" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-medium text-gray-900">Help Center</p>
-                <p className="text-xs text-gray-500">Get support & tutorials</p>
+                <p className="text-sm font-medium text-text-primary">Help Center</p>
+                <p className="text-xs text-text-tertiary">Get support & tutorials</p>
               </div>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={20} className="text-text-tertiary" />
           </button>
         </div>
 
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-4 bg-white hover:bg-red-50 rounded-2xl shadow-sm border border-gray-200 hover:border-red-200 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-4 bg-base-elevated hover:bg-signal-danger/10 rounded-md shadow-sm border border-border-default hover:border-signal-danger/20 transition-colors"
         >
-          <LogOut size={20} className="text-red-600" />
-          <span className="text-sm font-semibold text-red-600">Log Out</span>
+          <LogOut size={20} className="text-signal-danger" />
+          <span className="text-sm font-semibold text-signal-danger">Log Out</span>
         </button>
 
         {/* App Info */}
         <div className="text-center py-4">
-          <p className="text-xs text-gray-500">Jupho v1.0.0</p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-text-tertiary">Jupho v1.0.0</p>
+          <p className="text-xs text-text-tertiary mt-1">
             {user?.createdAt && `Member since ${new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`}
           </p>
         </div>

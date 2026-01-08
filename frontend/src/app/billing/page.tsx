@@ -52,13 +52,13 @@ export default function BillingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="min-h-screen bg-base-surface py-12 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-64"></div>
+            <div className="h-8 bg-base-elevated rounded w-64"></div>
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="h-64 bg-gray-200 rounded-2xl"></div>
-              <div className="h-64 bg-gray-200 rounded-2xl"></div>
+              <div className="h-64 bg-base-elevated rounded-md"></div>
+              <div className="h-64 bg-base-elevated rounded-md"></div>
             </div>
           </div>
         </div>
@@ -71,17 +71,17 @@ export default function BillingPage() {
     const errorStatus = (error as any)?.response?.status;
     
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="min-h-screen bg-base-surface py-12 px-4">
         <div className="max-w-5xl mx-auto space-y-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h2 className="text-red-800 font-semibold mb-2">Failed to load usage stats</h2>
-            <p className="text-red-600 mb-2">Error: {errorMessage}</p>
-            {errorStatus && <p className="text-red-600 mb-2">Status: {errorStatus}</p>}
-            <p className="text-red-600 text-sm">Please check the console for more details or try refreshing the page.</p>
+          <div className="bg-signal-danger/10 border border-signal-danger/20 rounded-md p-6">
+            <h2 className="text-signal-danger font-semibold mb-2">Failed to load usage stats</h2>
+            <p className="text-signal-danger mb-2">Error: {errorMessage}</p>
+            {errorStatus && <p className="text-signal-danger mb-2">Status: {errorStatus}</p>}
+            <p className="text-signal-danger text-sm">Please check the console for more details or try refreshing the page.</p>
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+            className="btn-primary"
           >
             Refresh Page
           </button>
@@ -91,35 +91,35 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-6">
+    <div className="min-h-screen bg-base-surface py-8 px-6">
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Billing & Plans</h1>
-          <p className="text-gray-600">Manage your subscription and view usage statistics</p>
+          <h1 className="text-3xl font-bold text-text-primary mb-2">Billing & Plans</h1>
+          <p className="text-text-secondary">Manage your subscription and view usage statistics</p>
         </div>
 
         {/* Current Plan Card */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Plan Status */}
-          <div className={`rounded-lg p-6 border-2 ${isPro ? 'bg-white border-teal-600' : 'bg-white border-gray-200'}`}>
+          <div className={`rounded-md p-6 border-2 ${isPro ? 'bg-base-elevated border-signal-primary' : 'bg-base-elevated border-border-default'}`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isPro ? 'bg-teal-50' : 'bg-gray-100'}`}>
-                  <Zap className={`w-6 h-6 ${isPro ? 'text-teal-700' : 'text-gray-600'}`} />
+                <div className={`w-12 h-12 rounded-md flex items-center justify-center ${isPro ? 'bg-signal-primary/10' : 'bg-base-surface'}`}>
+                  <Zap className={`w-6 h-6 ${isPro ? 'text-signal-primary' : 'text-text-secondary'}`} />
                 </div>
                 <div>
-                  <h2 className={`text-2xl font-bold ${isPro ? 'text-teal-700' : 'text-gray-900'}`}>
+                  <h2 className={`text-2xl font-bold ${isPro ? 'text-signal-primary' : 'text-text-primary'}`}>
                     {isPro ? 'Jupho Pro' : 'Free Plan'}
                   </h2>
-                  <p className={`text-sm ${isPro ? 'text-gray-600' : 'text-gray-600'}`}>
+                  <p className={`text-sm ${isPro ? 'text-text-secondary' : 'text-text-secondary'}`}>
                     {isPro ? '₹499 / month' : 'No payment required'}
                   </p>
                 </div>
               </div>
               {isPro && (
-                <div className="bg-teal-50 px-3 py-1 rounded">
-                  <span className="text-teal-700 text-sm font-medium">Active</span>
+                <div className="bg-signal-primary/10 px-3 py-1 rounded-sm">
+                  <span className="text-signal-primary text-sm font-medium">Active</span>
                 </div>
               )}
             </div>
@@ -128,60 +128,60 @@ export default function BillingPage() {
               {isPro ? (
                 <>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Unlimited analyses per day</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Unlimited analyses per day</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Unlimited Quick Fix Generators</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Unlimited Quick Fix Generators</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Unlimited PDF exports</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Unlimited PDF exports</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Saved Templates Library</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Saved Templates Library</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Priority support</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Priority support</span>
                   </div>
                 </>
               ) : (
                 <>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">3 analyses per day</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">3 analyses per day</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Unlimited generators per analysis</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Unlimited generators per analysis</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">PDF export included</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">PDF export included</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Saved Templates Library</span>
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Saved Templates Library</span>
                   </div>
                 </>
               )}
             </div>
 
             {isPro ? (
-              <div className="bg-teal-50 rounded-lg p-4 border border-teal-200">
+              <div className="bg-signal-primary/10 rounded-md p-4 border border-signal-primary/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="w-4 h-4 text-teal-700" />
-                  <span className="text-teal-900 text-sm font-medium">Subscription Details</span>
+                  <Calendar className="w-4 h-4 text-signal-primary" />
+                  <span className="text-text-primary text-sm font-medium">Subscription Details</span>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-teal-700 text-xs">
-                    Expires in: <span className="font-semibold text-teal-900">{daysLeft} days</span>
+                  <p className="text-text-secondary text-xs">
+                    Expires in: <span className="font-semibold text-text-primary">{daysLeft} days</span>
                   </p>
-                  <p className="text-teal-700 text-xs">
-                    Next renewal: <span className="font-semibold text-teal-900">
+                  <p className="text-text-secondary text-xs">
+                    Next renewal: <span className="font-semibold text-text-primary">
                       {usageStats?.proExpiresAt ? new Date(usageStats.proExpiresAt).toLocaleDateString('en-US', { 
                         month: 'long', 
                         day: 'numeric', 
@@ -194,7 +194,7 @@ export default function BillingPage() {
             ) : (
               <button
                 onClick={() => setShowUpgradeModal(true)}
-                className="w-full bg-teal-600 text-white py-3 rounded-lg font-medium hover:bg-teal-700 transition-colors shadow-sm"
+                className="btn-primary w-full"
               >
                 Upgrade to Pro
               </button>
@@ -202,27 +202,27 @@ export default function BillingPage() {
           </div>
 
           {/* Usage Stats */}
-          <div className="bg-white rounded-lg p-6 border-2 border-gray-200 space-y-6">
+          <div className="bg-base-elevated rounded-md p-6 border-2 border-border-default space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Usage Statistics</h3>
-              <p className="text-sm text-gray-600">Your current usage this period</p>
+              <h3 className="text-lg font-bold text-text-primary mb-1">Usage Statistics</h3>
+              <p className="text-sm text-text-secondary">Your current usage this period</p>
             </div>
 
             {/* Questions Used */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">Questions Used</span>
+                  <TrendingUp className="w-4 h-4 text-text-secondary" />
+                  <span className="text-sm font-medium text-text-secondary">Questions Used</span>
                 </div>
-                <span className="text-sm font-bold text-gray-900">
+                <span className="text-sm font-bold text-text-primary">
                   {isPro ? '∞' : `${usageStats?.apiUsageCount || 0}/${usageStats?.limit || 10}`}
                 </span>
               </div>
               {!isPro && (
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-base-surface rounded-sm h-3">
                   <div
-                    className="h-3 rounded-full bg-teal-600 transition-all"
+                    className="h-3 rounded-sm bg-signal-primary transition-all"
                     style={{ 
                       width: `${Math.min(((usageStats?.apiUsageCount || 0) / (usageStats?.limit || 10)) * 100, 100)}%` 
                     }}
@@ -233,15 +233,15 @@ export default function BillingPage() {
 
             {/* Reset Info */}
             {!isPro && (
-              <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
+              <div className="bg-signal-primary/10 border border-signal-primary/20 rounded-md p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Clock className="w-4 h-4 text-teal-700" />
-                  <span className="text-sm font-medium text-teal-900">Daily Reset</span>
+                  <Clock className="w-4 h-4 text-signal-primary" />
+                  <span className="text-sm font-medium text-text-primary">Daily Reset</span>
                 </div>
-                <p className="text-xs text-teal-700">
+                <p className="text-xs text-text-secondary">
                   Your question limit resets at midnight (IST)
                 </p>
-                <p className="text-xs text-teal-700 mt-1">
+                <p className="text-xs text-text-secondary mt-1">
                   Next reset: {usageStats?.resetsAt ? new Date(usageStats.resetsAt).toLocaleString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -253,15 +253,15 @@ export default function BillingPage() {
             )}
 
             {/* Account Info */}
-            <div className="pt-4 border-t border-gray-200">
+            <div className="pt-4 border-t border-border-default">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Account Email</span>
-                  <span className="font-medium text-gray-900">{user?.email}</span>
+                  <span className="text-text-secondary">Account Email</span>
+                  <span className="font-medium text-text-primary">{user?.email}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Member Since</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-text-secondary">Member Since</span>
+                  <span className="font-medium text-text-primary">
                     {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { 
                       month: 'short', 
                       year: 'numeric' 
@@ -269,8 +269,8 @@ export default function BillingPage() {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Current Plan</span>
-                  <span className={`font-bold ${isPro ? 'text-purple-600' : 'text-gray-900'}`}>
+                  <span className="text-text-secondary">Current Plan</span>
+                  <span className={`font-bold ${isPro ? 'text-signal-primary' : 'text-text-primary'}`}>
                     {isPro ? 'PRO' : 'FREE'}
                   </span>
                 </div>
@@ -281,29 +281,29 @@ export default function BillingPage() {
 
         {/* Transaction History - Only show for Pro users */}
         {isPro && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-base-elevated rounded-md border border-border-default p-6">
             <div className="flex items-center gap-3 mb-5">
-              <Receipt className="w-5 h-5 text-gray-600" />
+              <Receipt className="w-5 h-5 text-text-secondary" />
               <div>
-                <h2 className="text-lg font-bold text-gray-900">Transaction History</h2>
-                <p className="text-sm text-gray-600">View and download your payment receipts</p>
+                <h2 className="text-lg font-bold text-text-primary">Transaction History</h2>
+                <p className="text-sm text-text-secondary">View and download your payment receipts</p>
               </div>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-base-surface border-b border-border-default">
                   <tr>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700 uppercase">Date</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700 uppercase">Description</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700 uppercase">Amount</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-700 uppercase">Status</th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-gray-700 uppercase">Invoice</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase">Date</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase">Description</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase">Amount</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase">Status</th>
+                    <th className="text-right px-4 py-3 text-xs font-semibold text-text-secondary uppercase">Invoice</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
-                  <tr className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                <tbody className="divide-y divide-border-default">
+                  <tr className="hover:bg-base-surface transition-colors">
+                    <td className="px-4 py-3 text-sm text-text-primary">
                       {usageStats?.proExpiresAt 
                         ? new Date(new Date(usageStats.proExpiresAt).getTime() - 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
                             month: 'short',
@@ -317,19 +317,19 @@ export default function BillingPage() {
                           })}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-sm font-medium text-gray-900">Jupho Pro Subscription</div>
-                      <div className="text-xs text-gray-500">Monthly plan renewal</div>
+                      <div className="text-sm font-medium text-text-primary">Jupho Pro Subscription</div>
+                      <div className="text-xs text-text-tertiary">Monthly plan renewal</div>
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900">₹499.00</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-text-primary">₹499.00</td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-base-elevated text-text-primary">
                         Paid
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <button 
                         onClick={() => toast.success('Invoice download will be available soon')}
-                        className="text-teal-700 hover:text-teal-600 font-medium text-sm inline-flex items-center gap-1"
+                        className="text-signal-primary hover:text-signal-primary/80 font-medium text-sm inline-flex items-center gap-1">
                       >
                         <Download size={14} />
                         PDF
@@ -340,9 +340,9 @@ export default function BillingPage() {
               </table>
 
               {/* Empty state placeholder for demo */}
-              <div className="text-center py-6 border-t border-gray-200 bg-gray-50">
-                <p className="text-sm text-gray-600">Previous transactions will appear here</p>
-                <p className="text-xs text-gray-500 mt-1">You'll see a complete history of all your payments</p>
+              <div className="text-center py-6 border-t border-border-default bg-base-surface">
+                <p className="text-sm text-text-secondary">Previous transactions will appear here</p>
+                <p className="text-xs text-text-tertiary mt-1">You'll see a complete history of all your payments</p>
               </div>
             </div>
           </div>
@@ -350,24 +350,24 @@ export default function BillingPage() {
 
         {/* Payment Method (Pro users only) */}
         {isPro && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-base-elevated rounded-md border border-border-default p-6">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">Payment Method</h2>
-                <p className="text-sm text-gray-600">Manage your billing information</p>
+                <h2 className="text-lg font-bold text-text-primary">Payment Method</h2>
+                <p className="text-sm text-text-secondary">Manage your billing information</p>
               </div>
             </div>
 
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+            <div className="bg-base-surface border border-border-default rounded-md p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-teal-50 rounded flex items-center justify-center">
-                  <svg className="w-6 h-6 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-10 h-10 bg-signal-primary/10 rounded flex items-center justify-center">
+                  <svg className="w-6 h-6 text-signal-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Razorpay</p>
-                  <p className="text-xs text-gray-500">Auto-renews on {usageStats?.proExpiresAt 
+                  <p className="text-sm font-medium text-text-primary">Razorpay</p>
+                  <p className="text-xs text-text-tertiary">Auto-renews on {usageStats?.proExpiresAt 
                     ? new Date(usageStats.proExpiresAt).toLocaleDateString('en-US', {
                         month: 'long',
                         day: 'numeric',
@@ -378,14 +378,14 @@ export default function BillingPage() {
               </div>
               <button 
                 onClick={() => toast.success('Payment method management coming soon')}
-                className="text-teal-700 hover:text-teal-600 font-medium text-sm"
+                className="text-signal-primary hover:text-signal-primary/80 font-medium text-sm"
               >
                 Update
               </button>
             </div>
 
-            <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
+            <div className="mt-4 bg-signal-warning/10 border border-signal-warning/20 rounded-md p-4">
+              <p className="text-sm text-text-primary">
                 <strong>Note:</strong> Your subscription will auto-renew. You can cancel anytime from Settings.
               </p>
             </div>
@@ -394,18 +394,18 @@ export default function BillingPage() {
 
         {/* Upgrade CTA for Free Users */}
         {!isPro && (
-          <div className="bg-teal-600 border-2 border-teal-700 rounded-lg p-8 text-center">
+          <div className="bg-signal-primary border-2 border-signal-primary rounded-md p-8 text-center">
             <div className="max-w-2xl mx-auto">
-              <div className="w-16 h-16 bg-teal-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-base-elevated rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-8 h-8 text-signal-primary" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">Ready to unlock unlimited potential?</h2>
-              <p className="text-teal-50 mb-6">
+              <p className="text-white/90 mb-6">
                 Upgrade to Jupho Pro and get unlimited analyses, priority support, and advanced features for just ₹499/month.
               </p>
               <button
                 onClick={() => setShowUpgradeModal(true)}
-                className="bg-white text-teal-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors shadow-sm inline-flex items-center gap-2"
+                className="bg-white text-signal-primary px-8 py-3 rounded-md font-medium hover:bg-base-elevated transition-colors shadow-sm inline-flex items-center gap-2"
               >
                 <Zap className="w-5 h-5" />
                 Upgrade to Pro Now

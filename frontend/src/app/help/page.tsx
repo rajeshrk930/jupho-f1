@@ -264,7 +264,7 @@ export default function HelpPage() {
           </p>
           <a
             href="mailto:support@jupho.com"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium shadow-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 btn-primary"
           >
             <Mail size={18} />
             Contact Support

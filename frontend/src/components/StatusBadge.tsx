@@ -22,20 +22,20 @@ export function StatusBadge({ status, size = 'md', showLabel = false }: StatusBa
   const config = {
     WINNING: {
       icon: TrendingUp,
-      color: 'text-emerald-700',
-      bgColor: 'bg-emerald-500',
+      color: 'text-text-primary',
+      bgColor: 'bg-base-elevated',
       label: 'Winning',
     },
     AVERAGE: {
       icon: Minus,
-      color: 'text-amber-700',
-      bgColor: 'bg-amber-500',
+      color: 'text-text-secondary',
+      bgColor: 'bg-base-surface',
       label: 'Average',
     },
     DEAD: {
       icon: TrendingDown,
-      color: 'text-rose-700',
-      bgColor: 'bg-rose-500',
+      color: 'text-signal-danger',
+      bgColor: 'bg-signal-danger/10',
       label: 'Poor',
     },
   };
@@ -44,7 +44,7 @@ export function StatusBadge({ status, size = 'md', showLabel = false }: StatusBa
 
   if (showLabel) {
     return (
-      <span className={`badge ${bgColor} text-white`}>
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm ${bgColor} ${color} text-sm font-medium`}>
         <Icon size={iconSize[size]} />
         {label}
       </span>

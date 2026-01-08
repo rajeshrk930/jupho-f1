@@ -8,9 +8,7 @@ import {
   CreditCard,
   HelpCircle,
   LogOut,
-  Moon,
   Settings,
-  Sun,
 } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
@@ -20,30 +18,13 @@ const navLinks = [
   { href: "/history", label: "History", authOnly: true },
 ];
 
-type ThemeMode = "light" | "dark";
-
 export function TopNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { isAuthenticated, user, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<ThemeMode>("light");
   const menuRef = useRef<HTMLDivElement | null>(null);
   const isAuthPage = ['/', '/login', '/signup'].includes(pathname);
-
-  useEffect(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("theme") : null;
-    const preferred = saved === "dark" ? "dark" : "light";
-    setTheme(preferred);
-    document.documentElement.classList.toggle("theme-dark", preferred === "dark");
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("theme-dark", theme === "dark");
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("theme", theme);
-    }
-  }, [theme]);
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
@@ -65,7 +46,7 @@ export function TopNav() {
     <header className="nav-shell">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-lg font-semibold text-gray-900">
+          <Link href="/" className="text-lg font-semibold text-text-primary">
             Jupho
           </Link>
           <nav className="hidden md:flex items-center gap-3">
@@ -87,17 +68,6 @@ export function TopNav() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-            className="ghost-button hidden sm:inline-flex"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            <span className="hidden lg:inline text-sm font-medium">
-              {theme === "dark" ? "Light" : "Dark"} mode
-            </span>
-          </button>
 
           {isAuthenticated ? (
             <div className="relative" ref={menuRef}>
@@ -108,23 +78,23 @@ export function TopNav() {
               >
                 <div className="text-left leading-tight">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-gray-900">{displayName}</p>
+                    <p className="text-sm font-semibold text-text-primary">{displayName}</p>
                     {user?.proExpiresAt && new Date(user.proExpiresAt) > new Date() && (
-                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-teal-600 text-white">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-sm bg-signal-primary text-base">
                         PRO
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500">{emailLabel}</p>
+                  <p className="text-xs text-text-secondary">{emailLabel}</p>
                 </div>
-                <ChevronDown size={16} className="text-gray-500" />
+                <ChevronDown size={16} className="text-text-secondary" />
               </button>
 
               {menuOpen && (
                 <div className="dropdown-card" role="menu">
-                  <div className="pb-3 border-b border-gray-100">
-                    <p className="text-sm font-semibold text-gray-900">{displayName}</p>
-                    <p className="text-xs text-gray-500">{emailLabel}</p>
+                  <div className="pb-3 border-b border-border-default">
+                    <p className="text-sm font-semibold text-text-primary">{displayName}</p>
+                    <p className="text-xs text-text-secondary">{emailLabel}</p>
                   </div>
 
                   <div className="py-3 space-y-1">
@@ -136,19 +106,6 @@ export function TopNav() {
                       <Settings size={16} />
                       <span>Settings</span>
                     </Link>
-                    <button
-                      type="button"
-                      className="dropdown-item"
-                      onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-                    >
-                      <Moon size={16} />
-                      <span className="flex items-center justify-between w-full">
-                        <span>Dark Mode</span>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
-                          {theme === "dark" ? "ON" : "OFF"}
-                        </span>
-                      </span>
-                    </button>
                     <Link href="/help" className="dropdown-item">
                       <HelpCircle size={16} />
                       <span>Help Center</span>
@@ -157,7 +114,7 @@ export function TopNav() {
 
                   <button
                     type="button"
-                    className="dropdown-item text-red-600 hover:bg-red-50"
+                    className="dropdown-item text-signal-danger hover:bg-signal-danger/10"
                     onClick={() => {
                       logout();
                       setMenuOpen(false);

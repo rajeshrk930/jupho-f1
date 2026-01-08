@@ -10,32 +10,34 @@ interface StatCardProps {
 }
 
 export function StatCard({ title, value, subtext, icon: Icon, trend, gradient = true }: StatCardProps) {
-  const baseClasses = "rounded-lg p-4 shadow-sm transition-colors group";
-  const gradientClasses = gradient 
-    ? "bg-white border border-gray-200 hover:border-teal-600" 
-    : "bg-white border border-gray-200 hover:border-gray-300";
+  const baseClasses = "rounded-md p-4 transition-colors group";
+  const cardClasses = gradient 
+    ? "bg-base-surface border-l-4 border-signal-primary" 
+    : "bg-base-surface border border-border-default";
 
   return (
-    <div className={`${baseClasses} ${gradientClasses}`}>
+    <div className={`${baseClasses} ${cardClasses}`}>
       <div className="flex items-center justify-between mb-2">
-        <p className={`text-xs font-medium ${gradient ? 'text-gray-600' : 'text-gray-600'}`}>
+        <p className="text-xs font-medium text-text-secondary">
           {title}
         </p>
         {Icon && (
-          <Icon 
-            size={18} 
-            className={`${gradient ? 'text-teal-600' : 'text-gray-500'}`} 
-          />
+          <div className="w-8 h-8 rounded-sm bg-base-elevated flex items-center justify-center">
+            <Icon 
+              size={18} 
+              className="text-text-secondary" 
+            />
+          </div>
         )}
       </div>
-      <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
+      <p className="text-2xl font-bold text-text-primary mb-1">{value}</p>
       {trend && (
-        <div className="flex items-center gap-1 text-xs text-green-600 mb-1">
+        <div className="flex items-center gap-1 text-xs text-text-secondary mb-1">
           <TrendingUp size={12} />
           <span>{trend}</span>
         </div>
       )}
-      {subtext && <p className="text-xs text-gray-600">{subtext}</p>}
+      {subtext && <p className="text-xs text-text-secondary">{subtext}</p>}
     </div>
   );
 }

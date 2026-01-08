@@ -66,9 +66,9 @@ ${analysis.singleFix}`;
 
   // Determine result type styling
   const resultTypeConfig = {
-    WINNING: { color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200', icon: TrendingUp },
-    AVERAGE: { color: 'text-yellow-700', bg: 'bg-yellow-50', border: 'border-yellow-200', icon: Minus },
-    DEAD: { color: 'text-red-700', bg: 'bg-red-50', border: 'border-red-200', icon: TrendingDown },
+    WINNING: { color: 'text-text-primary', bg: 'bg-base-elevated', border: 'border-border-default', icon: TrendingUp },
+    AVERAGE: { color: 'text-text-secondary', bg: 'bg-base-surface', border: 'border-border-default', icon: Minus },
+    DEAD: { color: 'text-signal-danger', bg: 'bg-signal-danger/10', border: 'border-signal-danger/20', icon: TrendingDown },
   };
   const typeConfig = resultTypeConfig[analysis.resultType] || resultTypeConfig.AVERAGE;
   const TypeIcon = typeConfig.icon;
@@ -77,22 +77,22 @@ ${analysis.singleFix}`;
     <div className="space-y-6">
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-        <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 shadow-sm">
-          <p className="text-xs font-medium text-gray-600 mb-1">CTR</p>
-          <p className="text-lg sm:text-xl font-bold text-gray-900">{analysis.ctr}%</p>
+        <div className="bg-base-surface border border-border-default rounded-md p-2 sm:p-3">
+          <p className="text-xs font-medium text-text-secondary mb-1">CTR</p>
+          <p className="text-lg sm:text-xl font-bold text-text-primary">{analysis.ctr}%</p>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 shadow-sm">
-          <p className="text-xs font-medium text-gray-600 mb-1">CPM</p>
-          <p className="text-lg sm:text-xl font-bold text-gray-900">₹{analysis.cpm}</p>
+        <div className="bg-base-surface border border-border-default rounded-md p-2 sm:p-3">
+          <p className="text-xs font-medium text-text-secondary mb-1">CPM</p>
+          <p className="text-lg sm:text-xl font-bold text-text-primary">₹{analysis.cpm}</p>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 shadow-sm">
-          <p className="text-xs font-medium text-gray-600 mb-1">CPA</p>
-          <p className="text-lg sm:text-xl font-bold text-gray-900">₹{analysis.cpa}</p>
+        <div className="bg-base-surface border border-border-default rounded-md p-2 sm:p-3">
+          <p className="text-xs font-medium text-text-secondary mb-1">CPA</p>
+          <p className="text-lg sm:text-xl font-bold text-text-primary">₹{analysis.cpa}</p>
         </div>
       </div>
 
       {/* Status Badge */}
-      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded ${typeConfig.bg} ${typeConfig.border} border`}>
+      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-sm ${typeConfig.bg} ${typeConfig.border} border`}>
         <TypeIcon size={16} className={typeConfig.color} />
         <span className={`text-sm font-medium ${typeConfig.color}`}>
           {analysis.resultType === 'WINNING' ? 'Winning Creative' : analysis.resultType === 'DEAD' ? 'Needs Work' : 'Average Performance'}
@@ -100,54 +100,54 @@ ${analysis.singleFix}`;
       </div>
 
       {/* Section 1: Primary Reason */}
-      <div className="relative pl-6 border-l-4 border-teal-500">
-        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center">
+      <div className="relative pl-6 border-l-4 border-signal-primary">
+        <div className="absolute -left-3 top-0 w-6 h-6 rounded-sm bg-signal-primary flex items-center justify-center">
           <Target size={14} className="text-white" />
         </div>
         <div className="inline-flex items-center gap-2 mb-3">
-          <span className="px-2.5 py-1 rounded bg-teal-100 text-teal-700 text-xs font-medium">
+          <span className="px-2.5 py-1 rounded-sm bg-signal-primary/10 text-signal-primary text-xs font-medium">
             Primary Reason
           </span>
         </div>
-        <p className="text-xl sm:text-2xl font-semibold text-gray-900 leading-tight">
+        <p className="text-xl sm:text-2xl font-semibold text-text-primary leading-tight">
           {analysis.primaryReason}
         </p>
       </div>
 
       {/* Section 2: Why This Happened */}
-      <div className="relative pl-6 border-l-4 border-indigo-400">
-        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-indigo-400 flex items-center justify-center">
-          <Lightbulb size={14} className="text-white" />
+      <div className="relative pl-6 border-l-4 border-border-default">
+        <div className="absolute -left-3 top-0 w-6 h-6 rounded-sm bg-base-elevated flex items-center justify-center">
+          <Lightbulb size={14} className="text-text-secondary" />
         </div>
         <div className="inline-flex items-center gap-2 mb-4">
-          <span className="px-2.5 py-1 rounded bg-indigo-100 text-indigo-700 text-xs font-medium">
+          <span className="px-2.5 py-1 rounded-sm bg-base-elevated text-text-secondary text-xs font-medium">
             Why This Happened
           </span>
         </div>
         <div className="space-y-3">
           {supportingPoints.map((point, i) => (
-            <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+            <div key={i} className="flex items-start gap-3 p-3 rounded-sm bg-base-elevated hover:bg-base-elevated/80 transition-colors">
               <div className="mt-0.5">
-                <CheckCircle2 size={18} className="text-indigo-500" />
+                <CheckCircle2 size={18} className="text-text-secondary" />
               </div>
-              <p className="text-gray-800 text-[15px] leading-relaxed">{point}</p>
+              <p className="text-text-primary text-[15px] leading-relaxed">{point}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Section 3: What to Change */}
-      <div className="relative pl-6 border-l-4 border-teal-500">
-        <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-teal-600 flex items-center justify-center">
+      <div className="relative pl-6 border-l-4 border-signal-primary">
+        <div className="absolute -left-3 top-0 w-6 h-6 rounded-sm bg-signal-primary flex items-center justify-center">
           <Zap size={14} className="text-white" />
         </div>
-        <div className="bg-teal-50 border border-teal-200 rounded-lg p-5 shadow-sm">
+        <div className="bg-signal-primary/10 border border-signal-primary/20 rounded-md p-5">
           <div className="inline-flex items-center gap-2 mb-3">
-            <span className="px-2.5 py-1 rounded bg-teal-600 text-white text-xs font-medium">
+            <span className="px-2.5 py-1 rounded-sm bg-signal-primary text-white text-xs font-medium">
               Action Required
             </span>
           </div>
-          <p className="text-gray-900 text-base leading-relaxed font-medium">
+          <p className="text-text-primary text-base leading-relaxed font-medium">
             {analysis.singleFix}
           </p>
         </div>
@@ -155,18 +155,18 @@ ${analysis.singleFix}`;
 
       {/* Creative Brief Section - Only show if available */}
       {analysis.additionalNotes && (
-        <div className="relative pl-6 border-l-4 border-purple-500">
-          <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center">
-            <Sparkles size={14} className="text-white" />
+        <div className="relative pl-6 border-l-4 border-border-default">
+          <div className="absolute -left-3 top-0 w-6 h-6 rounded-sm bg-base-elevated flex items-center justify-center">
+            <Sparkles size={14} className="text-text-secondary" />
           </div>
-          <div className="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6 shadow-sm">
+          <div className="bg-base-elevated border border-border-default rounded-md p-6">
             <div className="inline-flex items-center gap-2 mb-4">
-              <span className="px-3 py-1.5 rounded bg-purple-600 text-white text-xs font-bold">
+              <span className="px-3 py-1.5 rounded-sm bg-base-surface text-text-primary text-xs font-bold">
                 🎨 CREATIVE DIRECTOR'S BRIEF
               </span>
             </div>
             <div className="prose prose-sm max-w-none">
-              <pre className="whitespace-pre-wrap font-sans text-gray-800 text-[15px] leading-relaxed bg-white/50 p-4 rounded-lg border border-purple-100 overflow-x-auto">
+              <pre className="whitespace-pre-wrap font-sans text-text-primary text-[15px] leading-relaxed bg-base-surface p-4 rounded-sm border border-border-default overflow-x-auto">
                 {analysis.additionalNotes}
               </pre>
             </div>
@@ -184,14 +184,14 @@ ${analysis.singleFix}`;
       <div className="flex gap-3 mt-4">
         <button 
           onClick={copyToClipboard} 
-          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors text-sm"
+          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md border border-border-default bg-base-surface hover:bg-base-elevated text-text-secondary font-medium transition-colors text-sm"
         >
           <Copy size={16} />
           Copy Text
         </button>
         <button 
           onClick={downloadPdf} 
-          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium transition-colors text-sm"
+          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-signal-primary hover:bg-signal-primary/90 text-white font-medium transition-colors text-sm"
         >
           <Download size={16} />
           Client Report (PDF)

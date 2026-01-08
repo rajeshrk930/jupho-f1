@@ -30,7 +30,7 @@ export default function BottomNav() {
   const gridCols = isAdmin ? 'grid-cols-6' : 'grid-cols-5';
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-pb">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-base-surface border-t border-border-default z-50 safe-area-pb">
       <div className={`grid ${gridCols} h-16`}>
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -42,8 +42,8 @@ export default function BottomNav() {
               href={tab.href}
               className={`flex flex-col items-center justify-center gap-1 transition-colors ${
                 isActive
-                  ? 'text-teal-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-signal-primary'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />

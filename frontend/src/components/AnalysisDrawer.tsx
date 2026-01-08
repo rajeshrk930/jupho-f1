@@ -25,19 +25,19 @@ export function AnalysisDrawer({ isOpen, onClose, isLoading, result }: AnalysisD
       />
 
       {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 z-50 w-full md:w-[600px] bg-white shadow-2xl animate-slideInRight overflow-hidden flex flex-col">
+      <div className="fixed inset-y-0 right-0 z-50 w-full md:w-[600px] bg-base-surface shadow-2xl animate-slideInRight overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-default bg-base-surface">
           <div>
-            <p className="text-xs uppercase tracking-[0.08em] text-teal-600 font-semibold">Report</p>
-            <h2 className="text-lg font-semibold text-gray-900">Analysis Result</h2>
+            <p className="text-xs uppercase tracking-[0.08em] text-signal-primary font-semibold">Report</p>
+            <h2 className="text-lg font-semibold text-text-primary">Analysis Result</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-base-elevated rounded-md transition-colors"
             aria-label="Close drawer"
           >
-            <X size={20} className="text-gray-500" />
+            <X size={20} className="text-text-secondary" />
           </button>
         </div>
 

@@ -53,23 +53,23 @@ function LoginPageInner() {
   }, [user, safeRedirect, router]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-base-surface flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-teal-600 flex items-center justify-center shadow-sm">
+          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-signal-primary flex items-center justify-center shadow-sm">
             <Lock className="md:hidden text-white" size={24} />
             <Lock className="hidden md:block text-white" size={28} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="text-gray-600 mt-1">Sign in to your account</p>
+          <h1 className="text-2xl font-bold text-text-primary">Welcome Back</h1>
+          <p className="text-text-secondary mt-1">Sign in to your account</p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur rounded-2xl border border-gray-200 p-6 md:p-8 shadow-xl">
+        <div className="bg-base-elevated rounded-md border border-border-default p-6 md:p-8 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="label">Email</label>
               <div className="relative">
-                <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" />
                 <input
                   type="email"
                   value={email}
@@ -84,7 +84,7 @@ function LoginPageInner() {
             <div>
               <label className="label">Password</label>
               <div className="relative">
-                <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" />
                 <input
                   type="password"
                   value={password}
@@ -99,15 +99,15 @@ function LoginPageInner() {
             <button 
               type="submit" 
               disabled={loading} 
-              className="w-full px-4 py-3 bg-gradient-to-r from-teal-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="text-center text-sm text-text-secondary mt-6">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-teal-700 hover:text-teal-800 font-medium">
+            <Link href="/signup" className="text-signal-primary hover:text-signal-primary/80 font-medium">
               Sign up
             </Link>
           </p>
@@ -119,7 +119,7 @@ function LoginPageInner() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-sm text-gray-500">Loading...</div>}>
+    <Suspense fallback={<div className="p-8 text-sm text-text-tertiary">Loading...</div>}>
       <LoginPageInner />
     </Suspense>
   );

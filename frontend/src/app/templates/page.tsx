@@ -155,7 +155,7 @@ export default function TemplatesPage() {
             </p>
             <button
               onClick={() => router.push('/analyze')}
-              className="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors inline-flex items-center gap-2"
+              className="btn-primary inline-flex items-center gap-2"
             >
               <Sparkles className="w-5 h-5" />
               Go to Analyze

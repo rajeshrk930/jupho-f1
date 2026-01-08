@@ -17,16 +17,16 @@ export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick,
   if (compact) {
     if (isPro) {
       return (
-        <div className="flex items-center gap-2 bg-teal-600 px-3 py-1.5 rounded-full">
-          <Zap className="w-3.5 h-3.5 text-white" />
-          <span className="text-white text-xs font-semibold">Pro</span>
+        <div className="flex items-center gap-2 bg-signal-primary/10 text-signal-primary border border-signal-primary/20 px-3 py-1.5 rounded-sm">
+          <Zap className="w-3.5 h-3.5" />
+          <span className="text-xs font-semibold">Pro</span>
         </div>
       );
     }
     return (
-      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${isNearLimit ? 'bg-orange-100' : 'bg-gray-100'}`}>
-        <MessageSquare className={`w-3.5 h-3.5 ${isNearLimit ? 'text-orange-600' : 'text-gray-600'}`} />
-        <span className={`text-xs font-semibold ${isNearLimit ? 'text-orange-700' : 'text-gray-700'}`}>
+      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm ${isNearLimit ? 'bg-signal-warning/10 text-signal-warning' : 'bg-base-elevated text-text-secondary'}`}>
+        <MessageSquare className="w-3.5 h-3.5" />
+        <span className="text-xs font-semibold">
           {usageCount}/{limit}
         </span>
       </div>
@@ -35,41 +35,41 @@ export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick,
 
   if (isPro) {
     return (
-      <div className="bg-gradient-to-r from-teal-500 to-purple-600 rounded-lg p-4 flex items-center justify-between">
+      <div className="bg-signal-primary/10 border border-signal-primary/20 rounded-md p-4 flex items-center justify-between">
         <div className="flex items-center">
-          <Zap className="w-5 h-5 text-white mr-2" />
+          <Zap className="w-5 h-5 text-signal-primary mr-2" />
           <div>
-            <p className="text-white font-semibold text-sm">Jupho Pro</p>
-            <p className="text-teal-100 text-xs">Unlimited analyses</p>
+            <p className="text-signal-primary font-semibold text-sm">Jupho Pro</p>
+            <p className="text-text-secondary text-xs">Unlimited analyses</p>
           </div>
         </div>
-        <div className="bg-white/20 px-3 py-1 rounded-full">
-          <span className="text-white text-sm font-medium">∞</span>
+        <div className="bg-base-elevated px-3 py-1 rounded-sm">
+          <span className="text-signal-primary text-sm font-medium">∞</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`rounded-lg p-4 border-2 ${isNearLimit ? 'border-orange-300 bg-orange-50' : 'border-gray-200 bg-white'}`}>
+    <div className={`rounded-md p-4 border ${isNearLimit ? 'border-signal-warning/20 bg-signal-warning/10' : 'border-border-default bg-base-surface'}`}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center">
-          <MessageSquare className={`w-4 h-4 mr-2 ${isNearLimit ? 'text-orange-600' : 'text-gray-600'}`} />
-          <p className={`text-sm font-medium ${isNearLimit ? 'text-orange-900' : 'text-gray-700'}`}>
+          <MessageSquare className={`w-4 h-4 mr-2 ${isNearLimit ? 'text-signal-warning' : 'text-text-secondary'}`} />
+          <p className={`text-sm font-medium ${isNearLimit ? 'text-signal-warning' : 'text-text-secondary'}`}>
             Analyses Today
           </p>
         </div>
-        <span className={`text-sm font-bold ${isNearLimit ? 'text-orange-600' : 'text-gray-900'}`}>
+        <span className={`text-sm font-bold ${isNearLimit ? 'text-signal-warning' : 'text-text-primary'}`}>
           {usageCount}/{limit}
         </span>
       </div>
 
-      <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+      <div className="w-full bg-base-elevated rounded-sm h-2 mb-3">
         <div
-          className={`h-2 rounded-full transition-all ${
+          className={`h-2 rounded-sm transition-all ${
             isNearLimit
-              ? 'bg-gradient-to-r from-orange-500 to-red-500'
-              : 'bg-gradient-to-r from-teal-500 to-purple-500'
+              ? 'bg-signal-warning'
+              : 'bg-signal-primary'
           }`}
           style={{ width: `${percentage}%` }}
         />
@@ -78,19 +78,19 @@ export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick,
       {usageCount >= limit ? (
         <button
           onClick={onUpgradeClick}
-          className="w-full bg-gradient-to-r from-teal-600 to-purple-600 text-white py-2 rounded-lg text-sm font-semibold hover:from-teal-700 hover:to-purple-700 transition-all"
+          className="w-full bg-signal-primary text-white py-2 rounded-sm text-sm font-semibold hover:bg-signal-primary/90 transition-all"
         >
           Upgrade to Pro
         </button>
       ) : isNearLimit ? (
         <button
           onClick={onUpgradeClick}
-          className="w-full border border-teal-600 text-teal-600 py-2 rounded-lg text-sm font-semibold hover:bg-teal-50 transition-all"
+          className="w-full border border-signal-primary text-signal-primary py-2 rounded-sm text-sm font-semibold hover:bg-signal-primary/10 transition-all"
         >
           Get Unlimited
         </button>
       ) : (
-        <p className="text-xs text-gray-500 text-center">
+        <p className="text-xs text-text-secondary text-center">
           Resets daily at midnight
         </p>
       )}
