@@ -5,6 +5,17 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    'bg-base',
+    'bg-base-surface',
+    'bg-base-elevated',
+    'text-text-primary',
+    'text-text-secondary',
+    'text-text-tertiary',
+    'bg-signal-primary',
+    'text-signal-primary',
+    'border-border-default',
+  ],
   theme: {
     extend: {
       colors: {

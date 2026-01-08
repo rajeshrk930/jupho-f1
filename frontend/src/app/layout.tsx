@@ -26,7 +26,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
-          <div className="flex min-h-screen bg-gray-50">
+          <div className="flex min-h-screen bg-base">
             <Sidebar />
             <main className="flex-1 overflow-x-hidden pb-16 lg:pb-0">
               {children}

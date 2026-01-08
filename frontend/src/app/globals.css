@@ -28,6 +28,10 @@
     
     color-scheme: dark;
   }
+  
+  html {
+    background: #0B0F14;
+  }
 }
 
 body {
