@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Objective, ProblemFaced, WhatChanged, AudienceType } from '@/types';
 import { Target, AlertCircle, Users, TrendingUp, DollarSign, Upload, FileText, Type } from 'lucide-react';
@@ -47,6 +47,8 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
   const [ctr, setCtr] = useState('');
   const [cpm, setCpm] = useState('');
   const [cpa, setCpa] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+  const [step, setStep] = useState(1); // mobile wizard step 1..3
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -67,7 +69,15 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    // If mobile wizard is active, advance steps instead of submitting
+    if (isMobile) {
+      // On final step, submit
+      if (step < 3) {
+        handleNext();
+        return;
+      }
+    }
+
     // Validate required fields
     if (!file) {
       alert('Please upload a creative file');
@@ -77,7 +87,7 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
       alert('Please fill in all required metrics: CTR, CPM, and Cost per Result');
       return;
     }
-    
+
     const formData = new FormData();
     formData.append('creative', file);
     formData.append('creativeType', creativeType);
@@ -94,10 +104,39 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
     onSubmit(formData);
   };
 
+  // Mobile detection
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1023px)');
+    const set = () => setIsMobile(mq.matches);
+    set();
+    mq.addEventListener?.('change', set);
+    return () => mq.removeEventListener?.('change', set);
+  }, []);
+
+  const handleNext = () => {
+    // Validate step-specific fields before advancing
+    if (step === 1) {
+      if (!file) {
+        alert('Please upload a creative file to continue');
+        return;
+      }
+    }
+    if (step === 2) {
+      if (!ctr || !cpm || !cpa) {
+        alert('Please fill CTR, CPM and Cost per Result to continue');
+        return;
+      }
+    }
+    setStep((s) => Math.min(3, s + 1));
+  };
+
+  const handleBack = () => setStep((s) => Math.max(1, s - 1));
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Creative Upload */}
-      <div>
+      {/* Step 1: Creative Upload (mobile) */}
+      {(!isMobile || step === 1) && (
+        <div>
         <label className="label">
           Creative (Image or Video) <span className="text-red-500">*</span>
         </label>
@@ -134,8 +173,11 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
             </div>
           )}
         </div>
-      </div>
+      )}
 
+      {/* Step 3: Optional details (mobile) */}
+      {(!isMobile || step === 3) && (
+      <>
       {/* Primary Text */}
       <div>
         <label className="label flex items-center gap-2">
@@ -242,74 +284,93 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
             </option>
           ))}
         </select>
-      </div>
+      </>
+      )}
 
-      {/* Metrics - REQUIRED */}
-      <div>
-        <label className="label flex items-center gap-2">
-          <TrendingUp size={16} className="text-gray-500" />
-          Metrics <span className="text-red-500">*</span>
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <div className="relative">
-              <input
-                type="number"
-                step="0.01"
-                value={ctr}
-                onChange={(e) => setCtr(e.target.value)}
-                className="input pr-8"
-                placeholder="CTR *"
-                required
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">%</span>
+      {/* Step 2: Metrics - REQUIRED (mobile) */}
+      {(!isMobile || step === 2) && (
+        <div>
+          <label className="label flex items-center gap-2">
+            <TrendingUp size={16} className="text-gray-500" />
+            Metrics <span className="text-red-500">*</span>
+          </label>
+          <div className="grid grid-cols-1 gap-3">
+            <div>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.01"
+                  value={ctr}
+                  onChange={(e) => setCtr(e.target.value)}
+                  className="input pr-8"
+                  placeholder="CTR *"
+                  required
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">%</span>
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="relative">
-              <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="number"
-                step="0.01"
-                value={cpm}
-                onChange={(e) => setCpm(e.target.value)}
-                className="input pl-10"
-                placeholder="CPM *"
-                required
-              />
+            <div>
+              <div className="relative">
+                <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="number"
+                  step="0.01"
+                  value={cpm}
+                  onChange={(e) => setCpm(e.target.value)}
+                  className="input pl-10"
+                  placeholder="CPM *"
+                  required
+                />
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="relative">
-              <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="number"
-                step="0.01"
-                value={cpa}
-                onChange={(e) => setCpa(e.target.value)}
-                className="input pl-10"
-                placeholder="Cost/Result *"
-                required
-              />
+            <div>
+              <div className="relative">
+                <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="number"
+                  step="0.01"
+                  value={cpa}
+                  onChange={(e) => setCpa(e.target.value)}
+                  className="input pl-10"
+                  placeholder="Cost/Result *"
+                  required
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="btn-primary w-full py-3 flex items-center justify-center gap-2"
-      >
-        {isLoading && (
-          <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-        )}
-        {isLoading ? 'Analyzing...' : 'Analyze Creative!'}
-      </button>
+      {/* Mobile Wizard Controls */}
+      {isMobile ? (
+        <div className="flex items-center gap-3">
+          {step > 1 ? (
+            <button type="button" onClick={handleBack} className="flex-1 px-4 py-3 border rounded-lg text-sm">
+              Back
+            </button>
+          ) : (
+            <div className="flex-1" />
+          )}
+          <button type="submit" disabled={isLoading} className="flex-1 bg-teal-600 text-white px-4 py-3 rounded-lg text-sm">
+            {isLoading ? 'Analyzing...' : step < 3 ? 'Next' : 'Analyze'}
+          </button>
+        </div>
+      ) : (
+        /* Desktop submit */
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="btn-primary w-full py-3 flex items-center justify-center gap-2"
+        >
+          {isLoading && (
+            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          )}
+          {isLoading ? 'Analyzing...' : 'Analyze Creative!'}
+        </button>
+      )}
     </form>
   );
 }
