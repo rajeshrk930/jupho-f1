@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { MessageSquare, Send, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { MessageSquare, Send, Sparkles, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { chatApi, trackingApi } from '@/lib/api';
 import { Analysis, ChatMessage } from '@/types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 interface InlineChatProps {
   analysis: Analysis;
@@ -142,12 +143,21 @@ export function InlineChat({ analysis }: InlineChatProps) {
           <span className="font-semibold">AI Assistant</span>
           <span className="text-xs bg-white/20 px-2 py-0.5 rounded">Context-aware</span>
         </div>
-        <button
-          onClick={() => setIsExpanded(false)}
-          className="p-1 hover:bg-white/20 rounded transition-colors"
-        >
-          <ChevronUp className="w-5 h-5 text-white" />
-        </button>
+        <div className="flex items-center gap-2">
+          <Link 
+            href={`/assistant?analysisId=${analysis.id}`}
+            className="text-xs text-white/90 hover:text-white flex items-center gap-1 px-2 py-1 rounded hover:bg-white/10 transition-colors"
+          >
+            <ExternalLink className="w-3 h-3" />
+            Open full chat
+          </Link>
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="p-1 hover:bg-white/20 rounded transition-colors"
+          >
+            <ChevronUp className="w-5 h-5 text-white" />
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
