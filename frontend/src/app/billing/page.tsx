@@ -21,13 +21,21 @@ export default function BillingPage() {
   const queryClient = useQueryClient();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-  const { data: usageData, isLoading: loading, isError } = useQuery({
+  const { data: usageData, isLoading: loading, isError, error } = useQuery({
     queryKey: ['usage-stats'],
     queryFn: async () => {
-      const response = await chatApi.getUsage();
-      return response.data;
+      try {
+        const response = await chatApi.getUsage();
+        return response.data;
+      } catch (err: any) {
+        console.error('Usage API Error:', err);
+        console.error('Error response:', err.response?.data);
+        console.error('Error status:', err.response?.status);
+        throw err;
+      }
     },
     refetchInterval: 10000, // Auto-refresh every 10 seconds
+    retry: 2,
   });
 
   const usageStats = usageData || null;
@@ -59,12 +67,24 @@ export default function BillingPage() {
   }
 
   if (isError) {
+    const errorMessage = (error as any)?.response?.data?.message || (error as any)?.message || 'Unknown error';
+    const errorStatus = (error as any)?.response?.status;
+    
     return (
       <div className="min-h-screen bg-gray-50 py-12 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <p className="text-red-600 font-medium">Failed to load usage stats. Please try refreshing the page.</p>
+        <div className="max-w-5xl mx-auto space-y-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-red-800 font-semibold mb-2">Failed to load usage stats</h2>
+            <p className="text-red-600 mb-2">Error: {errorMessage}</p>
+            {errorStatus && <p className="text-red-600 mb-2">Status: {errorStatus}</p>}
+            <p className="text-red-600 text-sm">Please check the console for more details or try refreshing the page.</p>
           </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+          >
+            Refresh Page
+          </button>
         </div>
       </div>
     );
