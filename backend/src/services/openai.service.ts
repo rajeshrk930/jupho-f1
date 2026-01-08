@@ -54,7 +54,6 @@ export interface ChatMessageInput {
 }
 
 export async function getAssistantReply(history: ChatMessageInput[], briefing?: string, isGenerator: boolean = false): Promise<string> {
-export async function getAssistantReply(history: ChatMessageInput[], briefing?: string, isGenerator: boolean = false): Promise<string> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error('OPENAI_API_KEY is not configured');
   }

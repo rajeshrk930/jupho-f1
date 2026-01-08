@@ -8,6 +8,7 @@ import { paymentRoutes } from './routes/payment.routes';
 import { chatRoutes } from './routes/chat.routes';
 import trackingRoutes from './routes/tracking.routes';
 import templateRoutes from './routes/template.routes';
+import adminRoutes from './routes/admin.routes';
 import { errorHandler } from './middleware/errorHandler';
 import path from 'path';
 
@@ -50,6 +51,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/tracking', trackingRoutes);
 app.use('/api/templates', templateRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

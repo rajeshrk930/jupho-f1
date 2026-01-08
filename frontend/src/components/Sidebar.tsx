@@ -11,7 +11,8 @@ import {
   User, 
   Settings, 
   LogOut,
-  Crown
+  Crown,
+  Shield
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -33,12 +34,22 @@ export function Sidebar() {
 
   const isPro = user?.proExpiresAt && new Date(user.proExpiresAt) > new Date();
 
+  // Check if user is admin (based on ADMIN_EMAILS env variable)
+  const isAdmin = user?.email && process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',')
+    .map(email => email.trim().toLowerCase())
+    .includes(user.email.toLowerCase());
+
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/analyze', label: 'Analyze', icon: Zap },
     { href: '/templates', label: 'Saved Templates', icon: BookMarked },
     { href: '/history', label: 'History', icon: History },
   ];
+
+  // Add admin link for admin users
+  if (isAdmin) {
+    navItems.push({ href: '/admin', label: 'Admin', icon: Shield });
+  }
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard';

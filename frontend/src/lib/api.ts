@@ -247,3 +247,36 @@ export const settingsApi = {
   },
 };
 
+// Admin API
+export const adminApi = {
+  getStats: async () => {
+    const response = await api.get('/admin/stats');
+    return response.data;
+  },
+  getUsers: async (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    plan?: 'FREE' | 'PRO' | '';
+    sortBy?: string;
+    order?: 'asc' | 'desc';
+  }) => {
+    const response = await api.get('/admin/users', { params });
+    return response.data;
+  },
+  getUserDetails: async (userId: string) => {
+    const response = await api.get(`/admin/users/${userId}`);
+    return response.data;
+  },
+  updateUser: async (userId: string, data: {
+    plan?: 'FREE' | 'PRO';
+  }) => {
+    const response = await api.patch(`/admin/users/${userId}`, data);
+    return response.data;
+  },
+  deleteUser: async (userId: string) => {
+    const response = await api.delete(`/admin/users/${userId}`);
+    return response.data;
+  },
+};
+
