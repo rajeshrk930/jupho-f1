@@ -226,7 +226,7 @@ export default function AssistantPage() {
 
   const handleSend = async (isAutoStart = false) => {
     const baseMessage = isAutoStart
-      ? 'Please review the analysis context and provide immediate actionable advice to improve the metrics.'
+      ? 'I just analyzed my ad and got the diagnosis. Based on the metrics and recommended fix, what should I do first to implement this?'
       : input.trim();
 
     if (!baseMessage) return;
@@ -495,8 +495,8 @@ export default function AssistantPage() {
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-sm">
                       <div className="flex items-center justify-between mb-3">
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">💡 Quick Context (Optional)</p>
-                          <p className="text-xs text-gray-600">Add metrics for more precise advice</p>
+                          <p className="text-sm font-semibold text-gray-900">💡 Add Context (Optional)</p>
+                          <p className="text-xs text-gray-600">For more precise advice, add your ad metrics</p>
                         </div>
                         <span className="text-[11px] font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded">Optional</span>
                       </div>
@@ -654,16 +654,21 @@ export default function AssistantPage() {
 
           <div className="border-t border-gray-200 pt-4 sticky bottom-0 bg-white">
             {analysisId && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-                  <span className="text-xs font-medium text-purple-800">
-                    Context from analysis will be included in your first message
-                  </span>
+              <div className="bg-gradient-to-r from-teal-50 to-purple-50 border-2 border-teal-300 rounded-lg px-4 py-3 flex items-center justify-between mb-3 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Connected to your analysis</p>
+                    <p className="text-xs text-gray-600">I have all your metrics and diagnosis. Let's implement the fix!</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => setAnalysisId(null)}
-                  className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                  className="text-xs text-gray-500 hover:text-gray-700 font-medium p-2 hover:bg-white/50 rounded"
                 >
                   ✕
                 </button>
