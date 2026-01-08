@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/store';
 import { chatApi } from '@/lib/api';
 import { Zap, Check, Calendar, TrendingUp, Clock, Download, Receipt } from 'lucide-react';
@@ -17,34 +18,22 @@ interface UsageStats {
 
 export default function BillingPage() {
   const { user } = useAuthStore();
-  const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
+  const queryClient = useQueryClient();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  const loadUsageStats = async () => {
-    try {
-      const resp = await chatApi.getUsage();
-      setUsageStats(resp.data);
-    } catch (e) {
-      toast.error('Failed to load usage stats');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: usageData, isLoading: loading, isError } = useQuery({
+    queryKey: ['usage-stats'],
+    queryFn: async () => {
+      const response = await chatApi.getUsage();
+      return response.data;
+    },
+    refetchInterval: 10000, // Auto-refresh every 10 seconds
+  });
 
-  useEffect(() => {
-    void loadUsageStats();
-    
-    // Auto-refresh usage stats every 10 seconds
-    const interval = setInterval(() => {
-      void loadUsageStats();
-    }, 10000);
-    
-    return () => clearInterval(interval);
-  }, []);
+  const usageStats = usageData || null;
 
   const handleUpgradeComplete = () => {
-    void loadUsageStats();
+    queryClient.invalidateQueries({ queryKey: ['usage-stats'] });
     toast.success('Welcome to Jupho Pro! You now have unlimited questions.');
   };
 
@@ -63,6 +52,18 @@ export default function BillingPage() {
               <div className="h-64 bg-gray-200 rounded-2xl"></div>
               <div className="h-64 bg-gray-200 rounded-2xl"></div>
             </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p className="text-red-600 font-medium">Failed to load usage stats. Please try refreshing the page.</p>
           </div>
         </div>
       </div>

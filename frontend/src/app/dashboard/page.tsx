@@ -9,20 +9,35 @@ import { AnalysisResult } from '@/components/AnalysisResult';
 import { StatCard } from '@/components/StatCard';
 import { StatusBadge } from '@/components/StatusBadge';
 import MobileTopBar from '@/components/MobileTopBar';
+import UsageCounter from '@/components/UsageCounter';
+import UpgradeModal from '@/components/UpgradeModal';
+import { chatApi } from '@/lib/api';
 import { Analysis } from '@/types';
 import { BarChart3, Calendar, TrendingUp, Zap, MessageSquare, FileText, Crown, Sparkles, Clock, ChevronDown } from 'lucide-react';
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
   const [showLatestAnalysis, setShowLatestAnalysis] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['dashboard-analyses'],
     queryFn: () => analysisApi.getAll({ limit: 5 }),
   });
 
+  // Fetch usage stats
+  const { data: usageData } = useQuery({
+    queryKey: ['usage-stats'],
+    queryFn: async () => {
+      const response = await chatApi.getUsage();
+      return response.data;
+    },
+  });
+
   const analyses: Analysis[] = data?.data?.analyses || [];
   const total = data?.data?.pagination?.total ?? analyses.length;
+  const isPro = user?.proExpiresAt && new Date(user.proExpiresAt) > new Date();
+  const usageCount = usageData?.apiUsageCount || 0;
 
   const monthlyCount = useMemo(() => {
     const now = Date.now();
@@ -60,18 +75,27 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <MobileTopBar title="Dashboard" />
+      <MobileTopBar 
+        title="Dashboard" 
+        rightContent={<UsageCounter isPro={!!isPro} usageCount={usageCount} limit={3} onUpgradeClick={() => setShowUpgradeModal(true)} compact />}
+      />
       <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-6 pb-20 lg:pb-6">
         {/* Simple Header */}
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hidden lg:block">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
               <p className="text-xs text-teal-600 font-medium uppercase tracking-wider">Dashboard</p>
               <h1 className="text-2xl font-semibold text-gray-900">Welcome back{user?.name ? `, ${user.name}` : ''}!</h1>
               <p className="text-sm text-gray-600">See your recent analyses and jump back into the work.</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/analyze" className="btn-primary">+ New Analysis</Link>
+            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+              <UsageCounter 
+                isPro={!!isPro} 
+                usageCount={usageCount} 
+                limit={3} 
+                onUpgradeClick={() => setShowUpgradeModal(true)} 
+              />
+              <Link href="/analyze" className="btn-primary whitespace-nowrap">+ New Analysis</Link>
             </div>
           </div>
         </div>
@@ -258,6 +282,11 @@ export default function DashboardPage() {
           </section>
         )}
       </div>
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onUpgradeComplete={() => setShowUpgradeModal(false)}
+      />
     </div>
   );
 }

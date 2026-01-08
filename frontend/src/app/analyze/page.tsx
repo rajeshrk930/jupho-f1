@@ -40,7 +40,7 @@ export default function AnalyzePage() {
 
   const recentAnalyses = recentData?.data?.analyses || [];
   const isPro = user?.proExpiresAt && new Date(user.proExpiresAt) > new Date();
-  const usageCount = usageData?.analysisCount || 0;
+  const usageCount = usageData?.apiUsageCount || 0;
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
@@ -69,6 +69,7 @@ export default function AnalyzePage() {
         queryClient.invalidateQueries({ queryKey: ['analyses'] });
         queryClient.invalidateQueries({ queryKey: ['recent-analyses'] });
         queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+        queryClient.invalidateQueries({ queryKey: ['usage-stats'] });
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Analysis failed');
