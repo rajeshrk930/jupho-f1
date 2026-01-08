@@ -194,52 +194,6 @@ router.get('/export/jsonl', authenticate, async (req: AuthRequest, res: Response
   res.send(lines);
 });
 
-router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
-  const user = req.user!;
-  const convo = await prisma.conversation.findFirst({
-    where: { id: req.params.id, userId: user.id },
-  });
-
-  if (!convo) {
-    return res.status(404).json({ success: false, message: 'Conversation not found' });
-  }
-
-  const messages = await prisma.message.findMany({
-    where: { conversationId: convo.id },
-    orderBy: { createdAt: 'asc' },
-  });
-
-  res.json({ success: true, data: { conversationId: convo.id, title: convo.title, messages } });
-});
-
-router.post(
-  '/:messageId/feedback',
-  authenticate,
-  [body('feedback').isIn(['up', 'down'])],
-  async (req: AuthRequest, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
-    }
-
-    const user = req.user!;
-    const message = await prisma.message.findFirst({
-      where: { id: req.params.messageId, userId: user.id },
-    });
-
-    if (!message) {
-      return res.status(404).json({ success: false, message: 'Message not found' });
-    }
-
-    const updated = await prisma.message.update({
-      where: { id: message.id },
-      data: { feedback: req.body.feedback },
-    });
-
-    res.json({ success: true, data: updated });
-  }
-);
-
 // Get usage stats
 router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
   try {
@@ -286,5 +240,51 @@ router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, message: 'Failed to get usage stats' });
   }
 });
+
+router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
+  const user = req.user!;
+  const convo = await prisma.conversation.findFirst({
+    where: { id: req.params.id, userId: user.id },
+  });
+
+  if (!convo) {
+    return res.status(404).json({ success: false, message: 'Conversation not found' });
+  }
+
+  const messages = await prisma.message.findMany({
+    where: { conversationId: convo.id },
+    orderBy: { createdAt: 'asc' },
+  });
+
+  res.json({ success: true, data: { conversationId: convo.id, title: convo.title, messages } });
+});
+
+router.post(
+  '/:messageId/feedback',
+  authenticate,
+  [body('feedback').isIn(['up', 'down'])],
+  async (req: AuthRequest, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+
+    const user = req.user!;
+    const message = await prisma.message.findFirst({
+      where: { id: req.params.messageId, userId: user.id },
+    });
+
+    if (!message) {
+      return res.status(404).json({ success: false, message: 'Message not found' });
+    }
+
+    const updated = await prisma.message.update({
+      where: { id: message.id },
+      data: { feedback: req.body.feedback },
+    });
+
+    res.json({ success: true, data: updated });
+  }
+);
 
 export { router as chatRoutes };
