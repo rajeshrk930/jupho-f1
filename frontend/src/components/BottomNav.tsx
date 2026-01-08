@@ -2,17 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, History, BookTemplate, CreditCard, HelpCircle } from 'lucide-react';
+import { LayoutDashboard, FileText, History, BookTemplate, CreditCard } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
 
   const tabs = [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/analyze', label: 'Analyze', icon: FileText },
     { href: '/history', label: 'History', icon: History },
     { href: '/templates', label: 'Templates', icon: BookTemplate },
     { href: '/billing', label: 'Billing', icon: CreditCard },
-    { href: '/help', label: 'Help', icon: HelpCircle },
   ];
 
   return (

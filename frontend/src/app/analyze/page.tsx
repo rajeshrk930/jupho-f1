@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import MobileTopBar from '@/components/MobileTopBar';
 import UsageCounter from '@/components/UsageCounter';
+import UpgradeModal from '@/components/UpgradeModal';
 
 export default function AnalyzePage() {
   const queryClient = useQueryClient();

@@ -4,7 +4,6 @@ import type { NextRequest } from 'next/server';
 const PROTECTED_PATHS = [
   '/dashboard',
   '/analyze',
-  '/assistant',
   '/history',
 ];
 
@@ -28,8 +27,6 @@ export const config = {
     '/dashboard',
     '/dashboard/:path*',
     '/analyze',
-    '/assistant',
-    '/assistant/:path*',
     '/history',
     '/history/:path*',
   ],

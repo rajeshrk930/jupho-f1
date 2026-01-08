@@ -76,7 +76,7 @@ ${analysis.singleFix}`;
   return (
     <div className="space-y-6">
       {/* Metrics Cards */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
         <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 shadow-sm">
           <p className="text-xs font-medium text-gray-600 mb-1">CTR</p>
           <p className="text-lg sm:text-xl font-bold text-gray-900">{analysis.ctr}%</p>
@@ -166,7 +166,7 @@ ${analysis.singleFix}`;
               </span>
             </div>
             <div className="prose prose-sm max-w-none">
-              <pre className="whitespace-pre-wrap font-sans text-gray-800 text-[15px] leading-relaxed bg-white/50 p-4 rounded-lg border border-purple-100">
+              <pre className="whitespace-pre-wrap font-sans text-gray-800 text-[15px] leading-relaxed bg-white/50 p-4 rounded-lg border border-purple-100 overflow-x-auto">
                 {analysis.additionalNotes}
               </pre>
             </div>
