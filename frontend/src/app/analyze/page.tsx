@@ -166,7 +166,7 @@ export default function AnalyzePage() {
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="text-xs font-bold px-2 py-1 bg-teal-100 text-teal-900 rounded-lg">CTR {analysis.ctr}%</span>
                               {analysis.industry && (
-                                <span className="text-xs px-2 py-1 rounded-lg bg-purple-100 text-purple-900 font-bold">
+                                <span className="text-xs px-2 py-1 rounded-lg bg-slate-100 text-slate-900 font-bold">
                                   {analysis.industry.replace('_', ' ')}
                                 </span>
                               )}
@@ -179,7 +179,7 @@ export default function AnalyzePage() {
                 </div>
 
                 {/* Quick Tip */}
-                <div className="mt-5 pt-5 border-t-2 border-gray-200 bg-gradient-to-r from-purple-100 to-pink-100 p-4 rounded-xl">
+                <div className="mt-5 pt-5 border-t-2 border-gray-200 bg-gradient-to-r from-blue-50 to-slate-100 p-4 rounded-xl">
                   <p className="text-sm text-gray-900 font-bold">
                     💡 <span className="font-black">Pro Tip:</span> Compare multiple creatives to find patterns in what works for your audience
                   </p>

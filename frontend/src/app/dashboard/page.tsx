@@ -91,33 +91,33 @@ export default function DashboardPage() {
 
           <Link
             href="/history"
-            className="bg-gradient-to-br from-green-500 to-green-700 border-4 border-green-900 rounded-2xl p-6 lg:p-8 hover:shadow-colored-teal transition-all group min-w-[300px] lg:min-w-0 snap-start"
+            className="bg-gradient-to-br from-slate-600 to-slate-800 border-4 border-slate-900 rounded-2xl p-6 lg:p-8 hover:shadow-bold transition-all group min-w-[300px] lg:min-w-0 snap-start"
           >
             <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-bold">
-              <FileText size={28} className="lg:w-8 lg:h-8 text-green-600" />
+              <FileText size={28} className="lg:w-8 lg:h-8 text-slate-700" />
             </div>
             <h3 className="font-extrabold text-white mb-2 text-lg lg:text-xl">View Reports</h3>
-            <p className="text-sm lg:text-base text-green-50 font-medium">Browse all your analyses</p>
+            <p className="text-sm lg:text-base text-slate-50 font-medium">Browse all your analyses</p>
           </Link>
 
           <Link
             href="/billing"
-            className="bg-gradient-to-br from-orange-500 to-orange-700 border-4 border-orange-900 rounded-2xl p-6 lg:p-8 hover:shadow-colored-orange transition-all group min-w-[300px] lg:min-w-0 snap-start"
+            className="bg-gradient-to-br from-indigo-600 to-indigo-800 border-4 border-indigo-900 rounded-2xl p-6 lg:p-8 hover:shadow-colored-indigo transition-all group min-w-[300px] lg:min-w-0 snap-start"
           >
             <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-bold">
-              <Crown size={28} className="lg:w-8 lg:h-8 text-orange-600" />
+              <Crown size={28} className="lg:w-8 lg:h-8 text-indigo-700" />
             </div>
             <h3 className="font-extrabold text-white mb-2 text-lg lg:text-xl">Upgrade Pro</h3>
-            <p className="text-sm lg:text-base text-orange-50 font-medium">Unlock unlimited features</p>
+            <p className="text-sm lg:text-base text-indigo-50 font-medium">Unlock unlimited features</p>
           </Link>
         </div>
 
         {/* Tips & Insights Section */}
         {analyses.length > 0 && (
-          <div className="bg-gradient-to-r from-purple-600 to-pink-600 border-4 border-purple-900 rounded-2xl p-6 lg:p-8 shadow-bold-xl">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 border-4 border-indigo-900 rounded-2xl p-6 lg:p-8 shadow-bold-xl">
             <div className="flex items-start gap-4 lg:gap-6">
               <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 shadow-bold">
-                <Sparkles size={24} className="lg:w-7 lg:h-7 text-purple-700" />
+                <Sparkles size={24} className="lg:w-7 lg:h-7 text-blue-700" />
               </div>
               <div className="flex-1">
                 <h3 className="font-extrabold text-white mb-2 lg:mb-3 text-lg lg:text-xl">💡 QUICK TIP</h3>
@@ -151,9 +151,9 @@ export default function DashboardPage() {
                 <p className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">{total}</p>
                 <p className="text-sm lg:text-base text-gray-600 font-bold">All time</p>
               </div>
-              <div className="stat-card-bold border-purple-600 min-w-[180px] lg:min-w-0">
+              <div className="stat-card-bold border-indigo-600 min-w-[180px] lg:min-w-0">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-md">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-md">
                     <Calendar size={20} className="text-white" />
                   </div>
                   <p className="text-sm lg:text-base text-gray-700 font-bold uppercase tracking-wide">This month</p>
@@ -161,9 +161,9 @@ export default function DashboardPage() {
                 <p className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">{monthlyCount}</p>
                 <p className="text-sm lg:text-base text-gray-600 font-bold">Past 30 days</p>
               </div>
-              <div className="stat-card-bold border-orange-600 min-w-[180px] lg:min-w-0">
+              <div className="stat-card-bold border-slate-600 min-w-[180px] lg:min-w-0">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-md">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-500 to-slate-700 flex items-center justify-center shadow-md">
                     <TrendingUp size={20} className="text-white" />
                   </div>
                   <p className="text-sm lg:text-base text-gray-700 font-bold uppercase tracking-wide">Avg CTR</p>
@@ -208,9 +208,9 @@ export default function DashboardPage() {
               {/* Show 2 cards on mobile/tablet, all 3 on desktop */}
               {recentSlice.map((analysis, idx) => (
                 <article key={analysis.id} className={`bg-white border-l-[6px] rounded-2xl p-4 lg:p-6 space-y-3 lg:space-y-4 shadow-bold hover:shadow-bold-xl group ${
-                  analysis.resultType === 'WINNING' ? 'border-green-600' : 
-                  analysis.resultType === 'AVERAGE' ? 'border-yellow-600' : 
-                  'border-red-600'
+                  analysis.resultType === 'WINNING' ? 'border-emerald-600' : 
+                  analysis.resultType === 'AVERAGE' ? 'border-amber-600' : 
+                  'border-rose-600'
                 } ${idx >= 2 ? 'hidden lg:block' : ''}`}>
                   <div className="flex items-center justify-between">
                     <span className="text-sm md:text-base text-gray-700 font-bold">{new Date(analysis.createdAt).toLocaleDateString()}</span>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-3 text-sm text-gray-700 flex-wrap font-bold">
                       <span className="px-3 py-1 bg-teal-100 text-teal-900 rounded-lg">CTR {analysis.ctr}%</span>
                       {analysis.industry && (
-                        <span className="px-3 py-1 rounded-lg bg-purple-100 text-purple-900">
+                        <span className="px-3 py-1 rounded-lg bg-slate-100 text-slate-900">
                           {analysis.industry.replace('_', ' ')}
                         </span>
                       )}

@@ -22,20 +22,20 @@ export function StatusBadge({ status, size = 'md', showLabel = false }: StatusBa
   const config = {
     WINNING: {
       icon: TrendingUp,
-      color: 'text-green-700',
-      bgColor: 'bg-green-500',
+      color: 'text-emerald-700',
+      bgColor: 'bg-emerald-500',
       label: 'Winning',
     },
     AVERAGE: {
       icon: Minus,
-      color: 'text-yellow-700',
-      bgColor: 'bg-yellow-500',
+      color: 'text-amber-700',
+      bgColor: 'bg-amber-500',
       label: 'Average',
     },
     DEAD: {
       icon: TrendingDown,
-      color: 'text-red-700',
-      bgColor: 'bg-red-500',
+      color: 'text-rose-700',
+      bgColor: 'bg-rose-500',
       label: 'Poor',
     },
   };
