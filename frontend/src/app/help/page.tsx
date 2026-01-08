@@ -43,7 +43,7 @@ const faqs = [
     questions: [
       {
         q: 'How much does Jupho Pro cost?',
-        a: 'Jupho Pro costs ₹999/month. You get unlimited AI questions, priority support, advanced features, and unlimited report exports.'
+        a: 'Jupho Pro costs ₹499/month or ₹4,990/year (save 2 months!). You get unlimited analyses, priority support, advanced features, and unlimited report exports.'
       },
       {
         q: 'Can I cancel anytime?',

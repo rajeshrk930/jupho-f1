@@ -16,15 +16,17 @@ const razorpay = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
   : null;
 
 const PLANS = {
-  PRO: {
-    amount: 99900, // ₹999 in paise (fallback for one-time)
+  PRO_MONTHLY: {
+    amount: 49900, // ₹499 in paise
     currency: 'INR',
-    name: 'Pro Plan'
+    name: 'Pro Plan - Monthly',
+    duration: 30 // days
   },
-  AGENCY: {
-    amount: 299900, // ₹2999 in paise
+  PRO_ANNUAL: {
+    amount: 499000, // ₹4,990 in paise (2 months free!)
     currency: 'INR',
-    name: 'Agency Plan'
+    name: 'Pro Plan - Annual',
+    duration: 365 // days
   }
 };
 
@@ -32,7 +34,7 @@ const PLANS = {
 router.post(
   '/create-order',
   authenticate,
-  [body('plan').isIn(['PRO', 'AGENCY'])],
+  [body('plan').isIn(['PRO_MONTHLY', 'PRO_ANNUAL'])],
   async (req: AuthRequest, res: Response) => {
     try {
       if (!razorpay) {
@@ -50,43 +52,7 @@ router.post(
       const { plan } = req.body;
       const planDetails = PLANS[plan as keyof typeof PLANS];
 
-      // For PRO, prefer subscription via plan_id; fallback to one-time order if plan_id missing
-      if (plan === 'PRO' && process.env.RAZORPAY_PRO_PLAN_ID) {
-        const subscription = await razorpay.subscriptions.create({
-          plan_id: process.env.RAZORPAY_PRO_PLAN_ID,
-          customer_notify: 1,
-          quantity: 1,
-          total_count: 1, // monthly charge, single cycle (renew via Razorpay)
-          notes: {
-            userId: req.user!.id,
-            plan,
-          },
-        });
-
-        await prisma.payment.create({
-          data: {
-            userId: req.user!.id,
-            razorpayOrderId: subscription.id, // storing subscription id in this field
-            amount: planDetails.amount,
-            currency: planDetails.currency,
-            plan: 'PRO',
-            status: 'PENDING',
-          },
-        });
-
-        return res.json({
-          success: true,
-          data: {
-            subscriptionId: subscription.id,
-            amount: planDetails.amount,
-            currency: planDetails.currency,
-            keyId: process.env.RAZORPAY_KEY_ID,
-            mode: 'subscription',
-          },
-        });
-      }
-
-      // Fallback: one-time order (AGENCY or missing plan_id)
+      // Create one-time order for both monthly and annual plans
       const order = await razorpay.orders.create({
         amount: planDetails.amount,
         currency: planDetails.currency,
@@ -103,7 +69,7 @@ router.post(
           razorpayOrderId: order.id,
           amount: planDetails.amount,
           currency: planDetails.currency,
-          plan: plan as 'PRO' | 'AGENCY',
+          plan: 'PRO',
           status: 'PENDING',
         },
       });
@@ -116,6 +82,7 @@ router.post(
           currency: planDetails.currency,
           keyId: process.env.RAZORPAY_KEY_ID,
           mode: 'order',
+          planDuration: planDetails.duration,
         },
       });
     } catch (error) {
@@ -190,15 +157,16 @@ router.post(
         }
       });
 
-      // Update user plan with expiry date (30 days for monthly subscription)
-      const proExpiresAt = payment.plan === 'PRO' 
-        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        : null;
+      // Determine expiry based on plan duration
+      // Monthly: 30 days, Annual: 365 days
+      const { plan: planType } = req.body;
+      const planDetails = PLANS[planType as keyof typeof PLANS];
+      const proExpiresAt = new Date(Date.now() + planDetails.duration * 24 * 60 * 60 * 1000);
         
       await prisma.user.update({
         where: { id: req.user!.id },
         data: { 
-          plan: payment.plan,
+          plan: 'PRO',
           proExpiresAt,
           apiUsageCount: 0 // Reset usage count on upgrade
         }
@@ -207,7 +175,7 @@ router.post(
       res.json({
         success: true,
         message: 'Payment verified successfully',
-        data: { plan: payment.plan }
+        data: { plan: 'PRO', expiresAt: proExpiresAt }
       });
     } catch (error) {
       console.error('Verify payment error:', error);

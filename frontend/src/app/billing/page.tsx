@@ -92,7 +92,7 @@ export default function BillingPage() {
                     {isPro ? 'Jupho Pro' : 'Free Plan'}
                   </h2>
                   <p className={`text-sm ${isPro ? 'text-gray-600' : 'text-gray-600'}`}>
-                    {isPro ? '₹999 / month' : 'No payment required'}
+                    {isPro ? '₹499 / month' : 'No payment required'}
                   </p>
                 </div>
               </div>
@@ -299,7 +299,7 @@ export default function BillingPage() {
                       <div className="text-sm font-medium text-gray-900">Jupho Pro Subscription</div>
                       <div className="text-xs text-gray-500">Monthly plan renewal</div>
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900">₹999.00</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-gray-900">₹499.00</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                         Paid
@@ -380,7 +380,7 @@ export default function BillingPage() {
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">Ready to unlock unlimited potential?</h2>
               <p className="text-teal-50 mb-6">
-                Upgrade to Jupho Pro and get unlimited AI conversations, priority support, and advanced features for just ₹999/month.
+                Upgrade to Jupho Pro and get unlimited analyses, priority support, and advanced features for just ₹499/month.
               </p>
               <button
                 onClick={() => setShowUpgradeModal(true)}

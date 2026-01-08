@@ -22,14 +22,15 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
     setError('');
 
     try {
-      const { orderId, subscriptionId, amount, currency, keyId, mode } = await paymentApi.createOrder('PRO');
+      const planName = selectedPlan === 'annual' ? 'PRO_ANNUAL' : 'PRO_MONTHLY';
+      const { orderId, subscriptionId, amount, currency, keyId, mode } = await paymentApi.createOrder(planName);
 
       const options = {
         key: keyId,
         amount,
         currency,
         name: 'Jupho',
-        description: 'Jupho Pro - Monthly Subscription',
+        description: selectedPlan === 'annual' ? 'Jupho Pro - Annual Subscription' : 'Jupho Pro - Monthly Subscription',
         order_id: mode === 'order' ? orderId : undefined,
         subscription_id: mode === 'subscription' ? subscriptionId : undefined,
         handler: async (response: any) => {
@@ -113,7 +114,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
           >
             Annual
             <span className="absolute -top-2 -right-2 bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-              SAVE 58%
+              SAVE 17%
             </span>
           </button>
         </div>
@@ -122,27 +123,27 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
           {selectedPlan === 'monthly' ? (
             <>
               <div className="flex items-baseline justify-center mb-4">
-                <span className="text-4xl font-bold text-gray-900">₹999</span>
+                <span className="text-4xl font-bold text-gray-900">₹499</span>
                 <span className="text-gray-600 ml-2">/month</span>
               </div>
               <p className="text-center text-sm text-gray-600 mb-4">
-                Billed monthly • ₹11,988/year
+                Billed monthly • ₹5,988/year
               </p>
             </>
           ) : (
             <>
               <div className="flex items-baseline justify-center mb-2">
-                <span className="text-4xl font-bold text-gray-900">₹4,999</span>
+                <span className="text-4xl font-bold text-gray-900">₹4,990</span>
                 <span className="text-gray-600 ml-2">/year</span>
               </div>
               <div className="flex items-center justify-center gap-2 mb-4">
-                <span className="text-sm line-through text-gray-500">₹11,988</span>
+                <span className="text-sm line-through text-gray-500">₹5,988</span>
                 <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">
-                  Save ₹6,989
+                  Save ₹998
                 </span>
               </div>
               <p className="text-center text-sm text-teal-700 font-medium mb-4">
-                Just ₹416/month • Limited to first 50 founders
+                Just ₹416/month • 2 months FREE!
               </p>
             </>
           )}
@@ -174,7 +175,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
           disabled={loading}
           className="w-full bg-gradient-to-r from-teal-600 to-purple-600 text-white py-3.5 rounded-lg font-semibold hover:from-teal-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
         >
-          {loading ? 'Processing...' : selectedPlan === 'annual' ? 'Get Annual Plan - ₹4,999' : 'Get Monthly Plan - ₹999'}
+          {loading ? 'Processing...' : selectedPlan === 'annual' ? 'Get Annual Plan - ₹4,990' : 'Get Monthly Plan - ₹499'}
         </button>
 
         <p className="text-xs text-gray-500 text-center mt-4">

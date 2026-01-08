@@ -4,8 +4,8 @@
 Successfully implemented a complete freemium subscription system for Jupho with Razorpay payment integration.
 
 ## Pricing Model
-- **FREE Plan**: 10 questions/day (resets at midnight IST)
-- **PRO Plan**: ₹999/month for unlimited questions (30-day subscription)
+- **FREE Plan**: 3 analyses/day (resets at midnight IST)
+- **PRO Plan**: ₹499/month or ₹4,990/year (save 2 months!) for unlimited analyses
 
 ---
 
@@ -70,7 +70,7 @@ SQL migration to add new columns to User table (runs automatically on Railway de
 
 **Features**:
 - Gradient background with backdrop blur
-- ₹999/month pricing card with feature list
+- Two plan options: ₹499/month or ₹4,990/year with annual savings badge
 - Razorpay integration (test & live mode support)
 - Loading states and error handling
 - Success callback to refresh usage stats
@@ -155,13 +155,13 @@ SQL migration to add new columns to User table (runs automatically on Railway de
 
 ### Upgrade Flow
 1. User clicks "Upgrade Now" button
-2. Modal opens with ₹999/month pricing
-3. Clicks "Upgrade Now" → Razorpay checkout opens
+2. Modal opens with plan selection: ₹499/month or ₹4,990/year (17% discount)
+3. Selects plan → Clicks "Get Monthly/Annual Plan" → Razorpay checkout opens
 4. Completes payment
-5. Backend verifies payment → sets `proExpiresAt` 30 days out
+5. Backend verifies payment → sets `proExpiresAt` 30 or 365 days out based on plan
 6. Frontend shows success toast: "Welcome to Jupho Pro!"
 7. PRO badge appears in navigation
-8. Usage counter shows "Unlimited" with infinity symbol
+8. Usage counter shows "Unlimited analyses" with infinity symbol
 
 ### PRO User Experience
 1. Usage counter displays "Jupho Pro - Unlimited questions"
@@ -289,10 +289,10 @@ railway run npx prisma migrate deploy
 
 Track these KPIs to measure success:
 - **Conversion Rate**: FREE → PRO upgrades / total FREE users
-- **Monthly Recurring Revenue (MRR)**: Active PRO users × ₹999
-- **Churn Rate**: PRO users who don't renew after 30 days
-- **Average Questions per User**: Total questions / active users
-- **Upgrade Trigger**: How many users hit the 10-question limit
+- **Monthly Recurring Revenue (MRR)**: (Monthly PRO users × ₹499) + (Annual PRO users × ₹4,990 / 12)
+- **Churn Rate**: PRO users who don't renew after their plan expires
+- **Average Analyses per User**: Total analyses / active users
+- **Upgrade Trigger**: How many users hit the 3-analysis/day limit
 
 ---
 
