@@ -95,41 +95,41 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Creative Upload */}
       <div>
         <label className="label">
-          Creative (Image or Video) <span className="text-red-600">*</span>
+          Creative (Image or Video) <span className="text-red-500">*</span>
         </label>
         <div
           {...getRootProps()}
-          className={`border-4 border-dashed rounded-2xl p-8 md:p-10 text-center cursor-pointer ${
+          className={`border-2 border-dashed rounded-lg p-6 md:p-8 text-center cursor-pointer ${
             isDragActive 
-              ? 'border-teal-600 bg-teal-50 shadow-colored-teal' 
+              ? 'border-teal-500 bg-teal-50' 
               : file
-              ? 'border-green-600 bg-green-50 shadow-bold'
-              : 'border-gray-400 hover:border-teal-600 hover:bg-gray-50 shadow-bold'
+              ? 'border-teal-400 bg-teal-50'
+              : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
           }`}
         >
           <input {...getInputProps()} />
           {file ? (
-            <div className="space-y-3">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center shadow-bold">
-                <Upload size={32} className="text-white" />
+            <div className="space-y-2">
+              <div className="w-12 h-12 mx-auto rounded-lg bg-teal-100 flex items-center justify-center">
+                <Upload size={24} className="text-teal-600" />
               </div>
-              <p className="font-black text-gray-900 text-lg">{file.name}</p>
-              <p className="text-base text-gray-700 font-bold">
+              <p className="font-semibold text-gray-900">{file.name}</p>
+              <p className="text-sm text-gray-600">
                 {creativeType} • {(file.size / 1024 / 1024).toFixed(1)} MB
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center shadow-bold">
-                <Upload size={32} className="text-white" />
+            <div className="space-y-3">
+              <div className="w-12 h-12 mx-auto rounded-lg bg-gray-100 flex items-center justify-center">
+                <Upload size={24} className="text-gray-500" />
               </div>
               <div>
-                <p className="text-gray-900 font-black text-lg">Drop your creative here</p>
-                <p className="text-base text-gray-700 mt-2 font-bold">or click to browse</p>
+                <p className="text-gray-700 font-medium">Drop your creative here</p>
+                <p className="text-sm text-gray-500 mt-1">or click to browse</p>
               </div>
             </div>
           )}
@@ -300,15 +300,15 @@ export function AnalyzeForm({ onSubmit, isLoading }: AnalyzeFormProps) {
       <button
         type="submit"
         disabled={isLoading}
-        className="btn-primary w-full py-4 flex items-center justify-center gap-3 text-lg"
+        className="btn-primary w-full flex items-center justify-center gap-2"
       >
         {isLoading && (
-          <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
         )}
-        {isLoading ? 'ANALYZING...' : 'ANALYZE CREATIVE!'}
+        {isLoading ? 'Analyzing...' : 'Analyze Creative'}
       </button>
     </form>
   );

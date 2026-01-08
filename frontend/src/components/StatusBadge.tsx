@@ -44,7 +44,7 @@ export function StatusBadge({ status, size = 'md', showLabel = false }: StatusBa
 
   if (showLabel) {
     return (
-      <span className={`badge-bold ${bgColor} text-white border-2 ${color.replace('text-', 'border-')}`}>
+      <span className={`badge ${bgColor} text-white`}>
         <Icon size={iconSize[size]} />
         {label}
       </span>
