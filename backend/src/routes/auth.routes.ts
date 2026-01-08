@@ -180,4 +180,228 @@ router.get('/me', authenticate, async (req: AuthRequest, res) => {
   }
 });
 
+// Update profile
+router.patch(
+  '/profile',
+  authenticate,
+  [
+    body('name').optional().trim().isLength({ min: 1, max: 100 }),
+    body('email').optional().isEmail().normalizeEmail()
+  ],
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() });
+      }
+
+      const { name, email } = req.body;
+      const userId = req.user!.id;
+
+      // If email is being changed, check if it's already taken
+      if (email) {
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser && existingUser.id !== userId) {
+          return res.status(400).json({
+            success: false,
+            message: 'Email already in use'
+          });
+        }
+      }
+
+      // Update user
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          ...(name !== undefined && { name }),
+          ...(email !== undefined && { email })
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          plan: true,
+          createdAt: true
+        }
+      });
+
+      res.json({
+        success: true,
+        message: 'Profile updated successfully',
+        data: updatedUser
+      });
+    } catch (error) {
+      console.error('Update profile error:', error);
+      res.status(500).json({ success: false, message: 'Failed to update profile' });
+    }
+  }
+);
+
+// Change password
+router.patch(
+  '/password',
+  authenticate,
+  [
+    body('currentPassword').notEmpty(),
+    body('newPassword').isLength({ min: 6 })
+  ],
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() });
+      }
+
+      const { currentPassword, newPassword } = req.body;
+      const userId = req.user!.id;
+
+      // Get user with password
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, password: true }
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      // Verify current password
+      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({
+          success: false,
+          message: 'Current password is incorrect'
+        });
+      }
+
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+      // Update password
+      await prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword }
+      });
+
+      res.json({
+        success: true,
+        message: 'Password changed successfully'
+      });
+    } catch (error) {
+      console.error('Change password error:', error);
+      res.status(500).json({ success: false, message: 'Failed to change password' });
+    }
+  }
+);
+
+// Export user data
+router.get('/export', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    // Fetch all user data
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        plan: true,
+        createdAt: true,
+        analyses: {
+          select: {
+            id: true,
+            creativeType: true,
+            objective: true,
+            primaryReason: true,
+            resultType: true,
+            ctr: true,
+            cpm: true,
+            cpa: true,
+            createdAt: true
+          }
+        },
+        conversations: {
+          select: {
+            id: true,
+            title: true,
+            createdAt: true,
+            messages: {
+              select: {
+                role: true,
+                content: true,
+                createdAt: true
+              }
+            }
+          }
+        },
+        savedTemplates: {
+          select: {
+            id: true,
+            category: true,
+            title: true,
+            content: true,
+            createdAt: true
+          }
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Format data for export
+    const exportData = {
+      account: {
+        email: user.email,
+        name: user.name,
+        plan: user.plan,
+        memberSince: user.createdAt
+      },
+      analyses: user.analyses,
+      conversations: user.conversations,
+      templates: user.savedTemplates,
+      exportedAt: new Date().toISOString()
+    };
+
+    // Set headers for file download
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename=jupho-data-export-${Date.now()}.json`);
+    res.json(exportData);
+  } catch (error) {
+    console.error('Export data error:', error);
+    res.status(500).json({ success: false, message: 'Failed to export data' });
+  }
+});
+
+// Delete account
+router.delete('/account', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    // Delete user (cascade deletes related data via Prisma schema)
+    await prisma.user.delete({
+      where: { id: userId }
+    });
+
+    // Clear auth cookie
+    res.clearCookie('token');
+
+    res.json({
+      success: true,
+      message: 'Account deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete account error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete account' });
+  }
+});
+
 export { router as authRoutes };

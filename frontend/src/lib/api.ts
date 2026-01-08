@@ -227,3 +227,23 @@ export const templateApi = {
   },
 };
 
+// Settings API
+export const settingsApi = {
+  updateProfile: async (data: { name?: string; email?: string }) => {
+    const response = await api.patch('/auth/profile', data);
+    return response.data;
+  },
+  changePassword: async (data: { currentPassword: string; newPassword: string }) => {
+    const response = await api.patch('/auth/password', data);
+    return response.data;
+  },
+  exportData: async () => {
+    const response = await api.get('/auth/export', { responseType: 'blob' });
+    return response.data as Blob;
+  },
+  deleteAccount: async () => {
+    const response = await api.delete('/auth/account');
+    return response.data;
+  },
+};
+

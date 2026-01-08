@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
+import { settingsApi, authApi } from '@/lib/api';
 import { User, Mail, Lock, Bell, Shield, Download, Trash2, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const router = useRouter();
+  const { user, logout } = useAuthStore();
   const [loading, setLoading] = useState(false);
   
   // Profile settings
@@ -28,11 +31,25 @@ export default function SettingsPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      // TODO: Implement API call to update profile
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const updates: { name?: string; email?: string } = {};
+      if (name !== user?.name) updates.name = name;
+      if (email !== user?.email) updates.email = email;
+      
+      if (Object.keys(updates).length === 0) {
+        toast.error('No changes to save');
+        setLoading(false);
+        return;
+      }
+
+      await settingsApi.updateProfile(updates);
+      
+      // Refresh user data
+      const response = await authApi.getMe();
+      useAuthStore.getState().setUser(response.data);
+      
       toast.success('Profile updated successfully');
-    } catch (error) {
-      toast.error('Failed to update profile');
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to update profile');
     } finally {
       setLoading(false);
     }
@@ -50,14 +67,16 @@ export default function SettingsPage() {
     }
     setLoading(true);
     try {
-      // TODO: Implement API call to change password
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await settingsApi.changePassword({
+        currentPassword,
+        newPassword
+      });
       toast.success('Password changed successfully');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (error) {
-      toast.error('Failed to change password');
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to change password');
     } finally {
       setLoading(false);
     }
@@ -65,24 +84,50 @@ export default function SettingsPage() {
 
   const handleExportData = async () => {
     try {
-      toast.success('Data export started. You\'ll receive an email shortly.');
-      // TODO: Implement data export API call
-    } catch (error) {
-      toast.error('Failed to export data');
+      toast.loading('Preparing your data export...');
+      const blob = await settingsApi.exportData();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `jupho-data-export-${Date.now()}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.dismiss();
+      toast.success('Data exported successfully');
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.response?.data?.message || 'Failed to export data');
     }
   };
 
   const handleDeleteAccount = async () => {
     const confirmed = window.confirm(
-      'Are you sure you want to delete your account? This action cannot be undone.'
+      'Are you sure you want to delete your account? This action cannot be undone and will delete all your data permanently.'
     );
     if (!confirmed) return;
     
+    const doubleConfirm = window.prompt(
+      'Type "DELETE" to confirm account deletion:'
+    );
+    if (doubleConfirm !== 'DELETE') {
+      toast.error('Account deletion cancelled');
+      return;
+    }
+    
     try {
-      // TODO: Implement account deletion API call
-      toast.success('Account deletion request submitted');
-    } catch (error) {
-      toast.error('Failed to delete account');
+      setLoading(true);
+      await settingsApi.deleteAccount();
+      toast.success('Account deleted successfully. Goodbye!');
+      logout();
+      router.push('/login');
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to delete account');
+      setLoading(false);
     }
   };
 
