@@ -45,7 +45,7 @@ export default function SettingsPage() {
       
       // Refresh user data
       const response = await authApi.getMe();
-      useAuthStore.getState().setUser(response.data);
+      useAuthStore.getState().setAuth(response.data);
       
       toast.success('Profile updated successfully');
     } catch (error: any) {
