@@ -68,8 +68,8 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className=\"mt-10 text-center\">
-          <p className=\"text-sm text-text-tertiary\">© 2026 Jupho · Built for ad professionals</p>
+        <div className="mt-10 text-center">
+          <p className="text-sm text-text-tertiary">© 2026 Jupho · Built for ad professionals</p>
         </div>
       </div>
     </div>
