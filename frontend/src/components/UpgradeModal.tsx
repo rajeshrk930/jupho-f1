@@ -150,11 +150,11 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
 
           <ul className="space-y-3">
             {[
-              'Unlimited AI assistant questions',
-              'Priority response time',
-              'Advanced analysis features',
-              'Export unlimited reports',
-              'Email support',
+              'Unlimited analyses per day',
+              'Unlimited Quick Fix Generators',
+              'Unlimited PDF exports',
+              'Saved Templates Library',
+              'Priority support',
             ].map((feature) => (
               <li key={feature} className="flex items-start">
                 <Check className="w-5 h-5 text-green-600 mr-3 flex-shrink-0 mt-0.5" />

@@ -35,50 +35,50 @@ export function QuickFixGenerator({ analysis }: QuickFixGeneratorProps) {
           id: 'headlines',
           label: 'Generate 5 High-CTR Headlines',
           icon: Zap,
-          prompt: `Based on this ad analysis:
-Problem: ${analysis.primaryReason}
-Current CTR: ${analysis.ctr}%
-Objective: ${analysis.objective}
+          prompt: `I just analyzed my ad and found: "${analysis.primaryReason}"
 
-Generate 5 alternative headlines that will increase CTR. Make them:
-- Attention-grabbing and specific
-- Value-focused (what user gets)
-- Under 40 characters
-- No generic phrases
+My current metrics:
+- CTR: ${analysis.ctr}%
+- CPM: ₹${analysis.cpm}
+- CPA: ₹${analysis.cpa}
+- Campaign Goal: ${analysis.objective}
 
-Format as numbered list.`
+I need 5 alternative headlines that will grab attention and increase my CTR. Make them specific to my situation - not generic templates. Keep them under 40 characters and focused on the value my audience gets.
+
+Give me headlines I can test tomorrow.`
         },
         {
           id: 'visuals',
           label: 'Suggest 3 Visual Changes',
           icon: Palette,
-          prompt: `Based on this ad analysis:
-Problem: ${analysis.primaryReason}
-Current CTR: ${analysis.ctr}%
+          prompt: `My ad isn't getting enough attention. Here's what's happening:
+- Problem: ${analysis.primaryReason}
+- Current CTR: ${analysis.ctr}%
 
-Suggest 3 specific visual changes to improve CTR. For each change, specify:
-- What to change (background, text size, image, etc.)
-- Exact color codes or dimensions
-- Why it will help
+I need 3 specific visual changes I can make today. For each change, tell me:
+1. Exactly what to change (background color, text size, image placement, etc.)
+2. Specific values (like color codes: #FF6B35, or dimensions: 48px font)
+3. Why it will help MY ad perform better
 
-Be specific and actionable.`
+I'll implement these in Canva, so be specific and actionable.`
         },
         {
           id: 'copy',
           label: 'Write Complete Ad Copy',
           icon: FileText,
-          prompt: `Based on this ad analysis:
-Problem: ${analysis.primaryReason}
-Objective: ${analysis.objective}
-Current CTR: ${analysis.ctr}%
+          prompt: `I need fresh ad copy that converts. Here's my situation:
+- Current problem: ${analysis.primaryReason}
+- Campaign goal: ${analysis.objective}
+- Current CTR: ${analysis.ctr}%
+- Target audience: Indian market
 
-Write complete ad copy with:
-- Primary Text (2-3 lines)
-- Headline (under 40 chars)
-- Description
-- CTA
+Write me complete ad copy with:
+- Primary Text (2-3 engaging lines)
+- Headline (punchy, under 40 characters)
+- Description (value-focused)
+- CTA (action-oriented)
 
-Make it conversion-focused for Indian audience.`
+Make it feel natural and conversational for Indian audience - not corporate or salesy.`
         }
       ];
     }
@@ -89,31 +89,36 @@ Make it conversion-focused for Indian audience.`
           id: 'landing',
           label: 'Optimize Landing Page Copy',
           icon: FileText,
-          prompt: `Based on this ad analysis:
-Problem: ${analysis.primaryReason}
-CTR: ${analysis.ctr}%, CPA: ₹${analysis.cpa}
+          prompt: `People are clicking my ad but not converting. Here's the issue:
+- Problem: ${analysis.primaryReason}
+- CTR: ${analysis.ctr}% (clicks are happening)
+- CPA: ₹${analysis.cpa} (but conversions are expensive)
+- Goal: ${analysis.objective}
 
-Write optimized landing page copy:
-- Headline (matches ad promise)
-- Subheadline
-- 3 key benefits
-- CTA button text
+I need landing page copy that matches my ad promise and gets conversions. Write:
+- Main headline (must match what my ad promised)
+- Subheadline (builds on the promise)
+- 3 key benefits (why they should act now)
+- CTA button text (action-oriented)
 
-Make it match the ad exactly.`
+Make sure the messaging flows from ad → landing page seamlessly.`
         },
         {
           id: 'form',
           label: 'Simplify Form Fields',
           icon: CheckCircle2,
-          prompt: `Based on this ad analysis:
-Problem: ${analysis.primaryReason}
-Objective: ${analysis.objective}
+          prompt: `My landing page form is killing conversions. Here's my situation:
+- Problem: ${analysis.primaryReason}
+- Campaign goal: ${analysis.objective}
 
-List exactly which form fields to keep and which to remove for ${analysis.objective}.
-Format:
-KEEP: (list)
-REMOVE: (list)
-WHY: (brief reason)`
+Tell me EXACTLY which form fields to keep and which to remove for ${analysis.objective} campaigns.
+
+Format your answer like this:
+**KEEP:** (list the essential fields only)
+**REMOVE:** (list what's slowing me down)
+**WHY:** (brief explanation)
+
+Be specific - I need to implement this today.`
         }
       ];
     }
@@ -124,30 +129,30 @@ WHY: (brief reason)`
           id: 'script',
           label: 'Generate Follow-up Script',
           icon: FileText,
-          prompt: `Based on this ad analysis:
-Problem: ${analysis.primaryReason}
-Objective: ${analysis.objective}
+          prompt: `I'm getting leads but they're not converting into sales. Here's the situation:
+- Problem: ${analysis.primaryReason}
+- Campaign goal: ${analysis.objective}
 
-Write a follow-up message script for leads who haven't converted:
-- First message (within 15 min)
-- Day 2 message
-- Day 4 message
-- Final message
+I need follow-up messages for leads who haven't responded yet. Write me a sequence:
+1. **First message** (within 15 minutes of lead coming in)
+2. **Day 2 message** (if no response)
+3. **Day 4 message** (value-add approach)
+4. **Final message** (last attempt with urgency)
 
-Make it conversational for Indian audience.`
+Make it conversational and natural for Indian audience - like I'm texting a friend, not a sales robot. Keep each message under 50 words.`
         },
         {
           id: 'response',
           label: 'Create Response Templates',
           icon: Wand2,
-          prompt: `Based on this objective: ${analysis.objective}
+          prompt: `I need quick response templates for the most common questions I get from ${analysis.objective} leads.
 
-Create 3 quick response templates for common questions:
-1. Price inquiry
-2. Timeline question
-3. "How it works" question
+Create 3 response templates for:
+1. **Price inquiry** ("How much does it cost?")
+2. **Timeline question** ("How long will it take?")
+3. **"How it works"** question
 
-Keep under 50 words each. Indian context.`
+Keep each under 50 words. Make them feel personal and helpful - not like copy-paste templates. Include pricing transparency (builds trust with Indian audience).`
         }
       ];
     }
@@ -158,19 +163,19 @@ Keep under 50 words each. Indian context.`
         id: 'budget',
         label: 'Calculate Budget Steps',
         icon: Zap,
-        prompt: `Current metrics:
-CTR: ${analysis.ctr}%
-CPM: ₹${analysis.cpm}
-CPA: ₹${analysis.cpa}
+        prompt: `I want to scale my budget but don't want to mess up what's working. Here are my current numbers:
+- CTR: ${analysis.ctr}%
+- CPM: ₹${analysis.cpm}
+- CPA: ₹${analysis.cpa}
 
-Calculate ideal budget scaling steps:
-- Current daily budget estimate
-- Step 1 increase (20-30%)
-- Step 2 increase
-- When to scale
-- Warning signs to watch
+Help me calculate the right budget scaling plan:
+1. Estimate my current daily budget (based on these metrics)
+2. First increase step (20-30% bump)
+3. Second increase step
+4. When to make each change (timing matters)
+5. Warning signs to watch for (so I know if something breaks)
 
-Be specific with numbers.`
+Give me specific rupee amounts and a timeline I can follow.`
       }
     ];
   };

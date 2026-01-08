@@ -104,7 +104,17 @@ router.post(
     const orderedHistory = history
       .reverse()
       .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
-    const reply = await getAssistantReply([...orderedHistory, { role: 'user', content: message }], briefing);
+    
+    // Detect if this is a Quick Fix Generator request (from analysisId + specific patterns)
+    const isGenerator = !!analysisId && !conversationId && (
+      message.includes('Generate') || 
+      message.includes('Write') || 
+      message.includes('Suggest') ||
+      message.includes('Create') ||
+      message.includes('Calculate')
+    );
+    
+    const reply = await getAssistantReply([...orderedHistory, { role: 'user', content: message }], briefing, isGenerator);
 
     const userMessage = await prisma.message.create({
       data: {

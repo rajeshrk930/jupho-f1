@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, History, BookTemplate, CreditCard } from 'lucide-react';
+import { LayoutDashboard, FileText, History, BookTemplate, User } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -12,7 +12,7 @@ export default function BottomNav() {
     { href: '/analyze', label: 'Analyze', icon: FileText },
     { href: '/history', label: 'History', icon: History },
     { href: '/templates', label: 'Templates', icon: BookTemplate },
-    { href: '/billing', label: 'Billing', icon: CreditCard },
+    { href: '/profile', label: 'Profile', icon: User },
   ];
 
   return (
