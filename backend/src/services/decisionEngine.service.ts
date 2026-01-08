@@ -1,7 +1,8 @@
 /**
- * V1 Decision Engine - Intent-First Logic
+ * V1 Decision Engine - Intent-First Logic (ENHANCED with Smart Overrides)
  * 
  * Flow:
+ * 0. The Guardian - Override user lies with metric reality
  * 1. Trust intent first (problemFaced)
  * 2. Validate with metrics (confirm only)
  * 3. Use whatChanged to lock root cause
@@ -21,7 +22,7 @@ interface DecisionInput {
 }
 
 interface DecisionOutput {
-  status: 'FIXABLE' | 'SCALE_READY' | 'BROKEN';
+  status: 'FIXABLE' | 'SCALE_READY' | 'BROKEN' | 'DEAD';
   primaryLayer: 'CREATIVE' | 'FUNNEL' | 'SALES' | 'DELIVERY' | 'AUDIENCE';
   rootCause: string;
   confirmed: boolean;
@@ -44,14 +45,10 @@ export class DecisionEngine {
   // Step 1: Trust intent first (problemFaced decides primary layer)
   private getPrimaryLayer(problemFaced: string): 'CREATIVE' | 'FUNNEL' | 'SALES' {
     switch (problemFaced) {
-      case 'LOW_CLICKS':
-        return 'CREATIVE';
-      case 'CLICKS_NO_ACTION':
-        return 'FUNNEL';
-      case 'MESSAGES_NO_CONVERSION':
-        return 'SALES';
-      default:
-        return 'CREATIVE';
+      case 'LOW_CLICKS': return 'CREATIVE';
+      case 'CLICKS_NO_ACTION': return 'FUNNEL';
+      case 'MESSAGES_NO_CONVERSION': return 'SALES';
+      default: return 'CREATIVE';
     }
   }
 
@@ -102,19 +99,19 @@ export class DecisionEngine {
     return false;
   }
 
-  // Step 4: Use whatChanged to lock root cause
-  private getRootCause(whatChanged: string, primaryLayer: string): string {
+  // Step 4: Lock root cause (FIXED: Now checks isLiveAd)
+  private getRootCause(whatChanged: string, primaryLayer: string, isLiveAd: boolean): string {
     switch (whatChanged) {
-      case 'CREATIVE_CHANGED':
-        return 'CREATIVE';
-      case 'AUDIENCE_CHANGED':
-        return 'AUDIENCE';
-      case 'BUDGET_CHANGED':
-        return 'DELIVERY';
+      case 'CREATIVE_CHANGED': return 'CREATIVE';
+      case 'AUDIENCE_CHANGED': return 'AUDIENCE';
+      case 'BUDGET_CHANGED': return 'DELIVERY';
       case 'NOTHING_NEW_AD':
+        // FIX: If ad is LIVE (has data), ignore "Launch Phase" and treat as normal issue
+        if (isLiveAd) {
+          return primaryLayer; 
+        }
         return primaryLayer === 'CREATIVE' ? 'LAUNCH_PHASE' : primaryLayer;
-      default:
-        return primaryLayer;
+      default: return primaryLayer;
     }
   }
 
@@ -165,20 +162,20 @@ export class DecisionEngine {
     } as const;
   }
 
-  // Step 8: FINAL classification (LAST STEP)
+  // Step 8: FINAL classification (Updated for DEAD status)
   private getFinalStatus(
     confirmed: boolean,
     metrics: ReturnType<typeof this.classifyMetrics>,
     primaryLayer: string
-  ): 'FIXABLE' | 'SCALE_READY' | 'BROKEN' {
+  ): 'FIXABLE' | 'SCALE_READY' | 'BROKEN' | 'DEAD' {
     // SCALE_READY: All metrics good
     if (metrics.ctrStatus === 'GOOD' && metrics.cpmStatus === 'GOOD' && metrics.cpaStatus === 'GOOD') {
       return 'SCALE_READY';
     }
 
-    // BROKEN: All metrics terrible
+    // Safety Logic: If everything is bad, it's DEAD, not just Broken
     if (metrics.ctrStatus === 'POOR' && metrics.cpmStatus === 'HIGH' && metrics.cpaStatus === 'HIGH') {
-      return 'BROKEN';
+      return 'DEAD';
     }
 
     // FIXABLE: Confirmed issue but addressable
@@ -190,9 +187,29 @@ export class DecisionEngine {
     return confirmed ? 'FIXABLE' : 'BROKEN';
   }
 
-  // Main decision function
+  // Main decision function (THIS IS WHERE THE MAGIC HAPPENS)
   public decide(input: DecisionInput): DecisionOutput {
-    // Step 1: Trust intent first
+    
+    // =========================================================
+    // STEP 0: THE GUARDIAN (Override User Lies)
+    // =========================================================
+    
+    // 1. GHOST CHECK: Does this ad have real data?
+    // If CTR or CPA > 0, it is LIVE. We ignore "New Ad" status later.
+    const isLiveAd = input.ctr > 0 || input.cpa > 0;
+
+    // 2. TRAFFIC OVERRIDE: 
+    // If user says "Sales Issue" but CTR < 0.6%, FORCE Creative Issue.
+    if (input.problemFaced === 'MESSAGES_NO_CONVERSION' && input.ctr < 0.6) {
+       console.log("⚡ LOGIC OVERRIDE: Forcing Creative Focus due to low CTR");
+       input.problemFaced = 'LOW_CLICKS';
+    }
+
+    // =========================================================
+    // END GUARDIAN - Proceed with normal 8 Steps
+    // =========================================================
+
+    // Step 1: Trust intent (Now filtered by Guardian)
     const primaryLayer = this.getPrimaryLayer(input.problemFaced);
 
     // Step 2: Get thresholds
@@ -201,8 +218,8 @@ export class DecisionEngine {
     // Step 3: Validate with metrics
     const confirmed = this.validateWithMetrics(primaryLayer, input.ctr, input.cpa, thresholds);
 
-    // Step 4: Lock root cause
-    const rootCause = this.getRootCause(input.whatChanged, primaryLayer);
+    // Step 4: Lock root cause (Passing isLiveAd to fix "Wait 48h" bug)
+    const rootCause = this.getRootCause(input.whatChanged, primaryLayer, isLiveAd);
 
     // Step 5: CPM analysis
     const audienceIssue = this.getAudienceIssue(input.audienceType, input.cpm, thresholds);

@@ -7,11 +7,31 @@ interface UsageCounterProps {
   usageCount: number;
   limit: number;
   onUpgradeClick: () => void;
+  compact?: boolean;
 }
 
-export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick }: UsageCounterProps) {
+export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick, compact = false }: UsageCounterProps) {
   const percentage = Math.min((usageCount / limit) * 100, 100);
   const isNearLimit = usageCount >= limit * 0.8;
+
+  if (compact) {
+    if (isPro) {
+      return (
+        <div className="flex items-center gap-2 bg-teal-600 px-3 py-1.5 rounded-full">
+          <Zap className="w-3.5 h-3.5 text-white" />
+          <span className="text-white text-xs font-semibold">Pro</span>
+        </div>
+      );
+    }
+    return (
+      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${isNearLimit ? 'bg-orange-100' : 'bg-gray-100'}`}>
+        <MessageSquare className={`w-3.5 h-3.5 ${isNearLimit ? 'text-orange-600' : 'text-gray-600'}`} />
+        <span className={`text-xs font-semibold ${isNearLimit ? 'text-orange-700' : 'text-gray-700'}`}>
+          {usageCount}/{limit}
+        </span>
+      </div>
+    );
+  }
 
   if (isPro) {
     return (

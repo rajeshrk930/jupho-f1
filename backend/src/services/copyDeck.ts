@@ -1,4 +1,4 @@
-type DecisionStatus = 'FIXABLE' | 'SCALE_READY' | 'BROKEN';
+type DecisionStatus = 'FIXABLE' | 'SCALE_READY' | 'BROKEN' | 'DEAD';
 
 interface DecisionSummary {
   status: DecisionStatus;
@@ -205,6 +205,16 @@ const SCALE_READY_COPY: HumanizedCopy = {
   ],
 };
 
+const DEAD_COPY: HumanizedCopy = {
+  headline: 'Status: Ad is underperforming - needs complete overhaul',
+  reason: '',
+  actions: [
+    'Stop this ad immediately to avoid wasting more budget.',
+    'Create a completely new ad with fresh creative, different hook, and simplified copy.',
+    'Test with a small daily budget (₹200-500) before scaling.'
+  ],
+};
+
 const fallbackCopy: HumanizedCopy = {
   headline: 'Status: Analysis ready',
   reason: 'Performance needs review.',
@@ -264,6 +274,18 @@ export function buildHumanizedCopy(input: BuildCopyInput): HumanizedCopy {
       : 'Performance is stable against goals.';
     return {
       ...SCALE_READY_COPY,
+      reason,
+    };
+  }
+
+  // Dead path: all metrics are terrible
+  if (decision.status === 'DEAD') {
+    const metric = pickMetric(decision, metrics);
+    const reason = metric.kind
+      ? `All metrics are critically poor; ${METRIC_LABEL[metric.kind]} is ${metric.kind === 'ctr' ? formatPercent(metric.value) : formatCurrency(metric.value)} vs ${metric.kind === 'ctr' ? formatPercent(metric.benchmark) : formatCurrency(metric.benchmark)} goal.`
+      : 'All key metrics are failing against benchmarks.';
+    return {
+      ...DEAD_COPY,
       reason,
     };
   }

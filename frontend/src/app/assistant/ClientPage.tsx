@@ -165,9 +165,10 @@ export default function AssistantPage() {
     try {
       const resp = await chatApi.getHistory();
       setHistory(resp.data || []);
+      // Only load specific conversation if explicitly requested via URL
       const targetId = preferredId || searchParams.get('conversationId');
-      if (!current && resp.data?.length) {
-        const match = targetId ? resp.data.find((h: ConversationSummary) => h.id === targetId) : resp.data[0];
+      if (targetId && resp.data?.length) {
+        const match = resp.data.find((h: ConversationSummary) => h.id === targetId);
         if (match) {
           void loadConversation(match.id);
           setIsSidebarOpen(false);
@@ -224,11 +225,6 @@ export default function AssistantPage() {
   }, [analysisId, current?.conversationId]);
 
   const handleSend = async (isAutoStart = false) => {
-    if (!hasContext) {
-      toast.error('Add an analysis or fill quick metrics before using the assistant.');
-      return;
-    }
-
     const baseMessage = isAutoStart
       ? 'Please review the analysis context and provide immediate actionable advice to improve the metrics.'
       : input.trim();
@@ -332,14 +328,37 @@ export default function AssistantPage() {
 
   return (
     <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-      <main className="flex-1 max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6 w-full overflow-hidden">
+      {/* Mobile Header */}
+      <div className="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-700"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 className="text-base font-bold text-gray-900">AI Assistant</h1>
+        </div>
+        <UsageCounter
+          isPro={usageStats.isPro}
+          usageCount={usageStats.apiUsageCount}
+          limit={10}
+          onUpgradeClick={() => setShowUpgradeModal(true)}
+          compact
+        />
+      </div>
+
+      <main className="flex-1 max-w-6xl mx-auto px-0 md:px-4 py-0 md:py-6 grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-6 w-full overflow-hidden">
+        {/* Mobile Sidebar Overlay */}
         <div
-          className={`fixed inset-0 bg-black/30 z-40 transition-opacity hidden md:block ${isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+          className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
           onClick={() => setIsSidebarOpen(false)}
         />
 
         <aside
-          className={`bg-white border border-gray-200 rounded-lg p-4 md:col-span-1 hidden md:block overflow-y-auto h-full`}
+          className={`fixed md:relative inset-y-0 left-0 w-4/5 max-w-sm md:w-auto bg-white border-r md:border border-gray-200 md:rounded-lg p-4 md:col-span-1 z-50 md:z-0 overflow-y-auto h-full transform transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
           aria-label="Conversations"
         >
           <div className="flex items-center justify-between mb-4">
@@ -356,7 +375,7 @@ export default function AssistantPage() {
                 }}
                 className="px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-medium hover:bg-teal-700 transition-colors shadow-sm"
               >
-                + New
+                + New Chat
               </button>
               <button
                 onClick={() => setIsSidebarOpen(false)}
@@ -433,7 +452,7 @@ export default function AssistantPage() {
             </div>
           </div>
 
-          <div className="mt-4">
+          <div className="hidden md:block mt-4">
             <UsageCounter
               isPro={usageStats.isPro}
               usageCount={usageStats.apiUsageCount}
@@ -443,7 +462,7 @@ export default function AssistantPage() {
           </div>
         </aside>
 
-        <section className="md:col-span-3 bg-white border border-gray-200 rounded-lg p-5 flex flex-col gap-4 h-full shadow-sm overflow-hidden">
+        <section className="md:col-span-3 bg-white border-0 md:border border-gray-200 md:rounded-lg p-4 md:p-5 flex flex-col gap-4 h-full md:shadow-sm overflow-hidden">
           <div className="flex-1 overflow-y-auto space-y-4 pr-1" aria-live="polite">
             {isLoading && (
               <div className="space-y-3" aria-label="Loading messages">
@@ -467,19 +486,19 @@ export default function AssistantPage() {
                     </div>
                     <h2 className="text-xl md:text-2xl font-bold text-gray-900">What decision can I help you make?</h2>
                     <p className="text-sm text-gray-600 max-w-md mx-auto">
-                      I help you execute fixes and make decisions. Not teaching basics—helping you act fast.
+                      Ask me anything about your Meta ads. I\'ll help you execute fixes and make fast decisions.
                     </p>
                   </div>
 
-                  {/* Context Gate */}
+                  {/* Optional Context Form */}
                   {!analysisId && !manualContext && (
-                    <div className="bg-white border border-teal-200 rounded-lg p-4 shadow-sm">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-sm">
                       <div className="flex items-center justify-between mb-3">
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">Add quick context to start</p>
-                          <p className="text-xs text-gray-600">Required so the assistant gives precise fixes.</p>
+                          <p className="text-sm font-semibold text-gray-900">💡 Quick Context (Optional)</p>
+                          <p className="text-xs text-gray-600">Add metrics for more precise advice</p>
                         </div>
-                        <span className="text-[11px] font-semibold text-teal-700 bg-teal-50 px-2 py-1 rounded">Required</span>
+                        <span className="text-[11px] font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded">Optional</span>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div className="space-y-1">
@@ -546,15 +565,15 @@ export default function AssistantPage() {
                         <button
                           onClick={() => {
                             if (!contextForm.ctr || !contextForm.cpm || !contextForm.cpa) {
-                              toast.error('Fill CTR, CPM, and CPA to start.');
+                              toast.error('Fill CTR, CPM, and CPA to add context.');
                               return;
                             }
                             setManualContext(contextForm);
-                            toast.success('Context added. You can start chatting.');
+                            toast.success('Context added! I\'ll use this for precise advice.');
                           }}
-                          className="px-4 py-2 rounded-lg bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 transition-colors"
+                          className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
                         >
-                          Enable assistant
+                          Add Context
                         </button>
                       </div>
                     </div>

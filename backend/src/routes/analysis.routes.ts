@@ -101,6 +101,7 @@ router.post(
         BROKEN: 'DEAD',
         FIXABLE: 'AVERAGE',
         SCALE_READY: 'WINNING',
+        DEAD: 'DEAD',
       } as const;
 
       const metricsParsed = {
@@ -120,7 +121,7 @@ router.post(
         supportingLogic: [copy.reason],
         singleFix: copy.actions.join(' | '),
         resultType: resultTypeMapping[decision.status],
-        failureReason: decision.status === 'BROKEN' ? decision.rootCause : 'none',
+        failureReason: decision.status === 'BROKEN' || decision.status === 'DEAD' ? decision.rootCause : 'none',
         creativeBrief: copy.creativeBrief || null
       };
 
