@@ -40,7 +40,7 @@ export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick,
           <Zap className="w-5 h-5 text-white mr-2" />
           <div>
             <p className="text-white font-semibold text-sm">Jupho Pro</p>
-            <p className="text-teal-100 text-xs">Unlimited questions</p>
+            <p className="text-teal-100 text-xs">Unlimited analyses</p>
           </div>
         </div>
         <div className="bg-white/20 px-3 py-1 rounded-full">
@@ -56,7 +56,7 @@ export default function UsageCounter({ isPro, usageCount, limit, onUpgradeClick,
         <div className="flex items-center">
           <MessageSquare className={`w-4 h-4 mr-2 ${isNearLimit ? 'text-orange-600' : 'text-gray-600'}`} />
           <p className={`text-sm font-medium ${isNearLimit ? 'text-orange-900' : 'text-gray-700'}`}>
-            Daily Limit
+            Analyses Today
           </p>
         </div>
         <span className={`text-sm font-bold ${isNearLimit ? 'text-orange-600' : 'text-gray-900'}`}>

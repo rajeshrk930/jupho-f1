@@ -19,7 +19,6 @@ const buildAnalysisTitle = (diagnosis: string) => {
 router.post(
   '/',
   authenticate,
-  checkUsageLimit,
   [
     body('message').isString().isLength({ min: 1 }),
     body('conversationId').optional().isString(),

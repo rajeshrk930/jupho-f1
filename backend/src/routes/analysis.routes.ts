@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { body, query, validationResult } from 'express-validator';
 import { prisma } from '../lib/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { checkUsageLimit } from '../middleware/usageLimit';
 import { upload } from '../middleware/upload';
 import { DecisionEngine } from '../services/decisionEngine.service';
 import { generateAnalysisPDF } from '../services/pdf.service';
@@ -32,6 +33,7 @@ const transformAnalysis = (analysis: any) => {
 router.post(
   '/',
   authenticate,
+  checkUsageLimit,
   upload.single('creative'),
   [
     body('creativeType').isIn(['IMAGE', 'VIDEO']),

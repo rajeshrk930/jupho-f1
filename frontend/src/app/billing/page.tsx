@@ -108,42 +108,42 @@ export default function BillingPage() {
                 <>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Unlimited AI assistant questions</span>
+                    <span className="text-gray-700 text-sm">Unlimited analyses per day</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Priority response time</span>
+                    <span className="text-gray-700 text-sm">Unlimited Quick Fix Generators</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Advanced analysis features</span>
+                    <span className="text-gray-700 text-sm">Unlimited PDF exports</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Export unlimited reports</span>
+                    <span className="text-gray-700 text-sm">Saved Templates Library</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Email support</span>
+                    <span className="text-gray-700 text-sm">Priority support</span>
                   </div>
                 </>
               ) : (
                 <>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">10 AI questions per day</span>
+                    <span className="text-gray-700 text-sm">3 analyses per day</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Basic analysis features</span>
+                    <span className="text-gray-700 text-sm">Unlimited generators per analysis</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Standard response time</span>
+                    <span className="text-gray-700 text-sm">PDF export included</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">Export reports (limited)</span>
+                    <span className="text-gray-700 text-sm">Saved Templates Library</span>
                   </div>
                 </>
               )}

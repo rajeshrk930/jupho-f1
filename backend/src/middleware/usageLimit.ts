@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { AuthRequest } from './auth';
 
-const DAILY_FREE_LIMIT = 10;
+const DAILY_FREE_LIMIT = 3; // 3 analyses per day for free users
 
 // Helper to check if date is a new day
 const isNewDay = (lastReset: Date): boolean => {
@@ -80,7 +80,7 @@ export const checkUsageLimit = async (
     if (user.plan === 'FREE' && user.apiUsageCount >= DAILY_FREE_LIMIT) {
       return res.status(429).json({
         success: false,
-        message: 'Daily limit reached. Upgrade to Pro for unlimited questions.',
+        message: 'Daily limit reached. Upgrade to Pro for unlimited analyses.',
         code: 'LIMIT_EXCEEDED',
         usage: {
           current: user.apiUsageCount,
