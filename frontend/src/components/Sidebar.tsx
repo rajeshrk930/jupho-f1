@@ -23,6 +23,13 @@ export function Sidebar() {
   const { user, logout } = useAuthStore();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  // Hide sidebar on auth pages
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  
+  if (isAuthPage) {
+    return null;
+  }
+
   const handleLogout = () => {
     logout();
     router.push('/login');
