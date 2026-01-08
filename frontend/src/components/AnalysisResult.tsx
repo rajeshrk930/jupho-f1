@@ -4,7 +4,7 @@ import { Analysis } from '@/types';
 import { analysisApi, trackingApi } from '@/lib/api';
 import { Target, Lightbulb, Zap, Copy, Download, CheckCircle2, TrendingUp, TrendingDown, Minus, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { InlineChat } from './InlineChat';
+import { QuickFixGenerator } from './QuickFixGenerator';
 import { FeedbackButtons } from './FeedbackButtons';
 
 interface AnalysisResultProps {
@@ -174,8 +174,8 @@ ${analysis.singleFix}`;
         </div>
       )}
 
-      {/* Inline AI Chat - Primary CTA */}
-      <InlineChat analysis={analysis} />
+      {/* Quick Fix Generator - One-click solutions */}
+      <QuickFixGenerator analysis={analysis} />
 
       {/* Feedback Buttons - Track if fix worked */}
       <FeedbackButtons analysisId={analysis.id} />
