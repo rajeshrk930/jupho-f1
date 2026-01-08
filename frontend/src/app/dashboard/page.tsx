@@ -61,66 +61,67 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <MobileTopBar title="Dashboard" />
-      <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-4 lg:space-y-6 pb-20 lg:pb-6">
-        <div className="surface-card p-4 lg:p-6 hidden lg:block">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-1">
-              <p className="text-xs text-teal-700 font-medium">Dashboard</p>
-              <h1 className="text-2xl font-bold text-gray-900">Welcome back{user?.name ? `, ${user.name}` : ''}.</h1>
-              <p className="text-sm text-gray-600">See your recent analyses and jump back into the work.</p>
+      <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-6 lg:space-y-8 pb-20 lg:pb-6">
+        {/* Bold Gradient Header */}
+        <div className="gradient-header hidden lg:block">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-2">
+              <p className="text-sm text-teal-100 font-bold uppercase tracking-wider">Dashboard</p>
+              <h1 className="text-4xl font-extrabold text-white">Welcome back{user?.name ? `, ${user.name}` : ''}!</h1>
+              <p className="text-lg text-teal-50">See your recent analyses and jump back into the work.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/analyze" className="btn-primary text-sm">+ New Analysis</Link>
+              <Link href="/analyze" className="btn-primary text-base shadow-bold-xl">+ New Analysis</Link>
             </div>
           </div>
         </div>
 
         {/* Quick Actions - Horizontal scroll on mobile, grid on desktop */}
-        <div className="flex lg:grid overflow-x-auto lg:overflow-visible gap-3 lg:gap-4 lg:grid-cols-3 xl:grid-cols-4 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory scrollbar-hide">
+        <div className="flex lg:grid overflow-x-auto lg:overflow-visible gap-4 lg:gap-6 lg:grid-cols-3 xl:grid-cols-3 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory scrollbar-hide">
           <Link
             href="/analyze"
-            className="bg-white border border-gray-200 rounded-lg p-4 lg:p-6 hover:border-teal-600 transition-colors group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
+            className="bg-gradient-to-br from-teal-500 to-teal-700 border-4 border-teal-900 rounded-2xl p-6 lg:p-8 hover:shadow-colored-teal transition-all group min-w-[300px] lg:min-w-0 snap-start"
           >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-teal-100 flex items-center justify-center mb-3 lg:mb-4 group-hover:bg-teal-200 transition-colors">
-              <Zap size={20} className="lg:w-6 lg:h-6 text-teal-700" />
+            <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-bold">
+              <Zap size={28} className="lg:w-8 lg:h-8 text-teal-700" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-1 text-sm lg:text-base">New Analysis</h3>
-            <p className="text-xs lg:text-sm text-gray-600">Analyze your next ad creative</p>
+            <h3 className="font-extrabold text-white mb-2 text-lg lg:text-xl">New Analysis</h3>
+            <p className="text-sm lg:text-base text-teal-50 font-medium">Analyze your next ad creative</p>
           </Link>
 
           <Link
             href="/history"
-            className="bg-white border border-gray-200 rounded-lg p-4 lg:p-6 hover:border-green-600 transition-colors group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
+            className="bg-gradient-to-br from-green-500 to-green-700 border-4 border-green-900 rounded-2xl p-6 lg:p-8 hover:shadow-colored-teal transition-all group min-w-[300px] lg:min-w-0 snap-start"
           >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-green-100 flex items-center justify-center mb-3 lg:mb-4 group-hover:bg-green-200 transition-colors">
-              <FileText size={20} className="lg:w-6 lg:h-6 text-green-600" />
+            <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-bold">
+              <FileText size={28} className="lg:w-8 lg:h-8 text-green-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-1 text-sm lg:text-base">View Reports</h3>
-            <p className="text-xs lg:text-sm text-gray-600">Browse all your analyses</p>
+            <h3 className="font-extrabold text-white mb-2 text-lg lg:text-xl">View Reports</h3>
+            <p className="text-sm lg:text-base text-green-50 font-medium">Browse all your analyses</p>
           </Link>
 
           <Link
             href="/billing"
-            className="bg-white border border-gray-200 rounded-lg p-4 lg:p-6 hover:border-orange-600 transition-colors group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
+            className="bg-gradient-to-br from-orange-500 to-orange-700 border-4 border-orange-900 rounded-2xl p-6 lg:p-8 hover:shadow-colored-orange transition-all group min-w-[300px] lg:min-w-0 snap-start"
           >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-orange-100 flex items-center justify-center mb-3 lg:mb-4 group-hover:bg-orange-200 transition-colors">
-              <Crown size={20} className="lg:w-6 lg:h-6 text-orange-600" />
+            <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-bold">
+              <Crown size={28} className="lg:w-8 lg:h-8 text-orange-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-1 text-sm lg:text-base">Upgrade Pro</h3>
-            <p className="text-xs lg:text-sm text-gray-600">Unlock unlimited features</p>
+            <h3 className="font-extrabold text-white mb-2 text-lg lg:text-xl">Upgrade Pro</h3>
+            <p className="text-sm lg:text-base text-orange-50 font-medium">Unlock unlimited features</p>
           </Link>
         </div>
 
         {/* Tips & Insights Section */}
         {analyses.length > 0 && (
-          <div className="bg-white border-l-4 border-teal-600 rounded-lg p-3 lg:p-6 shadow-sm">
-            <div className="flex items-start gap-3 lg:gap-4">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-                <Sparkles size={16} className="lg:w-5 lg:h-5 text-teal-700" />
+          <div className="bg-gradient-to-r from-purple-600 to-pink-600 border-4 border-purple-900 rounded-2xl p-6 lg:p-8 shadow-bold-xl">
+            <div className="flex items-start gap-4 lg:gap-6">
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 shadow-bold">
+                <Sparkles size={24} className="lg:w-7 lg:h-7 text-purple-700" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-1 lg:mb-2 text-sm lg:text-base">💡 Quick Tip</h3>
-                <p className="text-gray-700 leading-relaxed text-xs lg:text-sm">
+                <h3 className="font-extrabold text-white mb-2 lg:mb-3 text-lg lg:text-xl">💡 QUICK TIP</h3>
+                <p className="text-white text-base lg:text-lg font-medium leading-relaxed">
                   {quickTip}
                 </p>
               </div>
@@ -129,96 +130,102 @@ export default function DashboardPage() {
         )}
 
         {/* Stats - Horizontal on mobile, grid on desktop */}
-        <div className="flex lg:grid overflow-x-auto lg:overflow-visible gap-2 lg:gap-4 lg:grid-cols-3 -mx-4 px-4 lg:mx-0 lg:px-0 scrollbar-hide">
+        <div className="flex lg:grid overflow-x-auto lg:overflow-visible gap-4 lg:gap-6 lg:grid-cols-3 -mx-4 px-4 lg:mx-0 lg:px-0 scrollbar-hide">
           {isLoading || isFetching ? (
             [...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-lg p-3 lg:p-4 shadow-sm min-w-[140px] lg:min-w-0">
-                <div className="skeleton h-3 w-20 mb-2" />
-                <div className="skeleton h-6 lg:h-8 w-12 lg:w-16 mb-1" />
-                <div className="skeleton h-2 lg:h-3 w-16 lg:w-24" />
+              <div key={i} className="stat-card-bold border-teal-600 min-w-[180px] lg:min-w-0">
+                <div className="skeleton h-4 w-24 mb-3" />
+                <div className="skeleton h-10 lg:h-12 w-20 lg:w-24 mb-2" />
+                <div className="skeleton h-3 lg:h-4 w-20 lg:w-28" />
               </div>
             ))
           ) : (
             <>
-              <div className="bg-white border border-gray-200 rounded-lg p-3 lg:p-4 shadow-sm min-w-[140px] lg:min-w-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <BarChart3 size={16} className="lg:w-5 lg:h-5 text-teal-600" />
-                  <p className="text-[10px] lg:text-xs text-gray-600 font-medium">Total analyses</p>
+              <div className="stat-card-bold border-teal-600 min-w-[180px] lg:min-w-0">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center shadow-md">
+                    <BarChart3 size={20} className="text-white" />
+                  </div>
+                  <p className="text-sm lg:text-base text-gray-700 font-bold uppercase tracking-wide">Total analyses</p>
                 </div>
-                <p className="text-xl lg:text-2xl font-bold text-gray-900">{total}</p>
-                <p className="text-[10px] lg:text-xs text-gray-500 mt-0.5">All time</p>
+                <p className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">{total}</p>
+                <p className="text-sm lg:text-base text-gray-600 font-bold">All time</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-3 lg:p-4 shadow-sm min-w-[140px] lg:min-w-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar size={16} className="lg:w-5 lg:h-5 text-teal-600" />
-                  <p className="text-[10px] lg:text-xs text-gray-600 font-medium">This month</p>
+              <div className="stat-card-bold border-purple-600 min-w-[180px] lg:min-w-0">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-md">
+                    <Calendar size={20} className="text-white" />
+                  </div>
+                  <p className="text-sm lg:text-base text-gray-700 font-bold uppercase tracking-wide">This month</p>
                 </div>
-                <p className="text-xl lg:text-2xl font-bold text-gray-900">{monthlyCount}</p>
-                <p className="text-[10px] lg:text-xs text-gray-500 mt-0.5">Past 30 days</p>
+                <p className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">{monthlyCount}</p>
+                <p className="text-sm lg:text-base text-gray-600 font-bold">Past 30 days</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-3 lg:p-4 shadow-sm min-w-[140px] lg:min-w-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp size={16} className="lg:w-5 lg:h-5 text-teal-600" />
-                  <p className="text-[10px] lg:text-xs text-gray-600 font-medium">Avg CTR</p>
+              <div className="stat-card-bold border-orange-600 min-w-[180px] lg:min-w-0">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-md">
+                    <TrendingUp size={20} className="text-white" />
+                  </div>
+                  <p className="text-sm lg:text-base text-gray-700 font-bold uppercase tracking-wide">Avg CTR</p>
                 </div>
-                <p className="text-xl lg:text-2xl font-bold text-gray-900">{avgCtr ? `${avgCtr}%` : '—'}</p>
-                <p className="text-[10px] lg:text-xs text-gray-500 mt-0.5">Across recent</p>
+                <p className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">{avgCtr ? `${avgCtr}%` : '—'}</p>
+                <p className="text-sm lg:text-base text-gray-600 font-bold">Across recent</p>
               </div>
             </>
           )}
         </div>
 
-        <section className="surface-card p-4 lg:p-6 space-y-3 lg:space-y-4">
+        <section className="bg-white border-4 border-gray-900 rounded-2xl p-6 lg:p-8 shadow-bold-xl space-y-4 lg:space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-teal-700 font-medium">Recent</p>
-              <h2 className="text-base lg:text-lg font-semibold text-gray-900">Recent analyses</h2>
+              <p className="text-sm text-teal-700 font-bold uppercase tracking-wider">Recent</p>
+              <h2 className="text-xl lg:text-2xl font-black text-gray-900">Recent analyses</h2>
             </div>
-            <Link href="/history" className="text-xs lg:text-sm text-teal-700 hover:text-teal-800 font-medium">View all</Link>
+            <Link href="/history" className="text-sm lg:text-base text-white bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded-xl font-bold shadow-md">View all</Link>
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {[...Array(2)].map((_, idx) => (
-                <div key={idx} className="surface-card p-3 lg:p-4 space-y-3">
-                  <div className="skeleton h-3 w-24" />
-                  <div className="skeleton h-4 w-full" />
-                  <div className="skeleton h-4 w-2/3" />
+                <div key={idx} className="bg-white border-2 border-gray-300 rounded-2xl p-4 lg:p-6 space-y-3 shadow-bold">
+                  <div className="skeleton h-4 w-28" />
+                  <div className="skeleton h-5 w-full" />
+                  <div className="skeleton h-5 w-2/3" />
                 </div>
               ))}
             </div>
           ) : !recentSlice.length ? (
-            <div className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-300 rounded-lg p-6 md:p-8 text-center bg-gray-50">
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-teal-100 flex items-center justify-center">
-                <BarChart3 size={24} className="md:hidden text-teal-700" />
-                <BarChart3 size={28} className="hidden md:block text-teal-700" />
+            <div className="flex flex-col items-center justify-center gap-4 border-4 border-dashed border-gray-900 rounded-2xl p-8 md:p-12 text-center bg-gray-100">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center shadow-bold">
+                <BarChart3 size={32} className="md:w-10 md:h-10 text-white" />
               </div>
-              <p className="text-gray-700 font-medium text-sm lg:text-base">No analyses yet</p>
-              <p className="text-xs lg:text-sm text-gray-500">Start your first one to see insights here.</p>
-              <Link href="/analyze" className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors font-medium text-sm">Start first analysis</Link>
+              <p className="text-gray-900 font-black text-lg lg:text-xl">No analyses yet</p>
+              <p className="text-base lg:text-lg text-gray-700 font-bold">Start your first one to see insights here.</p>
+              <Link href="/analyze" className="px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-xl font-bold text-base shadow-bold">Start first analysis</Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {/* Show 2 cards on mobile/tablet, all 3 on desktop */}
               {recentSlice.map((analysis, idx) => (
-                <article key={analysis.id} className={`bg-white border border-gray-200 rounded-lg p-3 lg:p-5 space-y-2 lg:space-y-3 hover:border-teal-600 transition-colors group ${idx >= 2 ? 'hidden lg:block' : ''}`}>
-                  <div className="flex items-center justify-between text-xs md:text-sm">
-                    <span className="text-gray-500">{new Date(analysis.createdAt).toLocaleDateString()}</span>
-                    <StatusBadge status={analysis.resultType as 'WINNING' | 'AVERAGE' | 'DEAD'} size="sm" />
+                <article key={analysis.id} className={`bg-white border-l-[6px] rounded-2xl p-4 lg:p-6 space-y-3 lg:space-y-4 shadow-bold hover:shadow-bold-xl group ${
+                  analysis.resultType === 'WINNING' ? 'border-green-600' : 
+                  analysis.resultType === 'AVERAGE' ? 'border-yellow-600' : 
+                  'border-red-600'
+                } ${idx >= 2 ? 'hidden lg:block' : ''}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm md:text-base text-gray-700 font-bold">{new Date(analysis.createdAt).toLocaleDateString()}</span>
+                    <StatusBadge status={analysis.resultType as 'WINNING' | 'AVERAGE' | 'DEAD'} size="md" showLabel />
                   </div>
-                  <p className="text-sm md:text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-teal-700 transition-colors">{analysis.primaryReason}</p>
-                  <p className="text-xs md:text-sm text-gray-600 line-clamp-2">{Array.isArray(analysis.supportingLogic) ? analysis.supportingLogic[0] : analysis.supportingLogic}</p>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-gray-100">
-                    <Link href={`/history`} className="text-xs lg:text-sm text-teal-700 hover:text-teal-800 font-medium">View Details</Link>
-                    <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
-                      <span>CTR {analysis.ctr}%</span>
+                  <p className="text-base md:text-lg font-black text-gray-900 line-clamp-2 group-hover:text-teal-700">{analysis.primaryReason}</p>
+                  <p className="text-sm md:text-base text-gray-700 line-clamp-2 font-medium">{Array.isArray(analysis.supportingLogic) ? analysis.supportingLogic[0] : analysis.supportingLogic}</p>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t-2 border-gray-200">
+                    <Link href={`/history`} className="text-sm lg:text-base text-teal-700 hover:text-teal-900 font-bold uppercase tracking-wide">View Details →</Link>
+                    <div className="flex items-center gap-3 text-sm text-gray-700 flex-wrap font-bold">
+                      <span className="px-3 py-1 bg-teal-100 text-teal-900 rounded-lg">CTR {analysis.ctr}%</span>
                       {analysis.industry && (
-                        <>
-                          <span>•</span>
-                          <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-[10px] lg:text-xs">
-                            {analysis.industry.replace('_', ' ')}
-                          </span>
-                        </>
+                        <span className="px-3 py-1 rounded-lg bg-purple-100 text-purple-900">
+                          {analysis.industry.replace('_', ' ')}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -229,19 +236,19 @@ export default function DashboardPage() {
         </section>
 
         {recentSlice.length > 0 && (
-          <section className="surface-card p-4 lg:p-6 space-y-3 lg:space-y-4">
+          <section className="bg-white border-4 border-gray-900 rounded-2xl p-6 lg:p-8 shadow-bold-xl space-y-4 lg:space-y-6">
             {/* Mobile: Collapsible, Desktop: Always open */}
             <button
               onClick={() => setShowLatestAnalysis(!showLatestAnalysis)}
               className="w-full flex items-center justify-between lg:pointer-events-none"
             >
               <div>
-                <p className="text-xs text-teal-700 font-medium">Details</p>
-                <h2 className="text-base lg:text-lg font-semibold text-gray-900">Latest analysis</h2>
+                <p className="text-sm text-teal-700 font-bold uppercase tracking-wider">Details</p>
+                <h2 className="text-xl lg:text-2xl font-black text-gray-900">Latest analysis</h2>
               </div>
               <ChevronDown
-                size={20}
-                className={`lg:hidden text-gray-500 transition-transform ${showLatestAnalysis ? 'rotate-180' : ''}`}
+                size={24}
+                className={`lg:hidden text-gray-900 ${showLatestAnalysis ? 'rotate-180' : ''}`}
               />
             </button>
             
