@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { analysisApi } from '@/lib/api';
+import { analysisApi, chatApi } from '@/lib/api';
 import { Analysis } from '@/types';
 import { AnalyzeForm } from '@/components/AnalyzeForm';
 import { AnalysisDrawer } from '@/components/AnalysisDrawer';
@@ -10,10 +10,12 @@ import { useAuthStore } from '@/lib/store';
 import { Clock, ChevronRight, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import MobileTopBar from '@/components/MobileTopBar';
+import UsageCounter from '@/components/UsageCounter';
 
 export default function AnalyzePage() {
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<Analysis | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -25,7 +27,20 @@ export default function AnalyzePage() {
     enabled: isAuthenticated,
   });
 
+  // Fetch usage stats
+  const { data: usageData } = useQuery({
+    queryKey: ['usage-stats'],
+    queryFn: async () => {
+      const response = await chatApi.getUsage();
+      return response.data;
+    },
+    enabled: isAuthenticated,
+  });
+
   const recentAnalyses = recentData?.data?.analyses || [];
+  const isPro = user?.proExpiresAt && new Date(user.proExpiresAt) > new Date();
+  const usageCount = usageData?.analysisCount || 0;
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     if (isLoading || result) {
@@ -69,6 +84,7 @@ export default function AnalyzePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <MobileTopBar title="Analyze" rightContent={<UsageCounter isPro={!!isPro} usageCount={usageCount} limit={3} onUpgradeClick={() => setShowUpgradeModal(true)} compact />} />
       {/* Main Content */}
       <main className="px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
@@ -177,6 +193,11 @@ export default function AnalyzePage() {
         onClose={handleCloseDrawer}
         isLoading={isLoading}
         result={result}
+      />
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onUpgradeComplete={() => setShowUpgradeModal(false)}
       />
     </div>
   );

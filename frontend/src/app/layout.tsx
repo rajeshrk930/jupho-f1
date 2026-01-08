@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from '@/app/providers';
 import { Toaster } from 'react-hot-toast';
 import { Sidebar } from '@/components/Sidebar';
+import BottomNav from '@/components/BottomNav';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,10 +27,11 @@ export default function RootLayout({
         <Providers>
           <div className="flex min-h-screen bg-gray-50">
             <Sidebar />
-            <main className="flex-1 overflow-x-hidden">
+            <main className="flex-1 overflow-x-hidden pb-16 lg:pb-0">
               {children}
             </main>
           </div>
+          <BottomNav />
           <Toaster position="top-right" />
         </Providers>
       </body>
