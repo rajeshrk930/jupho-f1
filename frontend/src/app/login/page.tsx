@@ -12,7 +12,7 @@ function LoginPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get('redirect');
-  const ALLOWED_REDIRECTS = ['/dashboard', '/analyze', '/assistant', '/history', '/assistant/history'];
+  const ALLOWED_REDIRECTS = ['/dashboard', '/analyze', '/templates', '/history'];
   const safeRedirect = redirectParam && ALLOWED_REDIRECTS.some((path) => redirectParam.startsWith(path))
     ? redirectParam
     : '/dashboard';

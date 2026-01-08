@@ -65,7 +65,6 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-600">See your recent analyses and jump back into the work.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/assistant" className="btn-secondary text-sm">Implementation Help</Link>
               <Link href="/analyze" className="btn-primary text-sm">+ New Analysis</Link>
             </div>
           </div>
@@ -84,16 +83,7 @@ export default function DashboardPage() {
             <p className="text-sm text-gray-600">Analyze your next ad creative</p>
           </Link>
 
-          <Link
-            href="/assistant"
-            className="bg-white border border-gray-200 rounded-lg p-6 hover:border-purple-600 transition-colors group shadow-sm"
-          >
-            <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
-              <MessageSquare size={24} className="text-purple-600" />
-            </div>
-            <h3 className="font-semibold text-gray-900 mb-1">Implementation Help</h3>
-            <p className="text-sm text-gray-600">Get instant strategy help</p>
-          </Link>
+
 
           <Link
             href="/history"
@@ -219,7 +209,6 @@ export default function DashboardPage() {
                 <p className="text-xs text-teal-700 font-medium">Details</p>
                 <h2 className="text-lg font-semibold text-gray-900">Latest analysis</h2>
               </div>
-              <Link href="/assistant" className="text-sm text-teal-700 hover:text-teal-800">Ask AI about this</Link>
             </div>
             <AnalysisResult analysis={recentSlice[0]} />
           </section>

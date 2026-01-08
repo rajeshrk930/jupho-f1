@@ -4,9 +4,8 @@ import type { NextRequest } from 'next/server';
 const PROTECTED_PATHS = [
   '/dashboard',
   '/analyze',
-  '/assistant',
-  '/assistant/history',
   '/history',
+  '/templates',
 ];
 
 const AUTH_FREE_PATHS = ['/login', '/signup'];
@@ -29,8 +28,8 @@ export const config = {
     '/dashboard',
     '/dashboard/:path*',
     '/analyze',
-    '/assistant',
-    '/assistant/:path*',
+    '/templates',
+    '/templates/:path*',
     '/history',
     '/history/:path*',
   ],

@@ -17,7 +17,6 @@ import { useAuthStore } from "@/lib/store";
 const navLinks = [
   { href: "/dashboard", label: "Dashboard", authOnly: true },
   { href: "/analyze", label: "Analyze", authOnly: true },
-  { href: "/assistant", label: "AI Assistant", authOnly: true },
   { href: "/history", label: "History", authOnly: true },
 ];
 

@@ -99,7 +99,6 @@ export default function HistoryPage() {
             <h2 className="text-xl font-semibold text-gray-900">Past Analyses</h2>
             <p className="text-sm text-gray-600 mt-1">{filteredAnalyses.length} {filteredAnalyses.length === 1 ? 'result' : 'results'}</p>
           </div>
-          <Link href="/assistant" className="btn-secondary text-sm">Ask AI</Link>
         </div>
 
         {/* Search and Filters Bar */}
