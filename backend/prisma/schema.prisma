@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -15,6 +15,8 @@ model User {
   plan          String     @default("FREE")
   apiUsageCount Int        @default(0)
   lastResetDate DateTime   @default(now())
+  agentTasksCreated Int    @default(0) // FREE: 5/month, PRO: 50/month
+  agentLastResetDate DateTime @default(now())
   proExpiresAt  DateTime?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt

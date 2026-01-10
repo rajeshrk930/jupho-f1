@@ -206,35 +206,40 @@ export const adminApi = {
 
 // Agent API
 export const agentApi = {
-  startTask: async () => {
-    const response = await api.post('/agent/start');
+  // Step 1: Business Scan
+  startBusinessScan: async (data: { url?: string; manualInput?: string }) => {
+    const response = await api.post('/agent/scan', data);
     return response.data;
   },
-  sendMessage: async (taskId: string, message: string) => {
-    const response = await api.post('/agent/message', { taskId, message });
+  
+  // Step 2: Generate Strategy
+  generateStrategy: async (taskId: string, userGoal?: string) => {
+    const response = await api.post('/agent/strategy', { taskId, userGoal });
     return response.data;
   },
-  createAd: async (taskId: string, creativeFile?: File) => {
+  
+  // Step 3: Launch Campaign
+  launchCampaign: async (taskId: string, imageFile?: File) => {
     const formData = new FormData();
     formData.append('taskId', taskId);
-    if (creativeFile) {
-      formData.append('creative', creativeFile);
+    if (imageFile) {
+      formData.append('image', imageFile);
     }
-    const response = await api.post('/agent/create-ad', formData, {
+    const response = await api.post('/agent/launch', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
   },
+
+  // Get usage stats
+  getUsage: async () => {
+    const response = await api.get('/agent/usage');
+    return response.data;
+  },
+  
+  // Get task history
   getTasks: async (limit?: number) => {
     const response = await api.get('/agent/tasks', { params: { limit } });
-    return response.data;
-  },
-  selectVariant: async (taskId: string, creativeId: string, type: string) => {
-    const response = await api.post('/agent/select-variant', { taskId, creativeId, type });
-    return response.data;
-  },
-  deleteTask: async (taskId: string) => {
-    const response = await api.delete(`/agent/task/${taskId}`);
     return response.data;
   },
 };

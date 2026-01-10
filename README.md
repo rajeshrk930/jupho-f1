@@ -1,46 +1,45 @@
-# Creative Failure Analyzer for Meta Ads
+# Jupho - AI-Powered Meta Ads Creator
 
-A focused tool that does one job only: **Explain why a Meta ad creative failed or worked and tell what to change next.**
+An **"Agency-in-a-Box"** tool that automatically creates high-performing Meta ads using conversational AI.
 
-No automation. No Meta API. No dashboards. **Clarity over complexity.**
+**No agency knowledge required. No complex dashboards. Just paste your website URL and launch.**
 
 ## Target Users
 
-- Meta ads agencies
-- Freelancers handling multiple clients
-- Founders running ads themselves
+- Small business owners (like coaching centers, salons, ecommerce)
+- Entrepreneurs who need ads but can't afford agencies
+- Anyone who wants to run Meta ads without learning the platform
 
-## Core Features (MVP v1)
+## Core Features (3-Step Wizard)
 
-### 1. Creative Input Form
-- Upload creative (image/video)
-- Enter ad details (primary text, headline, objective)
-- Manual metrics input (CPM, CTR, CPC/CPA)
-- Industry selection
+### 1. Business Scan (Step 1)
+- Paste website URL or Instagram link
+- AI auto-scrapes business details (brand, products, USPs)
+- Fallback to manual text input if scraping fails
+- Takes ~10 seconds
 
-### 2. Analysis Engine (AI)
-Every analysis outputs exactly 3 sections:
-- **Primary Reason**: One sentence only
-- **Supporting Logic**: Max 2-3 bullet points
-- **Single Fix**: ONE actionable recommendation
+### 2. AI Consultant (Step 2)
+- One unified OpenAI prompt generates complete campaign strategy
+- Recommends: Objective, Budget, Targeting, Ad Copy
+- Dynamic Facebook interest search (no hardcoded IDs)
+- Generates 3 variants each: Headlines, Primary Text, Descriptions
+- Takes ~15 seconds
 
-### 3. History Page
-- List of past analyses
-- Search/filter by industry or reason
-- Copy previous fixes
+### 3. One-Click Launch (Step 3)
+- Upload image (optional)
+- Creates campaign directly on Facebook (PAUSED status)
+- Uses best practices: automatic placements, optimal bid strategy
+- Takes ~30 seconds
 
-### 4. Export
-- Copy analysis text
-- Download simple PDF
+**Total time: 55 seconds from URL to live ad.**
 
-## Tech Stack
+## Pricing
 
-- **Frontend**: Next.js + TypeScript + Tailwind CSS
-- **Backend**: Node.js + Express
-- **Database**: PostgreSQL + Prisma ORM
-- **Analysis Engine**: Rule-based Decision Engine
-- **Auth**: JWT (Email + Password)
-- **Payments**: Razorpay
+- **FREE**: 5 campaigns/month (resets monthly)
+- **PRO**: ₹1,999/month for 50 campaigns
+- **PRO Annual**: ₹19,990/year for 600 campaigns (save ₹3,998)
+
+**vs Agency**: ₹20,000/month + setup fees
 
 ## Getting Started
 

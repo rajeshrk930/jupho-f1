@@ -3,118 +3,262 @@ import { body, validationResult } from 'express-validator';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { AgentService } from '../services/agent.service';
 import { upload } from '../middleware/upload';
-import { Sanitizer } from '../utils/sanitizer';
+import { prisma } from '../lib/prisma';
 
 const router = Router();
 
-/**
- * POST /api/agent/start
- * Initialize a new AI agent task
- */
-router.post('/start', authenticate, async (req: AuthRequest, res: Response) => {
+// Middleware: Check agent usage limits (FREE: 5/month, PRO: 50/month)
+const checkUsageLimit = async (req: AuthRequest, res: Response, next: any) => {
   try {
-    const result = await AgentService.startTask(req.user!.id);
+    const user = await prisma.user.findUnique({
+      where: { id: req.user!.id },
+      select: { 
+        plan: true, 
+        agentTasksCreated: true, 
+        agentLastResetDate: true,
+        proExpiresAt: true 
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if we need to reset monthly counter
+    const now = new Date();
+    const lastReset = user.agentLastResetDate ? new Date(user.agentLastResetDate) : new Date(0);
+    const monthsSinceReset = (now.getFullYear() - lastReset.getFullYear()) * 12 + 
+                             (now.getMonth() - lastReset.getMonth());
+
+    if (monthsSinceReset >= 1) {
+      // Reset counter at start of new month
+      await prisma.user.update({
+        where: { id: req.user!.id },
+        data: {
+          agentTasksCreated: 0,
+          agentLastResetDate: now
+        }
+      });
+      user.agentTasksCreated = 0;
+    }
+
+    // Check limits
+    const isPro = user.plan === 'PRO' && user.proExpiresAt && new Date(user.proExpiresAt) > now;
+    const limit = isPro ? 50 : 5;
+
+    if (user.agentTasksCreated >= limit) {
+      return res.status(403).json({ 
+        error: 'LIMIT_EXCEEDED',
+        message: isPro 
+          ? `You've reached your PRO limit of ${limit} campaigns this month. Contact support for more.`
+          : `You've reached your FREE limit of ${limit} campaigns this month. Upgrade to PRO for 50/month.`,
+        limit,
+        used: user.agentTasksCreated,
+        plan: isPro ? 'PRO' : 'FREE'
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error('Usage limit check error:', error);
+    res.status(500).json({ error: 'Failed to check usage limits' });
+  }
+};
+
+/**
+ * 🔍 STEP 1: SCAN BUSINESS (POST /api/agent/scan)
+ * Input: { url: "https://my-coaching.com" } OR { manualInput: "I sell..." }
+ * Output: { taskId: "...", scrapedData: { ... } }
+ */
+router.post('/scan', authenticate, checkUsageLimit, async (req: AuthRequest, res: Response) => {
+  try {
+    const { url, manualInput } = req.body;
+    const userId = req.user!.id;
+
+    if (!url && !manualInput) {
+      return res.status(400).json({ error: 'URL or manual input is required' });
+    }
+
+    const agentService = new AgentService();
+    const result = await agentService.startBusinessScan(userId, url, manualInput);
+    
     res.json(result);
   } catch (error: any) {
-    console.error('Agent start error:', error);
-    res.status(500).json({ error: error.message || 'Failed to start agent' });
+    console.error('Scan Error:', error);
+    res.status(500).json({ error: error.message || 'Failed to scan business' });
   }
 });
 
 /**
- * POST /api/agent/message
- * Send a message to the agent and get response
+ * 🧠 STEP 2: GENERATE STRATEGY (POST /api/agent/strategy)
+ * Input: { taskId: "...", userGoal?: "Get more leads" }
+ * Output: { strategy: { budget, targeting, copy... } }
  */
-router.post(
-  '/message',
-  authenticate,
-  [
-    body('taskId').notEmpty().withMessage('Task ID is required'),
-    body('message').notEmpty().withMessage('Message is required')
-  ],
-  async (req: AuthRequest, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+router.post('/strategy', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const { taskId, userGoal } = req.body;
+    
+    if (!taskId) {
+      return res.status(400).json({ error: 'Task ID is required' });
     }
 
-    try {
-      const { taskId } = req.body;
-      
-      // Sanitize user message to prevent XSS
-      const message = Sanitizer.sanitizeMessage(req.body.message);
-      
-      if (!message || message.trim().length === 0) {
-        return res.status(400).json({ error: 'Message cannot be empty' });
-      }
-      
-      const result = await AgentService.processMessage(taskId, req.user!.id, message);
-      res.json(result);
-    } catch (error: any) {
-      console.error('Agent message error:', error);
-      res.status(500).json({ error: error.message || 'Failed to process message' });
-    }
+    const agentService = new AgentService();
+    const result = await agentService.generateStrategy(taskId, req.user!.id, userGoal);
+    
+    res.json(result);
+  } catch (error: any) {
+    console.error('Strategy Error:', error);
+    res.status(500).json({ error: error.message || 'Failed to generate strategy' });
   }
-);
+});
 
 /**
- * POST /api/agent/create-ad
- * Execute ad creation on Facebook
+ * 🚀 STEP 3: LAUNCH CAMPAIGN (POST /api/agent/launch)
+ * Input: { taskId: "...", imageFile: File }
+ * Output: { success: true, campaignId: "...", adId: "..." }
  */
 router.post(
-  '/create-ad',
+  '/launch',
   authenticate,
-  upload.single('creative'),
-  [
-    body('taskId').notEmpty().withMessage('Task ID is required')
-  ],
+  upload.single('image'),
   async (req: AuthRequest, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
       const { taskId } = req.body;
-      
-      // Get creative URL if uploaded
-      let creativeUrl: string | undefined;
+
+      if (!taskId) {
+        return res.status(400).json({ error: 'Task ID is required' });
+      }
+
+      // Get image URL if uploaded
+      let imageUrl: string | undefined;
       if (req.file) {
-        creativeUrl = `/uploads/${req.file.filename}`;
+        imageUrl = `/uploads/${req.file.filename}`;
       }
 
-      const result = await AgentService.createAdOnFacebook(
-        taskId,
-        req.user!.id,
-        creativeUrl
-      );
+      const agentService = new AgentService();
+      const result = await agentService.launchCampaign(taskId, req.user!.id, imageUrl);
       
+      // Increment usage counter on successful launch
+      await prisma.user.update({
+        where: { id: req.user!.id },
+        data: {
+          agentTasksCreated: { increment: 1 }
+        }
+      });
+
       res.json(result);
     } catch (error: any) {
-      console.error('Agent ad creation error:', error);
-      res.status(500).json({ error: error.message || 'Failed to create ad' });
+      console.error('Launch Error:', error);
+      res.status(500).json({ error: error.message || 'Failed to launch campaign' });
     }
   }
 );
 
 /**
- * GET /api/agent/tasks
- * Get user's agent task history
+ * GET /api/agent/tasks - Get user's task history
  */
 router.get('/tasks', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const limit = parseInt(req.query.limit as string) || 10;
-    const tasks = await AgentService.getTaskHistory(req.user!.id, limit);
+    const limit = parseInt(req.query.limit as string) || 20;
+    
+    const tasks = await prisma.agentTask.findMany({
+      where: { userId: req.user!.id },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      include: {
+        generatedCreatives: true
+      }
+    });
+
     res.json({ tasks });
-  } catch (error: any) {
-    console.error('Agent tasks error:', error);
-    res.status(500).json({ error: error.message || 'Failed to fetch tasks' });
+  } catch (error) {
+    console.error('Get tasks error:', error);
+    res.status(500).json({ error: 'Failed to fetch tasks' });
   }
 });
 
 /**
- * POST /api/agent/select-variant
- * Update which variant is selected for the ad
+ * GET /api/agent/task/:taskId - Get specific task details
+ */
+router.get('/task/:taskId', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const task = await prisma.agentTask.findUnique({
+      where: { 
+        id: req.params.taskId,
+        userId: req.user!.id
+      },
+      include: {
+        generatedCreatives: true
+      }
+    });
+
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    res.json({ task });
+  } catch (error) {
+    console.error('Get task error:', error);
+    res.status(500).json({ error: 'Failed to fetch task' });
+  }
+});
+
+/**
+ * DELETE /api/agent/task/:taskId - Delete a task
+ */
+router.delete('/task/:taskId', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    await prisma.agentTask.delete({
+      where: { 
+        id: req.params.taskId,
+        userId: req.user!.id
+      }
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete task error:', error);
+    res.status(500).json({ error: 'Failed to delete task' });
+  }
+});
+
+/**
+ * GET /api/agent/usage - Get current usage stats
+ */
+router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user!.id },
+      select: {
+        plan: true,
+        agentTasksCreated: true,
+        agentLastResetDate: true,
+        proExpiresAt: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isPro = user.plan === 'PRO' && user.proExpiresAt && new Date(user.proExpiresAt) > new Date();
+    const limit = isPro ? 50 : 5;
+
+    res.json({
+      used: user.agentTasksCreated,
+      limit,
+      remaining: Math.max(0, limit - user.agentTasksCreated),
+      plan: isPro ? 'PRO' : 'FREE',
+      resetDate: user.agentLastResetDate
+    });
+  } catch (error) {
+    console.error('Get usage error:', error);
+    res.status(500).json({ error: 'Failed to fetch usage' });
+  }
+});
+
+/**
+ * POST /api/agent/select-variant - Update selected creative variant
  */
 router.post(
   '/select-variant',
@@ -132,9 +276,6 @@ router.post(
 
     try {
       const { taskId, creativeId, type } = req.body;
-      
-      // Import prisma here to avoid circular dependencies
-      const { prisma } = await import('../lib/prisma');
       
       // Verify task belongs to user
       const task = await prisma.agentTask.findUnique({
@@ -159,40 +300,10 @@ router.post(
 
       res.json({ message: 'Variant selected successfully' });
     } catch (error: any) {
-      console.error('Agent variant selection error:', error);
+      console.error('Variant selection error:', error);
       res.status(500).json({ error: error.message || 'Failed to select variant' });
     }
   }
 );
-
-/**
- * DELETE /api/agent/task/:taskId
- * Delete an agent task
- */
-router.delete('/task/:taskId', authenticate, async (req: AuthRequest, res: Response) => {
-  try {
-    const { taskId } = req.params;
-    
-    const { prisma } = await import('../lib/prisma');
-    
-    // Verify task belongs to user
-    const task = await prisma.agentTask.findUnique({
-      where: { id: taskId, userId: req.user!.id }
-    });
-
-    if (!task) {
-      return res.status(404).json({ error: 'Task not found' });
-    }
-
-    await prisma.agentTask.delete({
-      where: { id: taskId }
-    });
-
-    res.json({ message: 'Task deleted successfully' });
-  } catch (error: any) {
-    console.error('Agent task deletion error:', error);
-    res.status(500).json({ error: error.message || 'Failed to delete task' });
-  }
-});
 
 export default router;

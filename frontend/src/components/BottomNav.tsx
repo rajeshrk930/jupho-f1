@@ -15,8 +15,8 @@ export default function BottomNav() {
     .includes(user.email.toLowerCase());
 
   const tabs = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/agent', label: 'AI Agent', icon: Sparkles },
+    { href: '/agent', label: 'Create Ad', icon: Sparkles },
+    { href: '/dashboard', label: 'History', icon: LayoutDashboard },
     { href: '/profile', label: 'Profile', icon: User },
   ];
 

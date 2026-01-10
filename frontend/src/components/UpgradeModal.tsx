@@ -123,37 +123,37 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
           {selectedPlan === 'monthly' ? (
             <>
               <div className="flex items-baseline justify-center mb-4">
-                <span className="text-4xl font-bold text-text-primary">₹499</span>
+                <span className="text-4xl font-bold text-text-primary">₹1,999</span>
                 <span className="text-text-secondary ml-2">/month</span>
               </div>
               <p className="text-center text-sm text-text-secondary mb-4">
-                Billed monthly • ₹5,988/year
+                Billed monthly • ₹23,988/year
               </p>
             </>
           ) : (
             <>
               <div className="flex items-baseline justify-center mb-2">
-                <span className="text-4xl font-bold text-gray-900">₹4,990</span>
+                <span className="text-4xl font-bold text-gray-900">₹19,990</span>
                 <span className="text-gray-600 ml-2">/year</span>
               </div>
               <div className="flex items-center justify-center gap-2 mb-4">
-                <span className="text-sm line-through text-gray-500">₹5,988</span>
+                <span className="text-sm line-through text-gray-500">₹23,988</span>
                 <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">
-                  Save ₹998
+                  Save ₹3,998
                 </span>
               </div>
               <p className="text-center text-sm text-signal-primary font-medium mb-4">
-                Just ₹416/month • 2 months FREE!
+                Just ₹1,666/month • 2 months FREE!
               </p>
             </>
           )}
 
           <ul className="space-y-3">
             {[
-              'Unlimited analyses per day',
-              'Unlimited Quick Fix Generators',
-              'Unlimited PDF exports',
-              'Saved Templates Library',
+              selectedPlan === 'monthly' ? '50 AI-created campaigns per month' : '600 AI-created campaigns per year',
+              'Unlimited AI ad copy generation',
+              'Advanced targeting recommendations',
+              'Automatic campaign optimization',
               'Priority support',
             ].map((feature) => (
               <li key={feature} className="flex items-start">
@@ -175,7 +175,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
           disabled={loading}
           className="btn-primary w-full shadow-lg"
         >
-          {loading ? 'Processing...' : selectedPlan === 'annual' ? 'Get Annual Plan - ₹4,990' : 'Get Monthly Plan - ₹499'}
+          {loading ? 'Processing...' : selectedPlan === 'annual' ? 'Get Annual Plan - ₹19,990' : 'Get Monthly Plan - ₹1,999'}
         </button>
 
         <p className="text-xs text-text-tertiary text-center mt-4">

@@ -12,10 +12,10 @@ function LoginPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get('redirect');
-  const ALLOWED_REDIRECTS = ['/dashboard', '/analyze', '/templates', '/history'];
+  const ALLOWED_REDIRECTS = ['/agent', '/dashboard', '/analyze', '/templates', '/history'];
   const safeRedirect = redirectParam && ALLOWED_REDIRECTS.some((path) => redirectParam.startsWith(path))
     ? redirectParam
-    : '/dashboard';
+    : '/agent';
   const setAuth = useAuthStore((state) => state.setAuth);
   const user = useAuthStore((state) => state.user);
   const [loading, setLoading] = useState(false);

@@ -448,25 +448,102 @@ export class FacebookService {
   }
 
   /**
-   * Get default targeting for broad audience (India)
+   * Search for interest IDs dynamically using Facebook Marketing API
+   * @param accessToken Facebook access token
+   * @param keywords Array of interest keywords to search (e.g., ['Digital Marketing', 'SaaS'])
+   * @param limit Maximum number of interests to return per keyword
+   * @returns Array of interest objects with id and name
    */
-  static getDefaultTargeting(audienceType: 'BROAD' | 'INTEREST_BASED' = 'BROAD') {
-    const baseTargeting = {
+  static async searchInterests(
+    accessToken: string,
+    keywords: string[],
+    limit: number = 5
+  ): Promise<Array<{ id: string; name: string; audience_size?: number }>> {
+    try {
+      const allInterests: Array<{ id: string; name: string; audience_size?: number }> = [];
+
+      for (const keyword of keywords) {
+        const response = await axios.get(
+          `${this.BASE_URL}/search`,
+          {
+            params: {
+              access_token: accessToken,
+              type: 'adinterest',
+              q: keyword,
+              limit: limit
+            }
+          }
+        );
+
+        const interests = response.data.data || [];
+        allInterests.push(...interests.map((i: any) => ({
+          id: i.id,
+          name: i.name,
+          audience_size: i.audience_size
+        })));
+      }
+
+      // Remove duplicates by ID
+      const uniqueInterests = allInterests.filter(
+        (interest, index, self) => 
+          index === self.findIndex((t) => t.id === interest.id)
+      );
+
+      console.log(`[FacebookService] Found ${uniqueInterests.length} unique interests for keywords: ${keywords.join(', ')}`);
+      return uniqueInterests.slice(0, limit * keywords.length);
+    } catch (error: any) {
+      console.error('Facebook interest search error:', error.response?.data || error.message);
+      // Return empty array on error (fallback to broad targeting)
+      return [];
+    }
+  }
+
+  /**
+   * Get default targeting for broad audience (India)
+   * Updated to support dynamic interests and best practices
+   */
+  static getDefaultTargeting(
+    audienceType: 'BROAD' | 'INTEREST_BASED' = 'BROAD',
+    customInterests?: Array<{ id: string; name: string }>,
+    cityKey?: string,
+    radius?: number
+  ) {
+    const baseTargeting: any = {
       geo_locations: {
         countries: ['IN']
       },
-      age_min: 18,
-      age_max: 65
+      age_min: 25, // More targeted than 18-65
+      age_max: 55,
+      publisher_platforms: ['facebook', 'instagram'], // Automatic placements
+      facebook_positions: ['feed', 'story'], // Exclude right column
+      instagram_positions: ['stream', 'story'],
+      device_platforms: ['mobile', 'desktop']
     };
 
-    if (audienceType === 'INTEREST_BASED') {
-      return {
-        ...baseTargeting,
-        interests: [
-          { id: '6003139266461', name: 'Online shopping' }, // Example interest ID
-          { id: '6003020834693', name: 'Business' }
+    // Add local radius targeting if city is provided (for local businesses)
+    if (cityKey && radius) {
+      baseTargeting.geo_locations = {
+        countries: ['IN'],
+        location_types: ['home', 'recent'],
+        cities: [
+          {
+            key: cityKey,
+            radius: radius,
+            distance_unit: 'kilometer'
+          }
         ]
       };
+    }
+
+    // Add interests if provided (dynamic from AI)
+    if (audienceType === 'INTEREST_BASED' && customInterests && customInterests.length > 0) {
+      baseTargeting.interests = customInterests;
+    } else if (audienceType === 'INTEREST_BASED') {
+      // Fallback to hardcoded interests
+      baseTargeting.interests = [
+        { id: '6003139266461', name: 'Online shopping' },
+        { id: '6003020834693', name: 'Business' }
+      ];
     }
 
     return baseTargeting;

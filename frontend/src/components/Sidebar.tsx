@@ -41,8 +41,8 @@ export function Sidebar() {
     .includes(user.email.toLowerCase());
 
   const navItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/agent', label: 'AI Agent', icon: Sparkles },
+    { href: '/agent', label: 'Create Ad', icon: Sparkles },
+    { href: '/dashboard', label: 'History', icon: LayoutDashboard },
   ];
 
   // Add admin link for admin users
@@ -59,7 +59,7 @@ export function Sidebar() {
     <>
       {/* Logo */}
       <div className="px-6 py-5 border-b border-gray-200">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/agent" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-md bg-coral-500 flex items-center justify-center">
             <Zap className="w-5 h-5 text-white" />
           </div>

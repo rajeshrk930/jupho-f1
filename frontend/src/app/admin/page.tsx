@@ -144,7 +144,7 @@ export default function AdminPage() {
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg">
             <Shield className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -157,7 +157,7 @@ export default function AdminPage() {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Total Users */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
                   <Users className="w-5 h-5 text-blue-600" />
@@ -173,7 +173,7 @@ export default function AdminPage() {
             </div>
 
             {/* Analyses */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-teal-600" />
@@ -189,7 +189,7 @@ export default function AdminPage() {
             </div>
 
             {/* Conversations */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
                   <MessageSquare className="w-5 h-5 text-purple-600" />
@@ -205,7 +205,7 @@ export default function AdminPage() {
             </div>
 
             {/* Revenue */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
                   <IndianRupee className="w-5 h-5 text-green-600" />
@@ -223,7 +223,7 @@ export default function AdminPage() {
         )}
 
         {/* Users Table */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
           {/* Filters */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -413,7 +413,7 @@ function EditUserModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+      <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-2xl">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Edit User</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const PROTECTED_PATHS = [
+  '/agent',
   '/dashboard',
   '/analyze',
   '/history',

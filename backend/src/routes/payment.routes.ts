@@ -17,15 +17,15 @@ const razorpay = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
 
 const PLANS = {
   PRO_MONTHLY: {
-    amount: 49900, // ₹499 in paise
+    amount: 199900, // ₹1,999 in paise
     currency: 'INR',
-    name: 'Pro Plan - Monthly',
+    name: 'Pro Plan - Monthly (50 campaigns)',
     duration: 30 // days
   },
   PRO_ANNUAL: {
-    amount: 499000, // ₹4,990 in paise (2 months free!)
+    amount: 1999000, // ₹19,990 in paise (2 months free!)
     currency: 'INR',
-    name: 'Pro Plan - Annual',
+    name: 'Pro Plan - Annual (600 campaigns)',
     duration: 365 // days
   }
 };
