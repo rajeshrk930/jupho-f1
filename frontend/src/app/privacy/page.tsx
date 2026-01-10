@@ -15,156 +15,159 @@ export default function PrivacyPolicyPage() {
           <p className="text-charcoal-600">Last updated: January 10, 2026</p>
         </div>
 
-        <div className="prose prose-charcoal max-w-none space-y-8">
+        <div className="prose prose-charcoal max-w-none space-y-6">
+          <section>
+            <p className="text-charcoal-700 leading-relaxed">
+              Welcome to Jupho ("we", "our", "us").
+              We respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, store, and protect information when you use our AI-powered Meta ads creation platform.
+            </p>
+            <p className="text-charcoal-700 leading-relaxed">
+              By using Jupho, you agree to the practices described in this policy.
+            </p>
+          </section>
+
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">1. Introduction</h2>
             <p className="text-charcoal-700 leading-relaxed">
-              Welcome to Jupho ("we," "our," or "us"). We are committed to protecting your personal information 
-              and your right to privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard 
-              your information when you use our AI-powered Meta ads creation tool.
-            </p>
-            <p className="text-charcoal-700 leading-relaxed">
-              By using Jupho, you agree to the collection and use of information in accordance with this policy.
+              Jupho is an AI-powered platform that helps businesses create and launch Meta (Facebook) advertising campaigns using automation and artificial intelligence. To provide these services, we collect and process certain information as described below.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">2. Information We Collect</h2>
             
-            <h3 className="text-xl font-semibold text-charcoal-800 mb-3 mt-4">2.1 Personal Information</h3>
-            <p className="text-charcoal-700 leading-relaxed mb-2">We collect information that you provide directly to us:</p>
+            <h3 className="text-xl font-semibold text-charcoal-800 mb-3 mt-4">2.1 Information You Provide Directly</h3>
+            <p className="text-charcoal-700 leading-relaxed mb-2">We may collect the following information when you use Jupho:</p>
             <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
               <li>Account information (name, email address, password)</li>
-              <li>Business information (company name, business type)</li>
-              <li>Payment information (processed securely through Razorpay)</li>
+              <li>Business information (business name, industry, website or social profile)</li>
+              <li>Advertising preferences (budget, goals, location, audience details)</li>
+              <li>Payment information (processed securely via Razorpay; we do not store card details)</li>
               <li>Communications with our support team</li>
             </ul>
 
-            <h3 className="text-xl font-semibold text-charcoal-800 mb-3 mt-4">2.2 Facebook/Meta Data</h3>
+            <h3 className="text-xl font-semibold text-charcoal-800 mb-3 mt-4">2.2 Facebook / Meta Data</h3>
             <p className="text-charcoal-700 leading-relaxed mb-2">
-              When you connect your Facebook account to Jupho, we collect:
+              When you connect your Facebook (Meta) account to Jupho, we may access:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
-              <li>Facebook account ID and access tokens</li>
-              <li>Ad accounts associated with your Facebook account</li>
+              <li>Facebook user ID</li>
+              <li>Ad account IDs</li>
               <li>Facebook Pages you manage</li>
-              <li>Ad campaign data (for display and management purposes)</li>
-              <li>Business information from your Facebook Business Manager</li>
+              <li>Campaign, ad set, and ad data</li>
+              <li>Lead data generated through Meta Lead Forms (such as name, phone number, and email)</li>
             </ul>
+            <p className="text-charcoal-700 leading-relaxed mt-3">
+              We only access data required to create, manage, and display advertising campaigns.
+              We do not access personal Facebook profiles, private messages, or data unrelated to advertising operations.
+            </p>
 
             <h3 className="text-xl font-semibold text-charcoal-800 mb-3 mt-4">2.3 Automatically Collected Information</h3>
+            <p className="text-charcoal-700 leading-relaxed mb-2">We may automatically collect:</p>
             <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
-              <li>Device information (IP address, browser type, operating system)</li>
-              <li>Usage data (pages visited, features used, time spent on platform)</li>
+              <li>Device and browser information (IP address, browser type, operating system)</li>
+              <li>Usage data (pages viewed, features used, time spent)</li>
               <li>Cookies and similar tracking technologies</li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">3. How We Use Your Information</h2>
-            <p className="text-charcoal-700 leading-relaxed mb-2">We use the collected information for:</p>
+            <p className="text-charcoal-700 leading-relaxed mb-2">We use the collected information to:</p>
             <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
-              <li>Providing and maintaining our AI-powered ad creation service</li>
-              <li>Creating and managing Meta/Facebook ad campaigns on your behalf</li>
-              <li>Processing your payments and managing subscriptions</li>
-              <li>Generating AI-powered ad copy and creative suggestions</li>
-              <li>Improving our services and developing new features</li>
-              <li>Communicating with you about updates, offers, and support</li>
-              <li>Analyzing usage patterns to enhance user experience</li>
-              <li>Detecting and preventing fraud or unauthorized access</li>
-              <li>Complying with legal obligations</li>
+              <li>Provide and operate the Jupho platform</li>
+              <li>Create and manage Meta advertising campaigns on your behalf</li>
+              <li>Generate AI-based ad copy and campaign strategies</li>
+              <li>Create and manage Meta Lead Generation Forms</li>
+              <li>Process payments and manage subscriptions</li>
+              <li>Communicate with you regarding updates, support, or service notices</li>
+              <li>Improve platform performance and user experience</li>
+              <li>Detect fraud, abuse, or unauthorized access</li>
+              <li>Comply with legal and regulatory requirements</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">4. Facebook/Meta Integration</h2>
+            <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">4. Facebook / Meta Integration</h2>
             <p className="text-charcoal-700 leading-relaxed">
-              Jupho integrates with Facebook's Marketing API to create and manage your Meta ads. We require 
-              <code className="bg-charcoal-50 px-2 py-1 rounded text-sm">ads_management</code> permission to:
+              Jupho integrates with Meta's Marketing API and requires the <code className="bg-charcoal-50 px-2 py-1 rounded text-sm">ads_management</code> permission to:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-charcoal-700 mt-2">
-              <li>Create ad campaigns, ad sets, and ads on your behalf</li>
-              <li>Access your ad accounts and Facebook Pages</li>
-              <li>Retrieve ad performance data</li>
-              <li>Update and manage existing campaigns</li>
+              <li>Create and manage ad campaigns, ad sets, and ads</li>
+              <li>Access connected ad accounts and Pages</li>
+              <li>Retrieve and display campaign-related data</li>
             </ul>
             <p className="text-charcoal-700 leading-relaxed mt-3">
-              You can revoke Jupho's access to your Facebook account at any time through your Facebook settings. 
-              We only access data necessary to provide our services and comply with Facebook's Platform Terms 
-              and Policies.
+              You may revoke Jupho's access at any time through your Facebook account settings.
+              Jupho uses Meta data strictly in accordance with Meta Platform Terms and Policies.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">5. AI and Data Processing</h2>
-            <p className="text-charcoal-700 leading-relaxed">
-              We use OpenAI's GPT-4o-mini to generate ad copy and provide conversational assistance. When you 
-              interact with our AI agent:
+            <p className="text-charcoal-700 leading-relaxed mb-2">
+              Jupho uses OpenAI's language models to generate ad copy and assist with campaign creation.
             </p>
-            <ul className="list-disc pl-6 space-y-2 text-charcoal-700 mt-2">
-              <li>Your conversations and business information may be sent to OpenAI for processing</li>
-              <li>We do not use your data to train OpenAI's models</li>
-              <li>Generated content is stored in our database for your future reference</li>
-              <li>We implement security measures to protect data in transit and at rest</li>
+            <p className="text-charcoal-700 leading-relaxed mb-2">When you interact with our AI features:</p>
+            <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
+              <li>Business inputs and prompts may be processed by OpenAI</li>
+              <li>Your data is not used to train OpenAI models</li>
+              <li>Generated content may be stored in our system for your reference</li>
+              <li>Data is protected using encryption and access controls</li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">6. Information Sharing and Disclosure</h2>
-            <p className="text-charcoal-700 leading-relaxed mb-2">We may share your information with:</p>
-            
-            <h3 className="text-xl font-semibold text-charcoal-800 mb-3 mt-4">6.1 Service Providers</h3>
-            <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
-              <li><strong>OpenAI:</strong> For AI-powered ad copy generation</li>
-              <li><strong>Razorpay:</strong> For payment processing</li>
-              <li><strong>Facebook/Meta:</strong> For ad creation and management</li>
-              <li><strong>Hosting providers:</strong> For platform infrastructure</li>
-            </ul>
-
-            <h3 className="text-xl font-semibold text-charcoal-800 mb-3 mt-4">6.2 Legal Requirements</h3>
-            <p className="text-charcoal-700 leading-relaxed">
-              We may disclose your information if required by law, court order, or to protect our rights and safety.
+            <p className="text-charcoal-700 leading-relaxed mb-2">
+              We do not sell or rent your personal data.
             </p>
-
-            <h3 className="text-xl font-semibold text-charcoal-800 mb-3 mt-4">6.3 Business Transfers</h3>
+            <p className="text-charcoal-700 leading-relaxed mb-2">
+              We may share information only with trusted service providers, including:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
+              <li><strong>OpenAI</strong> – AI text generation</li>
+              <li><strong>Razorpay</strong> – payment processing</li>
+              <li><strong>Meta (Facebook)</strong> – ad creation and management</li>
+              <li><strong>Hosting and infrastructure providers</strong> – platform operations</li>
+            </ul>
+            <p className="text-charcoal-700 leading-relaxed mt-3">
+              We may also disclose information if required by law, legal process, or to protect our rights and safety.
+            </p>
             <p className="text-charcoal-700 leading-relaxed">
-              In the event of a merger, acquisition, or sale of assets, your information may be transferred 
-              to the acquiring entity.
+              In the event of a merger, acquisition, or asset sale, user information may be transferred as part of that transaction.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">7. Data Security</h2>
-            <p className="text-charcoal-700 leading-relaxed">
-              We implement industry-standard security measures to protect your information:
+            <p className="text-charcoal-700 leading-relaxed mb-2">
+              We implement industry-standard security practices, including:
             </p>
-            <ul className="list-disc pl-6 space-y-2 text-charcoal-700 mt-2">
-              <li>Encryption of data in transit (HTTPS/TLS)</li>
-              <li>Encrypted storage of sensitive information</li>
-              <li>Secure password hashing (bcrypt)</li>
-              <li>JWT-based authentication</li>
-              <li>Regular security audits and updates</li>
+            <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
+              <li>HTTPS / TLS encryption</li>
+              <li>Encrypted storage of sensitive data</li>
+              <li>Secure password hashing</li>
+              <li>Token-based authentication</li>
               <li>Access controls and monitoring</li>
             </ul>
             <p className="text-charcoal-700 leading-relaxed mt-3">
-              However, no method of transmission over the internet is 100% secure. While we strive to protect 
-              your information, we cannot guarantee absolute security.
+              Despite our efforts, no system is completely secure. We cannot guarantee absolute security of data.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">8. Data Retention</h2>
-            <p className="text-charcoal-700 leading-relaxed">
-              We retain your personal information for as long as necessary to:
+            <p className="text-charcoal-700 leading-relaxed mb-2">
+              We retain information only as long as necessary to:
             </p>
-            <ul className="list-disc pl-6 space-y-2 text-charcoal-700 mt-2">
-              <li>Provide our services to you</li>
-              <li>Comply with legal obligations (e.g., tax records)</li>
+            <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
+              <li>Provide our services</li>
+              <li>Meet legal and regulatory obligations</li>
               <li>Resolve disputes and enforce agreements</li>
             </ul>
             <p className="text-charcoal-700 leading-relaxed mt-3">
-              When you delete your account, we will delete or anonymize your personal information within 90 days, 
-              except where we are required to retain it by law.
+              If you delete your account, your data will be deleted or anonymized within 90 days, unless legally required to retain it.
             </p>
           </section>
 
@@ -172,83 +175,86 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">9. Your Rights and Choices</h2>
             <p className="text-charcoal-700 leading-relaxed mb-2">You have the right to:</p>
             <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
-              <li><strong>Access:</strong> Request a copy of your personal information</li>
-              <li><strong>Correction:</strong> Update or correct your information</li>
-              <li><strong>Deletion:</strong> Request deletion of your account and data</li>
-              <li><strong>Portability:</strong> Export your data in a machine-readable format</li>
-              <li><strong>Opt-out:</strong> Unsubscribe from marketing communications</li>
-              <li><strong>Revoke consent:</strong> Disconnect Facebook/Meta integration</li>
+              <li>Access your personal data</li>
+              <li>Update or correct your information</li>
+              <li>Request deletion of your data</li>
+              <li>Export your data where applicable</li>
+              <li>Opt out of marketing communications</li>
+              <li>Revoke Meta account access</li>
             </ul>
             <p className="text-charcoal-700 leading-relaxed mt-3">
-              To exercise these rights, contact us at the email address below.
+              Requests can be made by contacting us at the email address below.
+            </p>
+          </section>
+
+          <section className="bg-coral-50 border border-coral-200 rounded-lg p-6">
+            <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">9A. Facebook Data Deletion Instructions</h2>
+            <p className="text-charcoal-700 leading-relaxed mb-3">
+              Jupho complies with Facebook's data deletion requirements.
+            </p>
+            <p className="text-charcoal-700 leading-relaxed mb-2">
+              To request deletion of data accessed via Facebook / Meta APIs, please email us at:
+            </p>
+            <div className="bg-white p-4 rounded-lg border border-coral-300 my-4">
+              <p className="text-charcoal-900 font-semibold">Email: privacy@jupho.io</p>
+              <p className="text-charcoal-700 mt-2"><strong>Subject:</strong> Facebook Data Deletion Request</p>
+            </div>
+            <p className="text-charcoal-700 leading-relaxed mb-2">Please include:</p>
+            <ul className="list-disc pl-6 space-y-1 text-charcoal-700">
+              <li>Your registered email address</li>
+              <li>Your Facebook User ID</li>
+            </ul>
+            <p className="text-charcoal-700 leading-relaxed mt-3">
+              We will process the request in accordance with applicable laws and Meta Platform Policies.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">10. Cookies and Tracking</h2>
-            <p className="text-charcoal-700 leading-relaxed">
-              We use cookies and similar technologies to:
-            </p>
-            <ul className="list-disc pl-6 space-y-2 text-charcoal-700 mt-2">
-              <li>Maintain your login session</li>
-              <li>Remember your preferences</li>
-              <li>Analyze platform usage and performance</li>
+            <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">10. Cookies and Tracking Technologies</h2>
+            <p className="text-charcoal-700 leading-relaxed mb-2">We use cookies to:</p>
+            <ul className="list-disc pl-6 space-y-2 text-charcoal-700">
+              <li>Maintain login sessions</li>
+              <li>Store user preferences</li>
+              <li>Analyze platform usage</li>
             </ul>
             <p className="text-charcoal-700 leading-relaxed mt-3">
-              You can control cookies through your browser settings. Disabling cookies may affect platform functionality.
+              You can manage cookies via your browser settings. Disabling cookies may affect functionality.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">11. Children's Privacy</h2>
             <p className="text-charcoal-700 leading-relaxed">
-              Jupho is not intended for users under the age of 18. We do not knowingly collect information from 
-              children. If you believe we have collected information from a child, please contact us immediately.
+              Jupho is not intended for individuals under the age of 18.
+              We do not knowingly collect data from children.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">12. International Data Transfers</h2>
             <p className="text-charcoal-700 leading-relaxed">
-              Your information may be transferred to and processed in countries other than your country of residence. 
-              We ensure appropriate safeguards are in place to protect your information in accordance with this 
-              Privacy Policy.
+              Your information may be processed in countries outside your residence.
+              We ensure appropriate safeguards are in place to protect your data.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">13. Changes to This Privacy Policy</h2>
             <p className="text-charcoal-700 leading-relaxed">
-              We may update this Privacy Policy from time to time. We will notify you of significant changes by:
-            </p>
-            <ul className="list-disc pl-6 space-y-2 text-charcoal-700 mt-2">
-              <li>Posting the new Privacy Policy on this page</li>
-              <li>Updating the "Last updated" date</li>
-              <li>Sending you an email notification (for material changes)</li>
-            </ul>
-            <p className="text-charcoal-700 leading-relaxed mt-3">
-              Your continued use of Jupho after changes constitutes acceptance of the updated policy.
+              We may update this Privacy Policy from time to time. Updates will be reflected on this page with a revised "Last updated" date. Continued use of Jupho indicates acceptance of changes.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">14. Contact Us</h2>
-            <p className="text-charcoal-700 leading-relaxed">
-              If you have questions about this Privacy Policy or our data practices, please contact us:
+            <p className="text-charcoal-700 leading-relaxed mb-3">
+              If you have any questions about this Privacy Policy or your data:
             </p>
             <div className="mt-4 bg-charcoal-50 p-4 rounded-lg">
-              <p className="text-charcoal-700"><strong>Email:</strong> privacy@jupho.io</p>
+              <p className="text-charcoal-700"><strong>Email:</strong> hi@jupho.io</p>
               <p className="text-charcoal-700 mt-2"><strong>Company:</strong> Jupho</p>
               <p className="text-charcoal-700 mt-2"><strong>Website:</strong> https://jupho.io</p>
             </div>
-          </section>
-
-          <section className="mt-12 pt-8 border-t border-charcoal-200">
-            <p className="text-sm text-charcoal-600">
-              This Privacy Policy complies with applicable data protection laws including GDPR (EU), 
-              CCPA (California), and other regional regulations. For specific rights under your local 
-              jurisdiction, please contact us.
-            </p>
           </section>
         </div>
 
