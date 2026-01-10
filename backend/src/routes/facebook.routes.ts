@@ -30,23 +30,25 @@ router.get('/auth-url', authenticate, (req: AuthRequest, res: Response) => {
 });
 
 /**
- * POST /api/facebook/callback
+ * GET /api/facebook/callback
  * Handle OAuth callback and store access token
+ * Facebook redirects here after user authorizes the app
  */
-router.post(
-  '/callback',
-  authenticate,
-  [
-    body('code').notEmpty().withMessage('Authorization code is required')
-  ],
-  async (req: AuthRequest, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+router.get('/callback', async (req: AuthRequest, res: Response) => {
+  try {
+    const { code, state, error } = req.query;
+    
+    // Check for Facebook OAuth error
+    if (error) {
+      console.error('[Facebook OAuth] User denied:', error);
+      return res.redirect(`${process.env.FRONTEND_URL}/settings?error=access_denied`);
     }
-
-    try {
-      const { code } = req.body;
+    
+    if (!code || !state || typeof code !== 'string' || typeof state !== 'string') {
+      return res.redirect(`${process.env.FRONTEND_URL}/settings?error=missing_code`);
+    }
+    
+    const userId = state; // We passed userId as state
       
       // Exchange code for access token
       const accessToken = await FacebookService.exchangeCodeForToken(code);
@@ -69,10 +71,11 @@ router.post(
       // Use first ad account (or let user select in future enhancement)
       const selectedAccount = adAccounts[0];
       
+      // userId was passed as state parameter
       await prisma.facebookAccount.upsert({
-        where: { userId: req.user!.id },
+        where: { userId },
         create: {
-          userId: req.user!.id,
+          userId,
           facebookUserId: userInfo.id,
           accessToken: encryptedToken,
           tokenExpiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
@@ -91,26 +94,13 @@ router.post(
         }
       });
       
-      res.json({ 
-        success: true, 
-        adAccounts: adAccounts.map((acc) => ({ 
-          id: acc.id, 
-          name: acc.name,
-          currency: acc.currency
-        })),
-        selectedAccount: {
-          id: selectedAccount.id,
-          name: selectedAccount.name
-        }
-      });
+      // Redirect back to frontend settings page with success
+      return res.redirect(`${process.env.FRONTEND_URL}/settings?facebook=connected`);
     } catch (error: any) {
-      console.error('Facebook callback error:', error);
-      res.status(500).json({ 
-        error: error.message || 'Failed to connect Facebook account' 
-      });
+      console.error('[Facebook OAuth] Callback error:', error);
+      return res.redirect(`${process.env.FRONTEND_URL}/settings?error=connection_failed&message=${encodeURIComponent(error.message || 'Unknown error')}`);
     }
-  }
-);
+  });
 
 /**
  * GET /api/facebook/status
