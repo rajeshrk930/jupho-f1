@@ -62,7 +62,9 @@ app.use('/api', generalLimiter);
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? [
-        process.env.FRONTEND_URL || 'https://jupho-f1.vercel.app',
+        process.env.FRONTEND_URL || 'https://jupho.io',
+        'https://jupho.io',
+        'https://www.jupho.io',
         'https://jupho-f1.vercel.app',
         'https://jupho-f1-v2.vercel.app'
       ]
