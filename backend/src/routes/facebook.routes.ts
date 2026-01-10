@@ -12,6 +12,10 @@ const router = Router();
  */
 router.get('/auth-url', authenticate, (req: AuthRequest, res: Response) => {
   try {
+    // Log environment variables for debugging
+    console.log('[Facebook OAuth] APP_ID:', process.env.FACEBOOK_APP_ID ? 'Set' : 'MISSING');
+    console.log('[Facebook OAuth] REDIRECT_URI:', process.env.FACEBOOK_REDIRECT_URI ? 'Set' : 'MISSING');
+    
     const url = `https://www.facebook.com/v19.0/dialog/oauth?` +
       `client_id=${process.env.FACEBOOK_APP_ID}` +
       `&redirect_uri=${encodeURIComponent(process.env.FACEBOOK_REDIRECT_URI!)}` +
@@ -20,6 +24,7 @@ router.get('/auth-url', authenticate, (req: AuthRequest, res: Response) => {
     
     res.json({ url });
   } catch (error: any) {
+    console.error('[Facebook OAuth] Error:', error);
     res.status(500).json({ error: 'Failed to generate OAuth URL' });
   }
 });
