@@ -200,16 +200,16 @@ export default function BusinessScanStep({ onComplete }: Props) {
           )}
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
             onClick={handleBack}
-            className="flex-1 py-4 bg-white text-coral-600 font-semibold rounded-lg border-2 border-coral-500 hover:bg-coral-50 transition-colors"
+            className="flex-1 py-4 bg-white text-coral-600 font-semibold rounded-xl border-2 border-coral-500 hover:bg-coral-50 active:scale-98 transition-all min-h-[56px] text-base"
           >
             Scan Again
           </button>
           <button
             onClick={handleContinue}
-            className="flex-1 py-4 bg-coral-500 text-white font-semibold rounded-lg hover:bg-coral-600 transition-colors flex items-center justify-center"
+            className="flex-1 py-4 bg-coral-500 text-white font-semibold rounded-xl hover:bg-coral-600 active:scale-98 transition-all flex items-center justify-center min-h-[56px] text-base"
           >
             <CheckCircle className="w-5 h-5 mr-2" />
             Continue to Strategy
@@ -220,41 +220,41 @@ export default function BusinessScanStep({ onComplete }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl border border-coral-100 p-8">
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-coral-50 rounded-full mb-4">
-          <Sparkles className="w-8 h-8 text-coral-600" />
+    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-coral-100 p-5 sm:p-8">
+      <div className="text-center mb-6 sm:mb-8">
+        <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-coral-50 rounded-full mb-4">
+          <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-coral-600" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Tell Us About Your Business</h2>
-        <p className="text-gray-600">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Tell Us About Your Business</h2>
+        <p className="text-sm sm:text-base text-gray-600">
           We'll scan your website or Instagram to understand your brand automatically
         </p>
       </div>
 
       {/* Mode Selector */}
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-3 sm:gap-4 mb-6">
         <button
           type="button"
           onClick={() => setMode('url')}
-          className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all ${
+          className={`flex-1 py-4 sm:py-3 px-4 rounded-xl border-2 transition-all active:scale-95 min-h-[80px] sm:min-h-0 ${
             mode === 'url'
               ? 'border-coral-500 bg-coral-50 text-coral-900'
               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
           }`}
         >
-          <Globe className="w-5 h-5 mx-auto mb-1" />
+          <Globe className="w-6 h-6 sm:w-5 sm:h-5 mx-auto mb-1" />
           <span className="text-sm font-medium">Website / Instagram URL</span>
         </button>
         <button
           type="button"
           onClick={() => setMode('manual')}
-          className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all ${
+          className={`flex-1 py-4 sm:py-3 px-4 rounded-xl border-2 transition-all active:scale-95 min-h-[80px] sm:min-h-0 ${
             mode === 'manual'
               ? 'border-coral-500 bg-coral-50 text-coral-900'
               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
           }`}
         >
-          <FileText className="w-5 h-5 mx-auto mb-1" />
+          <FileText className="w-6 h-6 sm:w-5 sm:h-5 mx-auto mb-1" />
           <span className="text-sm font-medium">Describe Manually</span>
         </button>
       </div>
@@ -272,7 +272,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://example.com or https://instagram.com/username"
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-coral-500 focus:border-transparent min-h-[52px]"
                 disabled={loading}
               />
             </div>
@@ -290,7 +290,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
               onChange={(e) => setManualInput(e.target.value)}
               placeholder="Example: We sell handmade organic soaps for sensitive skin. Our products are vegan, cruelty-free, and made with natural ingredients like lavender and tea tree oil. Target customers are health-conscious women aged 25-45."
               rows={6}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent resize-none"
+              className="w-full px-4 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-coral-500 focus:border-transparent resize-none"
               disabled={loading}
             />
             <p className="mt-2 text-xs text-gray-500">
@@ -300,7 +300,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
         )}
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
             <p className="text-sm text-red-800">{error}</p>
           </div>
         )}
@@ -308,7 +308,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
         <button
           type="submit"
           disabled={!isValid || loading}
-          className="w-full py-4 bg-coral-500 text-white font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          className="w-full py-4 sm:py-4 bg-coral-500 text-white font-semibold rounded-xl hover:bg-coral-600 disabled:opacity-50 disabled:cursor-not-allowed active:scale-98 transition-all flex items-center justify-center text-base min-h-[56px]"
         >
           {loading ? (
             <>
@@ -325,7 +325,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
       </form>
 
       {/* Example Section */}
-      <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+      <div className="mt-6 sm:mt-8 p-4 bg-gray-50 rounded-xl">
         <p className="text-xs font-medium text-gray-700 mb-2">💡 What we extract:</p>
         <ul className="text-xs text-gray-600 space-y-1">
           <li>• Brand name and description</li>

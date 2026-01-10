@@ -122,44 +122,44 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-between">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-gray-200 p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-coral-50 rounded-full mr-3">
-              <Rocket className="w-6 h-6 text-coral-600" />
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-coral-50 rounded-full mr-3">
+              <Rocket className="w-6 h-6 sm:w-7 sm:h-7 text-coral-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Launch Campaign</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Launch Campaign</h2>
               <p className="text-sm text-gray-600">Review and launch your Facebook ad</p>
             </div>
           </div>
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-3 sm:px-4 sm:py-2 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 active:scale-95 transition-all text-base sm:text-sm font-medium min-h-[48px] sm:min-h-0"
           >
             {showPreview ? (
               <>
-                <EyeOff className="w-4 h-4" />
-                <span className="text-sm font-medium">Hide Preview</span>
+                <EyeOff className="w-5 h-5 sm:w-4 sm:h-4" />
+                <span>Hide Preview</span>
               </>
             ) : (
               <>
-                <Eye className="w-4 h-4" />
-                <span className="text-sm font-medium">Show Preview</span>
+                <Eye className="w-5 h-5 sm:w-4 sm:h-4" />
+                <span>Show Preview</span>
               </>
             )}
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Left Side: Image Selection & Details */}
-        <div className="space-y-6">{/* Campaign Preview */}
-      <div className="bg-white rounded-xl shadow border border-gray-200 p-6">
-        <h3 className="font-semibold text-gray-900 mb-4">Campaign Preview</h3>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">{/* Campaign Preview */}
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow border border-gray-200 p-5 sm:p-6">
+        <h3 className="font-semibold text-gray-900 mb-4 text-base sm:text-lg">Campaign Preview</h3>
+        <div className="space-y-4 sm:space-y-6">
           {/* Image Upload */}
           <div>
             <p className="text-sm font-medium text-gray-700 mb-3">Creative Image</p>
@@ -177,7 +177,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
                     setPreviewUrl(null);
                     setUploadedFile(null);
                   }}
-                  className="absolute top-2 right-2 p-2 bg-black/50 text-white rounded-lg hover:bg-black/70"
+                  className="absolute top-2 right-2 p-3 sm:p-2 bg-black/50 text-white rounded-lg hover:bg-black/70 active:scale-95 transition-all min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center"
                 >
                   ✕
                 </button>
@@ -200,7 +200,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
             />
             <label
               htmlFor="ad-image"
-              className="w-full inline-block text-center py-3 px-4 border border-coral-500 text-coral-600 rounded-lg hover:bg-coral-50 cursor-pointer transition-colors"
+              className="w-full inline-block text-center py-4 sm:py-3 px-4 border border-coral-500 text-coral-600 rounded-xl font-medium hover:bg-coral-50 cursor-pointer active:scale-98 transition-all text-base min-h-[48px]"
             >
               {uploadedFile ? 'Change Image' : 'Upload Image'}
             </label>

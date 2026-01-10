@@ -103,9 +103,89 @@ export default function AgentPage() {
         </div>
       </div>
 
-      {/* Enhanced Progress Steps */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-center mb-12">
+      {/* Enhanced Mobile-First Progress Steps */}
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Mobile: Vertical Progress */}
+        <div className="block md:hidden mb-8">
+          <div className="space-y-4">
+            {/* Step 1 - Mobile */}
+            <div className="flex items-center">
+              <div
+                className={`flex items-center justify-center w-14 h-14 rounded-full border-2 transition-all duration-400 ${
+                  currentStep >= 1
+                    ? 'bg-gradient-to-br from-coral-500 to-purple-600 border-coral-500 text-white shadow-lg'
+                    : 'bg-white border-gray-300 text-gray-400'
+                }`}
+              >
+                {currentStep > 1 ? (
+                  <Check className="w-7 h-7" />
+                ) : (
+                  <Sparkles className="w-7 h-7" />
+                )}
+              </div>
+              <div className="flex-1 ml-4">
+                <p className={`text-base font-bold ${currentStep >= 1 ? 'text-gray-900' : 'text-gray-500'}`}>Scan Business</p>
+                <p className="text-sm text-gray-500">~90 seconds</p>
+                {currentStep === 1 && (
+                  <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-coral-500 to-purple-600 rounded-full animate-pulse" style={{ width: '60%' }} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Step 2 - Mobile */}
+            <div className="flex items-center">
+              <div
+                className={`flex items-center justify-center w-14 h-14 rounded-full border-2 transition-all duration-400 ${
+                  currentStep >= 2
+                    ? 'bg-gradient-to-br from-coral-500 to-purple-600 border-coral-500 text-white shadow-lg'
+                    : 'bg-white border-gray-300 text-gray-400'
+                }`}
+              >
+                {currentStep > 2 ? (
+                  <Check className="w-7 h-7" />
+                ) : (
+                  <Target className="w-7 h-7" />
+                )}
+              </div>
+              <div className="flex-1 ml-4">
+                <p className={`text-base font-bold ${currentStep >= 2 ? 'text-gray-900' : 'text-gray-500'}`}>AI Strategy</p>
+                <p className="text-sm text-gray-500">~20 seconds</p>
+                {currentStep === 2 && (
+                  <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-coral-500 to-purple-600 rounded-full animate-pulse" style={{ width: '60%' }} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Step 3 - Mobile */}
+            <div className="flex items-center">
+              <div
+                className={`flex items-center justify-center w-14 h-14 rounded-full border-2 transition-all duration-400 ${
+                  currentStep >= 3
+                    ? 'bg-gradient-to-br from-coral-500 to-purple-600 border-coral-500 text-white shadow-lg'
+                    : 'bg-white border-gray-300 text-gray-400'
+                }`}
+              >
+                <Rocket className="w-7 h-7" />
+              </div>
+              <div className="flex-1 ml-4">
+                <p className={`text-base font-bold ${currentStep >= 3 ? 'text-gray-900' : 'text-gray-500'}`}>Launch</p>
+                <p className="text-sm text-gray-500">~20 seconds</p>
+                {currentStep === 3 && (
+                  <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-coral-500 to-purple-600 rounded-full animate-pulse" style={{ width: '60%' }} />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop: Horizontal Progress */}
+        <div className="hidden md:flex items-center justify-center mb-12">
           <div className="flex items-center space-x-4">
             {/* Step 1 */}
             <div className="flex items-center">
@@ -189,7 +269,7 @@ export default function AgentPage() {
         </div>
 
         {/* Step Content */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto pb-20">
           {currentStep === 1 && (
             <BusinessScanStep onComplete={handleBusinessScanComplete} />
           )}
