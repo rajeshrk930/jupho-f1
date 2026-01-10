@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, History, BookTemplate, User, Shield } from 'lucide-react';
+import { LayoutDashboard, FileText, History, BookTemplate, User, Shield, Sparkles } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 
 export default function BottomNav() {
@@ -16,18 +16,16 @@ export default function BottomNav() {
 
   const tabs = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/analyze', label: 'Analyze', icon: FileText },
-    { href: '/history', label: 'History', icon: History },
-    { href: '/templates', label: 'Templates', icon: BookTemplate },
+    { href: '/agent', label: 'AI Agent', icon: Sparkles },
     { href: '/profile', label: 'Profile', icon: User },
   ];
 
   // Add admin tab for admin users
   if (isAdmin) {
-    tabs.splice(4, 0, { href: '/admin', label: 'Admin', icon: Shield });
+    tabs.splice(2, 0, { href: '/admin', label: 'Admin', icon: Shield });
   }
 
-  const gridCols = isAdmin ? 'grid-cols-6' : 'grid-cols-5';
+  const gridCols = isAdmin ? 'grid-cols-4' : 'grid-cols-3';
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-base-surface border-t border-border-default z-50 safe-area-pb">

@@ -47,28 +47,9 @@ router.post(
     let briefing: string | undefined;
     let analysisTitle: string | undefined;
     if (analysisId && !conversationId) {
-      const analysis = await prisma.analysis.findFirst({
-        where: { id: analysisId, userId: user.id },
-        select: {
-          primaryReason: true,
-          resultType: true,
-          ctr: true,
-          cpm: true,
-          cpa: true,
-          objective: true,
-          singleFix: true,
-        },
-      });
-
-      if (analysis) {
-        const statusMap: Record<string, string> = {
-          WINNING: 'Winning Performance',
-          AVERAGE: 'Average Performance',
-          DEAD: 'Poor Performance',
-        };
-        briefing = `CURRENT CONTEXT: The user just analyzed their ad creative. Results show ${statusMap[analysis.resultType] || 'Unknown'} with the diagnosis: "${analysis.primaryReason}". Metrics: CTR ${analysis.ctr}%, CPM ₹${analysis.cpm}, CPA ₹${analysis.cpa}. Campaign Goal: ${analysis.objective}. Recommended Fix: "${analysis.singleFix}". They need actionable advice to improve these metrics. Start your response by acknowledging their situation and offer immediate next steps.`;
-        analysisTitle = buildAnalysisTitle(analysis.primaryReason);
-      }
+      // Analysis feature removed - using agent tasks instead
+      briefing = undefined;
+      analysisTitle = undefined;
     }
 
     // Usage limit is now handled by checkUsageLimit middleware
@@ -82,15 +63,11 @@ router.post(
     }
 
     if (!conversation) {
-      const conversationData: any = {
-        userId: user.id,
-        title: analysisTitle || buildTitle(message),
-      };
-      if (analysisId) {
-        conversationData.analysisId = analysisId;
-      }
       conversation = await prisma.conversation.create({
-        data: conversationData,
+        data: {
+          userId: user.id,
+          title: analysisTitle || buildTitle(message),
+        },
       });
     }
 

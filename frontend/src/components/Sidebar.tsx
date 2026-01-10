@@ -12,7 +12,8 @@ import {
   Settings, 
   LogOut,
   Crown,
-  Shield
+  Shield,
+  Sparkles
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -41,9 +42,7 @@ export function Sidebar() {
 
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/analyze', label: 'Analyze', icon: Zap },
-    { href: '/templates', label: 'Saved Templates', icon: BookMarked },
-    { href: '/history', label: 'History', icon: History },
+    { href: '/agent', label: 'AI Agent', icon: Sparkles },
   ];
 
   // Add admin link for admin users

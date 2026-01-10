@@ -11,7 +11,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/dashboard');
+      router.replace('/agent');
     }
   }, [isAuthenticated, router]);
 
@@ -24,8 +24,8 @@ export default function Home() {
       <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold text-text-primary mb-3">Jupho</h1>
-          <p className="text-lg text-text-secondary">Meta Ads Creative Analyzer</p>
-          <p className="text-sm text-text-tertiary mt-2">Understand why your creatives fail. Get actionable fixes.</p>
+          <p className="text-lg text-text-secondary">AI-Powered Meta Ads Creator</p>
+          <p className="text-sm text-text-tertiary mt-2">Create high-performing Meta ads automatically with AI</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -41,7 +41,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-text-primary mb-2">Sign In</h2>
             <p className="text-text-secondary mb-4">Already have an account?</p>
             <div className="inline-flex items-center text-signal-primary font-semibold group-hover:gap-2 transition-all">
-              Continue to dashboard
+              Start creating ads
               <svg className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -58,7 +58,7 @@ export default function Home() {
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-text-primary mb-2">Create Account</h2>
-            <p className="text-text-secondary mb-4">Start analyzing your ads for free</p>
+            <p className="text-text-secondary mb-4">Start creating ads with AI for free</p>
             <div className="inline-flex items-center text-signal-primary font-semibold group-hover:gap-2 transition-all">
               Get started now
               <svg className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@ export default function Home() {
         </div>
 
         <div className="mt-10 text-center">
-          <p className="text-sm text-text-tertiary">© 2026 Jupho · Built for ad professionals</p>
+          <p className="text-sm text-text-tertiary">© 2026 Jupho · AI-powered Meta ads for business owners</p>
         </div>
       </div>
     </div>

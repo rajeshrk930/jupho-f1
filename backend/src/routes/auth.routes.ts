@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { Sanitizer } from '../utils/sanitizer';
+import { getCsrfToken } from '../middleware/csrf';
 
 const router = Router();
 
@@ -20,7 +22,17 @@ const registerHandler = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { email, password, name } = req.body;
+    // Sanitize inputs
+    const email = Sanitizer.sanitizeEmail(req.body.email);
+    const name = req.body.name ? Sanitizer.sanitizeString(req.body.name) : undefined;
+    const { password } = req.body;
+
+    if (!email || !Sanitizer.isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format'
+      });
+    }
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -311,19 +323,6 @@ router.get('/export', authenticate, async (req: AuthRequest, res: Response) => {
         name: true,
         plan: true,
         createdAt: true,
-        analyses: {
-          select: {
-            id: true,
-            creativeType: true,
-            objective: true,
-            primaryReason: true,
-            resultType: true,
-            ctr: true,
-            cpm: true,
-            cpa: true,
-            createdAt: true
-          }
-        },
         conversations: {
           select: {
             id: true,
@@ -336,15 +335,6 @@ router.get('/export', authenticate, async (req: AuthRequest, res: Response) => {
                 createdAt: true
               }
             }
-          }
-        },
-        savedTemplates: {
-          select: {
-            id: true,
-            category: true,
-            title: true,
-            content: true,
-            createdAt: true
           }
         }
       }
@@ -365,9 +355,7 @@ router.get('/export', authenticate, async (req: AuthRequest, res: Response) => {
         plan: user.plan,
         memberSince: user.createdAt
       },
-      analyses: user.analyses,
       conversations: user.conversations,
-      templates: user.savedTemplates,
       exportedAt: new Date().toISOString()
     };
 
@@ -403,5 +391,8 @@ router.delete('/account', authenticate, async (req: AuthRequest, res: Response) 
     res.status(500).json({ success: false, message: 'Failed to delete account' });
   }
 });
+
+// Get CSRF token
+router.get('/csrf-token', authenticate, getCsrfToken);
 
 export { router as authRoutes };

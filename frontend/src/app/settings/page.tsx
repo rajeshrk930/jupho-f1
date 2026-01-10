@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
-import { settingsApi, authApi } from '@/lib/api';
+import { settingsApi, authApi, api } from '@/lib/api';
 import { User, Mail, Lock, Bell, Shield, Download, Trash2, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -26,6 +26,51 @@ export default function SettingsPage() {
   const [analysisComplete, setAnalysisComplete] = useState(true);
   const [usageAlerts, setUsageAlerts] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(false);
+  
+  // Facebook connection
+  const [fbStatus, setFbStatus] = useState<any>(null);
+  const [fbLoading, setFbLoading] = useState(false);
+  
+  useEffect(() => {
+    checkFacebookStatus();
+  }, []);
+  
+  const checkFacebookStatus = async () => {
+    try {
+      const { data } = await api.get('/facebook/status');
+      setFbStatus(data);
+    } catch (error) {
+      console.error('Failed to check Facebook status:', error);
+    }
+  };
+  
+  const connectFacebook = async () => {
+    try {
+      setFbLoading(true);
+      const { data } = await api.get('/facebook/auth-url');
+      window.location.href = data.url;
+    } catch (error: any) {
+      toast.error('Failed to connect Facebook');
+      setFbLoading(false);
+    }
+  };
+  
+  const disconnectFacebook = async () => {
+    if (!confirm('Are you sure you want to disconnect your Facebook account? You will need to reconnect to analyze ads automatically.')) {
+      return;
+    }
+    
+    try {
+      setFbLoading(true);
+      await api.delete('/facebook/disconnect');
+      await checkFacebookStatus();
+      toast.success('Facebook account disconnected');
+    } catch (error: any) {
+      toast.error('Failed to disconnect Facebook');
+    } finally {
+      setFbLoading(false);
+    }
+  };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -243,6 +288,90 @@ export default function SettingsPage() {
               Update Password
             </button>
           </form>
+        </div>
+
+        {/* Facebook Account Connection Section */}
+        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-md bg-blue-600/10 flex items-center justify-center">
+              <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-text-primary">Facebook Ad Account</h2>
+              <p className="text-sm text-text-secondary">Connect to automatically fetch ad metrics</p>
+            </div>
+          </div>
+
+          {fbStatus === null ? (
+            <div className="flex items-center justify-center py-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-signal-primary"></div>
+            </div>
+          ) : fbStatus?.connected ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-md">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div className="flex-1">
+                  <p className="font-medium text-green-900">Connected</p>
+                  <p className="text-sm text-green-700">
+                    {fbStatus.account?.adAccountName || 'Facebook Ad Account'}
+                  </p>
+                </div>
+              </div>
+              
+              {fbStatus.account?.lastSyncAt && (
+                <p className="text-sm text-text-secondary">
+                  Last synced: {new Date(fbStatus.account.lastSyncAt).toLocaleString()}
+                </p>
+              )}
+              
+              {fbStatus.account?.tokenExpiring && (
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                  <p className="text-sm text-yellow-800">
+                    ⚠️ Your access token is expiring soon. Please reconnect your account.
+                  </p>
+                </div>
+              )}
+              
+              <button
+                onClick={disconnectFacebook}
+                disabled={fbLoading}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium disabled:opacity-50"
+              >
+                {fbLoading ? 'Disconnecting...' : 'Disconnect Facebook'}
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-sm text-blue-900 mb-2">
+                  <strong>Why connect Facebook?</strong>
+                </p>
+                <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                  <li>Automatically fetch ad metrics (CPM, CTR, CPA)</li>
+                  <li>No manual data entry required</li>
+                  <li>Real-time sync with your ad campaigns</li>
+                  <li>View-only access - we never modify your ads</li>
+                </ul>
+              </div>
+              
+              <button
+                onClick={connectFacebook}
+                disabled={fbLoading}
+                className="btn-primary inline-flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                {fbLoading ? 'Connecting...' : 'Connect Facebook'}
+              </button>
+              
+              <p className="text-xs text-text-secondary">
+                We only request view-only access to your ad accounts. Your credentials are encrypted and stored securely.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Notifications Section */}

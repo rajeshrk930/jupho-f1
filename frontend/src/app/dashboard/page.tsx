@@ -1,258 +1,161 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { analysisApi } from '@/lib/api';
+import { agentApi } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
-import { AnalysisResult } from '@/components/AnalysisResult';
 import { StatCard } from '@/components/StatCard';
-import { StatusBadge } from '@/components/StatusBadge';
 import MobileTopBar from '@/components/MobileTopBar';
-import { Analysis } from '@/types';
-import { BarChart3, Calendar, TrendingUp, Zap, MessageSquare, FileText, Crown, Sparkles, Clock, ChevronDown } from 'lucide-react';
+import { Sparkles, Target, Clock, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
-  const [showLatestAnalysis, setShowLatestAnalysis] = useState(false);
 
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: ['dashboard-analyses'],
-    queryFn: () => analysisApi.getAll({ limit: 5 }),
+  const { data: tasksData, isLoading } = useQuery({
+    queryKey: ['agent-tasks'],
+    queryFn: () => agentApi.getTasks(10),
   });
 
-  const analyses: Analysis[] = data?.data?.analyses || [];
-  const total = data?.data?.pagination?.total ?? analyses.length;
-
-  const monthlyCount = useMemo(() => {
-    const now = Date.now();
-    const THIRTY_DAYS = 1000 * 60 * 60 * 24 * 30;
-    return analyses.filter((a) => now - new Date(a.createdAt).getTime() <= THIRTY_DAYS).length;
-  }, [analyses]);
-
-  const avgCtr = useMemo(() => {
-    if (!analyses.length) return null;
-    const sum = analyses.reduce((acc, a) => acc + (a.ctr || 0), 0);
-    return (sum / analyses.length).toFixed(2);
-  }, [analyses]);
-
-  // Generate personalized tip based on last analysis
-  const quickTip = useMemo(() => {
-    if (!analyses.length) return "Upload your first ad creative to get personalized insights.";
-    
-    const lastAnalysis = analyses[0];
-    const tipMap: Record<string, string> = {
-      'LAUNCH_PHASE': `Your last ad is in launch phase. Give it 48-72 hours before making changes.`,
-      'CREATIVE': `Your last ad's CTR was ${lastAnalysis.ctr}%. Fixing just the opening visual can lift CTR by 30-50%.`,
-      'FUNNEL': `You're getting clicks (${lastAnalysis.ctr}% CTR) but no conversions. Optimize your landing page to capture those leads.`,
-      'SALES': `Leads are coming in but not converting. Faster follow-up (within 15 min) can increase sales by 40-60%.`,
-      'AUDIENCE': `Your ad is experiencing audience fatigue. Broaden your targeting or refresh the creative.`,
-      'DELIVERY': `Budget changes are inflating your costs. Adjust in 20-30% increments every 2-3 days.`,
-    };
-    
-    const failureType = lastAnalysis.failureReason || 'CREATIVE';
-    return tipMap[failureType] || `Great work! Your average CTR is ${avgCtr}%. Keep testing new variations.`;
-  }, [analyses, avgCtr]);
-
-  // Show 2 on mobile, 3 on desktop
-  const recentSlice = analyses.slice(0, 3);
-  const mobileRecentSlice = analyses.slice(0, 2);
+  const tasks = tasksData?.tasks || [];
+  
+  const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED').length;
+  const failedTasks = tasks.filter((t: any) => t.status === 'FAILED').length;
+  const pendingTasks = tasks.filter((t: any) => ['PENDING', 'GENERATING', 'CREATING'].includes(t.status)).length;
 
   return (
     <div className="min-h-screen bg-base">
       <MobileTopBar title="Dashboard" />
       <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-6 pb-20 lg:pb-6">
-        {/* Simple Header */}
+        {/* Header */}
         <div className="bg-base-surface border border-border-default rounded-md p-6 shadow-sm hidden lg:block">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
               <p className="text-xs text-signal-primary font-medium uppercase tracking-wider">Dashboard</p>
               <h1 className="text-2xl font-semibold text-text-primary">Welcome back{user?.name ? `, ${user.name}` : ''}!</h1>
-              <p className="text-sm text-text-secondary">See your recent analyses and jump back into the work.</p>
+              <p className="text-sm text-text-secondary">Create high-performing Meta ads with AI</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/analyze" className="btn-primary">+ New Analysis</Link>
+              <Link href="/agent" className="btn-primary inline-flex items-center gap-2">
+                <Sparkles size={16} />
+                Create Ad with AI
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Quick Actions - Horizontal scroll on mobile, grid on desktop */}
-        <div className="flex lg:grid overflow-x-auto lg:overflow-visible gap-3 lg:gap-4 lg:grid-cols-3 xl:grid-cols-3 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory scrollbar-hide">
-          <Link
-            href="/analyze"
-            className="bg-base-surface border-l-[3px] border-signal-primary rounded-md p-5 lg:p-6 hover:shadow-md transition-all group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
-          >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-md bg-base-elevated flex items-center justify-center mb-3 lg:mb-4">
-              <Zap size={20} className="lg:w-6 lg:h-6 text-signal-primary" />
-            </div>
-            <h3 className="font-semibold text-text-primary mb-1 text-base lg:text-lg">New Analysis</h3>
-            <p className="text-sm text-text-secondary">Analyze your next ad creative</p>
-          </Link>
-
-          <Link
-            href="/history"
-            className="bg-base-surface border-l-[3px] border-signal-primary rounded-md p-5 lg:p-6 hover:shadow-md transition-all group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
-          >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-md bg-base-elevated flex items-center justify-center mb-3 lg:mb-4">
-              <FileText size={20} className="lg:w-6 lg:h-6 text-signal-primary" />
-            </div>
-            <h3 className="font-semibold text-text-primary mb-1 text-base lg:text-lg">View Reports</h3>
-            <p className="text-sm text-text-secondary">Browse all your analyses</p>
-          </Link>
-
-          <Link
-            href="/billing"
-            className="bg-base-surface border-l-[3px] border-signal-primary rounded-md p-5 lg:p-6 hover:shadow-md transition-all group shadow-sm min-w-[280px] lg:min-w-0 snap-start"
-          >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-md bg-base-elevated flex items-center justify-center mb-3 lg:mb-4">
-              <Crown size={20} className="lg:w-6 lg:h-6 text-signal-primary" />
-            </div>
-            <h3 className="font-semibold text-text-primary mb-1 text-base lg:text-lg">Upgrade Pro</h3>
-            <p className="text-sm text-text-secondary">Unlock unlimited features</p>
-          </Link>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <StatCard
+            title="Completed Ads"
+            value={completedTasks}
+            icon={CheckCircle2}
+            trend={completedTasks > 0 ? `${completedTasks} successful` : undefined}
+          />
+          <StatCard
+            title="Active Tasks"
+            value={pendingTasks}
+            icon={Loader2}
+            trend={pendingTasks > 0 ? 'In progress' : 'No active tasks'}
+          />
+          <StatCard
+            title="Failed Tasks"
+            value={failedTasks}
+            icon={XCircle}
+            trend={failedTasks > 0 ? 'Review errors' : 'All good'}
+          />
         </div>
 
-        {/* Tips & Insights Section */}
-        {analyses.length > 0 && (
-          <div className="bg-base-elevated border border-border-default rounded-md p-5 lg:p-6 shadow-sm">
-            <div className="flex items-start gap-3 lg:gap-4">
-              <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-md bg-base-surface flex items-center justify-center flex-shrink-0">
-                <Sparkles size={20} className="lg:w-6 lg:h-6 text-signal-primary" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-text-primary mb-1 lg:mb-2 text-base lg:text-lg">💡 Quick Tip</h3>
-                <p className="text-text-secondary leading-relaxed text-sm lg:text-base">
-                  {quickTip}
-                </p>
-              </div>
+        {/* Quick Action */}
+        <Link
+          href="/agent"
+          className="block bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-8 text-white hover:shadow-xl transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+              <Sparkles size={32} />
             </div>
-          </div>
-        )}
-
-        {/* Stats - Horizontal on mobile, grid on desktop */}
-        <div className="flex lg:grid overflow-x-auto lg:overflow-visible gap-3 lg:gap-4 lg:grid-cols-3 -mx-4 px-4 lg:mx-0 lg:px-0 scrollbar-hide">
-          {isLoading || isFetching ? (
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="stat-card border-signal-primary min-w-[160px] lg:min-w-0">
-                <div className="skeleton h-3 w-20 mb-2" />
-                <div className="skeleton h-8 w-16 mb-1" />
-                <div className="skeleton h-3 w-24" />
-              </div>
-            ))
-          ) : (
-            <>
-              <div className="stat-card border-signal-primary min-w-[160px] lg:min-w-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-9 h-9 rounded-md bg-base-elevated flex items-center justify-center">
-                    <BarChart3 size={18} className="text-text-secondary" />
-                  </div>
-                  <p className="text-sm text-text-secondary font-medium">Total analyses</p>
-                </div>
-                <p className="text-2xl lg:text-3xl font-semibold text-text-primary mb-1">{total}</p>
-                <p className="text-xs lg:text-sm text-text-tertiary">All time</p>
-              </div>
-              <div className="stat-card border-signal-primary min-w-[160px] lg:min-w-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-9 h-9 rounded-md bg-base-elevated flex items-center justify-center">
-                    <Calendar size={18} className="text-text-secondary" />
-                  </div>
-                  <p className="text-sm text-text-secondary font-medium">This month</p>
-                </div>
-                <p className="text-2xl lg:text-3xl font-semibold text-text-primary mb-1">{monthlyCount}</p>
-                <p className="text-xs lg:text-sm text-text-tertiary">Past 30 days</p>
-              </div>
-              <div className="stat-card border-signal-primary min-w-[160px] lg:min-w-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-9 h-9 rounded-md bg-base-elevated flex items-center justify-center">
-                    <TrendingUp size={18} className="text-text-secondary" />
-                  </div>
-                  <p className="text-sm text-text-secondary font-medium">Avg CTR</p>
-                </div>
-                <p className="text-2xl lg:text-3xl font-semibold text-text-primary mb-1">{avgCtr ? `${avgCtr}%` : '—'}</p>
-                <p className="text-xs lg:text-sm text-text-tertiary">Across recent</p>
-              </div>
-            </>
-          )}
-        </div>
-
-        <section className="bg-base-surface border border-border-default rounded-md p-5 lg:p-6 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-signal-primary font-medium uppercase tracking-wider">Recent</p>
-              <h2 className="text-base lg:text-lg font-semibold text-text-primary">Recent analyses</h2>
+              <h2 className="text-2xl font-bold mb-2">Start Creating Ads with AI</h2>
+              <p className="text-white/80">Let our AI agent guide you through creating high-performing Meta ads in minutes</p>
             </div>
-            <Link href="/history" className="text-sm text-signal-primary hover:text-signal-primary/80 font-medium">View all</Link>
+          </div>
+        </Link>
+
+        {/* Recent Tasks */}
+        <div className="bg-base-surface border border-border-default rounded-md p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-text-primary">Recent Tasks</h2>
+            <Link href="/agent" className="text-sm text-signal-primary hover:underline">View all →</Link>
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-              {[...Array(2)].map((_, idx) => (
-                <div key={idx} className="bg-base-surface border border-border-default rounded-md p-4 lg:p-5 space-y-3 shadow-sm">
-                  <div className="skeleton h-3 w-24" />
-                  <div className="skeleton h-4 w-full" />
-                  <div className="skeleton h-4 w-2/3" />
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-signal-primary" />
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="text-center py-8">
+              <Target className="w-12 h-12 mx-auto mb-3 text-text-tertiary" />
+              <p className="text-text-secondary mb-4">No tasks yet</p>
+              <Link href="/agent" className="btn-primary inline-flex items-center gap-2">
+                <Sparkles size={16} />
+                Create Your First Ad
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {tasks.slice(0, 5).map((task: any) => (
+                <div key={task.id} className="flex items-center justify-between p-4 bg-base-elevated rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                      task.status === 'COMPLETED' ? 'bg-green-100 text-green-600' :
+                      task.status === 'FAILED' ? 'bg-red-100 text-red-600' :
+                      'bg-blue-100 text-blue-600'
+                    }`}>
+                      {task.status === 'COMPLETED' ? <CheckCircle2 size={20} /> :
+                       task.status === 'FAILED' ? <XCircle size={20} /> :
+                       <Loader2 size={20} className="animate-spin" />}
+                    </div>
+                    <div>
+                      <p className="font-medium text-text-primary">
+                        {task.input ? JSON.parse(task.input).objective || 'Ad Creation' : 'Ad Creation'}
+                      </p>
+                      <p className="text-sm text-text-secondary flex items-center gap-1">
+                        <Clock size={14} />
+                        {new Date(task.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    task.status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
+                    task.status === 'FAILED' ? 'bg-red-100 text-red-700' :
+                    'bg-blue-100 text-blue-700'
+                  }`}>
+                    {task.status}
+                  </span>
                 </div>
               ))}
             </div>
-          ) : !recentSlice.length ? (
-            <div className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border-default rounded-md p-6 md:p-8 text-center bg-base">
-              <div className="w-14 h-14 md:w-16 md:h-16 rounded-md bg-base-elevated flex items-center justify-center">
-                <BarChart3 size={24} className="md:w-7 md:h-7 text-text-secondary" />
-              </div>
-              <p className="text-text-primary font-semibold text-base lg:text-lg">No analyses yet</p>
-              <p className="text-sm lg:text-base text-text-secondary">Start your first one to see insights here.</p>
-              <Link href="/analyze" className="px-5 py-2.5 bg-signal-primary hover:bg-signal-primary/90 text-white rounded-sm font-medium text-sm shadow-sm">Start first analysis</Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-              {/* Show 2 cards on mobile/tablet, all 3 on desktop */}
-              {recentSlice.map((analysis, idx) => (
-                <article key={analysis.id} className={`bg-base-surface border-l-[3px] border-signal-primary rounded-md p-4 lg:p-5 space-y-3 shadow-sm hover:shadow-md group ${idx >= 2 ? 'hidden lg:block' : ''}`}>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-text-tertiary font-medium">{new Date(analysis.createdAt).toLocaleDateString()}</span>
-                    <StatusBadge status={analysis.resultType as 'WINNING' | 'AVERAGE' | 'DEAD'} size="sm" showLabel />
-                  </div>
-                  <p className="text-sm md:text-base font-semibold text-text-primary line-clamp-2 group-hover:text-signal-primary">{analysis.primaryReason}</p>
-                  <p className="text-xs md:text-sm text-text-secondary line-clamp-2">{Array.isArray(analysis.supportingLogic) ? analysis.supportingLogic[0] : analysis.supportingLogic}</p>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-border-subtle">
-                    <Link href={`/history`} className="text-xs lg:text-sm text-signal-primary hover:text-signal-primary/80 font-medium">View Details →</Link>
-                    <div className="flex items-center gap-2 text-xs text-text-secondary flex-wrap font-medium">
-                      <span className="px-2 py-1 bg-signal-primary/10 text-signal-primary rounded-sm">CTR {analysis.ctr}%</span>
-                      {analysis.industry && (
-                        <span className="px-2 py-1 rounded-sm bg-base-elevated text-text-secondary">
-                          {analysis.industry.replace('_', ' ')}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
           )}
-        </section>
+        </div>
 
-        {recentSlice.length > 0 && (
-          <section className="bg-base-surface border border-border-default rounded-md p-5 lg:p-6 shadow-sm space-y-4">
-            {/* Mobile: Collapsible, Desktop: Always open */}
-            <button
-              onClick={() => setShowLatestAnalysis(!showLatestAnalysis)}
-              className="w-full flex items-center justify-between lg:pointer-events-none"
-            >
-              <div>
-                <p className="text-xs text-signal-primary font-medium uppercase tracking-wider">Details</p>
-                <h2 className="text-base lg:text-lg font-semibold text-text-primary">Latest analysis</h2>
-              </div>
-              <ChevronDown
-                size={20}
-                className={`lg:hidden text-text-tertiary ${showLatestAnalysis ? 'rotate-180' : ''}`}
-              />
-            </button>
-            
-            <div className={`${showLatestAnalysis ? 'block' : 'hidden'} lg:block`}>
-              <AnalysisResult analysis={recentSlice[0]} />
+        {/* Help Section */}
+        <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl border border-purple-100 p-6">
+          <h2 className="text-lg font-semibold text-purple-900 mb-2">How it works</h2>
+          <div className="grid md:grid-cols-3 gap-4 text-sm text-purple-700">
+            <div>
+              <div className="font-medium mb-1">1. Answer Questions</div>
+              <p className="text-purple-600">Tell our AI about your business, target audience, and budget</p>
             </div>
-          </section>
-        )}
+            <div>
+              <div className="font-medium mb-1">2. Review AI-Generated Copy</div>
+              <p className="text-purple-600">Get 3 variants of headlines, primary text, and descriptions</p>
+            </div>
+            <div>
+              <div className="font-medium mb-1">3. Launch Your Ad</div>
+              <p className="text-purple-600">Approve and create ads directly on Facebook in one click</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

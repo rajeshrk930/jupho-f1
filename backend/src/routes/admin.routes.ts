@@ -19,15 +19,15 @@ router.get('/stats', async (req, res) => {
       totalUsers,
       freeUsers,
       proUsers,
-      totalAnalyses,
       totalConversations,
+      totalAgentTasks,
       revenueData
     ] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { plan: 'FREE' } }),
       prisma.user.count({ where: { plan: 'PRO' } }),
-      prisma.analysis.count(),
       prisma.conversation.count(),
+      prisma.agentTask.count(),
       prisma.user.aggregate({
         where: { plan: 'PRO' },
         _sum: { apiUsageCount: true }
@@ -44,9 +44,9 @@ router.get('/stats', async (req, res) => {
         pro: proUsers
       },
       analytics: {
-        totalAnalyses,
+        totalAgentTasks,
         totalConversations,
-        avgAnalysesPerUser: totalUsers > 0 ? (totalAnalyses / totalUsers).toFixed(2) : 0
+        avgTasksPerUser: totalUsers > 0 ? (totalAgentTasks / totalUsers).toFixed(2) : 0
       },
       revenue: {
         estimated: estimatedRevenue,
@@ -109,7 +109,6 @@ router.get('/users', async (req, res) => {
           createdAt: true,
           _count: {
             select: {
-              analyses: true,
               conversations: true
             }
           }
@@ -144,16 +143,6 @@ router.get('/users/:id', async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { id },
       include: {
-        analyses: {
-          take: 10,
-          orderBy: { createdAt: 'desc' },
-          select: {
-            id: true,
-            createdAt: true,
-            creativeType: true,
-            resultType: true
-          }
-        },
         conversations: {
           take: 10,
           orderBy: { createdAt: 'desc' },
@@ -167,7 +156,6 @@ router.get('/users/:id', async (req, res) => {
         },
         _count: {
           select: {
-            analyses: true,
             conversations: true
           }
         }

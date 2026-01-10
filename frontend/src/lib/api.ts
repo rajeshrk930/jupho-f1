@@ -96,40 +96,6 @@ export const authApi = {
   },
 };
 
-// Analysis API
-export const analysisApi = {
-  create: async (formData: FormData) => {
-    const response = await api.post('/analysis', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return response.data;
-  },
-  getAll: async (params?: {
-    page?: number;
-    limit?: number;
-    industry?: string;
-    resultType?: string;
-    search?: string;
-  }) => {
-    const response = await api.get('/analysis', { params });
-    return response.data;
-  },
-  getById: async (id: string) => {
-    const response = await api.get(`/analysis/${id}`);
-    return response.data;
-  },
-  exportPdf: async (id: string) => {
-    const response = await api.get(`/analysis/${id}/export/pdf`, {
-      responseType: 'blob',
-    });
-    return response.data;
-  },
-  delete: async (id: string) => {
-    const response = await api.delete(`/analysis/${id}`);
-    return response.data;
-  },
-};
-
 // Payment API
 export const paymentApi = {
   createOrder: async (plan: 'PRO_MONTHLY' | 'PRO_ANNUAL' = 'PRO_MONTHLY') => {
@@ -181,48 +147,6 @@ export const chatApi = {
   },
   getUsage: async () => {
     const response = await api.get('/chat/usage');
-    return response.data;
-  },
-};
-
-// Behavioral Tracking API (for AI training data)
-export const trackingApi = {
-  trackAction: async (analysisId: string, action: 'openedAI' | 'downloadedPDF' | 'copiedText' | 'clickedImplement') => {
-    try {
-      await api.post('/tracking/action', { analysisId, action });
-    } catch (error) {
-      // Silent failure - tracking should never interrupt UX
-      console.error('[Tracking] Failed to track action:', error);
-    }
-  },
-  trackFeedback: async (analysisId: string, fixWorked: boolean) => {
-    try {
-      await api.post('/tracking/feedback', { analysisId, fixWorked });
-    } catch (error) {
-      console.error('[Tracking] Failed to track feedback:', error);
-    }
-  },
-};
-
-// Template Library API
-export const templateApi = {
-  getAll: async (category?: 'COPY' | 'SCRIPT' | 'REPORT') => {
-    const params = category ? { category } : {};
-    const response = await api.get('/templates', { params });
-    return response.data;
-  },
-  create: async (template: {
-    category: 'COPY' | 'SCRIPT' | 'REPORT';
-    title: string;
-    content: string;
-    tags?: string[];
-    analysisId?: string;
-  }) => {
-    const response = await api.post('/templates', template);
-    return response.data;
-  },
-  delete: async (id: string) => {
-    const response = await api.delete(`/templates/${id}`);
     return response.data;
   },
 };
@@ -280,3 +204,37 @@ export const adminApi = {
   },
 };
 
+// Agent API
+export const agentApi = {
+  startTask: async () => {
+    const response = await api.post('/agent/start');
+    return response.data;
+  },
+  sendMessage: async (taskId: string, message: string) => {
+    const response = await api.post('/agent/message', { taskId, message });
+    return response.data;
+  },
+  createAd: async (taskId: string, creativeFile?: File) => {
+    const formData = new FormData();
+    formData.append('taskId', taskId);
+    if (creativeFile) {
+      formData.append('creative', creativeFile);
+    }
+    const response = await api.post('/agent/create-ad', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+  getTasks: async (limit?: number) => {
+    const response = await api.get('/agent/tasks', { params: { limit } });
+    return response.data;
+  },
+  selectVariant: async (taskId: string, creativeId: string, type: string) => {
+    const response = await api.post('/agent/select-variant', { taskId, creativeId, type });
+    return response.data;
+  },
+  deleteTask: async (taskId: string) => {
+    const response = await api.delete(`/agent/task/${taskId}`);
+    return response.data;
+  },
+};

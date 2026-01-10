@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -18,44 +18,10 @@ model User {
   proExpiresAt  DateTime?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
-  analyses      Analysis[]
   payments      Payment[]
   conversations Conversation[]
   messages      Message[]
-  savedTemplates SavedTemplate[]
-}
-
-model Analysis {
-  id              String   @id @default(uuid())
-  userId          String
-  creativeUrl     String?
-  creativeType    String
-  primaryText     String?
-  headline        String?
-  objective       String
-  problemFaced    String
-  whatChanged     String
-  audienceType    String
-  cpm             Float
-  ctr             Float
-  cpa             Float
-  primaryReason   String
-  supportingLogic String   // Stored as JSON string array
-  singleFix       String
-  additionalNotes String?  // Optional notes field
-  failureReason   String?
-  resultType      String   @default("AVERAGE")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  conversations   Conversation[]
-
-  @@index([userId])
-  @@index([userId, createdAt])
-  @@index([createdAt])
-  @@index([objective])
-  @@index([problemFaced])
-  @@index([resultType])
+  facebookAccount FacebookAccount?
 }
 
 model Payment {
@@ -78,16 +44,13 @@ model Conversation {
   id         String    @id @default(uuid())
   userId     String
   title      String?
-  analysisId String?
   goal       String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  analysis   Analysis? @relation(fields: [analysisId], references: [id], onDelete: SetNull)
   messages   Message[]
 
   @@index([userId, createdAt])
-  @@index([analysisId])
 }
 
 model Message {
@@ -105,49 +68,70 @@ model Message {
   @@index([userId, createdAt])
 }
 
-model AnalysisBehavior {
-  id          String   @id @default(uuid())
-  analysisId  String   @unique
-  userId      String
+model FacebookAccount {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  facebookUserId    String
+  accessToken       String   // Encrypted
+  tokenExpiresAt    DateTime
+  adAccountId       String
+  adAccountName     String?
+  isActive          Boolean  @default(true)
+  lastSyncAt        DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  // Labels from analysis
-  problemType String   // CREATIVE, FUNNEL, SALES
-  metrics     String   // JSON: { ctr, cpm, cpa, objective }
-  suggestedFix String
-  
-  // User actions (tracked)
-  clickedImplement Boolean @default(false)
-  openedAI        Boolean @default(false)
-  downloadedPDF   Boolean @default(false)
-  copiedText      Boolean @default(false)
-  
-  // Outcome signals (tracked later)
-  userReturnedWithSameAd Boolean?
-  newCTR                 Float?
-  fixWorked              Boolean?
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
   @@index([userId])
-  @@index([problemType])
-  @@index([fixWorked])
+  @@index([adAccountId])
+}
+
+model AgentTask {
+  id            String   @id @default(uuid())
+  userId        String
+  type          String   @default("CREATE_AD") // CREATE_AD, OPTIMIZE_AD
+  status        String   @default("PENDING") // PENDING, GATHERING_INFO, GENERATING, CREATING, COMPLETED, FAILED
+  
+  // User input data (stored as JSON)
+  input         String?  // { objective, audience, budget, preferences }
+  
+  // Generated output (stored as JSON)
+  output        String?  // { headlines, primaryTexts, descriptions, fbAdId, fbCampaignId }
+  
+  // AI-generated business profile (stored as JSON)
+  businessProfile String? // { industry, subCategory, targetMarket, businessGoal, painPoint, differentiator }
+  
+  // AI recommendations (stored as JSON)
+  recommendations String? // { objective: {recommended, reasoning, chosen}, audience: {}, budget: {}, cta: {}, acceptanceRate }
+  
+  // Error tracking
+  errorMessage  String?
+  
+  // Conversation state
+  conversationState String? // Current step in the flow
+  
+  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+  updatedAt     DateTime @updatedAt
+  
+  generatedCreatives GeneratedCreative[]
+  
+  @@index([userId])
+  @@index([status])
   @@index([createdAt])
 }
 
-model SavedTemplate {
-  id         String   @id @default(uuid())
-  userId     String
-  category   String   // COPY, SCRIPT, REPORT
-  title      String
-  content    String   // The actual generated text
-  tags       String   // Stored as JSON string array
-  analysisId String?  // Optional link to source analysis
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, category])
-  @@index([userId, createdAt])
-  @@index([category])
+model GeneratedCreative {
+  id          String   @id @default(uuid())
+  taskId      String
+  type        String   // HEADLINE, PRIMARY_TEXT, DESCRIPTION, CTA, IMAGE_URL
+  content     String   // The actual generated text or URL
+  isSelected  Boolean  @default(false)
+  metadata    String?  // JSON: { characterCount, validationStatus, score }
+  createdAt   DateTime @default(now())
+  
+  task        AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  @@index([taskId])
+  @@index([type])
 }

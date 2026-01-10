@@ -3,16 +3,13 @@
 # Creative Failure Analyzer - Project Instructions
 
 ## Overview
-This is a Meta Ads Creative Failure Analyzer SaaS MVP. The tool analyzes ad creatives and provides:
-- One clear reason why an ad failed/worked
-- Supporting logic (2-3 bullet points)
-- One actionable fix
+This is an AI-powered Meta Ads creation tool for business owners. The tool helps users automatically create high-performing Meta ads using conversational AI.
 
 ## Tech Stack
 - **Frontend**: Next.js 14 + TypeScript + Tailwind CSS
 - **Backend**: Node.js + Express + TypeScript
 - **Database**: PostgreSQL + Prisma ORM
-- **Analysis Engine**: Rule-based Decision Engine
+- **AI Engine**: OpenAI GPT-4o-mini
 - **Auth**: JWT (email + password)
 - **Payments**: Razorpay
 
@@ -20,8 +17,8 @@ This is a Meta Ads Creative Failure Analyzer SaaS MVP. The tool analyzes ad crea
 ```
 ├── backend/           # Express API server
 │   ├── src/
-│   │   ├── routes/    # API routes (auth, analysis, payments)
-│   │   ├── services/  # Business logic (Decision Engine, PDF generation)
+│   │   ├── routes/    # API routes (auth, agent, payments, facebook)
+│   │   ├── services/  # Business logic (AI Agent, Facebook API, OpenAI)
 │   │   ├── middleware/# Auth, upload, error handling
 │   │   └── lib/       # Prisma client
 │   └── prisma/        # Database schema
@@ -51,16 +48,26 @@ npm run db:generate
 - Frontend: Copy `frontend/.env.example` to `frontend/.env.local`
 
 ## Key Features
-1. Creative upload (image/video) with manual metrics
-2. AI-powered analysis with structured output
-3. History page with search/filter
-4. PDF export for client reporting
-5. Razorpay payment integration
+1. **AI Agent for auto-creating Meta ads** (PRIMARY)
+2. Conversational interface for ad creation
+3. AI-generated ad copy (headlines, primary text, descriptions)
+4. Direct Facebook ad creation via API
+5. Facebook OAuth with `ads_management` permission
+6. Razorpay payment integration
+
+## AI Agent Feature
+- Conversational interface for creating Meta ads
+- Guides users through objective, audience, budget selection
+- Auto-generates ad copy (headlines, primary text, descriptions)
+- Creates ads directly on Facebook via API
+- Requires Facebook OAuth with `ads_management` permission
 
 ## DO NOT BUILD
-- Meta API connection
-- Auto ad posting
-- Budget optimization
+- Creative analysis/diagnosis features
+- PDF export functionality
+- Template library
+- Manual metric tracking
+- Budget optimization beyond agent
 - A/B testing
 - Team roles
-- Analytics dashboards
+- Analytics dashboards beyond agent tasks
