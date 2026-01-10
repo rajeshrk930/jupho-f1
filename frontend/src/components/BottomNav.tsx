@@ -9,6 +9,12 @@ export default function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuthStore();
 
+  // Hide bottom nav on public pages (unauthenticated)
+  const publicPages = ['/', '/login', '/signup', '/privacy', '/terms'];
+  if (publicPages.includes(pathname)) {
+    return null;
+  }
+
   // Check if user is admin
   const isAdmin = user?.email && process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',')
     .map(email => email.trim().toLowerCase())

@@ -21,10 +21,11 @@ export function Sidebar() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
 
-  // Hide sidebar on auth pages
-  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  // Hide sidebar on public pages (unauthenticated)
+  const publicPages = ['/', '/login', '/signup', '/privacy', '/terms'];
+  const isPublicPage = publicPages.includes(pathname);
   
-  if (isAuthPage) {
+  if (isPublicPage) {
     return null;
   }
 

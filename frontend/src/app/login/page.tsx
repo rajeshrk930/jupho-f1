@@ -7,6 +7,7 @@ import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 import { Lock, Mail } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 function LoginPageInner() {
   const router = useRouter();
@@ -112,6 +113,8 @@ function LoginPageInner() {
             </Link>
           </p>
         </div>
+        
+        <Footer />
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 import { UserPlus, Mail, Lock, User } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 function SignupPageInner() {
   const router = useRouter();
@@ -131,6 +132,8 @@ function SignupPageInner() {
             </Link>
           </p>
         </div>
+        
+        <Footer />
       </div>
     </div>
   );
