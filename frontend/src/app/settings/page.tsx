@@ -177,45 +177,45 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-base-surface pt-6">
+    <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 pt-6">
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-text-primary">Settings</h1>
-          <p className="text-text-secondary mt-1">Manage your account and preferences</p>
+          <h1 className="text-3xl font-bold text-charcoal-900">Settings</h1>
+          <p className="text-charcoal-600 mt-1">Manage your account and preferences</p>
         </div>
 
         {/* Profile Section */}
-        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-md bg-signal-primary/10 flex items-center justify-center">
-              <User size={20} className="text-signal-primary" />
+            <div className="w-10 h-10 rounded-lg bg-coral-50 flex items-center justify-center">
+              <User size={20} className="text-coral-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-text-primary">Profile Information</h2>
-              <p className="text-sm text-text-secondary">Update your personal details</p>
+              <h2 className="text-lg font-semibold text-charcoal-900">Profile Information</h2>
+              <p className="text-sm text-charcoal-600">Update your personal details</p>
             </div>
           </div>
 
           <form onSubmit={handleProfileUpdate} className="space-y-4">
             <div>
-              <label className="label">Name</label>
+              <label className="block text-sm font-medium text-charcoal-700 mb-2">Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="input"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="Your name"
               />
             </div>
 
             <div>
-              <label className="label">Email</label>
+              <label className="block text-sm font-medium text-charcoal-700 mb-2">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="your@email.com"
               />
             </div>
@@ -223,7 +223,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary inline-flex items-center gap-2"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-coral-500 hover:bg-coral-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
               <Save size={16} />
               Save Changes
@@ -232,48 +232,48 @@ export default function SettingsPage() {
         </div>
 
         {/* Password Section */}
-        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-md bg-signal-primary/10 flex items-center justify-center">
-              <Lock size={20} className="text-signal-primary" />
+            <div className="w-10 h-10 rounded-lg bg-coral-50 flex items-center justify-center">
+              <Lock size={20} className="text-coral-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-text-primary">Change Password</h2>
-              <p className="text-sm text-gray-600">Update your password to keep your account secure</p>
+              <h2 className="text-lg font-semibold text-charcoal-900">Change Password</h2>
+              <p className="text-sm text-charcoal-600">Update your password to keep your account secure</p>
             </div>
           </div>
 
           <form onSubmit={handlePasswordChange} className="space-y-4">
             <div>
-              <label className="label">Current Password</label>
+              <label className="block text-sm font-medium text-charcoal-700 mb-2">Current Password</label>
               <input
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="input"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="••••••••"
               />
             </div>
 
             <div>
-              <label className="label">New Password</label>
+              <label className="block text-sm font-medium text-charcoal-700 mb-2">New Password</label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="input"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="••••••••"
                 minLength={6}
               />
             </div>
 
             <div>
-              <label className="label">Confirm New Password</label>
+              <label className="block text-sm font-medium text-charcoal-700 mb-2">Confirm New Password</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="input"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="••••••••"
                 minLength={6}
               />
@@ -282,7 +282,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary inline-flex items-center gap-2"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-coral-500 hover:bg-coral-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
               <Lock size={16} />
               Update Password
@@ -291,43 +291,43 @@ export default function SettingsPage() {
         </div>
 
         {/* Facebook Account Connection Section */}
-        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-md bg-blue-600/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
               <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-text-primary">Facebook Ad Account</h2>
-              <p className="text-sm text-text-secondary">Connect to automatically fetch ad metrics</p>
+              <h2 className="text-lg font-semibold text-charcoal-900">Facebook Ad Account</h2>
+              <p className="text-sm text-charcoal-600">Connect to automatically fetch ad metrics</p>
             </div>
           </div>
 
           {fbStatus === null ? (
             <div className="flex items-center justify-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-signal-primary"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-coral-500"></div>
             </div>
           ) : fbStatus?.connected ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-md">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div className="flex items-center gap-3 p-4 bg-mint-50 border border-mint-200 rounded-lg">
+                <div className="w-3 h-3 bg-mint-500 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="font-medium text-green-900">Connected</p>
-                  <p className="text-sm text-green-700">
+                  <p className="font-medium text-mint-900">Connected</p>
+                  <p className="text-sm text-mint-700">
                     {fbStatus.account?.adAccountName || 'Facebook Ad Account'}
                   </p>
                 </div>
               </div>
               
               {fbStatus.account?.lastSyncAt && (
-                <p className="text-sm text-text-secondary">
+                <p className="text-sm text-charcoal-600">
                   Last synced: {new Date(fbStatus.account.lastSyncAt).toLocaleString()}
                 </p>
               )}
               
               {fbStatus.account?.tokenExpiring && (
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <p className="text-sm text-yellow-800">
                     ⚠️ Your access token is expiring soon. Please reconnect your account.
                   </p>
@@ -337,14 +337,14 @@ export default function SettingsPage() {
               <button
                 onClick={disconnectFacebook}
                 disabled={fbLoading}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium disabled:opacity-50"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50"
               >
                 {fbLoading ? 'Disconnecting...' : 'Disconnect Facebook'}
               </button>
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-900 mb-2">
                   <strong>Why connect Facebook?</strong>
                 </p>
@@ -359,7 +359,7 @@ export default function SettingsPage() {
               <button
                 onClick={connectFacebook}
                 disabled={fbLoading}
-                className="btn-primary inline-flex items-center gap-2"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -367,7 +367,7 @@ export default function SettingsPage() {
                 {fbLoading ? 'Connecting...' : 'Connect Facebook'}
               </button>
               
-              <p className="text-xs text-text-secondary">
+              <p className="text-xs text-charcoal-600">
                 We only request view-only access to your ad accounts. Your credentials are encrypted and stored securely.
               </p>
             </div>
@@ -375,22 +375,22 @@ export default function SettingsPage() {
         </div>
 
         {/* Notifications Section */}
-        <div className="bg-base-elevated rounded-md border border-border-default p-6 shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-md bg-base-surface flex items-center justify-center">
-              <Bell size={20} className="text-text-secondary" />
+            <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+              <Bell size={20} className="text-charcoal-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-text-primary">Notifications</h2>
-              <p className="text-sm text-gray-600">Manage how you receive updates</p>
+              <h2 className="text-lg font-semibold text-charcoal-900">Notifications</h2>
+              <p className="text-sm text-charcoal-600">Manage how you receive updates</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-text-primary">Email Notifications</p>
-                <p className="text-sm text-text-secondary">Receive notifications via email</p>
+                <p className="font-medium text-charcoal-900">Email Notifications</p>
+                <p className="text-sm text-charcoal-600">Receive notifications via email</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input

@@ -185,10 +185,10 @@ export default function AgentPage() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-purple-600" />
+                <Sparkles className="w-6 h-6 text-coral-500" />
                 <div>
                   <h1 className="text-xl font-bold">AI Agent</h1>
-                  <p className="text-sm text-gray-500">Auto-create Meta ads with AI</p>
+                  <p className="text-sm text-charcoal-600">Auto-create Meta ads with AI</p>
                 </div>
               </div>
             </div>
@@ -208,7 +208,7 @@ export default function AgentPage() {
                     startNewTask();
                   }
                 }}
-                className="px-4 py-2 text-sm bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm bg-coral-500 text-white hover:bg-coral-600 rounded-lg transition-colors"
               >
                 New Task
               </button>
@@ -233,8 +233,8 @@ export default function AgentPage() {
                     <div
                       className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                         msg.role === 'user'
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-gray-100 text-gray-900'
+                          ? 'bg-coral-500 text-white'
+                          : 'bg-gray-50 text-charcoal-900'
                       }`}
                     >
                       <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
@@ -246,8 +246,8 @@ export default function AgentPage() {
                 ))}
                 {loading && (
                   <div className="flex justify-start">
-                    <div className="bg-gray-100 rounded-2xl px-4 py-3">
-                      <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
+                    <div className="bg-gray-50 rounded-2xl px-4 py-3">
+                      <Loader2 className="w-5 h-5 animate-spin text-coral-500" />
                     </div>
                   </div>
                 )}
@@ -289,12 +289,12 @@ export default function AgentPage() {
                     onKeyPress={handleKeyPress}
                     placeholder="Type your message..."
                     disabled={loading || creating}
-                    className="flex-1 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100"
+                    className="flex-1 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-coral-500 disabled:bg-gray-100"
                   />
                   <button
                     onClick={sendMessage}
                     disabled={!input.trim() || loading || creating}
-                    className="flex items-center justify-center w-12 h-12 bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center justify-center w-12 h-12 bg-coral-500 text-white rounded-xl hover:bg-coral-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {loading || creating ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -318,8 +318,8 @@ export default function AgentPage() {
                   <span className="text-gray-600">Task Active</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <div className={`w-2 h-2 rounded-full ${state === 'COMPLETED' ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                  <span className="text-gray-600">{state || 'Initializing'}</span>
+                  <div className={`w-2 h-2 rounded-full ${state === 'COMPLETED' ? 'bg-mint-500' : 'bg-coral-400'}`}></div>
+                  <span className="text-charcoal-600">{state || 'Initializing'}</span>
                 </div>
               </div>
             </div>
@@ -367,9 +367,9 @@ export default function AgentPage() {
             )}
 
             {/* Help Card */}
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl border border-purple-100 p-6">
-              <h2 className="font-semibold mb-2 text-purple-900">How it works</h2>
-              <ul className="text-sm text-purple-700 space-y-2">
+            <div className="bg-gradient-to-br from-coral-50 to-mint-50 rounded-2xl border border-coral-100 p-6">
+              <h2 className="font-semibold mb-2 text-charcoal-900">How it works</h2>
+              <ul className="text-sm text-charcoal-700 space-y-2">
                 <li>• Answer questions about your ad</li>
                 <li>• AI generates copy variants</li>
                 <li>• Review and approve</li>

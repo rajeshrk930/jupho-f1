@@ -4,40 +4,38 @@
 
 @layer base {
   :root {
-    /* Infrastructure dark theme - forced, no light mode */
-    --bg-base: #0B0F14;
-    --bg-surface: #111827;
-    --bg-elevated: #1F2937;
+    /* Fresh Coral & Mint Light Theme */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F8F9FA;
+    --bg-accent: #FFF5F3;
     
-    --signal-primary: #22D3EE;
-    --signal-electric: #00E5FF;
-    --signal-danger: #DC2626;
-    --signal-warning: #F59E0B;
+    --color-coral: #FF6B47;
+    --color-mint: #14B89C;
+    --color-danger: #DC2626;
+    --color-warning: #F59E0B;
     
-    --text-primary: #E5E7EB;
-    --text-secondary: #9CA3AF;
-    --text-tertiary: #6B7280;
+    --text-primary: #212529;
+    --text-secondary: #495057;
+    --text-tertiary: #6C757D;
     
-    --border-default: #1F2937;
-    --border-subtle: #374151;
-    --border-signal: #22D3EE;
+    --border-default: #DEE2E6;
+    --border-subtle: #E9ECEF;
+    --border-focus: #FF6B47;
     
-    --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
-    --shadow-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
-    --shadow-signal: 0 0 0 3px rgba(34, 211, 238, 0.15);
-    
-    color-scheme: dark;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   }
   
   html {
-    background: #0B0F14;
+    background: #FFFFFF;
   }
 }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--text-primary);
-  background: var(--bg-base);
+  background: var(--bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -60,157 +58,156 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @layer components {
-  /* Primary action button - cyan signal only */
+  /* Primary action button - coral */
   .btn-primary {
-    @apply bg-signal-primary hover:bg-signal-electric text-base font-semibold text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-sm shadow-sm transition-all duration-150;
+    @apply bg-coral-500 hover:bg-coral-600 text-white font-semibold text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg shadow-sm transition-all duration-150;
   }
   
   .btn-primary:hover {
-    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+    box-shadow: 0 0 0 3px rgba(255, 107, 71, 0.15);
   }
   
   .btn-primary:disabled,
   .btn-disabled {
-    @apply bg-base-elevated text-text-tertiary cursor-not-allowed shadow-none;
+    @apply bg-gray-300 text-charcoal-400 cursor-not-allowed shadow-none;
   }
   
   .btn-loading {
-    @apply bg-signal-primary text-base opacity-70 cursor-wait;
+    @apply bg-coral-500 text-white opacity-70 cursor-wait;
   }
 
   /* Secondary button - neutral surface */
   .btn-secondary {
-    @apply bg-base-surface hover:bg-base-elevated text-text-primary font-medium text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-sm border border-border-default shadow-sm transition-colors;
+    @apply bg-white hover:bg-gray-50 text-charcoal-900 font-medium text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg border border-gray-300 shadow-sm transition-colors;
   }
   
-  /* Danger button - muted red for irreversible actions only */
+  /* Danger button - red for irreversible actions only */
   .btn-danger {
-    @apply bg-signal-danger hover:bg-red-700 text-white font-semibold text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-sm shadow-sm transition-colors;
+    @apply bg-red-600 hover:bg-red-700 text-white font-semibold text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg shadow-sm transition-colors;
   }
 
-  /* Input with cyan focus signal */
+  /* Input with coral focus */
   .input {
-    @apply w-full px-4 py-3 border border-border-default rounded-sm outline-none bg-base-surface text-text-primary text-base transition-colors;
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg outline-none bg-white text-charcoal-900 text-base transition-colors;
   }
   
   .input:focus {
-    @apply border-border-signal;
-    box-shadow: var(--shadow-signal);
+    @apply border-coral-500 ring-2 ring-coral-500;
   }
   
   .input-error {
-    @apply border-signal-danger;
+    @apply border-red-500;
   }
   
   .input::placeholder {
-    @apply text-text-tertiary;
+    @apply text-charcoal-400;
   }
 
   .label {
-    @apply block text-sm font-medium text-text-secondary mb-2;
+    @apply block text-sm font-medium text-charcoal-700 mb-2;
   }
 
-  /* Card - dark surface, tight radius */
+  /* Card - light surface, rounded corners */
   .card {
-    @apply bg-base-surface border border-border-default rounded-md shadow-sm;
+    @apply bg-white border border-gray-200 rounded-lg shadow-sm;
   }
 
   .card-hover {
-    @apply card hover:border-border-subtle transition-colors;
+    @apply card hover:border-gray-300 transition-colors;
   }
   
-  /* Card with cyan signal border for active/important state */
+  /* Card with coral border for active/important state */
   .card-signal {
-    @apply card border-border-signal;
+    @apply card border-coral-500;
   }
 
   .skeleton {
-    @apply animate-pulse bg-base-elevated rounded-md;
+    @apply animate-pulse bg-gray-100 rounded-lg;
   }
 
   /* Navigation links */
   .nav-link {
-    @apply px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary rounded-sm transition-colors;
+    @apply px-3 py-2 text-sm font-medium text-charcoal-600 hover:text-charcoal-900 rounded-lg transition-colors;
   }
 
   .nav-link-active {
-    @apply bg-base-elevated text-signal-primary border-l-2 border-signal-primary font-semibold;
+    @apply bg-coral-50 text-coral-600 border-l-2 border-coral-600 font-semibold;
   }
 
   /* Ghost button */
   .ghost-button {
-    @apply inline-flex items-center gap-2 rounded-sm border border-border-default px-3 py-2 text-sm font-medium text-text-primary hover:bg-base-elevated bg-base-surface shadow-sm transition-colors;
+    @apply inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-charcoal-900 hover:bg-gray-50 bg-white shadow-sm transition-colors;
   }
 
   /* Profile trigger */
   .profile-trigger {
-    @apply inline-flex items-center gap-3 rounded-sm border border-border-default bg-base-surface px-3 py-2 shadow-sm hover:border-border-signal transition-colors;
+    @apply inline-flex items-center gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm hover:border-coral-500 transition-colors;
   }
 
   /* Dropdown */
   .dropdown-card {
-    @apply absolute right-0 mt-2 w-64 rounded-md border border-border-default bg-base-surface shadow-md p-3 z-50;
+    @apply absolute right-0 mt-2 w-64 rounded-lg border border-gray-200 bg-white shadow-md p-3 z-50;
   }
 
   .dropdown-item {
-    @apply w-full inline-flex items-center gap-2 px-3 py-2 rounded-sm text-sm text-text-primary hover:bg-base-elevated transition-colors;
+    @apply w-full inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-charcoal-900 hover:bg-gray-50 transition-colors;
   }
 
   /* Surface card using CSS variables */
   .surface-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
     box-shadow: var(--shadow-base);
-    border-radius: 0.375rem;
+    border-radius: 0.5rem;
   }
 
   /* Nav shell */
   .nav-shell {
-    @apply sticky top-0 z-40 border-b border-border-default shadow-sm;
-    background: var(--bg-surface);
+    @apply sticky top-0 z-40 border-b border-gray-200 shadow-sm;
+    background: var(--bg-primary);
   }
 
-  /* Stat card - cyan accent for metrics */
+  /* Stat card - coral accent for metrics */
   .stat-card {
-    @apply bg-base-surface rounded-md p-5 border-l-2 shadow-sm;
+    @apply bg-white rounded-lg p-5 border-l-2 shadow-sm;
   }
   
   .stat-card-signal {
-    @apply stat-card border-l-signal-primary;
+    @apply stat-card border-l-coral-500;
   }
   
   .stat-card-neutral {
-    @apply stat-card border-l-border-subtle;
+    @apply stat-card border-l-gray-300;
   }
 
   /* Badge - neutral by default, colored for signals */
   .badge {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-sm font-medium text-sm shadow-sm;
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium text-sm shadow-sm;
   }
   
   .badge-signal {
-    @apply badge bg-signal-primary/10 text-signal-primary border border-signal-primary/20;
+    @apply badge bg-coral-50 text-coral-600 border border-coral-200;
   }
   
   .badge-danger {
-    @apply badge bg-signal-danger/10 text-signal-danger border border-signal-danger/20;
+    @apply badge bg-red-50 text-red-600 border border-red-200;
   }
   
   .badge-neutral {
-    @apply badge bg-base-elevated text-text-secondary border border-border-default;
+    @apply badge bg-gray-100 text-charcoal-600 border border-gray-200;
   }
   
-  /* Empty state - stark, action-focused */
+  /* Empty state - clean and action-focused */
   .empty-state {
     @apply flex flex-col items-center justify-center py-12 text-center;
   }
   
   .empty-state-title {
-    @apply text-lg font-semibold text-text-primary mb-2;
+    @apply text-lg font-semibold text-charcoal-900 mb-2;
   }
   
   .empty-state-description {
-    @apply text-sm text-text-secondary mb-6;
+    @apply text-sm text-charcoal-600 mb-6;
   }
 }
 

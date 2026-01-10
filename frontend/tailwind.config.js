@@ -5,45 +5,45 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  safelist: [
-    'bg-base',
-    'bg-base-surface',
-    'bg-base-elevated',
-    'text-text-primary',
-    'text-text-secondary',
-    'text-text-tertiary',
-    'bg-signal-primary',
-    'text-signal-primary',
-    'border-border-default',
-  ],
   theme: {
     extend: {
       colors: {
-        // Infrastructure dark theme - semantic tokens only
-        base: {
-          DEFAULT: '#0B0F14', // Primary background
-          surface: '#111827',  // Card/panel background
-          elevated: '#1F2937', // Hover/elevated surfaces
+        // Fresh Coral & Mint Theme
+        coral: {
+          50: '#FFF5F3',
+          100: '#FFE8E3',
+          200: '#FFD5CC',
+          300: '#FFB8A8',
+          400: '#FF9478',
+          500: '#FF6B47',  // Primary coral
+          600: '#F04E2A',
+          700: '#D63B1A',
+          800: '#B02F16',
+          900: '#8F2815',
         },
-        // Flat border tokens to support border-border-default classes
-        'border-default': '#1F2937',
-        'border-subtle': '#374151',
-        'border-signal': '#22D3EE',
-        signal: {
-          primary: '#22D3EE',   // Muted cyan for UI chrome
-          electric: '#00E5FF',  // Electric cyan for critical actions
-          danger: '#DC2626',    // Muted red for irreversible actions
-          warning: '#F59E0B',   // Muted amber for warnings (rare)
+        mint: {
+          50: '#F0FDF9',
+          100: '#CCFBEF',
+          200: '#99F6E0',
+          300: '#5FEACE',
+          400: '#2DD4B4',
+          500: '#14B89C',  // Primary mint
+          600: '#0D9488',
+          700: '#0F766E',
+          800: '#115E59',
+          900: '#134E4A',
         },
-        text: {
-          primary: '#E5E7EB',   // Main content
-          secondary: '#9CA3AF', // Supporting text
-          tertiary: '#6B7280',  // Disabled/placeholder
-        },
-        border: {
-          DEFAULT: '#1F2937',   // Standard borders
-          subtle: '#374151',    // Hover borders
-          signal: '#22D3EE',    // Active/focus borders
+        charcoal: {
+          50: '#F8F9FA',
+          100: '#F1F3F5',
+          200: '#E9ECEF',
+          300: '#DEE2E6',
+          400: '#CED4DA',
+          500: '#ADB5BD',
+          600: '#6C757D',
+          700: '#495057',
+          800: '#343A40',
+          900: '#212529',  // Primary text
         },
       },
       boxShadow: {

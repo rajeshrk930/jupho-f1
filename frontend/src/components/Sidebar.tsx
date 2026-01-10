@@ -58,12 +58,12 @@ export function Sidebar() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="px-6 py-5 border-b border-border-default">
+      <div className="px-6 py-5 border-b border-gray-200">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-signal-primary flex items-center justify-center">
+          <div className="w-8 h-8 rounded-md bg-coral-500 flex items-center justify-center">
             <Zap className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold text-text-primary">Jupho</span>
+          <span className="text-xl font-bold text-charcoal-900">Jupho</span>
         </Link>
       </div>
 
@@ -78,11 +78,11 @@ export function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all ${
                 active
-                  ? 'bg-signal-primary/10 text-signal-primary font-medium'
-                  : 'text-text-secondary hover:bg-base-elevated'
+                  ? 'bg-coral-50 text-coral-600 font-medium'
+                  : 'text-charcoal-600 hover:bg-gray-50'
               }`}
             >
-              <Icon size={20} className={active ? 'text-signal-primary' : 'text-text-tertiary'} />
+              <Icon size={20} className={active ? 'text-coral-600' : 'text-charcoal-400'} />
               <span className="text-sm">{item.label}</span>
             </Link>
           );
@@ -90,14 +90,14 @@ export function Sidebar() {
       </nav>
 
       {/* User Section */}
-      <div className="border-t border-border-default p-4 space-y-2">
+      <div className="border-t border-gray-200 p-4 space-y-2">
         {/* PRO Badge */}
         {isPro && (
           <Link
             href="/billing"
-            className="flex items-center gap-2 px-3 py-2 rounded-md bg-signal-primary/10 border border-signal-primary/20 hover:border-signal-primary/30 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-md bg-mint-50 border border-mint-200 hover:border-mint-300 transition-colors"
           >
-            <Crown className="w-4 h-4 text-signal-primary" />
+            <Crown className="w-4 h-4 text-mint-600" />
             <div className="flex-1">
               <p className="text-xs font-semibold text-signal-primary">Jupho Pro</p>
               <p className="text-xs text-text-secondary">Unlimited access</p>
