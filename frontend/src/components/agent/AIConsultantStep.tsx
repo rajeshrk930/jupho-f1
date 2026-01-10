@@ -105,7 +105,21 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
       const response = await agentApi.generateStrategy(taskId, userGoal || undefined);
       setStrategy(normalizeStrategyResponse(response));
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to generate strategy. Please try again.');
+      const rawError = err.response?.data?.error || err.message || 'Failed to generate strategy.';
+      
+      // Hide technical details and show user-friendly messages
+      let userFriendlyError = 'Failed to generate strategy. Please try again.';
+      
+      if (rawError.includes('429') || rawError.includes('Rate limit') || rawError.includes('rate limit')) {
+        userFriendlyError = 'Our AI is currently experiencing high demand. Please wait 30 seconds and try again.';
+      } else if (rawError.includes('timeout') || rawError.includes('timed out')) {
+        userFriendlyError = 'The request took too long. Please try again.';
+      } else if (rawError.includes('network') || rawError.includes('Network')) {
+        userFriendlyError = 'Network error. Please check your connection and try again.';
+      }
+      
+      setError(userFriendlyError);
+      console.error('Strategy generation error:', rawError);
     } finally {
       setLoading(false);
     }
@@ -178,7 +192,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           {/* Trust signal */}
           <div className="mt-8 flex items-center justify-center space-x-2 text-xs text-gray-500">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span>Powered by GPT-4 • Secure & Private</span>
+            <span>AI-Powered • Secure & Private</span>
           </div>
         </div>
       </div>

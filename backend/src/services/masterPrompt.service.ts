@@ -174,7 +174,19 @@ Output: A complete JSON campaign strategy following the system instructions.`
       return strategy;
     } catch (error: any) {
       console.error('[MasterPrompt] Error generating strategy:', error.message);
-      throw new Error(`Failed to generate campaign strategy: ${error.message}`);
+      
+      // Sanitize error messages - don't expose OpenAI/API details to frontend
+      let userMessage = 'Failed to generate campaign strategy';
+      
+      if (error.status === 429 || error.message?.includes('Rate limit') || error.message?.includes('429')) {
+        userMessage = 'AI service is temporarily busy. Please wait 30 seconds and try again.';
+      } else if (error.message?.includes('timeout') || error.message?.includes('timed out')) {
+        userMessage = 'Request timeout. Please try again.';
+      } else if (error.message?.includes('Invalid API key') || error.message?.includes('authentication')) {
+        userMessage = 'Service configuration error. Please contact support.';
+      }
+      
+      throw new Error(userMessage);
     }
   }
 
