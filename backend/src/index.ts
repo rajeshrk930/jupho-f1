@@ -91,9 +91,14 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/facebook', facebookRoutes);
 app.use('/api/agent', agentRoutes);
 
-// Health check
+// Health check with deployment tracking
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: '1.1.0-oauth-fix',
+    features: ['facebook-oauth-get-callback', 'lead-forms']
+  });
 });
 
 // Error handler
