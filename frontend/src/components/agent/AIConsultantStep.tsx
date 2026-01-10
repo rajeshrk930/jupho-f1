@@ -42,10 +42,12 @@ interface Props {
 
 export default function AIConsultantStep({ taskId, businessData, onComplete, onBack }: Props) {
   const [strategy, setStrategy] = useState<CampaignStrategy | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [userGoal, setUserGoal] = useState('');
   const [editingGoal, setEditingGoal] = useState(false);
+  const [conversionMethod, setConversionMethod] = useState<'lead_form' | 'website'>('lead_form');
+  const [showingMethodSelector, setShowingMethodSelector] = useState(true);
 
   const normalizeStrategyResponse = (response: any): CampaignStrategy => {
     const raw = response?.strategy || response;
@@ -94,15 +96,20 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
   };
 
   useEffect(() => {
-    generateStrategy();
+    // Don't auto-generate - wait for user to select conversion method
   }, []);
+
+  const handleStartGeneration = () => {
+    setShowingMethodSelector(false);
+    generateStrategy();
+  };
 
   const generateStrategy = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const response = await agentApi.generateStrategy(taskId, userGoal || undefined);
+      const response = await agentApi.generateStrategy(taskId, userGoal || undefined, conversionMethod);
       setStrategy(normalizeStrategyResponse(response));
     } catch (err: any) {
       const rawError = err.response?.data?.error || err.message || 'Failed to generate strategy.';
@@ -134,6 +141,122 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
       onComplete(strategy);
     }
   };
+
+  if (showingMethodSelector) {
+    return (
+      <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 sm:p-12 max-w-3xl mx-auto">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-coral-50 rounded-full mb-4">
+            <Target className="w-8 h-8 text-coral-600" />
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+            How Should Customers Respond?
+          </h2>
+          <p className="text-gray-600">
+            Choose where leads will be captured. You can always change this later.
+          </p>
+        </div>
+
+        <div className="space-y-4 mb-8">
+          {/* Lead Form Option (Recommended) */}
+          <button
+            onClick={() => setConversionMethod('lead_form')}
+            className={`w-full text-left p-6 rounded-xl border-2 transition-all ${
+              conversionMethod === 'lead_form'
+                ? 'border-coral-500 bg-coral-50 shadow-lg'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-start">
+              <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center mr-4 ${
+                conversionMethod === 'lead_form' ? 'bg-coral-500 text-white' : 'bg-gray-100 text-gray-400'
+              }`}>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900">Meta Instant Lead Form</h3>
+                  <span className="ml-3 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                    ✓ Recommended
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">
+                  Captures leads directly on Facebook/Instagram. No website needed.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
+                    <Check className="w-3 h-3 mr-1 text-green-600" /> Higher conversion rates
+                  </span>
+                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
+                    <Check className="w-3 h-3 mr-1 text-green-600" /> Works even if website is slow
+                  </span>
+                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
+                    <Check className="w-3 h-3 mr-1 text-green-600" /> Mobile-optimized
+                  </span>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Website Option */}
+          <button
+            onClick={() => setConversionMethod('website')}
+            className={`w-full text-left p-6 rounded-xl border-2 transition-all ${
+              conversionMethod === 'website'
+                ? 'border-coral-500 bg-coral-50 shadow-lg'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-start">
+              <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center mr-4 ${
+                conversionMethod === 'website' ? 'bg-coral-500 text-white' : 'bg-gray-100 text-gray-400'
+              }`}>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900">Send to Website</h3>
+                  <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                    Advanced
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">
+                  Send users to your website landing page or contact form.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
+                    Requires fast website
+                  </span>
+                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
+                    You control the experience
+                  </span>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            onClick={onBack}
+            className="flex-1 py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+          >
+            Back
+          </button>
+          <button
+            onClick={handleStartGeneration}
+            className="flex-1 py-3 px-6 bg-gradient-to-r from-coral-500 to-purple-600 text-white rounded-lg hover:from-coral-600 hover:to-purple-700 transition-all shadow-lg font-medium"
+          >
+            Continue to Strategy →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

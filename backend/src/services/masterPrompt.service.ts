@@ -44,7 +44,17 @@ Your job is to analyze a business and output a COMPLETE, ready-to-execute Meta A
 4. Identify 3-5 precise interest keywords for targeting (will be used to search Facebook API)
 5. Detect if business is local (needs radius targeting) or national
 6. Generate 3 DISTINCT variants each for: Headlines (40 chars), Primary Text (125 chars), Descriptions (30 chars)
-7. Select the most effective CTA
+7. Select the most effective CTA based on conversion method
+
+**Conversion Method Awareness:**
+- If conversion method is "lead_form": Ad will use Meta Instant Form (captures leads without website)
+  - Copy should focus on IMMEDIATE ACTION: "Get Free Quote", "Book Consultation", "Request Demo"
+  - Keep it short, direct, benefit-oriented
+  - CTAs MUST be: "SIGN_UP", "CONTACT_US", "GET_QUOTE" only
+- If conversion method is "website": Ad will send users to client's website
+  - Copy can build curiosity: "Learn More", "Discover How", "See Why"
+  - Can be slightly longer to pre-qualify clicks
+  - CTAs can be: "LEARN_MORE", "SEE_MORE", or conversion-focused ones
 
 **Campaign Objective Rules:**
 - "Leads", "Inquiries", "Registrations", "Sign-ups" → OUTCOME_LEADS
@@ -77,11 +87,11 @@ Your job is to analyze a business and output a COMPLETE, ready-to-execute Meta A
   - Variant 3: Social proof/Urgency ("Join 1000+ users")
 - **Character Limits**: STRICTLY enforce (40/125/30). Count carefully.
 
-**CTA Rules:**
-- Lead generation → "SIGN_UP", "CONTACT_US", "GET_QUOTE"
-- Sales → "SHOP_NOW", "BUY_NOW", "ORDER_NOW"
-- WhatsApp inquiries → "WHATSAPP_MESSAGE"
-- Traffic → "LEARN_MORE", "SEE_MORE"
+**CTA Rules (CRITICAL - Must Match Conversion Method):**
+- For LEAD FORMS → "SIGN_UP", "CONTACT_US", "GET_QUOTE" ONLY
+- For WEBSITE + Sales → "SHOP_NOW", "BUY_NOW", "ORDER_NOW"
+- For WEBSITE + WhatsApp → "WHATSAPP_MESSAGE"
+- For WEBSITE + Traffic → "LEARN_MORE", "SEE_MORE"
 
 **Output Format (strict JSON):**
 \`\`\`json
@@ -135,13 +145,15 @@ export class MasterPromptService {
    */
   static async generateCampaignStrategy(
     businessData: any,
-    userGoal?: string
+    userGoal?: string,
+    conversionMethod: 'lead_form' | 'website' = 'lead_form'
   ): Promise<CampaignStrategy> {
     try {
       console.log('[MasterPrompt] Generating campaign strategy...');
+      console.log('[MasterPrompt] Conversion method:', conversionMethod);
 
       // Prepare business context for OpenAI
-      const businessContext = this.prepareBusinessContext(businessData, userGoal);
+      const businessContext = this.prepareBusinessContext(businessData, userGoal, conversionMethod);
 
       const response = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
@@ -193,8 +205,18 @@ Output: A complete JSON campaign strategy following the system instructions.`
   /**
    * Prepare business context from scraped data
    */
-  private static prepareBusinessContext(businessData: any, userGoal?: string): string {
+  private static prepareBusinessContext(
+    businessData: any, 
+    userGoal?: string,
+    conversionMethod: 'lead_form' | 'website' = 'lead_form'
+  ): string {
     let context = '';
+
+    // Conversion Method (Critical for AI)
+    context += `**Conversion Method:** ${conversionMethod === 'lead_form' ? 'META INSTANT FORM (Lead Generation)' : 'WEBSITE (Send to Client Website)'}\n`;
+    context += `**Important:** ${conversionMethod === 'lead_form' 
+      ? 'Ad will capture leads directly without website. Use action-oriented CTAs like SIGN_UP, CONTACT_US, GET_QUOTE only.' 
+      : 'Ad will send users to client website. Can use curiosity-driven or conversion CTAs.'}\n\n`;
 
     // Brand & Description
     if (businessData.brandName) {

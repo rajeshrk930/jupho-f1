@@ -89,7 +89,8 @@ export class AgentService {
   async generateStrategy(
     taskId: string, 
     userId: string, 
-    userGoal?: string
+    userGoal?: string,
+    conversionMethod: 'lead_form' | 'website' = 'lead_form'
   ): Promise<any> {
     try {
       // Get task
@@ -107,19 +108,22 @@ export class AgentService {
 
       const businessData = JSON.parse(task.businessProfile);
 
-      // Update status
+      // Update status and save conversion method
       await prisma.agentTask.update({
         where: { id: taskId },
         data: { 
           status: 'GENERATING',
-          conversationState: 'AI_CONSULTANT'
+          conversationState: 'AI_CONSULTANT',
+          conversionMethod: conversionMethod,
+          originalWebsiteUrl: businessData.contact?.website || null
         }
       });
 
       // Generate strategy using Master Prompt
       const strategy: CampaignStrategy = await MasterPromptService.generateCampaignStrategy(
         businessData,
-        userGoal
+        userGoal,
+        conversionMethod
       );
 
       // Search Facebook for interest IDs
@@ -304,21 +308,73 @@ export class AgentService {
         'PAUSED'
       );
 
-      // 6. Create Ad Creative
+      // 6. Create Ad Creative (SPLIT LOGIC: Lead Form vs Website)
       if (!imageHash) {
         throw new Error('Image upload failed - no image hash returned');
       }
-      const linkUrl = process.env.FACEBOOK_DEFAULT_LINK_URL || businessData.contact?.website || 'https://example.com';
-      const creativeId = await FacebookService.createAdCreative(
-        accessToken,
-        fbAccount.adAccountId,
-        `Creative - ${businessData.brandName || 'Default'}`,
-        imageHash,
-        selectedPrimaryText,
-        selectedHeadline,
-        linkUrl,
-        strategy.adCopy.cta || 'LEARN_MORE'
-      );
+
+      const conversionMethod = task.conversionMethod || 'lead_form';
+      let creativeId: string;
+
+      if (conversionMethod === 'lead_form') {
+        // LEAD FORM FLOW: Create Meta Instant Form + Lead Form Creative
+        console.log('[AgentService] Using LEAD FORM conversion method');
+        
+        const pageId = process.env.FACEBOOK_PAGE_ID;
+        if (!pageId) {
+          throw new Error('FACEBOOK_PAGE_ID not configured in environment variables');
+        }
+
+        // Create Lead Form
+        const leadFormId = await FacebookService.createLeadForm(
+          accessToken,
+          pageId,
+          `${businessData.brandName || 'Business'} - Lead Form`,
+          selectedPrimaryText, // Use primary text as intro
+          'https://jupho.io/privacy',
+          'Thank you! We\'ll contact you soon.',
+          undefined // Use default questions (Name, Phone, Email)
+        );
+
+        // Save lead form ID
+        await prisma.agentTask.update({
+          where: { id: taskId },
+          data: { leadFormId }
+        });
+
+        // Create creative with lead form
+        creativeId = await FacebookService.createAdCreativeWithLeadForm(
+          accessToken,
+          fbAccount.adAccountId,
+          `Creative - ${businessData.brandName || 'Default'}`,
+          imageHash,
+          selectedHeadline,
+          selectedPrimaryText,
+          leadFormId,
+          strategy.adCopy.cta || 'SIGN_UP'
+        );
+
+        console.log('[AgentService] Lead form created:', leadFormId);
+      } else {
+        // WEBSITE FLOW: Create regular creative with link URL
+        console.log('[AgentService] Using WEBSITE conversion method');
+        
+        const linkUrl = task.originalWebsiteUrl || 
+                       process.env.FACEBOOK_DEFAULT_LINK_URL || 
+                       businessData.contact?.website || 
+                       'https://example.com';
+        
+        creativeId = await FacebookService.createAdCreative(
+          accessToken,
+          fbAccount.adAccountId,
+          `Creative - ${businessData.brandName || 'Default'}`,
+          imageHash,
+          selectedHeadline,
+          selectedPrimaryText,
+          linkUrl,
+          strategy.adCopy.cta || 'LEARN_MORE'
+        );
+      }
 
       // 7. Create Ad
       const adId = await FacebookService.createAd(
@@ -342,7 +398,9 @@ export class AgentService {
             creativeId,
             adId,
             objective: strategy.objective,
-            budget: strategy.budget.dailyAmount
+            budget: strategy.budget.dailyAmount,
+            conversionMethod,
+            leadFormId: task.leadFormId || null
           })
         }
       });

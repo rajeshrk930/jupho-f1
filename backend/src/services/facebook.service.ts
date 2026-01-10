@@ -448,6 +448,107 @@ export class FacebookService {
   }
 
   /**
+   * Create a Lead Generation Form (Meta Instant Form)
+   * This form captures leads without sending users to a website
+   */
+  static async createLeadForm(
+    accessToken: string,
+    pageId: string,
+    formName: string,
+    introText: string,
+    privacyPolicyUrl: string = 'https://jupho.io/privacy',
+    thankYouMessage: string = 'Thank you! We\'ll contact you soon.',
+    questions?: Array<{ type: string, label?: string }>
+  ): Promise<string> {
+    try {
+      // Default questions: Name, Phone, Email
+      const defaultQuestions = [
+        { type: 'FULL_NAME' },
+        { type: 'PHONE' },
+        { type: 'EMAIL' }
+      ];
+
+      const formQuestions = questions || defaultQuestions;
+
+      const response = await axios.post(
+        `${this.BASE_URL}/${pageId}/leadgen_forms`,
+        {
+          name: formName,
+          privacy_policy: {
+            url: privacyPolicyUrl,
+            link_text: 'Privacy Policy'
+          },
+          follow_up_action_url: privacyPolicyUrl, // Fallback URL
+          questions: formQuestions,
+          context_card: {
+            title: formName,
+            content: [introText],
+            button_text: 'Submit'
+          },
+          thank_you_page: {
+            title: 'Thank You!',
+            body: thankYouMessage
+          },
+          access_token: accessToken
+        }
+      );
+
+      console.log('[Facebook] Lead form created:', response.data.id);
+      return response.data.id; // Returns leadgen form ID
+    } catch (error: any) {
+      console.error('Facebook lead form creation error:', error.response?.data || error.message);
+      throw new Error(`Failed to create lead form: ${error.response?.data?.error?.message || error.message}`);
+    }
+  }
+
+  /**
+   * Create an ad creative with Lead Generation Form
+   * Alternative to createAdCreative - uses leadgen_form instead of website link
+   */
+  static async createAdCreativeWithLeadForm(
+    accessToken: string,
+    adAccountId: string,
+    name: string,
+    imageHash: string,
+    headline: string,
+    body: string,
+    leadFormId: string,
+    callToActionType: string = 'SIGN_UP'
+  ): Promise<string> {
+    try {
+      const objectStorySpec: any = {
+        page_id: process.env.FACEBOOK_PAGE_ID,
+        link_data: {
+          image_hash: imageHash,
+          message: body,
+          name: headline,
+          call_to_action: {
+            type: callToActionType,
+            value: {
+              lead_gen_form_id: leadFormId
+            }
+          }
+        }
+      };
+
+      const response = await axios.post(
+        `${this.BASE_URL}/act_${adAccountId}/adcreatives`,
+        {
+          name,
+          object_story_spec: JSON.stringify(objectStorySpec),
+          access_token: accessToken
+        }
+      );
+      
+      console.log('[Facebook] Lead form creative created:', response.data.id);
+      return response.data.id;
+    } catch (error: any) {
+      console.error('Facebook lead form creative error:', error.response?.data || error.message);
+      throw new Error(`Failed to create lead form creative: ${error.response?.data?.error?.message || error.message}`);
+    }
+  }
+
+  /**
    * Search for interest IDs dynamically using Facebook Marketing API
    * @param accessToken Facebook access token
    * @param keywords Array of interest keywords to search (e.g., ['Digital Marketing', 'SaaS'])
