@@ -68,7 +68,22 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="mt-10 text-center">
+        <div className="mt-10 text-center space-y-3">
+          <div className="flex items-center justify-center gap-4 text-sm">
+            <Link 
+              href="/privacy" 
+              className="text-charcoal-600 hover:text-coral-600 underline transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <span className="text-charcoal-400">·</span>
+            <Link 
+              href="/terms" 
+              className="text-charcoal-600 hover:text-coral-600 underline transition-colors"
+            >
+              Terms of Service
+            </Link>
+          </div>
           <p className="text-sm text-charcoal-600">© 2026 Jupho · AI-powered Meta ads for business owners</p>
         </div>
       </div>
