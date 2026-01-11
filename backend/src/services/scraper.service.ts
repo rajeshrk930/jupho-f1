@@ -80,7 +80,7 @@ export class ScraperService {
       });
 
       // Extract data - using explicit typing to avoid DOM type issues
-      const scrapedData = await page.evaluate(() => {
+      const scrapedData = await page.evaluate((url) => {
         // @ts-ignore - document is available in browser context
         const data: any = {
           brandName: '',
@@ -190,11 +190,10 @@ export class ScraperService {
         const phoneMatch = textContent.match(/(\+?\d{1,3}[\s-]?)?(\(?\d{3}\)?[\s-]?)?\d{3}[\s-]?\d{4}/);
         data.contact.email = emailMatch ? emailMatch[0] : '';
         data.contact.phone = phoneMatch ? phoneMatch[0] : '';
-        // Use the validated URL passed into the scraper (no window in Node)
-        data.contact.website = validatedUrl;
+        data.contact.website = url; // Use URL parameter passed to evaluate
 
         return data;
-      });
+      }, validatedUrl); // Pass validatedUrl as parameter
 
       await page.close();
 
