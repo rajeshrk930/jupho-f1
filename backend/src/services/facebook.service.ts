@@ -364,20 +364,19 @@ export class FacebookService {
     adAccountId: string,
     campaignId: string,
     name: string,
-    dailyBudget: number, // in cents (e.g., 50000 = ₹500)
-    targeting: any,
-    optimizationGoal: string = 'LEAD_GENERATION',
-    billingEvent: string = 'IMPRESSIONS',
-    status: string = 'PAUSED'
+    dailyBudget: number,
+    targeting: any
   ): Promise<string> {
     try {
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
 
-      // Explicitly opt into Advantage+ audience automation to satisfy v19+ requirements
-      const targetingWithAutomation = {
+      const safeTargeting = {
         ...targeting,
+        geo_locations: { countries: ['IN'] },
+        age_min: 18,
+        age_max: 65,
         targeting_automation: {
-          advantage_audience: 1 // 1 = enable Advantage+ audience (required flag)
+          advantage_audience: 1
         }
       };
 
@@ -387,11 +386,15 @@ export class FacebookService {
           name,
           campaign_id: campaignId,
           daily_budget: dailyBudget,
-          billing_event: billingEvent,
-          optimization_goal: optimizationGoal,
-          bid_amount: Math.floor(dailyBudget * 0.1), // Auto bid at 10% of daily budget
-          targeting: JSON.stringify(targetingWithAutomation),
-          status,
+          billing_event: 'IMPRESSIONS',
+          optimization_goal: 'LEAD_GENERATION',
+          bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
+          targeting: JSON.stringify(safeTargeting),
+          status: 'PAUSED',
+          destination_type: 'ON_AD',
+          promoted_object: {
+            page_id: process.env.FACEBOOK_PAGE_ID
+          },
           access_token: accessToken
         }
       );
