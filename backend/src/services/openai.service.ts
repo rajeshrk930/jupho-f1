@@ -67,7 +67,7 @@ export async function getAssistantReply(history: ChatMessageInput[], briefing?: 
   ];
 
   const completion = await client.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: 'gpt-4o',
     messages,
     temperature: isGenerator ? 0.7 : 0.4, // Higher creativity for generators
     max_tokens: isGenerator ? 800 : 500, // More tokens for detailed copy
