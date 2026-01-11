@@ -91,12 +91,12 @@ router.post('/scan', authenticate, checkUsageLimit, async (req: AuthRequest, res
 
 /**
  * 🧠 STEP 2: GENERATE STRATEGY (POST /api/agent/strategy)
- * Input: { taskId: "...", userGoal?: "Get more leads", conversionMethod?: "lead_form" | "website" }
+ * Input: { taskId: "...", userGoal?: "Get more leads", conversionMethod?: "lead_form" | "website", objective?: "TRAFFIC" | "LEADS" | "SALES", budget?: number }
  * Output: { strategy: { budget, targeting, copy... } }
  */
 router.post('/strategy', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { taskId, userGoal, conversionMethod } = req.body;
+    const { taskId, userGoal, conversionMethod, objective, budget } = req.body;
     
     if (!taskId) {
       return res.status(400).json({ error: 'Task ID is required' });
@@ -106,7 +106,14 @@ router.post('/strategy', authenticate, async (req: AuthRequest, res: Response) =
     const method = conversionMethod === 'website' ? 'website' : 'lead_form';
 
     const agentService = new AgentService();
-    const result = await agentService.generateStrategy(taskId, req.user!.id, userGoal, method);
+    const result = await agentService.generateStrategy(
+      taskId, 
+      req.user!.id, 
+      userGoal, 
+      method,
+      objective,
+      budget
+    );
     
     res.json(result);
   } catch (error: any) {

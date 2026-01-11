@@ -213,11 +213,19 @@ export const agentApi = {
   },
   
   // Step 2: Generate Strategy
-  generateStrategy: async (taskId: string, userGoal?: string, conversionMethod?: 'lead_form' | 'website') => {
+  generateStrategy: async (
+    taskId: string, 
+    userGoal?: string, 
+    conversionMethod?: 'lead_form' | 'website',
+    objective?: 'TRAFFIC' | 'LEADS' | 'SALES',
+    budget?: number
+  ) => {
     const response = await api.post('/agent/strategy', { 
       taskId, 
       userGoal,
-      conversionMethod: conversionMethod || 'lead_form'
+      conversionMethod: conversionMethod || 'lead_form',
+      objective,
+      budget
     });
     return response.data;
   },

@@ -90,7 +90,9 @@ export class AgentService {
     taskId: string, 
     userId: string, 
     userGoal?: string,
-    conversionMethod: 'lead_form' | 'website' = 'lead_form'
+    conversionMethod: 'lead_form' | 'website' = 'lead_form',
+    userObjective?: 'TRAFFIC' | 'LEADS' | 'SALES',
+    userBudget?: number
   ): Promise<any> {
     try {
       // Get task
@@ -123,7 +125,9 @@ export class AgentService {
       const strategy: CampaignStrategy = await MasterPromptService.generateCampaignStrategy(
         businessData,
         userGoal,
-        conversionMethod
+        conversionMethod,
+        userObjective,
+        userBudget
       );
 
       // Search Facebook for interest IDs

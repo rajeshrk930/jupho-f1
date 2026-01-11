@@ -150,14 +150,24 @@ export class MasterPromptService {
   static async generateCampaignStrategy(
     businessData: any,
     userGoal?: string,
-    conversionMethod: 'lead_form' | 'website' = 'lead_form'
+    conversionMethod: 'lead_form' | 'website' = 'lead_form',
+    userObjective?: 'TRAFFIC' | 'LEADS' | 'SALES',
+    userBudget?: number
   ): Promise<CampaignStrategy> {
     try {
       console.log('[MasterPrompt] Generating campaign strategy...');
       console.log('[MasterPrompt] Conversion method:', conversionMethod);
+      console.log('[MasterPrompt] User objective:', userObjective);
+      console.log('[MasterPrompt] User budget:', userBudget);
 
       // Prepare business context for OpenAI
-      const businessContext = this.prepareBusinessContext(businessData, userGoal, conversionMethod);
+      const businessContext = this.prepareBusinessContext(
+        businessData, 
+        userGoal, 
+        conversionMethod,
+        userObjective,
+        userBudget
+      );
 
       const response = await openai.chat.completions.create({
         model: 'gpt-4o',
@@ -213,9 +223,27 @@ Output: A complete JSON campaign strategy following the system instructions.`
   private static prepareBusinessContext(
     businessData: any, 
     userGoal?: string,
-    conversionMethod: 'lead_form' | 'website' = 'lead_form'
+    conversionMethod: 'lead_form' | 'website' = 'lead_form',
+    userObjective?: 'TRAFFIC' | 'LEADS' | 'SALES',
+    userBudget?: number
   ): string {
     let context = '';
+
+    // User's selected objective (if provided)
+    if (userObjective) {
+      context += `**User's Ad Goal:** ${userObjective}\n`;
+      context += `**Note:** User wants to optimize for ${
+        userObjective === 'TRAFFIC' ? 'website clicks and traffic' :
+        userObjective === 'LEADS' ? 'lead generation and form submissions' :
+        'sales and conversions'
+      }. Respect this choice unless clearly inappropriate for their business.\n\n`;
+    }
+
+    // User's selected budget (if provided)
+    if (userBudget) {
+      context += `**User's Daily Budget:** ₹${userBudget}\n`;
+      context += `**Note:** User selected this budget. Use it as the base, but you can suggest adjustments with clear reasoning if needed.\n\n`;
+    }
 
     // Conversion Method (Critical for AI)
     context += `**Conversion Method:** ${conversionMethod === 'lead_form' ? 'META INSTANT FORM (Lead Generation)' : 'WEBSITE (Send to Client Website)'}\n`;

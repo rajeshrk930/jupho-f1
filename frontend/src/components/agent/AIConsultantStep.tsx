@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, Sparkles, Target, Users, DollarSign, Edit2, Check, FileText, Globe, ArrowRight } from 'lucide-react';
+import { Loader2, Sparkles, Target, Users, DollarSign, Edit2, Check, FileText, Globe, ArrowRight, ShoppingCart, MousePointerClick } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 import GoalCard from '@/components/ui/GoalCard';
 import PrimaryButton from '@/components/ui/PrimaryButton';
+import BudgetSlider from '@/components/ui/BudgetSlider';
 
 interface BusinessData {
   brandName: string;
@@ -50,6 +51,9 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
   const [editingGoal, setEditingGoal] = useState(false);
   const [conversionMethod, setConversionMethod] = useState<'lead_form' | 'website'>('lead_form');
   const [showingMethodSelector, setShowingMethodSelector] = useState(true);
+  const [objective, setObjective] = useState<'TRAFFIC' | 'LEADS' | 'SALES'>('LEADS');
+  const [budget, setBudget] = useState<number>(1000);
+  const [showingObjectiveBudget, setShowingObjectiveBudget] = useState(false);
 
   const normalizeStrategyResponse = (response: any): CampaignStrategy => {
     const raw = response?.strategy || response;
@@ -103,6 +107,11 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
 
   const handleStartGeneration = () => {
     setShowingMethodSelector(false);
+    setShowingObjectiveBudget(true);
+  };
+
+  const handleGenerateWithPreferences = () => {
+    setShowingObjectiveBudget(false);
     generateStrategy();
   };
 
@@ -111,7 +120,13 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
     setError('');
 
     try {
-      const response = await agentApi.generateStrategy(taskId, userGoal || undefined, conversionMethod);
+      const response = await agentApi.generateStrategy(
+        taskId, 
+        userGoal || undefined, 
+        conversionMethod,
+        objective,
+        budget
+      );
       setStrategy(normalizeStrategyResponse(response));
     } catch (err: any) {
       const rawError = err.response?.data?.error || err.message || 'Failed to generate strategy.';
@@ -143,6 +158,118 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
       onComplete(strategy);
     }
   };
+
+  if (showingObjectiveBudget) {
+    return (
+      <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 sm:p-12 max-w-4xl mx-auto">
+        {/* Ad Goal Selection */}
+        <div className="mb-10">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-full mb-4">
+              <Target className="w-8 h-8 text-purple-600" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+              Select Your Ad Goal
+            </h2>
+            <p className="text-gray-600">
+              Choose what you want to achieve with your ads
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Traffic Option */}
+            <GoalCard
+              icon={<MousePointerClick className="w-6 h-6" />}
+              title="Traffic"
+              description="Drive visitors to your website or landing page"
+              isSelected={objective === 'TRAFFIC'}
+              features={[
+                'Maximize clicks',
+                'Build awareness',
+                'Lower cost per click'
+              ]}
+              onClick={() => setObjective('TRAFFIC')}
+            />
+
+            {/* Leads Option (Recommended) */}
+            <GoalCard
+              icon={<Target className="w-6 h-6" />}
+              title="Leads"
+              description="Generate inquiries, form submissions, and lead captures"
+              isSelected={objective === 'LEADS'}
+              isRecommended={true}
+              features={[
+                'Collect customer info',
+                'High intent users',
+                'Best for services'
+              ]}
+              onClick={() => setObjective('LEADS')}
+            />
+
+            {/* Sales Option */}
+            <GoalCard
+              icon={<ShoppingCart className="w-6 h-6" />}
+              title="Sales"
+              description="Drive purchases and online transactions"
+              isSelected={objective === 'SALES'}
+              features={[
+                'Track conversions',
+                'Optimize for ROI',
+                'Best for e-commerce'
+              ]}
+              onClick={() => setObjective('SALES')}
+            />
+          </div>
+        </div>
+
+        {/* Budget Slider */}
+        <div className="mb-8">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-50 rounded-full mb-4">
+              <DollarSign className="w-8 h-8 text-green-600" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+              Set Your Daily Budget
+            </h2>
+            <p className="text-gray-600">
+              Choose how much you want to spend per day
+            </p>
+          </div>
+
+          <BudgetSlider
+            value={budget}
+            onChange={setBudget}
+            min={100}
+            max={5000}
+            currency="₹"
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <PrimaryButton
+            onClick={() => {
+              setShowingObjectiveBudget(false);
+              setShowingMethodSelector(true);
+            }}
+            variant="outline"
+            size="lg"
+            className="flex-1"
+          >
+            Back
+          </PrimaryButton>
+          <PrimaryButton
+            onClick={handleGenerateWithPreferences}
+            variant="primary"
+            size="lg"
+            className="flex-1"
+            icon={<Sparkles className="w-5 h-5" />}
+          >
+            Generate AI Strategy
+          </PrimaryButton>
+        </div>
+      </div>
+    );
+  }
 
   if (showingMethodSelector) {
     return (
