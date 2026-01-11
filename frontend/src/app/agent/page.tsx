@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Sparkles, Zap, Rocket, Check, Target } from 'lucide-react';
 import BusinessScanStep from '@/components/agent/BusinessScanStep';
@@ -47,12 +47,68 @@ interface CampaignStrategy {
   reasoning?: string;
 }
 
+interface SavedFlowState {
+  currentStep: Step;
+  taskId: string | null;
+  businessData: BusinessData | null;
+  strategy: CampaignStrategy | null;
+  timestamp: number;
+}
+
+const FLOW_STATE_KEY = 'agent_flow_state';
+const STATE_EXPIRY_HOURS = 24; // Expire after 24 hours
+
 export default function AgentPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [businessData, setBusinessData] = useState<BusinessData | null>(null);
   const [strategy, setStrategy] = useState<CampaignStrategy | null>(null);
+  const [isRestored, setIsRestored] = useState(false);
+
+  // Restore state from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedState = localStorage.getItem(FLOW_STATE_KEY);
+      if (savedState) {
+        const parsed: SavedFlowState = JSON.parse(savedState);
+        
+        // Check if state is not expired (24 hours)
+        const hoursElapsed = (Date.now() - parsed.timestamp) / (1000 * 60 * 60);
+        if (hoursElapsed < STATE_EXPIRY_HOURS) {
+          // Restore state
+          setCurrentStep(parsed.currentStep);
+          setTaskId(parsed.taskId);
+          setBusinessData(parsed.businessData);
+          setStrategy(parsed.strategy);
+          setIsRestored(true);
+          console.log('✅ [Flow] Restored from step:', parsed.currentStep);
+        } else {
+          // Expired, clear it
+          localStorage.removeItem(FLOW_STATE_KEY);
+          console.log('⏰ [Flow] Expired state cleared');
+        }
+      }
+    } catch (error) {
+      console.error('❌ [Flow] Error restoring state:', error);
+      localStorage.removeItem(FLOW_STATE_KEY);
+    }
+  }, []);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    if (isRestored || currentStep > 1) {
+      const stateToSave: SavedFlowState = {
+        currentStep,
+        taskId,
+        businessData,
+        strategy,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(FLOW_STATE_KEY, JSON.stringify(stateToSave));
+      console.log('💾 [Flow] State saved - Step:', currentStep);
+    }
+  }, [currentStep, taskId, businessData, strategy, isRestored]);
 
   const handleBusinessScanComplete = (data: BusinessData, id: string) => {
     setBusinessData(data);
@@ -66,6 +122,9 @@ export default function AgentPage() {
   };
 
   const handleLaunchComplete = () => {
+    // Clear saved state on successful completion
+    localStorage.removeItem(FLOW_STATE_KEY);
+    console.log('🎉 [Flow] Campaign launched! State cleared');
     // Show success and redirect to tasks page
     router.push('/agent/tasks');
   };
@@ -74,6 +133,9 @@ export default function AgentPage() {
     if (currentStep > 1) {
       setCurrentStep((currentStep - 1) as Step);
     } else {
+      // Clear state when going back to dashboard
+      localStorage.removeItem(FLOW_STATE_KEY);
+      console.log('🔙 [Flow] Returned to dashboard - State cleared');
       router.push('/dashboard');
     }
   };
