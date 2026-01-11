@@ -307,7 +307,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="bg-gradient-to-br from-coral-500 to-purple-600 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl shadow-lg p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
@@ -317,7 +317,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
               </div>
               <div>
                 <h2 className="text-2xl font-bold">AI-Generated Strategy</h2>
-                <p className="text-coral-100">Tailored for {businessData.brandName}</p>
+                <p className="text-white/90">Tailored for {businessData.brandName}</p>
               </div>
             </div>
           </div>
@@ -358,9 +358,9 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
       {/* Strategy Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Objective */}
-        <div className="bg-white rounded-3xl shadow-lg border border-red-100 p-6 hover:shadow-xl transition-all hover:-translate-y-1">
+        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-all">
           <div className="flex items-center mb-4">
-            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center mr-3">
+            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mr-3">
               <Target className="w-5 h-5 text-red-600" />
             </div>
             <h3 className="font-semibold text-gray-900">Objective</h3>
@@ -372,7 +372,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
         </div>
 
         {/* Budget */}
-        <div className="bg-white rounded-3xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-all hover:-translate-y-1">
+        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-all">
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
               <DollarSign className="w-5 h-5 text-green-600" />
@@ -387,16 +387,16 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
       </div>
 
       {/* Targeting */}
-      <div className="bg-white rounded-3xl shadow-lg border border-blue-100 p-6 hover:shadow-xl transition-all">
+      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-all">
         <div className="flex items-center mb-6">
-          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mr-3">
             <Users className="w-5 h-5 text-blue-600" />
           </div>
           <h3 className="font-semibold text-gray-900">Target Audience</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <p className="text-xs font-medium text-gray-500 mb-2">Age Range</p>
+            <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Age Range</p>
             <div className="flex items-center space-x-2">
               <span className="text-xl font-bold text-gray-900">{strategy.targeting.ageMin}</span>
               <span className="text-gray-400">-</span>
@@ -404,30 +404,30 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
             </div>
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 mb-2">Gender</p>
+            <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Gender</p>
             <span className="text-lg font-semibold text-gray-900">{strategy.targeting.genders.join(', ')}</span>
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 mb-2">Location</p>
-            <p className="font-medium">
+            <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Location</p>
+            <p className="font-medium text-gray-900">
               {strategy.targeting.locations[0]?.name || 'India'}
             </p>
           </div>
         </div>
         {strategy.targeting.interests.length > 0 && (
-          <div className="mt-4">
-            <p className="text-sm text-gray-600 mb-2">Interests</p>
+          <div className="mt-6">
+            <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">Interests</p>
             <div className="flex flex-wrap gap-2">
               {strategy.targeting.interests.slice(0, 6).map((interest, i) => (
                 <span
                   key={i}
-                  className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full"
+                  className="px-3 py-1.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg"
                 >
                   {interest.name}
                 </span>
               ))}
               {strategy.targeting.interests.length > 6 && (
-                <span className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
+                <span className="px-3 py-1.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg">
                   +{strategy.targeting.interests.length - 6} more
                 </span>
               )}
@@ -437,28 +437,28 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
       </div>
 
       {/* Ad Copy Preview */}
-      <div className="bg-white rounded-xl shadow border border-gray-200 p-6">
+      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
         <h3 className="font-semibold text-gray-900 mb-4">Ad Copy Variants</h3>
         <div className="space-y-4">
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">Headlines (3 variants)</p>
+            <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">Headlines (3 variants)</p>
             <div className="space-y-2">
               {strategy.adCopy.headlines.map((h, i) => (
-                <div key={i} className="p-3 bg-gray-50 rounded-lg text-sm">
+                <div key={i} className="p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
                   {i + 1}. {h}
                 </div>
               ))}
             </div>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">Primary Text (3 variants)</p>
+            <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">Primary Text (3 variants)</p>
             <div className="space-y-2">
               {strategy.adCopy.primaryTexts.slice(0, 1).map((t, i) => (
-                <div key={i} className="p-3 bg-gray-50 rounded-lg text-sm">
+                <div key={i} className="p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
                   {t.substring(0, 100)}...
                 </div>
               ))}
-              <p className="text-xs text-gray-500">+ 2 more variants</p>
+              <p className="text-xs text-gray-500 mt-2">+ 2 more variants</p>
             </div>
           </div>
         </div>
@@ -466,25 +466,28 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
 
       {/* Actions */}
       <div className="flex gap-4">
-        <button
+        <PrimaryButton
           onClick={onBack}
-          className="flex-1 py-4 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+          variant="outline"
+          className="flex-1"
         >
           Back
-        </button>
-        <button
+        </PrimaryButton>
+        <PrimaryButton
           onClick={handleRegenerate}
-          className="flex-1 py-4 border border-coral-300 text-coral-700 rounded-lg font-semibold hover:bg-coral-50 transition-colors"
+          variant="secondary"
+          className="flex-1"
         >
           Regenerate Strategy
-        </button>
-        <button
+        </PrimaryButton>
+        <PrimaryButton
           onClick={handleContinue}
-          className="flex-1 py-4 bg-coral-500 text-white rounded-lg font-semibold hover:bg-coral-600 transition-colors flex items-center justify-center"
+          variant="primary"
+          className="flex-1"
+          icon={<ArrowRight className="w-5 h-5" />}
         >
-          <Sparkles className="w-5 h-5 mr-2" />
           Continue to Launch
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );
