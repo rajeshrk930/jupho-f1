@@ -19,7 +19,7 @@ router.get('/auth-url', authenticate, (req: AuthRequest, res: Response) => {
     const url = `https://www.facebook.com/v19.0/dialog/oauth?` +
       `client_id=${process.env.FACEBOOK_APP_ID}` +
       `&redirect_uri=${encodeURIComponent(process.env.FACEBOOK_REDIRECT_URI!)}` +
-      `&scope=ads_read,read_insights,ads_management` +
+      `&scope=email,ads_management,ads_read,read_insights,pages_manage_ads,pages_read_engagement` +
       `&state=${req.user!.id}`;
     
     res.json({ url });
