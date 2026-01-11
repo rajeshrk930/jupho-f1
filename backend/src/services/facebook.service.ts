@@ -293,16 +293,13 @@ export class FacebookService {
       const name = imageName || 'ad_image';
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
 
-      // Use copy_from to let Facebook fetch the image directly (avoids multipart issues)
+      // Use copy_from (JSON body) so Facebook fetches the image directly
       const response = await axios.post(
         `${this.BASE_URL}/act_${cleanAccountId}/adimages`,
-        null,
         {
-          params: {
-            access_token: accessToken,
-            name,
-            copy_from: imageUrl,
-          },
+          access_token: accessToken,
+          name,
+          copy_from: imageUrl,
         }
       );
 
