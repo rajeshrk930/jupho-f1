@@ -368,20 +368,31 @@ export class FacebookService {
     targeting: any
   ): Promise<string> {
     try {
-      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+      if (!process.env.FACEBOOK_PAGE_ID) {
+        throw new Error('FACEBOOK_PAGE_ID is missing in .env file');
+      }
 
+      console.log(`[Facebook] Creating Ad Set linked to Page: ${process.env.FACEBOOK_PAGE_ID}`);
+
+      // Ensure targeting is an object, not a string
+      let finalTargeting = targeting;
+      if (typeof targeting === 'string') {
+        try { finalTargeting = JSON.parse(targeting); } catch (e) {}
+      }
+
+      // Force Advantage+ Settings
       const safeTargeting = {
-        ...targeting,
+        ...finalTargeting,
         geo_locations: { countries: ['IN'] },
         age_min: 18,
         age_max: 65,
         targeting_automation: {
-          advantage_audience: 1
+          advantage_audience: 1 
         }
       };
 
       const response = await axios.post(
-        `${this.BASE_URL}/act_${cleanAccountId}/adsets`,
+        `https://graph.facebook.com/v19.0/act_${adAccountId.replace('act_', '')}/adsets`,
         {
           name,
           campaign_id: campaignId,
@@ -389,20 +400,24 @@ export class FacebookService {
           billing_event: 'IMPRESSIONS',
           optimization_goal: 'LEAD_GENERATION',
           bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
-          targeting: JSON.stringify(safeTargeting),
-          status: 'PAUSED',
           destination_type: 'ON_AD',
+          status: 'PAUSED',
+          
+          // ✅ FIX: Send BOTH as Plain Objects (No JSON.stringify anywhere)
+          targeting: safeTargeting, 
           promoted_object: {
             page_id: process.env.FACEBOOK_PAGE_ID
           },
+
           access_token: accessToken
         }
       );
-
+      
+      console.log('[Facebook] Ad Set Created Successfully:', response.data.id);
       return response.data.id;
     } catch (error: any) {
-      console.error('Facebook ad set creation error:', error.response?.data || error.message);
-      throw new Error('Failed to create Facebook ad set');
+      console.error('Ad Set Error:', error.response?.data || error.message);
+      throw new Error(`Ad Set Failed: ${error.response?.data?.error?.message}`);
     }
   }
 
