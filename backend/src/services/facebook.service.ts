@@ -292,32 +292,28 @@ export class FacebookService {
     try {
       const name = imageName || 'ad_image';
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
-      
-      // Fetch image as buffer
-      const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-      const imageBuffer = Buffer.from(imageResponse.data);
-      
-      // Use proper form data with file upload
-      const formData = new FormData();
-      formData.append('access_token', accessToken);
-      formData.append(name, imageBuffer, {
-        filename: `${name}.jpg`,
-        contentType: 'image/jpeg'
-      });
-      
+
+      // Use copy_from to let Facebook fetch the image directly (avoids multipart issues)
       const response = await axios.post(
         `${this.BASE_URL}/act_${cleanAccountId}/adimages`,
-        formData,
+        null,
         {
-          headers: formData.getHeaders()
+          params: {
+            access_token: accessToken,
+            name,
+            copy_from: imageUrl,
+          },
         }
       );
-      
-      const imageHash = response.data.images?.[name]?.hash;
+
+      // Extract hash safely
+      const imagesObj = response.data?.images || {};
+      const imageHash = imagesObj[name]?.hash || imagesObj[Object.keys(imagesObj)[0]]?.hash;
       if (!imageHash) {
+        console.error('[Facebook] Image upload response missing hash:', response.data);
         throw new Error('Failed to get image hash from upload response');
       }
-      
+
       console.log('[Facebook] Image uploaded successfully:', imageHash);
       return imageHash;
     } catch (error: any) {
