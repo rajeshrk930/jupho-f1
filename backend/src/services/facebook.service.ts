@@ -554,8 +554,7 @@ export class FacebookService {
     imageHash: string,
     headline: string,
     body: string,
-    leadFormId: string,
-    callToActionType: string = 'SIGN_UP'
+    leadFormId: string
   ): Promise<string> {
     try {
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
@@ -568,7 +567,7 @@ export class FacebookService {
           name: headline,
           link: 'https://jupho.io',
           call_to_action: {
-            type: callToActionType,
+            type: 'SIGN_UP',
             value: {
               lead_gen_form_id: leadFormId
             }
