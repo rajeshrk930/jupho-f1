@@ -85,7 +85,11 @@ Your job is to analyze a business and output a COMPLETE, ready-to-execute Meta A
   - Variant 1: Pain-focused ("Struggling with X?")
   - Variant 2: Benefit-focused ("Get Y in Z days")
   - Variant 3: Social proof/Urgency ("Join 1000+ users")
-- **Character Limits**: STRICTLY enforce (40/125/30). Count carefully.
+- **Character Limits (ABSOLUTE MAXIMUM - NO EXCEPTIONS)**: 
+  - Headlines: MAX 40 characters (including spaces, emojis count as 2)
+  - Primary Text: MAX 125 characters (including spaces, emojis count as 2)
+  - Descriptions: MAX 30 characters (including spaces, emojis count as 2)
+  - CRITICAL: Count EVERY character. If you go over, the ad will be REJECTED.
 
 **CTA Rules (CRITICAL - Must Match Conversion Method):**
 - For LEAD FORMS → "SIGN_UP", "CONTACT_US", "GET_QUOTE" ONLY
@@ -296,22 +300,28 @@ Output: A complete JSON campaign strategy following the system instructions.`
       throw new Error('Must provide exactly 3 description variants');
     }
 
-    // Check character limits
+    // Check and auto-trim character limits (GPT-5.2 can be verbose)
     headlines.forEach((h, i) => {
       if (h.length > 40) {
-        console.warn(`[MasterPrompt] Headline ${i + 1} exceeds 40 chars: "${h}" (${h.length} chars)`);
+        const trimmed = h.substring(0, 37) + '...';
+        console.warn(`[MasterPrompt] Headline ${i + 1} exceeds 40 chars, auto-trimmed: "${h}" → "${trimmed}"`);
+        strategy.adCopy.headlines[i] = trimmed;
       }
     });
 
     primaryTexts.forEach((p, i) => {
       if (p.length > 125) {
-        console.warn(`[MasterPrompt] Primary text ${i + 1} exceeds 125 chars: "${p}" (${p.length} chars)`);
+        const trimmed = p.substring(0, 122) + '...';
+        console.warn(`[MasterPrompt] Primary text ${i + 1} exceeds 125 chars, auto-trimmed: "${p}" → "${trimmed}"`);
+        strategy.adCopy.primaryTexts[i] = trimmed;
       }
     });
 
     descriptions.forEach((d, i) => {
       if (d.length > 30) {
-        console.warn(`[MasterPrompt] Description ${i + 1} exceeds 30 chars: "${d}" (${d.length} chars)`);
+        const trimmed = d.substring(0, 27) + '...';
+        console.warn(`[MasterPrompt] Description ${i + 1} exceeds 30 chars, auto-trimmed: "${d}" → "${trimmed}"`);
+        strategy.adCopy.descriptions[i] = trimmed;
       }
     });
 
