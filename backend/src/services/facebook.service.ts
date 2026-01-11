@@ -460,6 +460,7 @@ export class FacebookService {
     status: string = 'PAUSED'
   ): Promise<string> {
     try {
+      console.log(`[DEBUG] 🚨 STOP! The Ad Account ID I am using is: act_${this.normalizeAdAccountId(adAccountId)}`);
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
       
       const response = await axios.post(
