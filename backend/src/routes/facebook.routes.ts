@@ -33,8 +33,9 @@ router.get('/auth-url', authenticate, (req: AuthRequest, res: Response) => {
  * GET /api/facebook/callback
  * Handle OAuth callback and store access token
  * Facebook redirects here after user authorizes the app
+ * NOTE: No authentication middleware - Facebook calls this directly
  */
-router.get('/callback', async (req: AuthRequest, res: Response) => {
+router.get('/callback', async (req, res: Response) => {
   try {
     const { code, state, error } = req.query;
     

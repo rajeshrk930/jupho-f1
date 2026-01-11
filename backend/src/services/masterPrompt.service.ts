@@ -156,8 +156,9 @@ export class MasterPromptService {
       const businessContext = this.prepareBusinessContext(businessData, userGoal, conversionMethod);
 
       const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-5.2',
         temperature: 0.7,
+        max_tokens: 2000,
         response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: MASTER_PROMPT_SYSTEM },
@@ -341,8 +342,9 @@ Output: A complete JSON campaign strategy following the system instructions.`
       }[copyType];
 
       const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-5.2',
         temperature: 0.8,
+        max_tokens: 2000,
         response_format: { type: 'json_object' },
         messages: [
           {
