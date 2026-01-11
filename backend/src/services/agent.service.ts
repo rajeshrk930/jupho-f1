@@ -256,9 +256,16 @@ export class AgentService {
       // 1. Upload image (if provided)
       let imageHash: string | undefined;
       if (imageUrl) {
+        // Construct full public URL for Railway deployment
+        const baseUrl = process.env.RAILWAY_PUBLIC_DOMAIN 
+          ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+          : process.env.BACKEND_URL || 'https://api.jupho.io';
+        
         const fullImageUrl = imageUrl.startsWith('http') 
           ? imageUrl 
-          : `${process.env.BACKEND_URL || 'http://localhost:5000'}${imageUrl}`;
+          : `${baseUrl}${imageUrl}`;
+        
+        console.log('[AgentService] Uploading image to Facebook:', fullImageUrl);
         imageHash = await FacebookService.uploadAdImage(
           accessToken,
           fbAccount.adAccountId,
