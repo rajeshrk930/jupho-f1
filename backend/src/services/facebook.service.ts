@@ -527,7 +527,8 @@ export class FacebookService {
             title: 'You are all set!',
             body: thankYouMessage,
             button_text: 'View Website',
-            button_type: 'VIEW_WEBSITE'
+            button_type: 'VIEW_WEBSITE',
+            button_link: 'https://jupho.io'
           },
           access_token: accessToken
         }
