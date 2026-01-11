@@ -45,6 +45,14 @@ export class FacebookService {
   private static BASE_URL = `https://graph.facebook.com/${this.API_VERSION}`;
   
   /**
+   * Normalize ad account ID to ensure proper format
+   * Removes act_ prefix if present to avoid double-prefixing
+   */
+  private static normalizeAdAccountId(adAccountId: string): string {
+    return adAccountId.replace(/^act_/, '');
+  }
+  
+  /**
    * Encrypt access token for secure storage
    * Generates random IV for each encryption and prepends it to ciphertext
    */
@@ -283,6 +291,7 @@ export class FacebookService {
   ): Promise<string> {
     try {
       const name = imageName || 'ad_image';
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
       
       // Fetch image as buffer
       const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
@@ -297,7 +306,7 @@ export class FacebookService {
       });
       
       const response = await axios.post(
-        `${this.BASE_URL}/act_${adAccountId}/adimages`,
+        `${this.BASE_URL}/act_${cleanAccountId}/adimages`,
         formData,
         {
           headers: formData.getHeaders()
@@ -328,8 +337,10 @@ export class FacebookService {
     status: string = 'PAUSED' // 'ACTIVE' or 'PAUSED'
   ): Promise<string> {
     try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+      
       const response = await axios.post(
-        `${this.BASE_URL}/act_${adAccountId}/campaigns`,
+        `${this.BASE_URL}/act_${cleanAccountId}/campaigns`,
         {
           name,
           objective,
@@ -361,8 +372,10 @@ export class FacebookService {
     status: string = 'PAUSED'
   ): Promise<string> {
     try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+      
       const response = await axios.post(
-        `${this.BASE_URL}/act_${adAccountId}/adsets`,
+        `${this.BASE_URL}/act_${cleanAccountId}/adsets`,
         {
           name,
           campaign_id: campaignId,
@@ -438,8 +451,10 @@ export class FacebookService {
     status: string = 'PAUSED'
   ): Promise<string> {
     try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+      
       const response = await axios.post(
-        `${this.BASE_URL}/act_${adAccountId}/ads`,
+        `${this.BASE_URL}/act_${cleanAccountId}/ads`,
         {
           name,
           adset_id: adSetId,
@@ -525,6 +540,8 @@ export class FacebookService {
     callToActionType: string = 'SIGN_UP'
   ): Promise<string> {
     try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+      
       const objectStorySpec: any = {
         page_id: process.env.FACEBOOK_PAGE_ID,
         link_data: {
@@ -541,7 +558,7 @@ export class FacebookService {
       };
 
       const response = await axios.post(
-        `${this.BASE_URL}/act_${adAccountId}/adcreatives`,
+        `${this.BASE_URL}/act_${cleanAccountId}/adcreatives`,
         {
           name,
           object_story_spec: JSON.stringify(objectStorySpec),
