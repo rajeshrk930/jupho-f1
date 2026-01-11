@@ -293,11 +293,15 @@ export class FacebookService {
       const name = imageName || 'ad_image';
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
 
-      // Use copy_from via multipart form (Facebook expects form fields, not JSON)
+      // Download and convert to base64 bytes; Facebook expects multipart form
+      const imgResp = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+      const imageBuffer = Buffer.from(imgResp.data);
+      const base64Image = imageBuffer.toString('base64');
+
       const formData = new FormData();
       formData.append('access_token', accessToken);
       formData.append('name', name);
-      formData.append('copy_from', imageUrl);
+      formData.append('bytes', base64Image);
 
       const response = await axios.post(
         `${this.BASE_URL}/act_${cleanAccountId}/adimages`,
@@ -305,7 +309,6 @@ export class FacebookService {
         { headers: formData.getHeaders() }
       );
 
-      // Extract hash safely
       const imagesObj = response.data?.images || {};
       const imageHash = imagesObj[name]?.hash || imagesObj[Object.keys(imagesObj)[0]]?.hash;
       if (!imageHash) {
@@ -368,7 +371,7 @@ export class FacebookService {
   ): Promise<string> {
     try {
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
-      
+
       const response = await axios.post(
         `${this.BASE_URL}/act_${cleanAccountId}/adsets`,
         {
@@ -383,7 +386,7 @@ export class FacebookService {
           access_token: accessToken
         }
       );
-      
+
       return response.data.id;
     } catch (error: any) {
       console.error('Facebook ad set creation error:', error.response?.data || error.message);
@@ -405,6 +408,8 @@ export class FacebookService {
     callToActionType: string = 'LEARN_MORE'
   ): Promise<string> {
     try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+
       const objectStorySpec: any = {
         page_id: process.env.FACEBOOK_PAGE_ID, // You'll need to add this
         link_data: {
@@ -419,7 +424,7 @@ export class FacebookService {
       };
 
       const response = await axios.post(
-        `${this.BASE_URL}/act_${adAccountId}/adcreatives`,
+        `${this.BASE_URL}/act_${cleanAccountId}/adcreatives`,
         {
           name,
           object_story_spec: JSON.stringify(objectStorySpec),
