@@ -367,6 +367,10 @@ export class FacebookService {
     dailyBudget: number,
     targeting: any
   ): Promise<string> {
+    console.log('\n📊 [Facebook] Creating Ad Set...');
+    console.log('[Facebook] Ad Set Name:', name);
+    console.log('[Facebook] Daily Budget:', dailyBudget);
+    
     try {
       if (!process.env.FACEBOOK_PAGE_ID) {
         throw new Error('FACEBOOK_PAGE_ID is missing in .env file');
@@ -389,34 +393,42 @@ export class FacebookService {
         }
       };
 
+      const adSetPayload = {
+        name,
+        campaign_id: campaignId,
+        daily_budget: dailyBudget,
+        billing_event: 'IMPRESSIONS',
+        optimization_goal: 'LEAD_GENERATION',
+        bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
+        status: 'PAUSED',
+        
+        // ✅ FOR LEAD GENERATION: Use ON_AD (Instant Forms)
+        destination_type: 'ON_AD',
+        
+        // Send BOTH as plain objects (no stringified JSON)
+        targeting: safeTargeting,
+        promoted_object: {
+          page_id: process.env.FACEBOOK_PAGE_ID
+        },
+
+        access_token: accessToken
+      };
+
+      console.log('[Facebook] Ad Set Config:');
+      console.log('  - optimization_goal:', adSetPayload.optimization_goal);
+      console.log('  - destination_type:', adSetPayload.destination_type);
+      console.log('  - promoted_object.page_id:', adSetPayload.promoted_object.page_id);
+
       const response = await axios.post(
         `https://graph.facebook.com/v19.0/act_${adAccountId.replace('act_', '')}/adsets`,
-        {
-          name,
-          campaign_id: campaignId,
-          daily_budget: dailyBudget,
-          billing_event: 'IMPRESSIONS',
-          optimization_goal: 'LEAD_GENERATION',
-          bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
-          status: 'PAUSED',
-          
-          // ✅ THE MAGIC FIX: force Instant Forms instead of Website
-          destination_type: 'ON_AD',
-          
-          // Send BOTH as plain objects (no stringified JSON)
-          targeting: safeTargeting,
-          promoted_object: {
-            page_id: process.env.FACEBOOK_PAGE_ID
-          },
-
-          access_token: accessToken
-        }
+        adSetPayload
       );
       
-      console.log('[Facebook] Ad Set Created Successfully:', response.data.id);
+      console.log('✅ [Facebook] Ad Set Created Successfully:', response.data.id);
       return response.data.id;
     } catch (error: any) {
-      console.error('Ad Set Error:', error.response?.data || error.message);
+      console.error('\n❌ [Facebook] Ad Set Creation FAILED');
+      console.error('[Facebook] Error:', error.response?.data || error.message);
       throw new Error(`Ad Set Failed: ${error.response?.data?.error?.message}`);
     }
   }
@@ -574,7 +586,16 @@ export class FacebookService {
     body: string,
     leadFormId: string
   ): Promise<string> {
+    console.log('\n🎨 [Facebook] Creating Ad Creative with Lead Form...');
+    console.log('[Facebook] Lead Form ID:', leadFormId);
+    console.log('[Facebook] Creative Name:', name);
+    console.log('[Facebook] Headline:', headline);
+    
     try {
+      if (!leadFormId) {
+        throw new Error('❌ Lead Form ID is required but was not provided');
+      }
+
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
       
       const objectStorySpec: any = {
@@ -593,6 +614,8 @@ export class FacebookService {
         }
       };
 
+      console.log('[Facebook] Object Story Spec:', JSON.stringify(objectStorySpec, null, 2));
+
       const response = await axios.post(
         `${this.BASE_URL}/act_${cleanAccountId}/adcreatives`,
         {
@@ -602,10 +625,11 @@ export class FacebookService {
         }
       );
       
-      console.log('[Facebook] Lead form creative created:', response.data.id);
+      console.log('✅ [Facebook] Lead Form Creative Created:', response.data.id);
       return response.data.id;
     } catch (error: any) {
-      console.error('Facebook lead form creative error:', error.response?.data || error.message);
+      console.error('\n❌ [Facebook] Lead Form Creative Creation FAILED');
+      console.error('[Facebook] Error:', error.response?.data?.error || error.message);
       throw new Error(`Failed to create lead form creative: ${error.response?.data?.error?.message || error.message}`);
     }
   }
