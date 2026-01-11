@@ -93,15 +93,15 @@ router.get('/callback', async (req, res: Response) => {
           lastSyncAt: new Date(),
           isActive: true
         }
-      });
-      
-      // Redirect back to frontend settings page with success
-      return res.redirect(`${process.env.FRONTEND_URL}/settings?facebook=connected`);
-    } catch (error: any) {
-      console.error('[Facebook OAuth] Callback error:', error);
-      return res.redirect(`${process.env.FRONTEND_URL}/settings?error=connection_failed&message=${encodeURIComponent(error.message || 'Unknown error')}`);
-    }
-  });
+    });
+    
+    // Redirect back to frontend settings page with success
+    return res.redirect(`${process.env.FRONTEND_URL}/settings?facebook=connected`);
+  } catch (error: any) {
+    console.error('[Facebook OAuth] Callback error:', error);
+    return res.redirect(`${process.env.FRONTEND_URL}/settings?error=connection_failed&message=${encodeURIComponent(error.message || 'Unknown error')}`);
+  }
+});
 
 /**
  * GET /api/facebook/status
