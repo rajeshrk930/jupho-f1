@@ -565,6 +565,7 @@ export class FacebookService {
           image_hash: imageHash,
           message: body,
           name: headline,
+          link: 'https://jupho.io',
           call_to_action: {
             type: callToActionType,
             value: {
