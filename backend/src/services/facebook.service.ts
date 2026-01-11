@@ -494,6 +494,9 @@ export class FacebookService {
     questions?: Array<{ type: string, label?: string }>
   ): Promise<string> {
     try {
+      const rawTitle = formName || 'Lead Form';
+      const safeTitle = rawTitle.length > 60 ? `${rawTitle.substring(0, 57)}...` : rawTitle;
+
       // Default questions: Name, Phone, Email
       const defaultQuestions = [
         { type: 'FULL_NAME' },
@@ -507,6 +510,7 @@ export class FacebookService {
         `${this.BASE_URL}/${pageId}/leadgen_forms`,
         {
           name: formName,
+          question_page_custom_headline: safeTitle,
           privacy_policy: {
             url: privacyPolicyUrl,
             link_text: 'Privacy Policy'
@@ -514,7 +518,7 @@ export class FacebookService {
           follow_up_action_url: privacyPolicyUrl, // Fallback URL
           questions: formQuestions,
           context_card: {
-            title: formName,
+            title: safeTitle,
             content: [introText],
             button_text: 'Submit'
           },
