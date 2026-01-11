@@ -344,6 +344,7 @@ export class FacebookService {
           objective,
           status,
           special_ad_categories: [], // Required for some verticals
+          is_adset_budget_sharing_enabled: false,
           access_token: accessToken
         }
       );
