@@ -1,4 +1,522 @@
+import { AdAccount, FacebookAdsApi } from 'facebook-nodejs-business-sdk';
 import axios from 'axios';
+import crypto from 'crypto';
+
+// Types reused by callers
+export interface FacebookAdMetrics {
+  impressions: string;
+  clicks: string;
+  spend: string;
+  conversions?: string;
+  cpm: string;
+  ctr: string;
+  cpc?: string;
+  campaign_name?: string;
+  adset_name?: string;
+  ad_name?: string;
+}
+
+export interface FacebookAd {
+  id: string;
+  name: string;
+  status: string;
+  creative?: {
+    id: string;
+    name?: string;
+    image_url?: string;
+    video_id?: string;
+    body?: string;
+    title?: string;
+    thumbnail_url?: string;
+  };
+  insights?: {
+    data: FacebookAdMetrics[];
+  };
+}
+
+export interface FacebookAdAccount {
+  id: string;
+  name: string;
+  account_status: number;
+  currency: string;
+}
+
+export class FacebookService {
+  private static API_VERSION = 'v19.0';
+  private static BASE_URL = `https://graph.facebook.com/${this.API_VERSION}`;
+
+  // Ensure the SDK has a token available for calls that rely on it
+  private static initApi(accessToken: string) {
+    try {
+      FacebookAdsApi.init(accessToken);
+    } catch (err) {
+      console.error('[Facebook] Failed to init SDK API context', (err as any)?.message || err);
+    }
+  }
+
+  private static normalizeAdAccountId(adAccountId: string): string {
+    return adAccountId.replace(/^act_/, '');
+  }
+
+  // Security utilities
+  static encryptToken(token: string): string {
+    const algorithm = 'aes-256-cbc';
+    const key = Buffer.from(process.env.ENCRYPTION_KEY || '12345678901234567890123456789012', 'utf8').slice(0, 32);
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encrypted = cipher.update(token, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return iv.toString('hex') + ':' + encrypted;
+  }
+
+  static decryptToken(encrypted: string): string {
+    const algorithm = 'aes-256-cbc';
+    const key = Buffer.from(process.env.ENCRYPTION_KEY || '12345678901234567890123456789012', 'utf8').slice(0, 32);
+    const parts = encrypted.split(':');
+    if (parts.length !== 2) {
+      throw new Error('Invalid encrypted token format');
+    }
+
+    const iv = Buffer.from(parts[0], 'hex');
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
+    let decrypted = decipher.update(parts[1], 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
+
+  // Authentication and account helpers
+  static async exchangeCodeForToken(code: string): Promise<string> {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/oauth/access_token`, {
+        params: {
+          client_id: process.env.FACEBOOK_APP_ID,
+          client_secret: process.env.FACEBOOK_APP_SECRET,
+          redirect_uri: process.env.FACEBOOK_REDIRECT_URI,
+          code
+        }
+      });
+      return response.data.access_token;
+    } catch (error: any) {
+      console.error('Facebook Auth Error:', error.response?.data || error.message);
+      throw new Error('Failed to exchange code for token');
+    }
+  }
+
+  static async getAdAccounts(accessToken: string): Promise<FacebookAdAccount[]> {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/me/adaccounts`, {
+        params: {
+          access_token: accessToken,
+          fields: 'id,name,account_status,currency'
+        }
+      });
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Failed to fetch ad accounts', error.response?.data || error.message);
+      throw new Error('Failed to fetch ad accounts');
+    }
+  }
+
+  static async verifyToken(accessToken: string): Promise<boolean> {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/me`, {
+        params: { access_token: accessToken, fields: 'id' }
+      });
+      return !!response.data.id;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  static async refreshLongLivedToken(accessToken: string): Promise<string> {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/oauth/access_token`, {
+        params: {
+          grant_type: 'fb_exchange_token',
+          client_id: process.env.FACEBOOK_APP_ID,
+          client_secret: process.env.FACEBOOK_APP_SECRET,
+          fb_exchange_token: accessToken
+        }
+      });
+      return response.data.access_token;
+    } catch (error: any) {
+      console.error('Facebook token refresh error:', error.response?.data || error.message);
+      throw new Error('Failed to refresh Facebook access token');
+    }
+  }
+
+  // Campaign creation
+  static async createCampaign(
+    accessToken: string,
+    adAccountId: string,
+    name: string,
+    objective: string = 'OUTCOME_LEADS',
+    status: string = 'PAUSED'
+  ): Promise<string> {
+    try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+
+      const response = await axios.post(
+        `${this.BASE_URL}/act_${cleanAccountId}/campaigns`,
+        {
+          name,
+          objective,
+          status,
+          special_ad_categories: [],
+          is_adset_budget_sharing_enabled: false,
+          access_token: accessToken
+        }
+      );
+
+      return response.data.id;
+    } catch (error: any) {
+      console.error('Campaign Error:', error.response?.data || error.message);
+      throw new Error('Failed to create campaign');
+    }
+  }
+
+  // Image upload via SDK using bytes
+  static async uploadAdImage(accessToken: string, adAccountId: string, imageUrl: string): Promise<string> {
+    try {
+      const cleanId = this.normalizeAdAccountId(adAccountId);
+      this.initApi(accessToken);
+
+      const imgResp = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+      const imageBuffer = Buffer.from(imgResp.data);
+      const base64Image = imageBuffer.toString('base64');
+
+      const account = new AdAccount(cleanId);
+      const adImage = await account.createAdImage(
+        [],
+        {
+          bytes: base64Image,
+          name: 'jupho_ad_image.png',
+          access_token: accessToken
+        }
+      );
+
+      const hash = (Array.isArray(adImage) ? adImage[0]?.hash : (adImage as any)?.hash) || (adImage as any)?.images?.[0]?.hash;
+      if (!hash) {
+        console.error('Image upload response missing hash', adImage);
+        throw new Error('Failed to get image hash from upload response');
+      }
+
+      console.log('[Facebook] Image uploaded successfully:', hash);
+      return hash;
+    } catch (error: any) {
+      console.error('Image Upload Error:', error.response?.data || error.message);
+      throw new Error('Failed to upload image');
+    }
+  }
+
+  // Ad set creation with Advantage+ constraints
+  static async createAdSet(
+    accessToken: string,
+    adAccountId: string,
+    campaignId: string,
+    name: string,
+    dailyBudget: number,
+    targeting: any
+  ): Promise<string> {
+    try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+
+      const safeTargeting = {
+        ...targeting,
+        geo_locations: { countries: ['IN'] },
+        age_min: 18,
+        age_max: 65,
+        targeting_automation: {
+          advantage_audience: 1
+        }
+      };
+
+      const response = await axios.post(
+        `${this.BASE_URL}/act_${cleanAccountId}/adsets`,
+        {
+          name,
+          campaign_id: campaignId,
+          daily_budget: dailyBudget,
+          billing_event: 'IMPRESSIONS',
+          optimization_goal: 'LEAD_GENERATION',
+          bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
+          targeting: JSON.stringify(safeTargeting),
+          status: 'PAUSED',
+          destination_type: 'ON_AD',
+          access_token: accessToken
+        }
+      );
+
+      return response.data.id;
+    } catch (error: any) {
+      console.error('Ad Set Error:', error.response?.data || error.message);
+      throw new Error(`Ad Set Failed: ${error.response?.data?.error?.message || error.message}`);
+    }
+  }
+
+  // Lead form creation with title length guard
+  static async createLeadForm(
+    accessToken: string,
+    pageId: string,
+    formName: string,
+    introText: string,
+    privacyPolicyUrl: string = 'https://jupho.io/privacy',
+    thankYouMessage: string = 'Thank you! We\'ll contact you soon.',
+    questions?: Array<{ type: string; label?: string }>
+  ): Promise<string> {
+    try {
+      const safeTitle = formName.length > 55 ? `${formName.substring(0, 55)}...` : formName;
+      const formQuestions = questions && questions.length > 0
+        ? questions
+        : [
+            { type: 'FULL_NAME' },
+            { type: 'PHONE' },
+            { type: 'EMAIL' }
+          ];
+
+      const response = await axios.post(
+        `${this.BASE_URL}/${pageId}/leadgen_forms`,
+        {
+          name: `${safeTitle} - ${Date.now()}`,
+          follow_up_action_url: privacyPolicyUrl,
+          privacy_policy: {
+            url: privacyPolicyUrl,
+            link_text: 'Privacy Policy'
+          },
+          questions: formQuestions,
+          context_card: {
+            title: safeTitle,
+            style: 'PARAGRAPH_STYLE',
+            content: [introText],
+            button_text: 'Submit'
+          },
+          thank_you_page: {
+            title: 'Thank You!',
+            body: thankYouMessage
+          },
+          access_token: accessToken
+        }
+      );
+
+      console.log('[Facebook] Lead Form Created:', response.data.id);
+      return response.data.id;
+    } catch (error: any) {
+      console.error('Lead Form Error:', error.response?.data || error.message);
+      throw new Error(`Lead Form Failed: ${error.response?.data?.error?.message || error.message}`);
+    }
+  }
+
+  // Creative and ad creation
+  static async createAdCreativeWithLeadForm(
+    accessToken: string,
+    adAccountId: string,
+    name: string,
+    imageHash: string,
+    headline: string,
+    body: string,
+    leadFormId: string
+  ): Promise<string> {
+    try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+
+      const objectStorySpec = {
+        page_id: process.env.FACEBOOK_PAGE_ID,
+        link_data: {
+          image_hash: imageHash,
+          message: body,
+          name: headline,
+          call_to_action: {
+            type: 'SIGN_UP',
+            value: {
+              lead_gen_form_id: leadFormId
+            }
+          }
+        }
+      };
+
+      const response = await axios.post(
+        `${this.BASE_URL}/act_${cleanAccountId}/adcreatives`,
+        {
+          name,
+          object_story_spec: JSON.stringify(objectStorySpec),
+          access_token: accessToken
+        }
+      );
+
+      return response.data.id;
+    } catch (error: any) {
+      console.error('Creative Error:', error.response?.data || error.message);
+      throw new Error('Failed to create ad creative');
+    }
+  }
+
+  static async createAd(
+    accessToken: string,
+    adAccountId: string,
+    name: string,
+    adSetId: string,
+    creativeId: string
+  ): Promise<string> {
+    try {
+      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+
+      const response = await axios.post(
+        `${this.BASE_URL}/act_${cleanAccountId}/ads`,
+        {
+          name,
+          adset_id: adSetId,
+          creative: JSON.stringify({ creative_id: creativeId }),
+          status: 'PAUSED',
+          access_token: accessToken
+        }
+      );
+
+      return response.data.id;
+    } catch (error: any) {
+      console.error('Ad Creation Error:', error.response?.data || error.message);
+      throw new Error('Failed to create final ad');
+    }
+  }
+
+  // Interest search for AI suggestions
+  static async searchInterests(accessToken: string, keywords: string[], limit: number = 3) {
+    try {
+      const results: any[] = [];
+      for (const keyword of keywords) {
+        const res = await axios.get(`${this.BASE_URL}/search`, {
+          params: { type: 'adinterest', q: keyword, access_token: accessToken, limit }
+        });
+        results.push(...(res.data?.data || []));
+      }
+      return results;
+    } catch (e) {
+      console.error('Facebook interest search error:', (e as any)?.response?.data || (e as any)?.message || e);
+      return [];
+    }
+  }
+
+  // Default targeting used by AgentService
+  static getDefaultTargeting(
+    audienceType: 'BROAD' | 'INTEREST_BASED' = 'BROAD',
+    customInterests?: Array<{ id: string; name: string }>,
+    cityKey?: string,
+    radius?: number
+  ) {
+    const baseTargeting: any = {
+      geo_locations: {
+        countries: ['IN']
+      },
+      age_min: 25,
+      age_max: 65,
+      publisher_platforms: ['facebook', 'instagram'],
+      facebook_positions: ['feed', 'story'],
+      instagram_positions: ['stream', 'story'],
+      device_platforms: ['mobile', 'desktop']
+    };
+
+    if (cityKey && radius) {
+      baseTargeting.geo_locations = {
+        countries: ['IN'],
+        location_types: ['home', 'recent'],
+        cities: [
+          {
+            key: cityKey,
+            radius: radius,
+            distance_unit: 'kilometer'
+          }
+        ]
+      };
+    }
+
+    if (audienceType === 'INTEREST_BASED' && customInterests && customInterests.length > 0) {
+      baseTargeting.interests = customInterests;
+    } else if (audienceType === 'INTEREST_BASED') {
+      baseTargeting.interests = [
+        { id: '6003139266461', name: 'Online shopping' },
+        { id: '6003020834693', name: 'Business' }
+      ];
+    }
+
+    return baseTargeting;
+  }
+
+  // Metrics and creative detail helpers retained for compatibility
+  static async getAdCreativeMetrics(
+    accessToken: string,
+    adAccountId: string,
+    adId: string
+  ): Promise<FacebookAdMetrics> {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/${adId}/insights`, {
+        params: {
+          access_token: accessToken,
+          fields: 'impressions,clicks,spend,conversions,cpm,ctr,cpc,campaign_name,adset_name,ad_name',
+          time_range: JSON.stringify({
+            since: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            until: new Date().toISOString().split('T')[0]
+          })
+        }
+      });
+
+      if (!response.data.data || response.data.data.length === 0) {
+        throw new Error('No metrics found for this ad');
+      }
+
+      return response.data.data[0];
+    } catch (error: any) {
+      console.error('Facebook get ad metrics error:', error.response?.data || error.message);
+      throw new Error('Failed to fetch ad metrics from Facebook');
+    }
+  }
+
+  static async getActiveAds(
+    accessToken: string,
+    adAccountId: string,
+    limit: number = 50
+  ): Promise<FacebookAd[]> {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/${adAccountId}/ads`, {
+        params: {
+          access_token: accessToken,
+          fields: 'id,name,status,creative{id,name,image_url,video_id,body,title,thumbnail_url},insights{impressions,clicks,spend,cpm,ctr,conversions}',
+          filtering: JSON.stringify([
+            {
+              field: 'effective_status',
+              operator: 'IN',
+              value: ['ACTIVE', 'PAUSED']
+            }
+          ]),
+          time_range: JSON.stringify({
+            since: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            until: new Date().toISOString().split('T')[0]
+          }),
+          limit
+        }
+      });
+
+      return response.data.data || [];
+    } catch (error: any) {
+      console.error('Facebook get active ads error:', error.response?.data || error.message);
+      throw new Error('Failed to fetch active ads from Facebook');
+    }
+  }
+
+  static async getAdCreative(accessToken: string, creativeId: string): Promise<any> {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/${creativeId}`, {
+        params: {
+          access_token: accessToken,
+          fields: 'id,name,image_url,video_id,body,title,thumbnail_url,object_story_spec'
+        }
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error('Facebook get creative error:', error.response?.data || error.message);
+      throw new Error('Failed to fetch creative details from Facebook');
+    }
+  }
+}import axios from 'axios';
 import crypto from 'crypto';
 import FormData from 'form-data';
 
