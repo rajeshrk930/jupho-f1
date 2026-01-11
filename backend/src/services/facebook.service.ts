@@ -1,5 +1,6 @@
 import axios from 'axios';
 import crypto from 'crypto';
+import FormData from 'form-data';
 
 export interface FacebookAdMetrics {
   impressions: string;
@@ -281,30 +282,38 @@ export class FacebookService {
     imageName?: string
   ): Promise<string> {
     try {
-      const formData = new FormData();
+      const name = imageName || 'ad_image';
       
-      // Fetch image as buffer if it's a URL
+      // Fetch image as buffer
       const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
       const imageBuffer = Buffer.from(imageResponse.data);
       
+      // Use proper form data with file upload
+      const formData = new FormData();
+      formData.append('access_token', accessToken);
+      formData.append(name, imageBuffer, {
+        filename: `${name}.jpg`,
+        contentType: 'image/jpeg'
+      });
+      
       const response = await axios.post(
         `${this.BASE_URL}/act_${adAccountId}/adimages`,
+        formData,
         {
-          access_token: accessToken,
-          bytes: imageBuffer.toString('base64'),
-          name: imageName || 'ad_image'
+          headers: formData.getHeaders()
         }
       );
       
-      const imageHash = response.data.images?.[imageName || 'ad_image']?.hash;
+      const imageHash = response.data.images?.[name]?.hash;
       if (!imageHash) {
         throw new Error('Failed to get image hash from upload response');
       }
       
+      console.log('[Facebook] Image uploaded successfully:', imageHash);
       return imageHash;
     } catch (error: any) {
-      console.error('Facebook image upload error:', error.response?.data || error.message);
-      throw new Error('Failed to upload image to Facebook');
+      console.error('[Facebook] Image upload error:', error.response?.data || error.message);
+      throw new Error(`Failed to upload image to Facebook: ${error.response?.data?.error?.message || error.message}`);
     }
   }
 
