@@ -373,6 +373,14 @@ export class FacebookService {
     try {
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
 
+      // Explicitly opt into Advantage+ audience automation to satisfy v19+ requirements
+      const targetingWithAutomation = {
+        ...targeting,
+        targeting_automation: {
+          advantage_audience: 1 // 1 = enable Advantage+ audience (required flag)
+        }
+      };
+
       const response = await axios.post(
         `${this.BASE_URL}/act_${cleanAccountId}/adsets`,
         {
@@ -382,7 +390,7 @@ export class FacebookService {
           billing_event: billingEvent,
           optimization_goal: optimizationGoal,
           bid_amount: Math.floor(dailyBudget * 0.1), // Auto bid at 10% of daily budget
-          targeting: JSON.stringify(targeting),
+          targeting: JSON.stringify(targetingWithAutomation),
           status,
           access_token: accessToken
         }
