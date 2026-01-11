@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, Sparkles, Target, Users, DollarSign, Edit2, Check } from 'lucide-react';
+import { Loader2, Sparkles, Target, Users, DollarSign, Edit2, Check, FileText, Globe, ArrowRight } from 'lucide-react';
 import { agentApi } from '@/lib/api';
+import GoalCard from '@/components/ui/GoalCard';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 
 interface BusinessData {
   brandName: string;
@@ -159,100 +161,50 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
 
         <div className="space-y-4 mb-8">
           {/* Lead Form Option (Recommended) */}
-          <button
+          <GoalCard
+            icon={<FileText className="w-6 h-6" />}
+            title="Meta Instant Lead Form"
+            description="Captures leads directly on Facebook/Instagram. No website needed."
+            isSelected={conversionMethod === 'lead_form'}
+            isRecommended={true}
+            features={[
+              '✓ Higher conversion rates',
+              '✓ Works even if website is slow',
+              '✓ Mobile-optimized',
+            ]}
             onClick={() => setConversionMethod('lead_form')}
-            className={`w-full text-left p-6 rounded-xl border-2 transition-all ${
-              conversionMethod === 'lead_form'
-                ? 'border-coral-500 bg-coral-50 shadow-lg'
-                : 'border-gray-200 bg-white hover:border-gray-300'
-            }`}
-          >
-            <div className="flex items-start">
-              <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center mr-4 ${
-                conversionMethod === 'lead_form' ? 'bg-coral-500 text-white' : 'bg-gray-100 text-gray-400'
-              }`}>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">Meta Instant Lead Form</h3>
-                  <span className="ml-3 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                    ✓ Recommended
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 mb-3">
-                  Captures leads directly on Facebook/Instagram. No website needed.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
-                    <Check className="w-3 h-3 mr-1 text-green-600" /> Higher conversion rates
-                  </span>
-                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
-                    <Check className="w-3 h-3 mr-1 text-green-600" /> Works even if website is slow
-                  </span>
-                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
-                    <Check className="w-3 h-3 mr-1 text-green-600" /> Mobile-optimized
-                  </span>
-                </div>
-              </div>
-            </div>
-          </button>
+          />
 
           {/* Website Option */}
-          <button
+          <GoalCard
+            icon={<Globe className="w-6 h-6" />}
+            title="Send to Website"
+            description="Send users to your website landing page or contact form."
+            isSelected={conversionMethod === 'website'}
+            badge="Advanced"
+            features={['Requires fast website', 'You control the experience']}
             onClick={() => setConversionMethod('website')}
-            className={`w-full text-left p-6 rounded-xl border-2 transition-all ${
-              conversionMethod === 'website'
-                ? 'border-coral-500 bg-coral-50 shadow-lg'
-                : 'border-gray-200 bg-white hover:border-gray-300'
-            }`}
-          >
-            <div className="flex items-start">
-              <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center mr-4 ${
-                conversionMethod === 'website' ? 'bg-coral-500 text-white' : 'bg-gray-100 text-gray-400'
-              }`}>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">Send to Website</h3>
-                  <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-                    Advanced
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 mb-3">
-                  Send users to your website landing page or contact form.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
-                    Requires fast website
-                  </span>
-                  <span className="inline-flex items-center px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200">
-                    You control the experience
-                  </span>
-                </div>
-              </div>
-            </div>
-          </button>
+          />
         </div>
 
         <div className="flex gap-4">
-          <button
+          <PrimaryButton
             onClick={onBack}
-            className="flex-1 py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            variant="outline"
+            size="lg"
+            className="flex-1"
           >
             Back
-          </button>
-          <button
+          </PrimaryButton>
+          <PrimaryButton
             onClick={handleStartGeneration}
-            className="flex-1 py-3 px-6 bg-gradient-to-r from-coral-500 to-purple-600 text-white rounded-lg hover:from-coral-600 hover:to-purple-700 transition-all shadow-lg font-medium"
+            variant="primary"
+            size="lg"
+            className="flex-1"
+            icon={<ArrowRight className="w-5 h-5" />}
           >
-            Continue to Strategy →
-          </button>
+            Continue to Strategy
+          </PrimaryButton>
         </div>
       </div>
     );

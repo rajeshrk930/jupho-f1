@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Loader2, Rocket, Upload, Check, ExternalLink, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 import MetaAdPreview from './MetaAdPreview';
+import PrimaryButton from '@/components/ui/PrimaryButton';
 
 interface BusinessData {
   brandName: string;
@@ -335,30 +336,26 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
 
       {/* Actions */}
       <div className="flex gap-4">
-        <button
+        <PrimaryButton
           onClick={onBack}
+          variant="secondary"
+          size="lg"
           disabled={launching}
-          className="flex-1 py-4 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
+          className="flex-1"
         >
           Back
-        </button>
-        <button
+        </PrimaryButton>
+        <PrimaryButton
           onClick={handleLaunch}
+          variant="primary"
+          size="xl"
           disabled={!imageUrl || launching}
-          className="flex-1 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+          loading={launching}
+          className="flex-1"
+          icon={!launching && <Rocket className="w-5 h-5" />}
         >
-          {launching ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              Launching... (~20s)
-            </>
-          ) : (
-            <>
-              <Rocket className="w-5 h-5 mr-2" />
-              Launch Campaign
-            </>
-          )}
-        </button>
+          {launching ? 'Launching... (~20s)' : 'Launch Campaign'}
+        </PrimaryButton>
       </div>
 
       {/* Disclaimer */}
