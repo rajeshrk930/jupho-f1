@@ -293,14 +293,16 @@ export class FacebookService {
       const name = imageName || 'ad_image';
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
 
-      // Use copy_from (JSON body) so Facebook fetches the image directly
+      // Use copy_from via multipart form (Facebook expects form fields, not JSON)
+      const formData = new FormData();
+      formData.append('access_token', accessToken);
+      formData.append('name', name);
+      formData.append('copy_from', imageUrl);
+
       const response = await axios.post(
         `${this.BASE_URL}/act_${cleanAccountId}/adimages`,
-        {
-          access_token: accessToken,
-          name,
-          copy_from: imageUrl,
-        }
+        formData,
+        { headers: formData.getHeaders() }
       );
 
       // Extract hash safely
