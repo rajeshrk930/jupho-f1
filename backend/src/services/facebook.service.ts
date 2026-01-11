@@ -495,7 +495,7 @@ export class FacebookService {
   ): Promise<string> {
     try {
       const rawTitle = formName || 'Lead Form';
-      const safeTitle = rawTitle.length > 60 ? `${rawTitle.substring(0, 57)}...` : rawTitle;
+      const safeTitle = rawTitle.length > 55 ? `${rawTitle.substring(0, 55)}...` : rawTitle;
 
       // Default questions: Name, Phone, Email
       const defaultQuestions = [
@@ -509,7 +509,7 @@ export class FacebookService {
       const response = await axios.post(
         `${this.BASE_URL}/${pageId}/leadgen_forms`,
         {
-          name: formName,
+          name: `${safeTitle} - ${Date.now()}`,
           question_page_custom_headline: safeTitle,
           privacy_policy: {
             url: privacyPolicyUrl,
@@ -519,12 +519,15 @@ export class FacebookService {
           questions: formQuestions,
           context_card: {
             title: safeTitle,
+            style: 'PARAGRAPH_STYLE',
             content: [introText],
-            button_text: 'Submit'
+            button_text: 'Get Started'
           },
           thank_you_page: {
-            title: 'Thank You!',
-            body: thankYouMessage
+            title: 'You are all set!',
+            body: thankYouMessage,
+            button_text: 'View Website',
+            button_type: 'VIEW_WEBSITE'
           },
           access_token: accessToken
         }
