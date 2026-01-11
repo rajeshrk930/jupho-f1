@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Loader2, Globe, Instagram, FileText, Sparkles, CheckCircle, Package, Zap, Mail, Phone, Image } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Loader2, Globe, Instagram, FileText, Sparkles, CheckCircle, Package, Zap, Mail, Phone, Image, Link as LinkIcon, User } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 
 interface BusinessData {
@@ -27,6 +27,14 @@ interface Props {
 type InputMode = 'url' | 'manual';
 type ViewMode = 'input' | 'preview';
 
+type ScanStep = {
+  id: string;
+  title: string;
+  description: string;
+  icon: any;
+  status: 'pending' | 'in-progress' | 'complete';
+};
+
 export default function BusinessScanStep({ onComplete }: Props) {
   const [mode, setMode] = useState<InputMode>('url');
   const [viewMode, setViewMode] = useState<ViewMode>('input');
@@ -36,11 +44,101 @@ export default function BusinessScanStep({ onComplete }: Props) {
   const [error, setError] = useState('');
   const [scannedData, setScannedData] = useState<BusinessData | null>(null);
   const [taskId, setTaskId] = useState<string>('');
+  const [scanSteps, setScanSteps] = useState<ScanStep[]>([
+    {
+      id: 'parsing',
+      title: 'Parsing URL',
+      description: 'Connecting to your website and validating the URL',
+      icon: LinkIcon,
+      status: 'pending',
+    },
+    {
+      id: 'brand',
+      title: 'Extracting Brand Info',
+      description: 'Identifying your brand name and business description',
+      icon: Sparkles,
+      status: 'pending',
+    },
+    {
+      id: 'products',
+      title: 'Identifying Products',
+      description: 'Discovering your products, services, and offerings',
+      icon: Package,
+      status: 'pending',
+    },
+    {
+      id: 'usps',
+      title: 'Analyzing Selling Points',
+      description: 'Finding your unique competitive advantages and USPs',
+      icon: Zap,
+      status: 'pending',
+    },
+    {
+      id: 'visuals',
+      title: 'Gathering Visuals',
+      description: 'Extracting images, colors, and brand visual style',
+      icon: Image,
+      status: 'pending',
+    },
+  ]);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [stepDetails, setStepDetails] = useState<string>('');
+
+  // Simulate progress through steps
+  useEffect(() => {
+    if (!loading) return;
+
+    const stepTimings = [
+      { index: 0, delay: 500, duration: 8000 },    // Parsing URL: 0-8s
+      { index: 1, delay: 8500, duration: 15000 },  // Brand Info: 8-23s
+      { index: 2, delay: 23500, duration: 25000 }, // Products: 23-48s
+      { index: 3, delay: 48500, duration: 25000 }, // USPs: 48-73s
+      { index: 4, delay: 73500, duration: 16500 }, // Visuals: 73-90s
+    ];
+
+    const timeouts: NodeJS.Timeout[] = [];
+
+    stepTimings.forEach(({ index, delay, duration }) => {
+      // Mark step as in-progress
+      const startTimeout = setTimeout(() => {
+        setScanSteps((prev) =>
+          prev.map((step, i) => ({
+            ...step,
+            status: i === index ? 'in-progress' : i < index ? 'complete' : 'pending',
+          }))
+        );
+        setCurrentStepIndex(index);
+      }, delay);
+      timeouts.push(startTimeout);
+
+      // Mark step as complete
+      const completeTimeout = setTimeout(() => {
+        setScanSteps((prev) =>
+          prev.map((step, i) => ({
+            ...step,
+            status: i <= index ? 'complete' : 'pending',
+          }))
+        );
+      }, delay + duration);
+      timeouts.push(completeTimeout);
+    });
+
+    return () => {
+      timeouts.forEach((timeout) => clearTimeout(timeout));
+    };
+  }, [loading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setStepDetails('');
+    setCurrentStepIndex(0);
+    
+    // Reset steps to pending
+    setScanSteps((prev) =>
+      prev.map((step) => ({ ...step, status: 'pending' as const }))
+    );
 
     try {
       const response = await agentApi.startBusinessScan({
@@ -48,9 +146,37 @@ export default function BusinessScanStep({ onComplete }: Props) {
         manualInput: mode === 'manual' ? manualInput : undefined,
       });
 
+      // Update step details with actual data when scan completes
+      const data = response.businessData;
+      const details: string[] = [];
+      
+      if (data.brandName) {
+        details.push(`Found ${data.brandName}`);
+      }
+      if (data.products && data.products.length > 0) {
+        details.push(`Identified ${data.products.length} products/services`);
+      }
+      if (data.usps && data.usps.length > 0) {
+        details.push(`Discovered ${data.usps.length} key differentiators`);
+      }
+      if (data.visualStyle?.imageUrls && data.visualStyle.imageUrls.length > 0) {
+        details.push(`Extracted ${data.visualStyle.imageUrls.length} images`);
+      }
+      
+      setStepDetails(details.join(' • '));
+      
+      // Mark all steps complete
+      setScanSteps((prev) =>
+        prev.map((step) => ({ ...step, status: 'complete' as const }))
+      );
+
       setScannedData(response.businessData);
       setTaskId(response.taskId);
-      setViewMode('preview');
+      
+      // Small delay to show completion before transitioning
+      setTimeout(() => {
+        setViewMode('preview');
+      }, 1000);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to scan business. Please try again.');
     } finally {
@@ -71,6 +197,123 @@ export default function BusinessScanStep({ onComplete }: Props) {
   };
 
   const isValid = mode === 'url' ? url.trim().length > 0 : manualInput.trim().length > 20;
+
+  // Show loading progress UI
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 rounded-3xl shadow-xl border border-purple-100 p-8 min-h-[600px]">
+        <div className="flex h-full">
+          {/* Left Sidebar */}
+          <div className="w-16 flex-shrink-0 flex flex-col items-center border-r border-purple-200 pr-4 mr-8">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white mb-8">
+              <User className="w-5 h-5" />
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Header */}
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Preparing tailored insights for your ads
+              </h2>
+              <p className="text-gray-600">This will take approximately 90 seconds</p>
+            </div>
+
+            {/* Progress Steps */}
+            <div className="space-y-6">
+              {scanSteps.map((step, index) => {
+                const StepIcon = step.icon;
+                return (
+                  <div
+                    key={step.id}
+                    className={`flex items-start space-x-4 transition-all duration-500 ${
+                      step.status === 'pending' ? 'opacity-40' : 'opacity-100'
+                    }`}
+                  >
+                    {/* Icon/Status */}
+                    <div className="flex-shrink-0 relative">
+                      {step.status === 'complete' ? (
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                          <CheckCircle className="w-6 h-6 text-white" />
+                        </div>
+                      ) : step.status === 'in-progress' ? (
+                        <div className="w-10 h-10 bg-white border-2 border-purple-500 rounded-full flex items-center justify-center">
+                          <Loader2 className="w-5 h-5 text-purple-600 animate-spin" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center">
+                          <StepIcon className="w-5 h-5 text-gray-400" />
+                        </div>
+                      )}
+                      
+                      {/* Connecting line */}
+                      {index < scanSteps.length - 1 && (
+                        <div
+                          className={`absolute left-1/2 top-10 w-0.5 h-6 -translate-x-1/2 transition-colors duration-500 ${
+                            step.status === 'complete' ? 'bg-purple-500' : 'bg-gray-300'
+                          }`}
+                        />
+                      )}
+                    </div>
+
+                    {/* Step Content */}
+                    <div className="flex-1 pt-1">
+                      <h3
+                        className={`font-semibold mb-1 transition-colors duration-300 ${
+                          step.status === 'in-progress'
+                            ? 'text-purple-900'
+                            : step.status === 'complete'
+                            ? 'text-gray-900'
+                            : 'text-gray-500'
+                        }`}
+                      >
+                        {step.title}
+                      </h3>
+                      <p
+                        className={`text-sm transition-colors duration-300 ${
+                          step.status === 'in-progress' || step.status === 'complete'
+                            ? 'text-gray-600'
+                            : 'text-gray-400'
+                        }`}
+                      >
+                        {step.description}
+                      </p>
+                      
+                      {/* Show details for current step */}
+                      {step.status === 'in-progress' && currentStepIndex === index && (
+                        <div className="mt-2 text-sm text-purple-700 font-medium animate-pulse">
+                          Checking out what's on your page...
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Bottom Details */}
+            {stepDetails && (
+              <div className="mt-8 p-4 bg-white/60 backdrop-blur rounded-xl border border-purple-200">
+                <p className="text-sm text-gray-700">{stepDetails}</p>
+              </div>
+            )}
+
+            {/* What we extract section */}
+            <div className="mt-8 p-4 bg-white/60 backdrop-blur rounded-xl border border-purple-200">
+              <p className="text-sm font-medium text-gray-700 mb-2">💡 What we extract:</p>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Brand name and description</li>
+                <li>• Products/services offerings</li>
+                <li>• Unique selling points</li>
+                <li>• Visual style and branding</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (viewMode === 'preview' && scannedData) {
     return (
