@@ -190,7 +190,8 @@ export class ScraperService {
         const phoneMatch = textContent.match(/(\+?\d{1,3}[\s-]?)?(\(?\d{3}\)?[\s-]?)?\d{3}[\s-]?\d{4}/);
         data.contact.email = emailMatch ? emailMatch[0] : '';
         data.contact.phone = phoneMatch ? phoneMatch[0] : '';
-        data.contact.website = window.location.href; // Store original URL
+        // Use the validated URL passed into the scraper (no window in Node)
+        data.contact.website = validatedUrl;
 
         return data;
       });
