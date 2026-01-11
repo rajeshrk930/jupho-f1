@@ -372,8 +372,6 @@ export class FacebookService {
         throw new Error('FACEBOOK_PAGE_ID is missing in .env file');
       }
 
-      console.log(`[Facebook] Creating Ad Set linked to Page: ${process.env.FACEBOOK_PAGE_ID}`);
-
       // Ensure targeting is an object, not a string
       let finalTargeting = targeting;
       if (typeof targeting === 'string') {
@@ -400,11 +398,13 @@ export class FacebookService {
           billing_event: 'IMPRESSIONS',
           optimization_goal: 'LEAD_GENERATION',
           bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
-          destination_type: 'ON_AD',
           status: 'PAUSED',
           
-          // ✅ FIX: Send BOTH as Plain Objects (No JSON.stringify anywhere)
-          targeting: safeTargeting, 
+          // ✅ THE MAGIC FIX: force Instant Forms instead of Website
+          destination_type: 'ON_AD',
+          
+          // Send BOTH as plain objects (no stringified JSON)
+          targeting: safeTargeting,
           promoted_object: {
             page_id: process.env.FACEBOOK_PAGE_ID
           },
