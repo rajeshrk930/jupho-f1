@@ -110,7 +110,12 @@ router.post('/strategy', authenticate, async (req: AuthRequest, res: Response) =
     
     res.json(result);
   } catch (error: any) {
-    console.error('Strategy Error:', error);
+    console.error('[Agent Route] Strategy generation failed:', {
+      message: error.message,
+      stack: error.stack,
+      status: error.status,
+      code: error.code
+    });
     res.status(500).json({ error: error.message || 'Failed to generate strategy' });
   }
 });
