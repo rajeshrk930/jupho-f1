@@ -649,7 +649,7 @@ export class FacebookService {
         countries: ['IN']
       },
       age_min: 25, // More targeted than 18-65
-      age_max: 55,
+      age_max: 65, // Advantage+ requires max age >= 65
       publisher_platforms: ['facebook', 'instagram'], // Automatic placements
       facebook_positions: ['feed', 'story'], // Exclude right column
       instagram_positions: ['stream', 'story'],
