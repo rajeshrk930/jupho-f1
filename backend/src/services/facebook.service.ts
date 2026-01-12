@@ -686,6 +686,142 @@ export class FacebookService {
   }
 
   /**
+   * Get historical ad performance metrics for data-driven recommendations
+   * Fetches last 30 days of user's ad performance with insights
+   */
+  static async getAdPerformanceMetrics(
+    accessToken: string,
+    adAccountId: string
+  ): Promise<{
+    totalAds: number;
+    avgCPM: number;
+    avgCTR: number;
+    avgCPA: number;
+    totalSpend: number;
+    totalConversions: number;
+    topPerformingObjective: string;
+    bestPerformingAds: Array<{
+      id: string;
+      name: string;
+      cpm: number;
+      ctr: number;
+      conversions: number;
+    }>;
+  } | null> {
+    try {
+      console.log('[Facebook] Fetching historical performance metrics...');
+      
+      const ads = await this.getActiveAds(accessToken, adAccountId, 100);
+      
+      if (!ads || ads.length === 0) {
+        console.log('[Facebook] No historical ads found');
+        return null;
+      }
+
+      let totalCPM = 0;
+      let totalCTR = 0;
+      let totalCPA = 0;
+      let totalSpend = 0;
+      let totalConversions = 0;
+      let adsWithMetrics = 0;
+      let adsWithConversions = 0;
+
+      const objectiveCounts: Record<string, number> = {};
+      const performingAds: Array<any> = [];
+
+      for (const ad of ads) {
+        const insights = ad.insights?.data?.[0];
+        if (!insights) continue;
+
+        adsWithMetrics++;
+        
+        const cpm = parseFloat(insights.cpm || '0');
+        const ctr = parseFloat(insights.ctr || '0');
+        const spend = parseFloat(insights.spend || '0');
+        const conversions = parseInt(insights.conversions || '0', 10);
+
+        totalCPM += cpm;
+        totalCTR += ctr;
+        totalSpend += spend;
+        totalConversions += conversions;
+
+        if (conversions > 0) {
+          const cpa = spend / conversions;
+          totalCPA += cpa;
+          adsWithConversions++;
+        }
+
+        // Track ad performance for ranking
+        performingAds.push({
+          id: ad.id,
+          name: ad.name,
+          cpm,
+          ctr,
+          conversions,
+          spend,
+          score: (ctr * 10) + (conversions * 5) - (cpm / 10) // Composite score
+        });
+
+        // Track campaign objective (inferred from ad name patterns)
+        if (ad.name.toLowerCase().includes('lead')) {
+          objectiveCounts['LEADS'] = (objectiveCounts['LEADS'] || 0) + 1;
+        } else if (ad.name.toLowerCase().includes('sale') || ad.name.toLowerCase().includes('purchase')) {
+          objectiveCounts['SALES'] = (objectiveCounts['SALES'] || 0) + 1;
+        } else if (ad.name.toLowerCase().includes('traffic')) {
+          objectiveCounts['TRAFFIC'] = (objectiveCounts['TRAFFIC'] || 0) + 1;
+        }
+      }
+
+      if (adsWithMetrics === 0) {
+        return null;
+      }
+
+      // Calculate averages
+      const avgCPM = totalCPM / adsWithMetrics;
+      const avgCTR = totalCTR / adsWithMetrics;
+      const avgCPA = adsWithConversions > 0 ? totalCPA / adsWithConversions : 0;
+
+      // Get top performing objective
+      const topObjective = Object.entries(objectiveCounts)
+        .sort(([, a], [, b]) => b - a)[0]?.[0] || 'LEADS';
+
+      // Get top 5 best performing ads
+      const bestAds = performingAds
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5)
+        .map(ad => ({
+          id: ad.id,
+          name: ad.name,
+          cpm: ad.cpm,
+          ctr: ad.ctr,
+          conversions: ad.conversions
+        }));
+
+      console.log('[Facebook] Performance metrics calculated:', {
+        totalAds: ads.length,
+        avgCPM: avgCPM.toFixed(2),
+        avgCTR: avgCTR.toFixed(2),
+        avgCPA: avgCPA.toFixed(2),
+        topObjective
+      });
+
+      return {
+        totalAds: ads.length,
+        avgCPM: parseFloat(avgCPM.toFixed(2)),
+        avgCTR: parseFloat(avgCTR.toFixed(2)),
+        avgCPA: parseFloat(avgCPA.toFixed(2)),
+        totalSpend: parseFloat(totalSpend.toFixed(2)),
+        totalConversions,
+        topPerformingObjective: topObjective,
+        bestPerformingAds: bestAds
+      };
+    } catch (error: any) {
+      console.error('[Facebook] Error fetching performance metrics:', error.message);
+      return null; // Return null instead of throwing to allow graceful fallback
+    }
+  }
+
+  /**
    * Get default targeting for broad audience (India)
    * Updated to support dynamic interests and best practices
    */

@@ -5,6 +5,73 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// Industry Benchmarks (Indian Market - 2026)
+const INDUSTRY_BENCHMARKS = {
+  ecommerce: {
+    avgCPM: 150,
+    avgCTR: 1.2,
+    avgCPA: 500,
+    optimalBudget: { min: 1000, max: 2000 },
+    description: 'E-commerce & Online Retail'
+  },
+  local_services: {
+    avgCPM: 80,
+    avgCTR: 2.0,
+    avgCPA: 300,
+    optimalBudget: { min: 500, max: 1200 },
+    description: 'Local Services (Salons, Gyms, Coaching)'
+  },
+  saas: {
+    avgCPM: 200,
+    avgCTR: 0.8,
+    avgCPA: 800,
+    optimalBudget: { min: 1500, max: 2500 },
+    description: 'SaaS & B2B Software'
+  },
+  education: {
+    avgCPM: 120,
+    avgCTR: 1.5,
+    avgCPA: 400,
+    optimalBudget: { min: 800, max: 1500 },
+    description: 'Education & Coaching'
+  },
+  healthcare: {
+    avgCPM: 100,
+    avgCTR: 1.8,
+    avgCPA: 350,
+    optimalBudget: { min: 600, max: 1300 },
+    description: 'Healthcare & Wellness'
+  },
+  real_estate: {
+    avgCPM: 180,
+    avgCTR: 1.0,
+    avgCPA: 600,
+    optimalBudget: { min: 1200, max: 2000 },
+    description: 'Real Estate'
+  },
+  food_beverage: {
+    avgCPM: 90,
+    avgCTR: 2.2,
+    avgCPA: 250,
+    optimalBudget: { min: 600, max: 1200 },
+    description: 'Food & Beverage'
+  },
+  finance: {
+    avgCPM: 220,
+    avgCTR: 0.7,
+    avgCPA: 900,
+    optimalBudget: { min: 1500, max: 2500 },
+    description: 'Finance & Insurance'
+  },
+  default: {
+    avgCPM: 130,
+    avgCTR: 1.3,
+    avgCPA: 450,
+    optimalBudget: { min: 800, max: 1500 },
+    description: 'General Business'
+  }
+};
+
 export interface CampaignStrategy {
   objective: 'OUTCOME_LEADS' | 'OUTCOME_SALES' | 'OUTCOME_TRAFFIC' | 'OUTCOME_AWARENESS';
   targeting: {
@@ -33,18 +100,24 @@ export interface CampaignStrategy {
   reasoning: string; // Why these choices were made
 }
 
-const MASTER_PROMPT_SYSTEM = `You are an expert Meta Ads strategist and consultant specializing in the Indian market.
+const MASTER_PROMPT_SYSTEM = `You are JUPHO AI — an elite Meta Ads strategist specializing in data-driven campaign optimization for the Indian market (2026).
 
-Your job is to analyze a business and output a COMPLETE, ready-to-execute Meta Ads campaign strategy in a single JSON object.
+Your job is to analyze business data, historical performance metrics, and industry benchmarks to output a COMPLETE, ready-to-execute Meta Ads campaign strategy.
 
-**Your Analysis Process:**
+**Your Analysis Process (DATA-DRIVEN):**
 1. Understand the business niche, products/services, and target market
-2. Determine the optimal campaign objective (LEADS, SALES, TRAFFIC, AWARENESS)
-3. Calculate appropriate daily budget based on business size and goal (₹500-₹2,500/day)
-4. Identify 3-5 precise interest keywords for targeting (will be used to search Facebook API)
-5. Detect if business is local (needs radius targeting) or national
-6. Generate 3 DISTINCT variants each for: Headlines (40 chars), Primary Text (125 chars), Descriptions (30 chars)
-7. Select the most effective CTA based on conversion method
+2. **ANALYZE HISTORICAL PERFORMANCE:** If user's past ad data is provided, identify what worked/failed
+3. **COMPARE TO INDUSTRY BENCHMARKS:** Use provided benchmarks to validate your recommendations
+4. Determine the optimal campaign objective (LEADS, SALES, TRAFFIC, AWARENESS)
+5. Calculate appropriate daily budget based on:
+   - Business size and goal
+   - User's historical spend efficiency (if available)
+   - Industry benchmark CPA/CPM
+   - Competitive landscape
+6. Identify 3-5 precise interest keywords for targeting (will be used to search Facebook API)
+7. Detect if business is local (needs radius targeting) or national
+8. Generate 3 DISTINCT variants each for: Headlines (40 chars), Primary Text (125 chars), Descriptions (30 chars)
+9. Select the most effective CTA based on conversion method
 
 **Conversion Method Awareness:**
 - If conversion method is "lead_form": Ad will use Meta Instant Form (captures leads without website)
@@ -62,11 +135,17 @@ Your job is to analyze a business and output a COMPLETE, ready-to-execute Meta A
 - "Website Traffic", "Clicks", "Views" → OUTCOME_TRAFFIC
 - "Brand Awareness", "Reach" → OUTCOME_AWARENESS
 
-**Budget Rules:**
+**Budget Rules (DATA-DRIVEN):**
 - Small/Local Business (coaching, salon, restaurant): ₹500-₹1,000/day
 - Medium Business (ecommerce, services): ₹1,000-₹1,500/day
 - Large Business (SaaS, enterprise): ₹1,500-₹2,500/day
-- Factor in: competition level, product price point, target audience size
+- **If Historical Data Provided:** Adjust budget based on:
+  - Previous CPM/CPA efficiency (if user's CPM < industry avg, they can scale up)
+  - Past ROAS (if ROAS > 3x, suggest +30-50% budget increase)
+  - Winning campaigns (identify best performers and allocate more)
+- **If Industry Benchmarks Provided:** Validate budget against typical CPA
+  - Example: ₹800/day budget with ₹400 CPA = ~60 leads/month (realistic)
+- Factor in: competition level, product price point, target audience size, seasonal trends
 
 **Targeting Rules:**
 - **Interest Keywords**: Be SPECIFIC. Use industry terms, competitor brands, behaviors.
@@ -77,14 +156,19 @@ Your job is to analyze a business and output a COMPLETE, ready-to-execute Meta A
   - If local: Set isLocal=true, extract cityName, set radius=15-25km
   - If national/online: Set isLocal=false
 
-**Ad Copy Rules:**
+**Ad Copy Rules (PERFORMANCE-INFORMED):**
 - **Indian Context**: Use ₹ symbol, Hindi-English mix if appropriate, local references
 - **Structure**: Pain Point → Solution → Benefit → CTA
 - **Tone**: Match business type (professional for B2B, friendly for B2C, urgent for offers)
+- **If Historical Performance Data Provided:**
+  - Identify which copy angles had highest CTR in user's past campaigns
+  - Replicate winning patterns (e.g., if "social proof" ads outperformed, prioritize that angle)
+  - Avoid copy styles that had high impressions but low clicks
 - **3 DISTINCT Variants**: Don't just rephrase. Change angle/hook entirely.
   - Variant 1: Pain-focused ("Struggling with X?")
   - Variant 2: Benefit-focused ("Get Y in Z days")
   - Variant 3: Social proof/Urgency ("Join 1000+ users")
+- **Seasonal Awareness (2026):** If January (New Year resolution season), emphasize "fresh start" angles
 - **Character Limits (ABSOLUTE MAXIMUM - NO EXCEPTIONS)**: 
   - Headlines: MAX 40 characters (including spaces, emojis count as 2)
   - Primary Text: MAX 125 characters (including spaces, emojis count as 2)
@@ -144,15 +228,49 @@ Your job is to analyze a business and output a COMPLETE, ready-to-execute Meta A
 
 export class MasterPromptService {
   /**
+   * Detect industry from business data
+   */
+  private static detectIndustry(businessData: any): keyof typeof INDUSTRY_BENCHMARKS {
+    const description = (businessData.description || '').toLowerCase();
+    const categories = (businessData.categories || []).join(' ').toLowerCase();
+    const products = (businessData.products || []).join(' ').toLowerCase();
+    const combined = `${description} ${categories} ${products}`;
+
+    // Industry detection rules
+    if (combined.match(/ecommerce|online store|shop|product|retail|fashion|clothing/i)) {
+      return 'ecommerce';
+    } else if (combined.match(/salon|spa|gym|fitness|coaching|tutor|class|training/i)) {
+      return 'local_services';
+    } else if (combined.match(/saas|software|app|platform|crm|erp|b2b|enterprise/i)) {
+      return 'saas';
+    } else if (combined.match(/education|learning|course|school|institute|academy/i)) {
+      return 'education';
+    } else if (combined.match(/health|medical|clinic|doctor|therapy|wellness|hospital/i)) {
+      return 'healthcare';
+    } else if (combined.match(/real estate|property|apartment|flat|housing|broker/i)) {
+      return 'real_estate';
+    } else if (combined.match(/food|restaurant|cafe|catering|delivery|meal|kitchen/i)) {
+      return 'food_beverage';
+    } else if (combined.match(/finance|insurance|loan|investment|banking|trading/i)) {
+      return 'finance';
+    }
+
+    return 'default';
+  }
+
+  /**
    * Generate complete campaign strategy from scraped business data
    * This is the "Master Prompt" that replaces 3 separate OpenAI calls
+   * Now includes historical performance data and industry benchmarks
    */
   static async generateCampaignStrategy(
     businessData: any,
     userGoal?: string,
     conversionMethod: 'lead_form' | 'website' = 'lead_form',
     userObjective?: 'TRAFFIC' | 'LEADS' | 'SALES',
-    userBudget?: number
+    userBudget?: number,
+    historicalPerformance?: any,
+    userId?: string
   ): Promise<CampaignStrategy> {
     try {
       console.log('[MasterPrompt] Generating campaign strategy...');
@@ -160,13 +278,21 @@ export class MasterPromptService {
       console.log('[MasterPrompt] User objective:', userObjective);
       console.log('[MasterPrompt] User budget:', userBudget);
 
+      // Detect industry for benchmarks
+      const industry = this.detectIndustry(businessData);
+      const benchmarks = INDUSTRY_BENCHMARKS[industry];
+      console.log('[MasterPrompt] Detected industry:', industry, `(${benchmarks.description})`);
+
       // Prepare business context for OpenAI
       const businessContext = this.prepareBusinessContext(
         businessData, 
         userGoal, 
         conversionMethod,
         userObjective,
-        userBudget
+        userBudget,
+        historicalPerformance,
+        benchmarks,
+        industry
       );
 
       const response = await openai.chat.completions.create({
@@ -225,9 +351,62 @@ Output: A complete JSON campaign strategy following the system instructions.`
     userGoal?: string,
     conversionMethod: 'lead_form' | 'website' = 'lead_form',
     userObjective?: 'TRAFFIC' | 'LEADS' | 'SALES',
-    userBudget?: number
+    userBudget?: number,
+    historicalPerformance?: any,
+    benchmarks?: typeof INDUSTRY_BENCHMARKS[keyof typeof INDUSTRY_BENCHMARKS],
+    industry?: string
   ): string {
     let context = '';
+
+    // 🔥 DATA-DRIVEN SECTION: Historical Performance
+    if (historicalPerformance) {
+      context += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+      context += `📊 USER'S HISTORICAL AD PERFORMANCE (LAST 30 DAYS)\n`;
+      context += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+      
+      context += `**Total Campaigns Run:** ${historicalPerformance.totalAds}\n`;
+      context += `**Average CPM (Cost per 1000 impressions):** ₹${historicalPerformance.avgCPM}\n`;
+      context += `**Average CTR (Click-through rate):** ${historicalPerformance.avgCTR}%\n`;
+      
+      if (historicalPerformance.avgCPA > 0) {
+        context += `**Average CPA (Cost per acquisition):** ₹${historicalPerformance.avgCPA}\n`;
+      }
+      
+      context += `**Total Spend:** ₹${historicalPerformance.totalSpend}\n`;
+      context += `**Total Conversions:** ${historicalPerformance.totalConversions}\n`;
+      context += `**Best Performing Objective:** ${historicalPerformance.topPerformingObjective}\n\n`;
+      
+      if (historicalPerformance.bestPerformingAds && historicalPerformance.bestPerformingAds.length > 0) {
+        context += `**Top Performing Ads:**\n`;
+        historicalPerformance.bestPerformingAds.slice(0, 3).forEach((ad: any, idx: number) => {
+          context += `${idx + 1}. "${ad.name}" - CPM: ₹${ad.cpm}, CTR: ${ad.ctr}%, Conversions: ${ad.conversions}\n`;
+        });
+        context += `\n`;
+      }
+      
+      context += `**⚠️ CRITICAL INSTRUCTION:** Use this historical data to:\n`;
+      context += `- If user's CPM is lower than industry average, they're efficient → can scale budget\n`;
+      context += `- If user's CTR is higher than benchmark, replicate successful copy patterns\n`;
+      context += `- Recommend the objective that historically performed best for this user\n`;
+      context += `- Adjust budget based on their actual CPA vs product value\n\n`;
+    }
+
+    // 🔥 DATA-DRIVEN SECTION: Industry Benchmarks
+    if (benchmarks && industry) {
+      context += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+      context += `📈 INDUSTRY BENCHMARKS (${benchmarks.description.toUpperCase()})\n`;
+      context += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+      
+      context += `**Typical CPM:** ₹${benchmarks.avgCPM}\n`;
+      context += `**Typical CTR:** ${benchmarks.avgCTR}%\n`;
+      context += `**Typical CPA:** ₹${benchmarks.avgCPA}\n`;
+      context += `**Optimal Budget Range:** ₹${benchmarks.optimalBudget.min}-₹${benchmarks.optimalBudget.max}/day\n\n`;
+      
+      context += `**⚠️ CRITICAL INSTRUCTION:** Use these benchmarks to:\n`;
+      context += `- Validate your budget recommendation (ensure it's within optimal range)\n`;
+      context += `- Set realistic expectations (mention expected CPM/CPA in your reasoning)\n`;
+      context += `- If user has historical data, compare their performance vs industry avg\n\n`;
+    }
 
     // User's selected objective (if provided)
     if (userObjective) {
@@ -250,6 +429,10 @@ Output: A complete JSON campaign strategy following the system instructions.`
     context += `**Important:** ${conversionMethod === 'lead_form' 
       ? 'Ad will capture leads directly without website. Use action-oriented CTAs like SIGN_UP, CONTACT_US, GET_QUOTE only.' 
       : 'Ad will send users to client website. Can use curiosity-driven or conversion CTAs.'}\n\n`;
+
+    context += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    context += `🏢 BUSINESS INFORMATION\n`;
+    context += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
     // Brand & Description
     if (businessData.brandName) {

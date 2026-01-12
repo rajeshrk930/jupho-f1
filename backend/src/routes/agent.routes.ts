@@ -321,4 +321,118 @@ router.post(
   }
 );
 
+/**
+ * POST /api/agent/track-performance - Save campaign performance metrics
+ * Updates AgentTask with actual performance data from Meta for future AI learning
+ */
+router.post(
+  '/track-performance',
+  authenticate,
+  [
+    body('taskId').notEmpty().withMessage('Task ID is required')
+  ],
+  async (req: AuthRequest, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { taskId } = req.body;
+      const userId = req.user!.id;
+      
+      // Verify task belongs to user
+      const task = await prisma.agentTask.findUnique({
+        where: { id: taskId, userId }
+      });
+
+      if (!task) {
+        return res.status(404).json({ error: 'Task not found' });
+      }
+
+      // Get Facebook credentials
+      const fbAccount = await prisma.facebookAccount.findUnique({
+        where: { userId }
+      });
+
+      if (!fbAccount) {
+        return res.status(404).json({ error: 'Facebook account not connected' });
+      }
+
+      // Parse campaign output to get FB IDs
+      const output = task.output ? JSON.parse(task.output) : {};
+      const fbAdId = output.fbAdId;
+
+      if (!fbAdId) {
+        return res.status(400).json({ error: 'No Facebook Ad ID found for this campaign' });
+      }
+
+      // Fetch performance metrics from Facebook
+      const { FacebookService } = require('../services/facebook.service');
+      const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
+      
+      // Get ad with insights
+      const ads = await FacebookService.getActiveAds(accessToken, fbAccount.adAccountId, 1000);
+      const targetAd = ads.find((ad: any) => ad.id === fbAdId);
+
+      if (!targetAd || !targetAd.insights?.data?.[0]) {
+        return res.status(404).json({ error: 'No performance data available yet. Try again in 24 hours.' });
+      }
+
+      const insights = targetAd.insights.data[0];
+      
+      // Calculate performance grade
+      const cpm = parseFloat(insights.cpm || '0');
+      const ctr = parseFloat(insights.ctr || '0');
+      const conversions = parseInt(insights.conversions || '0', 10);
+      
+      let grade = 'PENDING';
+      if (ctr >= 2.0 && cpm <= 100) {
+        grade = 'EXCELLENT';
+      } else if (ctr >= 1.5 && cpm <= 150) {
+        grade = 'GOOD';
+      } else if (ctr >= 1.0 && cpm <= 200) {
+        grade = 'AVERAGE';
+      } else {
+        grade = 'POOR';
+      }
+
+      // Update task with performance data
+      await prisma.agentTask.update({
+        where: { id: taskId },
+        data: {
+          fbAdId,
+          fbCampaignId: output.fbCampaignId || null,
+          fbAdSetId: output.fbAdSetId || null,
+          actualCPM: cpm,
+          actualCTR: ctr,
+          actualConversions: conversions,
+          actualSpend: parseFloat(insights.spend || '0'),
+          impressions: parseInt(insights.impressions || '0', 10),
+          clicks: parseInt(insights.clicks || '0', 10),
+          performanceGrade: grade,
+          fbInsightsData: JSON.stringify(insights),
+          lastPerformanceSync: new Date()
+        }
+      });
+
+      res.json({
+        message: 'Performance tracked successfully',
+        performance: {
+          cpm,
+          ctr,
+          conversions,
+          spend: parseFloat(insights.spend || '0'),
+          impressions: parseInt(insights.impressions || '0', 10),
+          clicks: parseInt(insights.clicks || '0', 10),
+          grade
+        }
+      });
+    } catch (error: any) {
+      console.error('Performance tracking error:', error);
+      res.status(500).json({ error: error.message || 'Failed to track performance' });
+    }
+  }
+);
+
 export default router;

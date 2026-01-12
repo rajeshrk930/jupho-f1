@@ -121,13 +121,47 @@ export class AgentService {
         }
       });
 
-      // Generate strategy using Master Prompt
+      // 🔥 FETCH HISTORICAL PERFORMANCE DATA (DATA-DRIVEN AI)
+      let historicalPerformance = null;
+      try {
+        const fbAccount = await prisma.facebookAccount.findUnique({
+          where: { userId }
+        });
+
+        if (fbAccount) {
+          const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
+          console.log('[AgentService] 📊 Fetching historical ad performance for data-driven recommendations...');
+          
+          historicalPerformance = await FacebookService.getAdPerformanceMetrics(
+            accessToken,
+            fbAccount.adAccountId
+          );
+
+          if (historicalPerformance) {
+            console.log('[AgentService] ✅ Historical performance data retrieved:', {
+              totalAds: historicalPerformance.totalAds,
+              avgCPM: historicalPerformance.avgCPM,
+              avgCTR: historicalPerformance.avgCTR,
+              avgCPA: historicalPerformance.avgCPA
+            });
+          } else {
+            console.log('[AgentService] ℹ️ No historical ad data found - generating strategy from scratch');
+          }
+        }
+      } catch (error) {
+        console.error('[AgentService] ⚠️ Failed to fetch historical performance (non-fatal):', error);
+        // Non-fatal error - continue without historical data
+      }
+
+      // Generate strategy using Master Prompt (NOW WITH DATA!)
       const strategy: CampaignStrategy = await MasterPromptService.generateCampaignStrategy(
         businessData,
         userGoal,
         conversionMethod,
         userObjective,
-        userBudget
+        userBudget,
+        historicalPerformance,
+        userId
       );
 
       // Search Facebook for interest IDs

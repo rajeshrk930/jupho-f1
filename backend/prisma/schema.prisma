@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -117,6 +117,20 @@ model AgentTask {
   // Conversation state
   conversationState String? // Current step in the flow
   
+  // Performance tracking (fetched post-launch)
+  fbCampaignId      String? // Meta Campaign ID
+  fbAdSetId         String? // Meta Ad Set ID
+  fbAdId            String? // Meta Ad ID
+  actualCPM         Float?  // Cost per 1000 impressions
+  actualCTR         Float?  // Click-through rate (%)
+  actualConversions Int?    // Total conversions
+  actualSpend       Float?  // Total spend in INR
+  impressions       Int?    // Total impressions
+  clicks            Int?    // Total clicks
+  performanceGrade  String? // EXCELLENT, GOOD, AVERAGE, POOR, PENDING
+  fbInsightsData    String? // Full insights JSON from Meta
+  lastPerformanceSync DateTime? // When metrics were last fetched
+  
   createdAt     DateTime @default(now())
   completedAt   DateTime?
   updatedAt     DateTime @updatedAt
@@ -135,6 +149,13 @@ model GeneratedCreative {
   content     String   // The actual generated text or URL
   isSelected  Boolean  @default(false)
   metadata    String?  // JSON: { characterCount, validationStatus, score }
+  
+  // A/B Test Performance Tracking
+  impressions Int?     // How many times this variant was shown
+  clicks      Int?     // How many clicks this variant got
+  conversions Int?     // How many conversions this variant drove
+  winRate     Float?   // % of time this variant outperformed others (0-100)
+  
   createdAt   DateTime @default(now())
   
   task        AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
