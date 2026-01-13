@@ -24,14 +24,18 @@ export default function BillingPage() {
 
   const { data: usageData, isLoading: loading, isError, error } = useQuery({
     queryKey: ['usage-stats'],
+    enabled: !!user, // avoid running before auth is ready
     queryFn: async () => {
       try {
-        const response = await agentApi.getUsage();
-        return response.data;
+        const data = await agentApi.getUsage();
+        if (!data) {
+          throw new Error('Usage data is undefined');
+        }
+        return data;
       } catch (err: any) {
         console.error('Usage API Error:', err);
-        console.error('Error response:', err.response?.data);
-        console.error('Error status:', err.response?.status);
+        console.error('Error response:', err?.response?.data);
+        console.error('Error status:', err?.response?.status);
         throw err;
       }
     },
@@ -46,7 +50,7 @@ export default function BillingPage() {
     toast.success('Welcome to Jupho Pro! You now have unlimited questions.');
   };
 
-  const isPro = usageStats?.isPro || false;
+  const isPro = usageStats?.plan === 'PRO';
   const daysLeft = usageStats?.proExpiresAt
     ? Math.max(0, Math.ceil((new Date(usageStats.proExpiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
