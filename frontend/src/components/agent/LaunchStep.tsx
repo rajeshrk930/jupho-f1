@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, Rocket, Upload, Check, ExternalLink, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Rocket, Upload, Check, ExternalLink, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 import MetaAdPreview from './MetaAdPreview';
 import PrimaryButton from '@/components/ui/PrimaryButton';
@@ -45,7 +45,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [adLink, setAdLink] = useState('');
-  const [showPreview, setShowPreview] = useState(true);
+  const [showDetails, setShowDetails] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -123,204 +123,174 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-gray-200 p-5 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="max-w-6xl mx-auto pb-24">
+      {/* Compact Header */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-5 mb-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-coral-50 rounded-full mr-3">
-              <Rocket className="w-6 h-6 sm:w-7 sm:h-7 text-coral-600" />
+            <div className="inline-flex items-center justify-center w-10 h-10 bg-coral-50 rounded-full mr-3">
+              <Rocket className="w-5 h-5 text-coral-600" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Launch Campaign</h2>
-              <p className="text-sm text-gray-600">Review and launch your Facebook ad</p>
+              <h2 className="text-lg font-bold text-gray-900">Launch Campaign</h2>
+              <p className="text-xs text-gray-600">Review and launch</p>
             </div>
           </div>
-          <button
-            onClick={() => setShowPreview(!showPreview)}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-3 sm:px-4 sm:py-2 bg-coral-50 text-coral-700 rounded-xl hover:bg-coral-100 active:scale-95 transition-all text-base sm:text-sm font-medium min-h-[48px] sm:min-h-0"
-          >
-            {showPreview ? (
-              <>
-                <EyeOff className="w-5 h-5 sm:w-4 sm:h-4" />
-                <span>Hide Preview</span>
-              </>
-            ) : (
-              <>
-                <Eye className="w-5 h-5 sm:w-4 sm:h-4" />
-                <span>Show Preview</span>
-              </>
-            )}
-          </button>
+          {/* Compact settings badges */}
+          <div className="hidden sm:flex items-center gap-2 text-xs">
+            <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded">Leads</span>
+            <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded">{strategy.budget.currency} {strategy.budget.daily}/day</span>
+            <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded">3 variants</span>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Left Side: Image Selection & Details */}
-        <div className="space-y-4 sm:space-y-6">{/* Campaign Preview */}
-      <div className="bg-white rounded-xl sm:rounded-2xl shadow border border-gray-200 p-5 sm:p-6">
-        <h3 className="font-semibold text-gray-900 mb-4 text-base sm:text-lg">Campaign Preview</h3>
-        <div className="space-y-4 sm:space-y-6">
-          {/* Image Upload */}
-          <div>
-            <p className="text-sm font-medium text-gray-700 mb-3">Creative Image</p>
-            
-            {imageUrl ? (
-              <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-3">
-                <img
-                  src={imageUrl}
-                  alt="Ad creative"
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  onClick={() => {
-                    setSelectedImage(null);
-                    setPreviewUrl(null);
-                    setUploadedFile(null);
-                  }}
-                  className="absolute top-2 right-2 p-3 sm:p-2 bg-black/50 text-white rounded-lg hover:bg-black/70 active:scale-95 transition-all min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center"
-                >
-                  ✕
-                </button>
-              </div>
-            ) : (
-              <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-3">
-                <div className="text-center">
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">No image selected</p>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* Left Side: Compact Image Upload - 2 columns */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-white rounded-xl shadow border border-gray-200 p-4">
+            <h3 className="font-semibold text-gray-900 mb-3 text-sm">Creative Image</h3>
+            <div className="space-y-3">
+              {imageUrl ? (
+                <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
+                  <img
+                    src={imageUrl}
+                    alt="Ad creative"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    onClick={() => {
+                      setSelectedImage(null);
+                      setPreviewUrl(null);
+                      setUploadedFile(null);
+                    }}
+                    className="absolute top-2 right-2 p-2 bg-black/50 text-white rounded-lg hover:bg-black/70 active:scale-95 transition-all"
+                  >
+                    ✕
+                  </button>
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-2">
+                  <div className="text-center">
+                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+                    <p className="text-xs text-gray-600">No image</p>
+                  </div>
+                </div>
+              )}
 
-            <input
-              type="file"
-              id="ad-image"
-              accept="image/*"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <label
-              htmlFor="ad-image"
-              className="w-full inline-block text-center py-4 sm:py-3 px-4 border border-coral-500 text-coral-600 rounded-xl font-medium hover:bg-coral-50 cursor-pointer active:scale-98 transition-all text-base min-h-[48px]"
+              <input
+                type="file"
+                id="ad-image"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <label
+                htmlFor="ad-image"
+                className="w-full inline-block text-center py-2 px-3 border border-coral-500 text-coral-600 rounded-lg text-sm font-medium hover:bg-coral-50 cursor-pointer active:scale-98 transition-all"
+              >
+                {uploadedFile ? 'Change' : 'Upload'}
+              </label>
+
+              {businessData.visualStyle?.imageUrls && businessData.visualStyle.imageUrls.length > 0 && !uploadedFile && (
+                <div className="mt-2">
+                  <p className="text-xs text-gray-500 mb-1">Or select:</p>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {businessData.visualStyle.imageUrls.slice(0, 6).map((url, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setSelectedImage(url);
+                          setPreviewUrl(null);
+                        }}
+                        className={`aspect-square rounded overflow-hidden border-2 transition-all ${
+                          selectedImage === url
+                            ? 'border-coral-500'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <img
+                          src={url}
+                          alt={`Option ${i + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Collapsible Ad Copy Details */}
+          <div className="bg-white rounded-xl shadow border border-gray-200">
+            <button
+              onClick={() => setShowDetails(!showDetails)}
+              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
-              {uploadedFile ? 'Change Image' : 'Upload Image'}
-            </label>
-
-            {businessData.visualStyle?.imageUrls && businessData.visualStyle.imageUrls.length > 0 && !uploadedFile && (
-              <div className="mt-4">
-                <p className="text-xs text-gray-600 mb-2">Or select from scraped images:</p>
-                <div className="grid grid-cols-3 gap-2">
-                  {businessData.visualStyle.imageUrls.slice(0, 6).map((url, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        setSelectedImage(url);
-                        setPreviewUrl(null);
-                      }}
-                      className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                        selectedImage === url
-                          ? 'border-coral-500'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <img
-                        src={url}
-                        alt={`Option ${i + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
+              <span className="text-sm font-semibold text-gray-900">Ad Copy & Settings</span>
+              {showDetails ? (
+                <ChevronUp className="w-4 h-4 text-gray-500" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-gray-500" />
+              )}
+            </button>
+            {showDetails && (
+              <div className="p-4 pt-0 space-y-3 border-t border-gray-100">
+                <div>
+                  <p className="text-xs text-gray-500 mb-0.5">Headline</p>
+                  <p className="text-sm font-semibold text-gray-900">{strategy.adCopy.headlines[0]}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-0.5">Primary Text</p>
+                  <p className="text-xs text-gray-700">
+                    {strategy.adCopy.primaryTexts[0]}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-0.5">Description</p>
+                  <p className="text-xs text-gray-600">
+                    {strategy.adCopy.descriptions[0]}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <div>
+                    <p className="text-xs text-gray-500">CTA</p>
+                    <p className="text-xs font-medium text-gray-900">{strategy.adCopy.cta}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Platform</p>
+                    <p className="text-xs font-medium text-gray-900">FB + IG</p>
+                  </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Ad Copy */}
-          <div>
-            <p className="text-sm font-medium text-gray-700 mb-3">Ad Copy</p>
-            <div className="space-y-4">
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Headline</p>
-                <p className="font-semibold text-gray-900">{strategy.adCopy.headlines[0]}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Primary Text</p>
-                <p className="text-sm text-gray-700 line-clamp-3">
-                  {strategy.adCopy.primaryTexts[0]}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Description</p>
-                <p className="text-sm text-gray-600">
-                  {strategy.adCopy.descriptions[0]}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Call to Action</p>
-                <span className="inline-block px-3 py-1 bg-coral-600 text-white text-sm rounded-lg">
-                  {strategy.adCopy.cta}
-                </span>
+          {!imageUrl && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start">
+              <AlertCircle className="w-4 h-4 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-yellow-800">Image required to launch</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-xs text-red-800">{error}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side: Live Meta Ad Preview - 3 columns, always visible and sticky */}
+        <div className="lg:col-span-3 lg:sticky lg:top-4 lg:self-start">
+          <div className="bg-white rounded-xl shadow border border-gray-200 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-gray-900 text-sm">Live Preview</h3>
+              <div className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                Facebook Feed
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Campaign Settings Summary */}
-      <div className="bg-gradient-to-r from-coral-50 to-mint-50 rounded-xl border border-coral-200 p-6">
-        <h3 className="font-semibold text-gray-900 mb-4">Campaign Settings</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-xs text-gray-600 mb-1">Objective</p>
-            <p className="font-medium text-gray-900">{strategy.objective}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-600 mb-1">Daily Budget</p>
-            <p className="font-medium text-gray-900">{strategy.budget.currency} {strategy.budget.daily}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-600 mb-1">Ad Variants</p>
-            <p className="font-medium text-gray-900">3 copies each</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-600 mb-1">Platform</p>
-            <p className="font-medium text-gray-900">Facebook + Instagram</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Warning */}
-      {!imageUrl && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start">
-          <AlertCircle className="w-5 h-5 text-yellow-600 mr-3 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-yellow-900 mb-1">Image Required</p>
-            <p className="text-sm text-yellow-700">
-              Please upload an image or select one from the scraped images to continue.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}</div>
-
-        {/* Right Side: Live Meta Ad Preview */}
-        {showPreview && imageUrl && (
-          <div className="lg:sticky lg:top-6">
-            <div className="bg-white rounded-xl shadow border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">Live Ad Preview</h3>
-                <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                  Facebook Feed
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-6">
-                This is how your ad will appear in users' Facebook feeds
-              </p>
+            {imageUrl ? (
               <MetaAdPreview
                 brandName={businessData.brandName}
                 headline={strategy.adCopy.headlines[0]}
@@ -329,44 +299,44 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
                 imageUrl={imageUrl}
                 cta={strategy.adCopy.cta}
               />
-            </div>
+            ) : (
+              <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
+                <p className="text-sm text-gray-500">Upload an image to see preview</p>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-4">
-        <PrimaryButton
-          onClick={onBack}
-          variant="secondary"
-          size="lg"
-          disabled={launching}
-          className="flex-1"
-        >
-          Back
-        </PrimaryButton>
-        <PrimaryButton
-          onClick={handleLaunch}
-          variant="primary"
-          size="xl"
-          disabled={!imageUrl || launching}
-          loading={launching}
-          className="flex-1"
-          icon={!launching && <Rocket className="w-5 h-5" />}
-        >
-          {launching ? 'Launching... (~20s)' : 'Launch Campaign'}
-        </PrimaryButton>
-      </div>
-
-      {/* Reassurance near actions */}
-      <div className="text-xs text-gray-500 text-center mt-2">
-        You can pause or edit this anytime in Meta Ads Manager.
-      </div>
-
-      {/* Disclaimer */}
-      <div className="text-xs text-gray-500 text-center">
-        By launching, you agree that this ad will be created in your connected Facebook Ad Account.
-        You can pause or edit it anytime in Ads Manager.
+      {/* Sticky Actions Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-4 z-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex gap-3 mb-2">
+            <PrimaryButton
+              onClick={onBack}
+              variant="secondary"
+              size="lg"
+              disabled={launching}
+              className="flex-1"
+            >
+              Back
+            </PrimaryButton>
+            <PrimaryButton
+              onClick={handleLaunch}
+              variant="primary"
+              size="xl"
+              disabled={!imageUrl || launching}
+              loading={launching}
+              className="flex-[2]"
+              icon={!launching && <Rocket className="w-5 h-5" />}
+            >
+              {launching ? 'Launching... (~20s)' : 'Launch Campaign'}
+            </PrimaryButton>
+          </div>
+          <p className="text-xs text-gray-500 text-center">
+            You can pause or edit this anytime in Meta Ads Manager.
+          </p>
+        </div>
       </div>
     </div>
   );
