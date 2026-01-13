@@ -29,7 +29,7 @@ export default function ProfileDropdown() {
   useEffect(() => {
     const checkFacebookStatus = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/facebook/status`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/facebook/status`, {
           withCredentials: true
         });
         setFacebookConnected(response.data.connected || false);
@@ -53,7 +53,7 @@ export default function ProfileDropdown() {
   const handleConnectMeta = async () => {
     try {
       setConnecting(true);
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/facebook/auth-url`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/facebook/auth-url`, {
         withCredentials: true,
       });
       const authUrl = response.data?.url;
