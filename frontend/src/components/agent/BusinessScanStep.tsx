@@ -335,15 +335,11 @@ export default function BusinessScanStep({ onComplete }: Props) {
                 })}
               </div>
 
-              {/* What we extract section */}
+              {/* Outcome note */}
               <div className="mt-4 p-4 bg-white/60 backdrop-blur rounded-xl border border-coral-200">
-                <p className="text-sm font-medium text-gray-700 mb-2">💡 What we extract:</p>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Brand name and description</li>
-                  <li>• Products/services offerings</li>
-                  <li>• Unique selling points (no duplicates)</li>
-                  <li>• Visual style and branding</li>
-                </ul>
+                <p className="text-sm text-gray-700">
+                  AI will understand your business and create a ready-to-launch Meta lead ad.
+                </p>
               </div>
             </div>
           </div>
@@ -353,146 +349,72 @@ export default function BusinessScanStep({ onComplete }: Props) {
   }
 
   if (viewMode === 'preview' && scannedData) {
+    const industry = (scannedData as any)?.industry || '';
+    const location = (scannedData as any)?.location || '';
+    const offer = scannedData.products?.[0] || (scannedData.description ? scannedData.description.split('.')[0] : '');
+
     return (
       <div className="bg-white rounded-3xl shadow-xl border border-green-100 p-8">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-green-50 rounded-full mb-4">
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Business Scan Complete!</h2>
-          <p className="text-gray-600">
-            Here's what we found about your business. Review and continue.
-          </p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Business Identified</h2>
+          <p className="text-gray-600">This is how your business will be advertised on Meta.</p>
         </div>
 
-        <div className="space-y-4 mb-8">
-          {/* Brand Name */}
-          <div className="p-4 bg-coral-50 border border-coral-200 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
             <div className="flex items-start">
-              <Sparkles className="w-5 h-5 text-coral-600 mt-0.5 mr-3 flex-shrink-0" />
+              <Sparkles className="w-5 h-5 text-gray-600 mt-0.5 mr-3 flex-shrink-0" />
               <div className="flex-1">
-                <h3 className="text-sm font-semibold text-coral-900 mb-1">Brand Name</h3>
-                <p className="text-lg font-bold text-gray-900">{scannedData.brandName}</p>
+                <h3 className="text-sm font-semibold text-gray-900 mb-1">Business Identified As</h3>
+                <p className="text-lg font-bold text-gray-900">{scannedData.brandName || '—'}</p>
               </div>
             </div>
           </div>
-
-          {/* Description */}
-          {scannedData.description && (
-            <div className="p-4 bg-coral-50 border border-coral-200 rounded-lg">
-              <div className="flex items-start">
-                <FileText className="w-5 h-5 text-coral-600 mt-0.5 mr-3 flex-shrink-0" />
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-coral-900 mb-1">Business Description</h3>
-                  <p className="text-sm text-gray-700">{scannedData.description}</p>
-                </div>
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="flex items-start">
+              <FileText className="w-5 h-5 text-gray-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900 mb-1">Industry</h3>
+                <p className="text-sm text-gray-700">{industry || '—'}</p>
               </div>
             </div>
-          )}
-
-          {/* Products */}
-          {scannedData.products && scannedData.products.length > 0 && (
-            <div className="p-4 bg-mint-50 border border-mint-200 rounded-lg">
-              <div className="flex items-start">
-                <Package className="w-5 h-5 text-mint-600 mt-0.5 mr-3 flex-shrink-0" />
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-mint-900 mb-2">
-                    Products/Services <span className="text-xs font-normal text-mint-600">({scannedData.products.length} found)</span>
-                  </h3>
-                  <ul className="space-y-1">
-                    {scannedData.products.map((product, idx) => (
-                      <li key={idx} className="text-sm text-gray-700 flex items-start">
-                        <span className="text-mint-600 mr-2">•</span>
-                        <span>{product}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+          </div>
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="flex items-start">
+              <Package className="w-5 h-5 text-gray-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900 mb-1">Offer</h3>
+                <p className="text-sm text-gray-700">{offer || '—'}</p>
               </div>
             </div>
-          )}
-
-          {/* USPs */}
-          {scannedData.usps && scannedData.usps.length > 0 && (
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <div className="flex items-start">
-                <Zap className="w-5 h-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-amber-900 mb-2">Unique Selling Points</h3>
-                  <ul className="space-y-1">
-                    {scannedData.usps.map((usp, idx) => (
-                      <li key={idx} className="text-sm text-gray-700 flex items-start">
-                        <CheckCircle className="w-4 h-4 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
-                        <span>{usp}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+          </div>
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="flex items-start">
+              <Globe className="w-5 h-5 text-gray-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900 mb-1">Location</h3>
+                <p className="text-sm text-gray-700">{location || '—'}</p>
               </div>
             </div>
-          )}
-
-          {/* Contact Info */}
-          {(scannedData.contact?.email || scannedData.contact?.phone) && (
-            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Contact Information</h3>
-              <div className="space-y-2">
-                {scannedData.contact.email && (
-                  <div className="flex items-center text-sm text-gray-700">
-                    <Mail className="w-4 h-4 text-gray-500 mr-2" />
-                    <span>{scannedData.contact.email}</span>
-                  </div>
-                )}
-                {scannedData.contact.phone && (
-                  <div className="flex items-center text-sm text-gray-700">
-                    <Phone className="w-4 h-4 text-gray-500 mr-2" />
-                    <span>{scannedData.contact.phone}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Images */}
-          {scannedData.visualStyle?.imageUrls && scannedData.visualStyle.imageUrls.length > 0 && (
-            <div className="p-4 bg-coral-50 border border-coral-200 rounded-lg">
-              <div className="flex items-start mb-3">
-                <Image className="w-5 h-5 text-coral-600 mt-0.5 mr-3 flex-shrink-0" />
-                <h3 className="text-sm font-semibold text-coral-900">
-                  Extracted Images <span className="text-xs font-normal text-coral-600">({scannedData.visualStyle.imageUrls.length} found)</span>
-                </h3>
-              </div>
-              <div className="grid grid-cols-4 gap-2">
-                {scannedData.visualStyle.imageUrls.slice(0, 8).map((imgUrl, idx) => (
-                  <div key={idx} className="aspect-square bg-white rounded-lg overflow-hidden border border-gray-200">
-                    <img
-                      src={imgUrl}
-                      alt={`Business image ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f3f4f6" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%239ca3af" font-family="sans-serif" font-size="12"%3EImage%3C/text%3E%3C/svg%3E';
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
             onClick={handleBack}
-            className="flex-1 py-4 bg-white text-coral-600 font-semibold rounded-xl border-2 border-coral-500 hover:bg-coral-50 active:scale-98 transition-all min-h-[56px] text-base"
+            className="flex-1 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 active:scale-98 transition-all min-h-[56px] text-base"
           >
             Scan Again
           </button>
           <button
             onClick={handleContinue}
-            className="flex-1 py-4 bg-coral-500 text-white font-semibold rounded-xl hover:bg-coral-600 active:scale-98 transition-all flex items-center justify-center min-h-[56px] text-base"
+            className="flex-1 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-black active:scale-98 transition-all flex items-center justify-center min-h-[56px] text-base"
           >
             <CheckCircle className="w-5 h-5 mr-2" />
-            Continue to Strategy
+            Continue
           </button>
         </div>
       </div>
@@ -650,33 +572,12 @@ export default function BusinessScanStep({ onComplete }: Props) {
         </button>
       </form>
 
-      {/* Example Section */}
+      {/* Outcome Section */}
       <div className="mt-8 p-5 bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-white shadow-lg">
-        <p className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-          <span className="text-lg">💡</span> What we extract:
+        <p className="text-sm text-gray-800 flex items-center gap-2">
+          <span className="text-lg">💡</span>
+          AI will understand your business and create a ready-to-launch Meta lead ad.
         </p>
-        <ul className="text-sm text-gray-700 space-y-2">
-          <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
-            Brand name and description
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
-            Products/services offered
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
-            Unique selling points (USPs)
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
-            Visual style and branding
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
-            Contact information
-          </li>
-        </ul>
       </div>
       </div>
     </div>

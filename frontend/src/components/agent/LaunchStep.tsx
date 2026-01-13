@@ -358,6 +358,11 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
         </PrimaryButton>
       </div>
 
+      {/* Reassurance near actions */}
+      <div className="text-xs text-gray-500 text-center mt-2">
+        You can pause or edit this anytime in Meta Ads Manager.
+      </div>
+
       {/* Disclaimer */}
       <div className="text-xs text-gray-500 text-center">
         By launching, you agree that this ad will be created in your connected Facebook Ad Account.

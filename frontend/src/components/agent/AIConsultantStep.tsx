@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, Sparkles, Target, Users, DollarSign, Edit2, Check, FileText, Globe, ArrowRight, ShoppingCart, MousePointerClick } from 'lucide-react';
+import { Loader2, Sparkles, Target, Users, DollarSign, Edit2, Check, ArrowRight } from 'lucide-react';
 import { agentApi } from '@/lib/api';
-import GoalCard from '@/components/ui/GoalCard';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import BudgetSlider from '@/components/ui/BudgetSlider';
 
@@ -162,66 +161,6 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
   if (showingObjectiveBudget) {
     return (
       <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 sm:p-12 max-w-4xl mx-auto">
-        {/* Ad Goal Selection */}
-        <div className="mb-10">
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-coral-50 rounded-full mb-4">
-              <Target className="w-8 h-8 text-coral-600" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-              Select Your Ad Goal
-            </h2>
-            <p className="text-gray-600">
-              Choose what you want to achieve with your ads
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Traffic Option */}
-            <GoalCard
-              icon={<MousePointerClick className="w-6 h-6" />}
-              title="Traffic"
-              description="Drive visitors to your website or landing page"
-              isSelected={objective === 'TRAFFIC'}
-              features={[
-                'Maximize clicks',
-                'Build awareness',
-                'Lower cost per click'
-              ]}
-              onClick={() => setObjective('TRAFFIC')}
-            />
-
-            {/* Leads Option (Recommended) */}
-            <GoalCard
-              icon={<Target className="w-6 h-6" />}
-              title="Leads"
-              description="Generate inquiries, form submissions, and lead captures"
-              isSelected={objective === 'LEADS'}
-              isRecommended={true}
-              features={[
-                'Collect customer info',
-                'High intent users',
-                'Best for services'
-              ]}
-              onClick={() => setObjective('LEADS')}
-            />
-
-            {/* Sales Option */}
-            <GoalCard
-              icon={<ShoppingCart className="w-6 h-6" />}
-              title="Sales"
-              description="Drive purchases and online transactions"
-              isSelected={objective === 'SALES'}
-              features={[
-                'Track conversions',
-                'Optimize for ROI',
-                'Best for e-commerce'
-              ]}
-              onClick={() => setObjective('SALES')}
-            />
-          </div>
-        </div>
-
         {/* Budget Slider */}
         <div className="mb-8">
           <div className="text-center mb-6">
@@ -229,11 +168,9 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
               <DollarSign className="w-8 h-8 text-green-600" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-              Set Your Daily Budget
+              Set Your Daily Ad Budget
             </h2>
-            <p className="text-gray-600">
-              Choose how much you want to spend per day
-            </p>
+            <p className="text-gray-600">AI will optimize for maximum leads within this budget.</p>
           </div>
 
           <BudgetSlider
@@ -246,17 +183,6 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
         </div>
 
         <div className="flex gap-4">
-          <PrimaryButton
-            onClick={() => {
-              setShowingObjectiveBudget(false);
-              setShowingMethodSelector(true);
-            }}
-            variant="outline"
-            size="lg"
-            className="flex-1"
-          >
-            Back
-          </PrimaryButton>
           <PrimaryButton
             onClick={handleGenerateWithPreferences}
             variant="primary"
@@ -278,51 +204,44 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           <div className="inline-flex items-center justify-center w-16 h-16 bg-coral-50 rounded-full mb-4">
             <Target className="w-8 h-8 text-coral-600" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-            How Should Customers Respond?
-          </h2>
-          <p className="text-gray-600">
-            Choose where leads will be captured. You can always change this later.
-          </p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">AI Campaign Setup (Auto-Configured)</h2>
+          <p className="text-gray-600">Chosen because Instant Forms convert better for service businesses.</p>
         </div>
 
-        <div className="space-y-4 mb-8">
-          {/* Lead Form Option (Recommended) */}
-          <GoalCard
-            icon={<FileText className="w-6 h-6" />}
-            title="Meta Instant Lead Form"
-            description="Captures leads directly on Facebook/Instagram. No website needed."
-            isSelected={conversionMethod === 'lead_form'}
-            isRecommended={true}
-            features={[
-              '✓ Higher conversion rates',
-              '✓ Works even if website is slow',
-              '✓ Mobile-optimized',
-            ]}
-            onClick={() => setConversionMethod('lead_form')}
-          />
-
-          {/* Website Option */}
-          <GoalCard
-            icon={<Globe className="w-6 h-6" />}
-            title="Send to Website"
-            description="Send users to your website landing page or contact form."
-            isSelected={conversionMethod === 'website'}
-            badge="Advanced"
-            features={['Requires fast website', 'You control the experience']}
-            onClick={() => setConversionMethod('website')}
-          />
+        <div className="space-y-3 mb-8">
+          <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-gray-50">
+            <div className="flex items-center gap-3">
+              <Check className="w-5 h-5 text-green-600" />
+              <div>
+                <p className="text-sm text-gray-500">Objective</p>
+                <p className="font-semibold text-gray-900">Leads</p>
+              </div>
+            </div>
+            <span className="text-xs text-gray-500">Locked</span>
+          </div>
+          <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-gray-50">
+            <div className="flex items-center gap-3">
+              <Check className="w-5 h-5 text-green-600" />
+              <div>
+                <p className="text-sm text-gray-500">Lead Type</p>
+                <p className="font-semibold text-gray-900">Meta Instant Form</p>
+              </div>
+            </div>
+            <span className="text-xs text-gray-500">Locked</span>
+          </div>
+          <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-gray-50">
+            <div className="flex items-center gap-3">
+              <Check className="w-5 h-5 text-green-600" />
+              <div>
+                <p className="text-sm text-gray-500">Optimization</p>
+                <p className="font-semibold text-gray-900">Lowest cost per lead</p>
+              </div>
+            </div>
+            <span className="text-xs text-gray-500">Locked</span>
+          </div>
         </div>
 
         <div className="flex gap-4">
-          <PrimaryButton
-            onClick={onBack}
-            variant="outline"
-            size="lg"
-            className="flex-1"
-          >
-            Back
-          </PrimaryButton>
           <PrimaryButton
             onClick={handleStartGeneration}
             variant="primary"
@@ -330,7 +249,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
             className="flex-1"
             icon={<ArrowRight className="w-5 h-5" />}
           >
-            Continue to Strategy
+            Continue
           </PrimaryButton>
         </div>
       </div>
@@ -352,12 +271,8 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
             </div>
           </div>
 
-          <h3 className="text-2xl font-bold text-gray-900 mb-3 bg-gradient-to-r from-coral-500 to-coral-600 bg-clip-text text-transparent">
-            AI is Crafting Your Strategy...
-          </h3>
-          <p className="text-gray-600 mb-8 text-lg">
-            Analyzing <span className="font-semibold text-coral-600">{businessData.brandName}</span> to create the perfect campaign
-          </p>
+          <h3 className="text-2xl font-bold text-gray-900 mb-1">Creating your Meta lead campaign</h3>
+          <p className="text-gray-600 mb-8 text-lg">Selecting audience, copy, and structure</p>
 
           {/* Animated progress bar */}
           <div className="max-w-md mx-auto mb-8">
@@ -447,6 +362,10 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
                 <p className="text-white/90">Tailored for {businessData.brandName}</p>
               </div>
             </div>
+          </div>
+
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 text-white text-xs font-medium">
+            AI-Recommended Setup (editable)
           </div>
 
           {/* User Goal Input */}
@@ -605,7 +524,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           variant="secondary"
           className="flex-1"
         >
-          Regenerate Strategy
+          Try a Different Angle
         </PrimaryButton>
         <PrimaryButton
           onClick={handleContinue}
