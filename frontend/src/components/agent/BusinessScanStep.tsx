@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, Globe, Instagram, FileText, Sparkles, CheckCircle, Package, Zap, Mail, Phone, Image, Link as LinkIcon, User } from 'lucide-react';
+import { Loader2, Globe, FileText, Sparkles, CheckCircle, Package, Zap, Mail, Phone, Image, Link as LinkIcon, User } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 
 interface BusinessData {
@@ -470,7 +470,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Tell Us About Your Business</h2>
         <p className="text-sm sm:text-base text-gray-600">
-          We'll scan your website or Instagram to understand your brand automatically
+          We'll scan your website to understand your brand, or you can describe it yourself
         </p>
       </div>
 
@@ -486,7 +486,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
           }`}
         >
           <Globe className="w-6 h-6 sm:w-5 sm:h-5 mx-auto mb-1" />
-          <span className="text-sm font-medium">Website / Instagram URL</span>
+          <span className="text-sm font-medium">Enter Website URL</span>
         </button>
         <button
           type="button"
@@ -498,7 +498,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
           }`}
         >
           <FileText className="w-6 h-6 sm:w-5 sm:h-5 mx-auto mb-1" />
-          <span className="text-sm font-medium">Describe Manually</span>
+          <span className="text-sm font-medium">Describe Your Business</span>
         </button>
       </div>
 
@@ -506,7 +506,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
         {mode === 'url' ? (
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Website or Instagram URL
+              Your Website URL
             </label>
             <div className="relative">
               <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -514,7 +514,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                 type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://example.com or https://instagram.com/username"
+                placeholder="https://yourwebsite.com"
                 className="w-full pl-10 pr-4 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-coral-500 focus:border-transparent min-h-[52px]"
                 disabled={loading}
               />
@@ -528,16 +528,25 @@ export default function BusinessScanStep({ onComplete }: Props) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Describe Your Business
             </label>
+            <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-xs font-medium text-blue-900 mb-2">💡 Tell us about:</p>
+              <ul className="text-xs text-blue-800 space-y-1">
+                <li>• What products or services you sell</li>
+                <li>• Who your target customers are</li>
+                <li>• What makes your business unique</li>
+                <li>• Your main business goal</li>
+              </ul>
+            </div>
             <textarea
               value={manualInput}
               onChange={(e) => setManualInput(e.target.value)}
-              placeholder="Example: We sell handmade organic soaps for sensitive skin. Our products are vegan, cruelty-free, and made with natural ingredients like lavender and tea tree oil. Target customers are health-conscious women aged 25-45."
-              rows={6}
+              placeholder="Example: I run a digital marketing agency helping small businesses grow online. We offer SEO, social media management, and paid ads services. Our clients are local businesses with 5-20 employees looking to increase online visibility. We focus on affordable, results-driven strategies."
+              rows={7}
               className="w-full px-4 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-coral-500 focus:border-transparent resize-none"
               disabled={loading}
             />
             <p className="mt-2 text-xs text-gray-500">
-              Include your business name, products/services, and target audience (min. 20 characters)
+              The more detail you provide, the better your ad strategy will be (min. 30 characters)
             </p>
           </div>
         )}
