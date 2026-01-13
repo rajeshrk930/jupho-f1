@@ -678,6 +678,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
           </li>
         </ul>
       </div>
+      </div>
     </div>
   );
 }
