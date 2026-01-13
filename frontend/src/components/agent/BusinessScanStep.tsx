@@ -218,7 +218,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
               {/* Website iframe */}
               <div className="w-full h-full relative">
                 <iframe
-                  src={websiteUrl}
+                  src={url}
                   className="w-full h-full border-0"
                   title="Website Preview"
                   sandbox="allow-same-origin allow-scripts"
@@ -344,6 +344,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                   <li>• Unique selling points (no duplicates)</li>
                   <li>• Visual style and branding</li>
                 </ul>
+              </div>
             </div>
           </div>
         </div>
