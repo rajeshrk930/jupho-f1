@@ -231,8 +231,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                   <div 
                     className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-scan-line"
                     style={{
-                      boxShadow: '0 0 20px rgba(168, 85, 247, 0.8)',
-                      animation: 'scanLine 3s ease-in-out infinite',
+                      boxShadow: '0 0 20px rgba(168, 85, 247, 0.8)'
                     }}
                   />
                   
