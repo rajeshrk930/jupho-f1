@@ -31,7 +31,8 @@ export default function ProfileDropdown() {
     return email.charAt(0).toUpperCase();
   };
 
-  const facebookConnected = !!user?.facebookAccessToken;
+  // For now, assume not connected - will need backend API to check
+  const facebookConnected = false;
 
   return (
     <div className="relative" ref={dropdownRef}>
