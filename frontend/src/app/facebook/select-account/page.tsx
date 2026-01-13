@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to allow useSearchParams during build
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
