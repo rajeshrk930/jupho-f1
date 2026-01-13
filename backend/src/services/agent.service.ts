@@ -325,8 +325,8 @@ export class AgentService {
         accessToken,
         fbAccount.adAccountId,
         `Jupho AI - ${businessData.brandName || 'Campaign'}`,
-        strategy.objective,
-        'PAUSED'
+        strategy.objective
+        // Status defaults to ACTIVE in FacebookService
       );
 
       // 3. Search for interest IDs
@@ -455,8 +455,8 @@ export class AgentService {
         fbAccount.adAccountId,
         `Ad - ${businessData.brandName || 'Default'}`,
         adSetId,
-        creativeId,
-        'PAUSED'
+        creativeId
+        // Status defaults to ACTIVE in FacebookService
       );
 
       console.log('✅ [AgentService] Ad Created:', adId);
@@ -497,7 +497,7 @@ export class AgentService {
 
       return {
         success: true,
-        message: '🎉 Your Meta ad campaign is live (PAUSED)! Go to Facebook Ads Manager to review and activate it.',
+        message: '🎉 Your Meta ad campaign is now live and active! It will start running after Facebook approval (5-30 minutes).',
         campaignId,
         adId,
         adSetId,
