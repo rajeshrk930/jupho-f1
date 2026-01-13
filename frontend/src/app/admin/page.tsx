@@ -438,7 +438,7 @@ function EditUserModal({
               <option value="PRO">PRO</option>
             </select>
             <p className="text-xs text-gray-500 mt-1">
-              FREE: 3 analyses limit · PRO: Unlimited
+              FREE: 5 campaigns/month · PRO: 50 campaigns/month
             </p>
           </div>
 

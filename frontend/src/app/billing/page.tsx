@@ -316,7 +316,7 @@ export default function BillingPage() {
                       <div className="text-sm font-medium text-text-primary">Jupho Pro Subscription</div>
                       <div className="text-xs text-text-tertiary">Monthly plan renewal</div>
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-text-primary">₹499.00</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-text-primary">₹1,999.00</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-base-elevated text-text-primary">
                         Paid
@@ -396,7 +396,7 @@ export default function BillingPage() {
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">Ready to create unlimited Meta ads?</h2>
               <p className="text-white/90 mb-6">
-                Upgrade to Jupho Pro and get unlimited AI-generated ads, unlimited campaigns, and priority support for just ₹499/month.
+                Upgrade to Jupho Pro and get 50 AI-created campaigns per month, unlimited ad copy generation, and priority support for just ₹1,999/month.
               </p>
               <button
                 onClick={() => setShowUpgradeModal(true)}

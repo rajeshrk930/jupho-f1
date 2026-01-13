@@ -26,7 +26,7 @@ const faqs = [
     questions: [
       {
         q: 'How many questions can I ask the AI?',
-        a: 'Free plan users get 10 questions per day. Pro users get unlimited questions. Your daily limit resets at midnight IST.'
+        a: 'Free plan users get 5 campaigns per month. Pro users get 50 campaigns per month. Your limit resets on the 1st of each month.'
       },
       {
         q: 'What kind of questions can I ask?',
@@ -43,7 +43,7 @@ const faqs = [
     questions: [
       {
         q: 'How much does Jupho Pro cost?',
-        a: 'Jupho Pro costs ₹499/month or ₹4,990/year (save 2 months!). You get unlimited analyses, priority support, advanced features, and unlimited report exports.'
+        a: 'Jupho Pro costs ₹1,999/month or ₹19,990/year (save ₹3,998!). You get 50 campaigns per month, unlimited AI ad copy generation, advanced targeting, and priority support.'
       },
       {
         q: 'Can I cancel anytime?',
