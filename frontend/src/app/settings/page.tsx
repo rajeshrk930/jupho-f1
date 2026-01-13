@@ -27,6 +27,18 @@ export default function SettingsPage() {
   
   useEffect(() => {
     checkFacebookStatus();
+    
+    // Check if redirected from Facebook OAuth
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('facebook') === 'connected') {
+      toast.success('Facebook account connected successfully!');
+      // Clean up URL
+      window.history.replaceState({}, '', '/settings');
+    } else if (params.get('error')) {
+      const errorMsg = params.get('message') || 'Failed to connect Facebook account';
+      toast.error(decodeURIComponent(errorMsg));
+      window.history.replaceState({}, '', '/settings');
+    }
   }, []);
   
   const checkFacebookStatus = async () => {

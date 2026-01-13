@@ -57,7 +57,7 @@ export default function TaskDetailsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
+          <p className="text-red-600 mb-4">Task not found</p>
           <button
             onClick={() => router.push('/agent/tasks')}
             className="px-6 py-3 bg-coral-600 text-white rounded-lg hover:bg-coral-700"
