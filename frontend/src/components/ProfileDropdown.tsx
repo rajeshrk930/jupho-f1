@@ -9,6 +9,7 @@ import axios from 'axios';
 export default function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [facebookConnected, setFacebookConnected] = useState(false);
+  const [connecting, setConnecting] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuthStore();
   const router = useRouter();
@@ -49,6 +50,25 @@ export default function ProfileDropdown() {
     return email.charAt(0).toUpperCase();
   };
 
+  const handleConnectMeta = async () => {
+    try {
+      setConnecting(true);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/facebook/auth-url`, {
+        withCredentials: true,
+      });
+      const authUrl = response.data?.url;
+      if (authUrl) {
+        window.location.href = authUrl;
+      } else {
+        console.error('No auth URL returned');
+      }
+    } catch (error) {
+      console.error('Failed to start Meta connect:', error);
+    } finally {
+      setConnecting(false);
+    }
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -79,7 +99,7 @@ export default function ProfileDropdown() {
           {/* Menu Items */}
           <div className="py-2">
             {/* Meta Connection Status */}
-            <div className="px-5 py-3 hover:bg-purple-50 transition-colors">
+            <div className="px-5 py-3 space-y-3 hover:bg-purple-50 transition-colors">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                   facebookConnected 
@@ -95,6 +115,16 @@ export default function ProfileDropdown() {
                   </p>
                 </div>
               </div>
+
+              {!facebookConnected && (
+                <button
+                  onClick={handleConnectMeta}
+                  disabled={connecting}
+                  className="w-full px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md hover:shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {connecting ? 'Connecting…' : 'Connect Meta Ads'}
+                </button>
+              )}
             </div>
 
             {/* Billing */}
