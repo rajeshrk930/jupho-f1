@@ -500,91 +500,128 @@ export default function BusinessScanStep({ onComplete }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-coral-100 p-5 sm:p-8">
-      <div className="text-center mb-6 sm:mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-coral-50 rounded-full mb-4">
-          <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-coral-600" />
+    <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 rounded-3xl shadow-2xl border-0 p-8">
+      {/* Animated Background Blobs */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+      <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
+      
+      <div className="relative z-10">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg transform hover:scale-110 transition-transform">
+            <Sparkles className="w-10 h-10 text-white" />
+          </div>
+          <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-3">
+            What's Your Website? ✨
+          </h2>
+          <p className="text-lg text-gray-700 max-w-xl mx-auto">
+            Drop your URL and watch the magic happen! We'll analyze everything in 90 seconds 🚀
+          </p>
+          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-purple-200">
+            <div className="flex -space-x-2">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-white" />
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 border-2 border-white" />
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 border-2 border-white" />
+            </div>
+            <span className="text-xs font-semibold text-gray-700">2,847 businesses analyzed this week</span>
+          </div>
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Tell Us About Your Business</h2>
-        <p className="text-sm sm:text-base text-gray-600">
-          We'll scan your website to understand your brand, or you can describe it yourself
-        </p>
-      </div>
 
-      {/* Mode Selector */}
-      <div className="flex gap-3 sm:gap-4 mb-6">
-        <button
-          type="button"
-          onClick={() => setMode('url')}
-          className={`flex-1 py-4 sm:py-3 px-4 rounded-xl border-2 transition-all active:scale-95 min-h-[80px] sm:min-h-0 ${
-            mode === 'url'
-              ? 'border-coral-500 bg-coral-50 text-coral-900'
-              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-          }`}
-        >
-          <Globe className="w-6 h-6 sm:w-5 sm:h-5 mx-auto mb-1" />
-          <span className="text-sm font-medium">Enter Website URL</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode('manual')}
-          className={`flex-1 py-4 sm:py-3 px-4 rounded-xl border-2 transition-all active:scale-95 min-h-[80px] sm:min-h-0 ${
-            mode === 'manual'
-              ? 'border-coral-500 bg-coral-50 text-coral-900'
-              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-          }`}
-        >
-          <FileText className="w-6 h-6 sm:w-5 sm:h-5 mx-auto mb-1" />
-          <span className="text-sm font-medium">Describe Your Business</span>
-        </button>
-      </div>
+        {/* Mode Selector */}
+        <div className="flex gap-4 mb-6">
+          <button
+            type="button"
+            onClick={() => setMode('url')}
+            className={`flex-1 py-5 px-6 rounded-2xl transition-all active:scale-95 transform hover:scale-105 ${
+              mode === 'url'
+                ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-xl shadow-purple-300/50'
+                : 'bg-white/70 backdrop-blur-sm text-gray-700 border-2 border-white shadow-md hover:shadow-lg'
+            }`}
+          >
+            <Globe className="w-7 h-7 mx-auto mb-2" />
+            <span className="text-base font-bold">🌐 Scan Website</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('manual')}
+            className={`flex-1 py-5 px-6 rounded-2xl transition-all active:scale-95 transform hover:scale-105 ${
+              mode === 'manual'
+                ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-xl shadow-purple-300/50'
+                : 'bg-white/70 backdrop-blur-sm text-gray-700 border-2 border-white shadow-md hover:shadow-lg'
+            }`}
+          >
+            <FileText className="w-7 h-7 mx-auto mb-2" />
+            <span className="text-base font-bold">✍️ Describe It</span>
+          </button>
+        </div>
 
       <form onSubmit={handleSubmit}>
         {mode === 'url' ? (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Your Website URL
-            </label>
-            <div className="relative">
-              <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://yourwebsite.com"
-                className="w-full pl-10 pr-4 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-coral-500 focus:border-transparent min-h-[52px]"
-                disabled={loading}
-              />
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-lg border-2 border-white">
+              <label className="block text-base font-bold text-gray-800 mb-3">
+                🔗 Paste Your Website URL
+              </label>
+              <div className="relative">
+                <Globe className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-purple-400" />
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://yourawesome.business"
+                  className="w-full pl-14 pr-4 py-5 text-lg font-medium border-2 border-purple-200 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-400 bg-white shadow-inner"
+                  disabled={loading}
+                />
+              </div>
+              <div className="mt-4 flex items-start gap-2 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
+                <Sparkles className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-gray-700">
+                  <span className="font-semibold">AI will extract:</span> Brand identity, products, unique selling points, visual style & contact info
+                </p>
+              </div>
             </div>
-            <p className="mt-2 text-xs text-gray-500">
-              We'll automatically extract your brand name, products, and visual style
-            </p>
           </div>
         ) : (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe Your Business
-            </label>
-            <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-xs font-medium text-blue-900 mb-2">💡 Tell us about:</p>
-              <ul className="text-xs text-blue-800 space-y-1">
-                <li>• What products or services you sell</li>
-                <li>• Who your target customers are</li>
-                <li>• What makes your business unique</li>
-                <li>• Your main business goal</li>
-              </ul>
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-lg border-2 border-white">
+              <label className="block text-base font-bold text-gray-800 mb-3">
+                ✨ Tell Us Your Story
+              </label>
+              <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl">
+                <p className="text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
+                  <span className="text-lg">💡</span> What should you include?
+                </p>
+                <ul className="text-sm text-blue-800 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-lg">🎯</span>
+                    <span>What products or services you sell</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-lg">👥</span>
+                    <span>Who your dream customers are</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-lg">⭐</span>
+                    <span>What makes you special & different</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-lg">🚀</span>
+                    <span>Your main business goal right now</span>
+                  </li>
+                </ul>
+              </div>
+              <textarea
+                value={manualInput}
+                onChange={(e) => setManualInput(e.target.value)}
+                placeholder="Example: I run a boutique coffee roastery in Portland. We source organic beans from Ethiopia and Colombia, roast them in small batches, and sell to local cafes and online. Our customers are coffee enthusiasts who care about sustainability and taste. We're known for our unique honey-processed beans and eco-friendly packaging. Goal: Get 50 new wholesale clients this quarter!"
+                rows={8}
+                className="w-full px-5 py-4 text-base border-2 border-purple-200 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-400 resize-none bg-white shadow-inner font-medium"
+                disabled={loading}
+              />
+              <p className="mt-3 text-sm text-gray-600 font-medium">
+                <span className="text-purple-600">Pro tip:</span> The more details you share, the better your AI-powered ads will be! 🎨
+              </p>
             </div>
-            <textarea
-              value={manualInput}
-              onChange={(e) => setManualInput(e.target.value)}
-              placeholder="Example: I run a digital marketing agency helping small businesses grow online. We offer SEO, social media management, and paid ads services. Our clients are local businesses with 5-20 employees looking to increase online visibility. We focus on affordable, results-driven strategies."
-              rows={7}
-              className="w-full px-4 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-coral-500 focus:border-transparent resize-none"
-              disabled={loading}
-            />
-            <p className="mt-2 text-xs text-gray-500">
-              The more detail you provide, the better your ad strategy will be (min. 30 characters)
-            </p>
           </div>
         )}
 
@@ -597,31 +634,48 @@ export default function BusinessScanStep({ onComplete }: Props) {
         <button
           type="submit"
           disabled={!isValid || loading}
-          className="w-full py-4 sm:py-4 bg-coral-500 text-white font-semibold rounded-xl hover:bg-coral-600 disabled:opacity-50 disabled:cursor-not-allowed active:scale-98 transition-all flex items-center justify-center text-base min-h-[56px]"
+          className="w-full py-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-2xl hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-xl shadow-purple-300/50 hover:shadow-2xl hover:shadow-purple-400/50 transform hover:scale-105"
         >
           {loading ? (
             <>
-              <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              Scanning... (~90 seconds)
+              <Loader2 className="w-6 h-6 animate-spin mr-3" />
+              <span>Analyzing Your Business... 🔍</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-5 h-5 mr-2" />
-              Scan & Continue
+              <Sparkles className="w-6 h-6 mr-3" />
+              <span>{mode === 'url' ? '🚀 Scan My Website' : '✨ Generate My Ads'}</span>
             </>
           )}
         </button>
       </form>
 
       {/* Example Section */}
-      <div className="mt-6 sm:mt-8 p-4 bg-gray-50 rounded-xl">
-        <p className="text-xs font-medium text-gray-700 mb-2">💡 What we extract:</p>
-        <ul className="text-xs text-gray-600 space-y-1">
-          <li>• Brand name and description</li>
-          <li>• Products/services offered</li>
-          <li>• Unique selling points (USPs)</li>
-          <li>• Visual style and branding</li>
-          <li>• Contact information</li>
+      <div className="mt-8 p-5 bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-white shadow-lg">
+        <p className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+          <span className="text-lg">💡</span> What we extract:
+        </p>
+        <ul className="text-sm text-gray-700 space-y-2">
+          <li className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            Brand name and description
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            Products/services offered
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            Unique selling points (USPs)
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            Visual style and branding
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            Contact information
+          </li>
         </ul>
       </div>
     </div>
