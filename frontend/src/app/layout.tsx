@@ -3,14 +3,13 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/app/providers';
 import { Toaster } from 'react-hot-toast';
-import { Sidebar } from '@/components/Sidebar';
-import BottomNav from '@/components/BottomNav';
+import Header from '@/components/Header';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Jupho - Meta Ads Creative Analyzer',
-  description: 'Analyze why your Meta ad creatives fail or work. Get clear reasons, supporting logic, and actionable fixes.',
+  title: 'Jupho - AI-Powered Meta Ads Creation',
+  description: 'Create high-performing Meta ads in seconds with AI. Scan your business, get AI strategy, and launch campaigns automatically.',
 };
 
 export const viewport: Viewport = {
@@ -31,13 +30,12 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
-          <div className="flex min-h-screen bg-base">
-            <Sidebar />
-            <main className="flex-1 overflow-x-hidden pb-16 lg:pb-0">
+          <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+            <Header />
+            <main className="w-full">
               {children}
             </main>
           </div>
-          <BottomNav />
           <Toaster position="top-right" />
         </Providers>
       </body>

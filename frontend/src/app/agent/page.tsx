@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Sparkles, Zap, Rocket, Check, Target } from 'lucide-react';
 import BusinessScanStep from '@/components/agent/BusinessScanStep';
 import AIConsultantStep from '@/components/agent/AIConsultantStep';
 import LaunchStep from '@/components/agent/LaunchStep';
@@ -141,63 +140,36 @@ export default function AgentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={handleBack}
-              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back
-            </button>
-            <div className="flex items-center">
-              <Sparkles className="w-6 h-6 text-coral-600 mr-2" />
-              <h1 className="text-xl font-bold text-gray-900">Agency-in-a-Box</h1>
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-gray-500">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span>Secured</span>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen">
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Step Content */}
+        {currentStep === 1 && (
+          <BusinessScanStep onComplete={handleBusinessScanComplete} />
+        )}
+
+        {currentStep === 2 && taskId && businessData && (
+          <AIConsultantStep
+            taskId={taskId}
+            businessData={businessData}
+            onComplete={handleStrategyComplete}
+            onBack={handleBack}
+          />
+        )}
+
+        {currentStep === 3 && taskId && businessData && strategy && (
+          <LaunchStep
+            taskId={taskId}
+            businessData={businessData}
+            strategy={strategy}
+            onComplete={handleLaunchComplete}
+            onBack={handleBack}
+          />
+        )}
       </div>
-
-      {/* Enhanced Mobile-First Progress Steps */}
-      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Mobile: Vertical Progress */}
-        <div className="block md:hidden mb-8">
-          <div className="space-y-4">
-            {/* Step 1 - Mobile */}
-            <div className="flex items-center">
-              <div
-                className={`flex items-center justify-center w-14 h-14 rounded-full border-2 transition-all duration-400 ${
-                  currentStep >= 1
-                    ? 'bg-gradient-to-br from-coral-500 to-purple-600 border-coral-500 text-white shadow-lg'
-                    : 'bg-white border-gray-300 text-gray-400'
-                }`}
-              >
-                {currentStep > 1 ? (
-                  <Check className="w-7 h-7" />
-                ) : (
-                  <Sparkles className="w-7 h-7" />
-                )}
-              </div>
-              <div className="flex-1 ml-4">
-                <p className={`text-base font-bold ${currentStep >= 1 ? 'text-gray-900' : 'text-gray-500'}`}>Scan Business</p>
-                <p className="text-sm text-gray-500">~90 seconds</p>
-                {currentStep === 1 && (
-                  <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-coral-500 to-purple-600 rounded-full animate-pulse" style={{ width: '60%' }} />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Step 2 - Mobile */}
-            <div className="flex items-center">
+    </div>
+  );
+}
               <div
                 className={`flex items-center justify-center w-14 h-14 rounded-full border-2 transition-all duration-400 ${
                   currentStep >= 2
