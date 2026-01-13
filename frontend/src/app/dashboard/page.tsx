@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { agentApi } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
@@ -8,16 +9,68 @@ import { StatCard } from '@/components/StatCard';
 import MobileTopBar from '@/components/MobileTopBar';
 import PerformanceCard from '@/components/PerformanceCard';
 import { Sparkles, Target, Clock, CheckCircle2, XCircle, Loader2, TrendingUp, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
-  const { user } = useAuthStore();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { user, isAuthenticated } = useAuthStore();
   const [isSyncing, setIsSyncing] = useState(false);
 
-  const { data: tasksData, isLoading, refetch } = useQuery({
+  // Auth guard
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace('/login?redirect=/dashboard');
+    }
+  }, [isAuthenticated, router]);
+
+  // Handle Facebook OAuth callback
+  useEffect(() => {
+    if (searchParams.get('facebook') === 'connected') {
+      toast.success('Facebook account connected successfully!');
+      window.history.replaceState({}, '', '/dashboard');
+    } else if (searchParams.get('error') === 'connection_failed') {
+      const message = searchParams.get('message') || 'Failed to connect Facebook account';
+      toast.error(decodeURIComponent(message));
+      window.history.replaceState({}, '', '/dashboard');
+    }
+  }, [searchParams]);
+
+  const { data: tasksData, isLoading, error, refetch } = useQuery({
     queryKey: ['agent-tasks'],
     queryFn: () => agentApi.getTasks(50),
+    enabled: isAuthenticated, // Only run query if authenticated
   });
+
+  // Show loading while checking auth
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-red-800 font-semibold mb-2">Failed to load dashboard</h2>
+            <p className="text-red-600 mb-4">{(error as any).message || 'Something went wrong'}</p>
+            <button 
+              onClick={() => refetch()} 
+              className="bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const tasks = tasksData?.tasks || [];
   

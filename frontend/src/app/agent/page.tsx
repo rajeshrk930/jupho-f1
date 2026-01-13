@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/lib/store';
 import BusinessScanStep from '@/components/agent/BusinessScanStep';
 import AIConsultantStep from '@/components/agent/AIConsultantStep';
 import LaunchStep from '@/components/agent/LaunchStep';
@@ -59,11 +60,28 @@ const STATE_EXPIRY_HOURS = 24; // Expire after 24 hours
 
 export default function AgentPage() {
   const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [businessData, setBusinessData] = useState<BusinessData | null>(null);
   const [strategy, setStrategy] = useState<CampaignStrategy | null>(null);
   const [isRestored, setIsRestored] = useState(false);
+
+  // Auth guard
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace('/login?redirect=/agent');
+    }
+  }, [isAuthenticated, router]);
+
+  // Don't render until auth is checked
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+      </div>
+    );
+  }
 
   // Restore state from localStorage on mount
   useEffect(() => {

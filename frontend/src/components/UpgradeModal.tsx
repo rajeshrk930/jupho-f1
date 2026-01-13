@@ -72,69 +72,69 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-base-elevated rounded-md shadow-2xl max-w-md w-full p-6 relative">
+      <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-text-tertiary hover:text-text-primary"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-signal-primary rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-coral-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <Zap className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-text-primary mb-2">
+          <h2 className="text-2xl font-bold text-charcoal-900 mb-2">
             Upgrade to Jupho Pro
           </h2>
-          <p className="text-text-secondary">
+          <p className="text-charcoal-600">
             Unlock unlimited AI conversations and advanced features
           </p>
         </div>
 
         {/* Plan Toggle */}
-        <div className="flex gap-2 bg-base-surface rounded-md p-1 mb-6">
+        <div className="flex gap-2 bg-gray-100 rounded-lg p-1 mb-6">
           <button
             onClick={() => setSelectedPlan('monthly')}
-            className={`flex-1 py-2.5 px-4 rounded-sm text-sm font-medium transition-all ${
+            className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
               selectedPlan === 'monthly'
-                ? 'bg-base-elevated text-text-primary shadow-sm'
-                : 'text-text-secondary hover:text-text-primary'
+                ? 'bg-white text-charcoal-900 shadow-sm'
+                : 'text-charcoal-600 hover:text-charcoal-900'
             }`}
           >
             Monthly
           </button>
           <button
             onClick={() => setSelectedPlan('annual')}
-            className={`flex-1 py-2.5 px-4 rounded-sm text-sm font-medium transition-all relative ${
+            className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all relative ${
               selectedPlan === 'annual'
-                ? 'bg-base-elevated text-text-primary shadow-sm'
-                : 'text-text-secondary hover:text-text-primary'
+                ? 'bg-white text-charcoal-900 shadow-sm'
+                : 'text-charcoal-600 hover:text-charcoal-900'
             }`}
           >
             Annual
-            <span className="absolute -top-2 -right-2 bg-base-elevated text-signal-primary text-[10px] font-bold px-1.5 py-0.5 rounded-sm">
+            <span className="absolute -top-2 -right-2 bg-white text-coral-500 text-[10px] font-bold px-1.5 py-0.5 rounded-lg border border-coral-200">
               SAVE 17%
             </span>
           </button>
         </div>
 
-        <div className="bg-signal-primary/10 rounded-md p-6 mb-6 border-2 border-signal-primary/20">
+        <div className="bg-coral-50 rounded-lg p-6 mb-6 border-2 border-coral-200">
           {selectedPlan === 'monthly' ? (
             <>
               <div className="flex items-baseline justify-center mb-4">
-                <span className="text-4xl font-bold text-text-primary">₹1,999</span>
-                <span className="text-text-secondary ml-2">/month</span>
+                <span className="text-4xl font-bold text-charcoal-900">₹1,999</span>
+                <span className="text-charcoal-600 ml-2">/month</span>
               </div>
-              <p className="text-center text-sm text-text-secondary mb-4">
+              <p className="text-center text-sm text-charcoal-600 mb-4">
                 Billed monthly • ₹23,988/year
               </p>
             </>
           ) : (
             <>
               <div className="flex items-baseline justify-center mb-2">
-                <span className="text-4xl font-bold text-gray-900">₹19,990</span>
-                <span className="text-gray-600 ml-2">/year</span>
+                <span className="text-4xl font-bold text-charcoal-900">₹19,990</span>
+                <span className="text-charcoal-600 ml-2">/year</span>
               </div>
               <div className="flex items-center justify-center gap-2 mb-4">
                 <span className="text-sm line-through text-gray-500">₹23,988</span>
@@ -142,7 +142,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
                   Save ₹3,998
                 </span>
               </div>
-              <p className="text-center text-sm text-signal-primary font-medium mb-4">
+              <p className="text-center text-sm text-coral-600 font-medium mb-4">
                 Just ₹1,666/month • 2 months FREE!
               </p>
             </>
@@ -157,15 +157,15 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
               'Priority support',
             ].map((feature) => (
               <li key={feature} className="flex items-start">
-                <Check className="w-5 h-5 text-signal-primary mr-3 flex-shrink-0 mt-0.5" />
-                <span className="text-text-secondary">{feature}</span>
+                <Check className="w-5 h-5 text-coral-500 mr-3 flex-shrink-0 mt-0.5" />
+                <span className="text-charcoal-600">{feature}</span>
               </li>
             ))}
           </ul>
         </div>
 
         {error && (
-          <div className="bg-signal-danger/10 border border-signal-danger/20 text-signal-danger px-4 py-3 rounded-md mb-4 text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-4 text-sm">
             {error}
           </div>
         )}
@@ -173,12 +173,12 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
         <button
           onClick={handleUpgrade}
           disabled={loading}
-          className="btn-primary w-full shadow-lg"
+          className="bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 px-6 rounded-lg w-full shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Processing...' : selectedPlan === 'annual' ? 'Get Annual Plan - ₹19,990' : 'Get Monthly Plan - ₹1,999'}
         </button>
 
-        <p className="text-xs text-text-tertiary text-center mt-4">
+        <p className="text-xs text-gray-500 text-center mt-4">
           Secure payment powered by Razorpay. {selectedPlan === 'monthly' ? 'Cancel anytime.' : '30-day money-back guarantee.'}
         </p>
       </div>

@@ -146,8 +146,8 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        {/* Left Side: Compact Image Upload - 2 columns */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* Left Side: Compact Image Upload - 3 columns */}
+        <div className="lg:col-span-3 space-y-4">
           <div className="bg-white rounded-xl shadow border border-gray-200 p-4">
             <h3 className="font-semibold text-gray-900 mb-3 text-sm">Creative Image</h3>
             <div className="space-y-3">
@@ -281,9 +281,9 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
           )}
         </div>
 
-        {/* Right Side: Live Meta Ad Preview - 3 columns, always visible and sticky */}
-        <div className="lg:col-span-3 lg:sticky lg:top-4 lg:self-start">
-          <div className="bg-white rounded-xl shadow border border-gray-200 p-4">
+        {/* Right Side: Live Meta Ad Preview - 2 columns, always visible and sticky */}
+        <div className="lg:col-span-2 lg:sticky lg:top-4 lg:self-start">
+          <div className="bg-white rounded-xl shadow border border-gray-200 p-3">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-gray-900 text-sm">Live Preview</h3>
               <div className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">

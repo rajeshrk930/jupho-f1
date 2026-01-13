@@ -21,7 +21,7 @@ export default function MetaAdPreview({
   cta,
 }: MetaAdPreviewProps) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm max-w-[500px] mx-auto">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm max-w-[400px] mx-auto">
       {/* Facebook Post Header */}
       <div className="p-3 flex items-center justify-between border-b border-gray-100">
         <div className="flex items-center space-x-2">

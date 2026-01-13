@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/app/providers';
 import { Toaster } from 'react-hot-toast';
-import Header from '@/components/Header';
+import ConditionalHeader from '@/components/ConditionalHeader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,7 +31,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50">
-            <Header />
+            <ConditionalHeader />
             <main className="w-full">
               {children}
             </main>

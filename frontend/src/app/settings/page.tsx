@@ -9,8 +9,15 @@ import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, logout, isAuthenticated } = useAuthStore();
   const [loading, setLoading] = useState(false);
+  
+  // Auth guard
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace('/login?redirect=/settings');
+    }
+  }, [isAuthenticated, router]);
   
   // Profile settings
   const [name, setName] = useState(user?.name || '');
@@ -24,6 +31,15 @@ export default function SettingsPage() {
   // Facebook connection
   const [fbStatus, setFbStatus] = useState<any>(null);
   const [fbLoading, setFbLoading] = useState(false);
+
+  // Don't render until auth is checked
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+      </div>
+    );
+  }
   
   useEffect(() => {
     checkFacebookStatus();

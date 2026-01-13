@@ -95,11 +95,11 @@ router.get('/callback', async (req, res: Response) => {
         }
     });
     
-    // Redirect back to frontend settings page with success
-    return res.redirect(`${process.env.FRONTEND_URL}/settings?facebook=connected`);
+    // Redirect back to frontend dashboard with success
+    return res.redirect(`${process.env.FRONTEND_URL}/dashboard?facebook=connected`);
   } catch (error: any) {
     console.error('[Facebook OAuth] Callback error:', error);
-    return res.redirect(`${process.env.FRONTEND_URL}/settings?error=connection_failed&message=${encodeURIComponent(error.message || 'Unknown error')}`);
+    return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=connection_failed&message=${encodeURIComponent(error.message || 'Unknown error')}`);
   }
 });
 

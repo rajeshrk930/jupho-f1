@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/store';
 import { agentApi } from '@/lib/api';
@@ -18,13 +19,21 @@ interface UsageStats {
 }
 
 export default function BillingPage() {
-  const { user } = useAuthStore();
+  const router = useRouter();
+  const { user, isAuthenticated } = useAuthStore();
   const queryClient = useQueryClient();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
+  // Auth guard
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace('/login?redirect=/billing');
+    }
+  }, [isAuthenticated, router]);
+
   const { data: usageData, isLoading: loading, isError, error } = useQuery({
     queryKey: ['usage-stats'],
-    enabled: !!user, // avoid running before auth is ready
+    enabled: !!user && isAuthenticated, // avoid running before auth is ready
     queryFn: async () => {
       try {
         const data = await agentApi.getUsage();
