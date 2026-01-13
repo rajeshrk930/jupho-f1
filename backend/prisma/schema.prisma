@@ -74,10 +74,14 @@ model FacebookAccount {
   id                String   @id @default(uuid())
   userId            String   @unique
   facebookUserId    String
+  facebookUserName  String?  // Facebook account name
+  facebookUserEmail String?  // Facebook account email
   accessToken       String   // Encrypted
   tokenExpiresAt    DateTime
   adAccountId       String
   adAccountName     String?
+  pageIds           String?  // Comma-separated page IDs
+  pageNames         String?  // Comma-separated page names
   isActive          Boolean  @default(true)
   lastSyncAt        DateTime?
   createdAt         DateTime @default(now())

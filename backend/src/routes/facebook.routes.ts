@@ -54,54 +54,143 @@ router.get('/callback', async (req, res: Response) => {
       // Exchange code for access token
       const accessToken = await FacebookService.exchangeCodeForToken(code);
       
-      // Get user info and ad accounts
-      const [userInfo, adAccounts] = await Promise.all([
+      // Get user info and pages
+      const [userInfo, pages] = await Promise.all([
         FacebookService.getUserInfo(accessToken),
-        FacebookService.getAdAccounts(accessToken)
+        FacebookService.getPages(accessToken)
       ]);
       
-      if (adAccounts.length === 0) {
-        return res.status(400).json({ 
-          error: 'No ad accounts found. Please make sure you have access to at least one Facebook Ad Account.' 
-        });
-      }
-      
-      // Store encrypted token
+      // Store encrypted token and user info temporarily (without ad account yet)
       const encryptedToken = FacebookService.encryptToken(accessToken);
       
-      // Use first ad account (or let user select in future enhancement)
-      const selectedAccount = adAccounts[0];
+      // Check if account already exists
+      const existingAccount = await prisma.facebookAccount.findUnique({
+        where: { userId }
+      });
       
-      // userId was passed as state parameter
-      await prisma.facebookAccount.upsert({
-        where: { userId },
-        create: {
-          userId,
-          facebookUserId: userInfo.id,
-          accessToken: encryptedToken,
-          tokenExpiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
-          adAccountId: selectedAccount.id,
-          adAccountName: selectedAccount.name,
-          lastSyncAt: new Date()
-        },
-        update: {
-          facebookUserId: userInfo.id,
-          accessToken: encryptedToken,
-          tokenExpiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-          adAccountId: selectedAccount.id,
-          adAccountName: selectedAccount.name,
-          lastSyncAt: new Date(),
-          isActive: true
-        }
-    });
+      if (existingAccount) {
+        // Update existing account with new token and user info
+        await prisma.facebookAccount.update({
+          where: { userId },
+          data: {
+            facebookUserId: userInfo.id,
+            facebookUserName: userInfo.name,
+            facebookUserEmail: userInfo.email,
+            accessToken: encryptedToken,
+            tokenExpiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
+            pageIds: pages.map(p => p.id).join(','),
+            pageNames: pages.map(p => p.name).join(','),
+            lastSyncAt: new Date()
+          }
+        });
+      } else {
+        // Create new account record (without ad account yet)
+        await prisma.facebookAccount.create({
+          data: {
+            userId,
+            facebookUserId: userInfo.id,
+            facebookUserName: userInfo.name,
+            facebookUserEmail: userInfo.email,
+            accessToken: encryptedToken,
+            tokenExpiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+            pageIds: pages.map(p => p.id).join(','),
+            pageNames: pages.map(p => p.name).join(','),
+            adAccountId: 'PENDING', // Placeholder until user selects
+            adAccountName: null,
+            lastSyncAt: new Date()
+          }
+        });
+      }
     
-    // Redirect back to frontend dashboard with success
-    return res.redirect(`${process.env.FRONTEND_URL}/dashboard?facebook=connected`);
+    // Redirect to ad account selection page with userId in query
+    return res.redirect(`${process.env.FRONTEND_URL}/facebook/select-account?userId=${userId}`);
   } catch (error: any) {
     console.error('[Facebook OAuth] Callback error:', error);
     return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=connection_failed&message=${encodeURIComponent(error.message || 'Unknown error')}`);
   }
 });
+
+/**
+ * GET /api/facebook/ad-accounts
+ * Get list of ad accounts for current user's Facebook connection
+ */
+router.get('/ad-accounts', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const fbAccount = await prisma.facebookAccount.findUnique({
+      where: { userId: req.user!.id }
+    });
+    
+    if (!fbAccount) {
+      return res.status(400).json({ 
+        error: 'No Facebook account connected. Please connect your Facebook account first.' 
+      });
+    }
+    
+    const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
+    const adAccounts = await FacebookService.getAdAccounts(accessToken);
+    
+    res.json({ 
+      adAccounts: adAccounts.map(account => ({
+        id: account.id,
+        name: account.name,
+        accountStatus: account.account_status,
+        currency: account.currency,
+        balance: account.balance
+      }))
+    });
+  } catch (error: any) {
+    console.error('Fetch ad accounts error:', error);
+    res.status(500).json({ error: 'Failed to fetch ad accounts' });
+  }
+});
+
+/**
+ * POST /api/facebook/select-account
+ * Save user's selected ad account
+ */
+router.post('/select-account', 
+  authenticate,
+  [
+    body('adAccountId').notEmpty().withMessage('Ad account ID is required'),
+    body('adAccountName').notEmpty().withMessage('Ad account name is required')
+  ],
+  async (req: AuthRequest, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { adAccountId, adAccountName } = req.body;
+      
+      const fbAccount = await prisma.facebookAccount.findUnique({
+        where: { userId: req.user!.id }
+      });
+      
+      if (!fbAccount) {
+        return res.status(400).json({ error: 'No Facebook account connected' });
+      }
+      
+      // Update with selected ad account
+      await prisma.facebookAccount.update({
+        where: { userId: req.user!.id },
+        data: {
+          adAccountId,
+          adAccountName,
+          isActive: true
+        }
+      });
+      
+      res.json({ 
+        success: true, 
+        message: 'Ad account selected successfully'
+      });
+    } catch (error: any) {
+      console.error('Select ad account error:', error);
+      res.status(500).json({ error: 'Failed to save ad account selection' });
+    }
+  }
+);
 
 /**
  * GET /api/facebook/status
@@ -113,7 +202,7 @@ router.get('/status', authenticate, async (req: AuthRequest, res: Response) => {
       where: { userId: req.user!.id }
     });
     
-    if (!account || !account.isActive) {
+    if (!account || !account.isActive || account.adAccountId === 'PENDING') {
       return res.json({
         connected: false,
         account: null
@@ -126,8 +215,11 @@ router.get('/status', authenticate, async (req: AuthRequest, res: Response) => {
     res.json({
       connected: isTokenValid,
       account: {
+        facebookUserName: account.facebookUserName,
+        facebookUserEmail: account.facebookUserEmail,
         adAccountId: account.adAccountId,
         adAccountName: account.adAccountName,
+        pageNames: account.pageNames,
         lastSyncAt: account.lastSyncAt,
         tokenExpiring: account.tokenExpiresAt < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Expires in < 7 days
       }

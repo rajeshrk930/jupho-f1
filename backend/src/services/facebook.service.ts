@@ -149,6 +149,24 @@ export class FacebookService {
   }
   
   /**
+   * Get user's Facebook pages
+   */
+  static async getPages(accessToken: string): Promise<Array<{ id: string; name: string; access_token?: string }>> {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/me/accounts`, {
+        params: {
+          access_token: accessToken,
+          fields: 'id,name,access_token'
+        }
+      });
+      return response.data.data || [];
+    } catch (error: any) {
+      console.error('Facebook get pages error:', error.response?.data || error.message);
+      throw new Error('Failed to fetch Facebook pages');
+    }
+  }
+  
+  /**
    * Fetch ad creative metrics from Facebook Ads API
    */
   static async getAdCreativeMetrics(

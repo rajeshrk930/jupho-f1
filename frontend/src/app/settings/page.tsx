@@ -6,11 +6,13 @@ import { useAuthStore } from '@/lib/store';
 import { settingsApi, authApi, api } from '@/lib/api';
 import { User, Lock, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
+import MetaConnectionModal from '@/components/MetaConnectionModal';
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user, logout, isAuthenticated } = useAuthStore();
   const [loading, setLoading] = useState(false);
+  const [showMetaModal, setShowMetaModal] = useState(false);
   
   // Profile settings
   const [name, setName] = useState(user?.name || '');
@@ -265,7 +267,7 @@ export default function SettingsPage() {
           </form>
         </div>
 
-        {/* Facebook Account Connection Section */}
+        {/* Meta Connection Section */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
@@ -274,8 +276,8 @@ export default function SettingsPage() {
               </svg>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-charcoal-900">Facebook Ad Account</h2>
-              <p className="text-sm text-charcoal-600">Connect to automatically fetch ad metrics</p>
+              <h2 className="text-lg font-semibold text-charcoal-900">Meta Connection</h2>
+              <p className="text-sm text-charcoal-600">Manage your Facebook Ad Account connection</p>
             </div>
           </div>
 
@@ -295,12 +297,6 @@ export default function SettingsPage() {
                 </div>
               </div>
               
-              {fbStatus.account?.lastSyncAt && (
-                <p className="text-sm text-charcoal-600">
-                  Last synced: {new Date(fbStatus.account.lastSyncAt).toLocaleString()}
-                </p>
-              )}
-              
               {fbStatus.account?.tokenExpiring && (
                 <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <p className="text-sm text-yellow-800">
@@ -310,45 +306,52 @@ export default function SettingsPage() {
               )}
               
               <button
-                onClick={disconnectFacebook}
-                disabled={fbLoading}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50"
+                onClick={() => setShowMetaModal(true)}
+                className="px-4 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition-colors font-medium"
               >
-                {fbLoading ? 'Disconnecting...' : 'Disconnect Facebook'}
+                View Connection Details
               </button>
             </div>
           ) : (
             <div className="space-y-4">
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-900 mb-2">
-                  <strong>Why connect Facebook?</strong>
+                  <strong>Why connect Meta?</strong>
                 </p>
                 <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-                  <li>Automatically fetch ad metrics (CPM, CTR, CPA)</li>
-                  <li>No manual data entry required</li>
-                  <li>Real-time sync with your ad campaigns</li>
-                  <li>View-only access - we never modify your ads</li>
+                  <li>Create Facebook ads directly from Jupho</li>
+                  <li>Select your ad account and pages</li>
+                  <li>Auto-sync ad performance metrics</li>
+                  <li>Secure OAuth connection</li>
                 </ul>
               </div>
               
               <button
-                onClick={connectFacebook}
-                disabled={fbLoading}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
+                onClick={() => setShowMetaModal(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
-                {fbLoading ? 'Connecting...' : 'Connect Facebook'}
+                Connect Meta Account
               </button>
               
               <p className="text-xs text-charcoal-600">
-                We only request view-only access to your ad accounts. Your credentials are encrypted and stored securely.
+                We only request permissions to create and manage ads. Your credentials are encrypted and stored securely.
               </p>
             </div>
           )}
         </div>
       </main>
+      
+      {/* Meta Connection Modal */}
+      <MetaConnectionModal 
+        isOpen={showMetaModal} 
+        onClose={() => {
+          setShowMetaModal(false);
+          checkFacebookStatus(); // Refresh status after modal closes
+        }} 
+      />
     </div>
   );
 }
