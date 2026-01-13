@@ -4,9 +4,11 @@ import { useState, useRef, useEffect } from 'react';
 import { LogOut, CreditCard, Facebook, Mail, ChevronDown } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [facebookConnected, setFacebookConnected] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuthStore();
   const router = useRouter();
@@ -22,6 +24,22 @@ export default function ProfileDropdown() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Check Facebook connection status
+  useEffect(() => {
+    const checkFacebookStatus = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/facebook/status`, {
+          withCredentials: true
+        });
+        setFacebookConnected(response.data.connected || false);
+      } catch (error) {
+        console.error('Failed to check Facebook status:', error);
+        setFacebookConnected(false);
+      }
+    };
+    checkFacebookStatus();
+  }, []);
+
   const handleLogout = () => {
     logout();
     router.push('/login');
@@ -30,9 +48,6 @@ export default function ProfileDropdown() {
   const getInitials = (email: string) => {
     return email.charAt(0).toUpperCase();
   };
-
-  // For now, assume not connected - will need backend API to check
-  const facebookConnected = false;
 
   return (
     <div className="relative" ref={dropdownRef}>

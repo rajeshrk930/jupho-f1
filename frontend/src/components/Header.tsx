@@ -40,15 +40,15 @@ export default function Header() {
               Create Ad
             </Link>
             <Link
-              href="/agent/tasks"
+              href="/dashboard"
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
-                isActive('/agent/tasks')
+                isActive('/dashboard')
                   ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
                   : 'text-gray-700 hover:bg-purple-50'
               }`}
             >
               <History className="w-5 h-5" />
-              History
+              Dashboard
             </Link>
           </nav>
 
@@ -71,15 +71,15 @@ export default function Header() {
           Create Ad
         </Link>
         <Link
-          href="/agent/tasks"
+          href="/dashboard"
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all ${
-            isActive('/agent/tasks')
+            isActive('/dashboard')
               ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
               : 'text-gray-700 bg-purple-50'
           }`}
         >
           <History className="w-4 h-4" />
-          History
+          Dashboard
         </Link>
       </div>
     </header>
