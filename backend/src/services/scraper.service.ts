@@ -149,41 +149,57 @@ export class ScraperService {
           .filter((src: any) => src && src.startsWith('http'));
         data.visualStyle.imageUrls = images;
 
-        // 5. Extract CTAs (buttons, links)
+        // 5. Extract CTAs (buttons, links) - remove duplicates
         const ctaElements = Array.from(
           // @ts-ignore
-          document.querySelectorAll('button, a[href*="contact"], a[href*="buy"], a[href*="shop"]')
+          document.querySelectorAll('button, a[href*="contact"], a[href*="buy"], a[href*="shop"], a[class*="cta"]')
         );
-        data.cta = ctaElements
+        const rawCtas = ctaElements
           .map((el: any) => el.textContent?.trim())
-          .filter((text: any) => text && text.length < 50)
-          .slice(0, 5);
+          .filter((text: any) => text && text.length > 2 && text.length < 50);
+        
+        // Remove duplicates using Set
+        data.cta = Array.from(new Set(rawCtas)).slice(0, 5);
 
         // 6. Extract Products (look for product listings)
         const productElements = Array.from(
           // @ts-ignore
           document.querySelectorAll('[class*="product"], [class*="item"], [class*="card"]')
         );
-        data.products = productElements
+        const rawProducts = productElements
           .map((el: any) => {
             const titleEl = el.querySelector('h2, h3, h4, .title');
             const title = titleEl?.textContent?.trim();
             return title;
           })
-          .filter((title: any) => title && title.length > 5 && title.length < 100)
-          .slice(0, 10);
+          .filter((title: any) => title && title.length > 5 && title.length < 100);
+        
+        // Remove duplicates using Set
+        data.products = Array.from(new Set(rawProducts)).slice(0, 10);
 
-        // 7. Extract USPs (benefit/feature keywords)
+        // 7. Extract USPs (benefit/feature keywords with complete context)
         // @ts-ignore
         const textContent = document.body.innerText;
-        const uspKeywords = ['fast', 'free', 'easy', 'best', 'top', 'quality', 'affordable', 'trusted'];
+        const uspKeywords = ['fast', 'free', 'easy', 'best', 'quality', 'affordable', 'trusted', 'guaranteed'];
         const foundUsps: string[] = [];
+        
         uspKeywords.forEach((keyword: any) => {
-          const regex = new RegExp(`(${keyword}[^.!?]{0,50}[.!?])`, 'gi');
+          // Match complete sentences containing keywords
+          const regex = new RegExp(`([A-Z][^.!?]{10,150}${keyword}[^.!?]{0,50}[.!?])`, 'gi');
           const matches = textContent.match(regex);
-          if (matches) foundUsps.push(...matches.slice(0, 2));
+          if (matches) {
+            matches.forEach((match: string) => {
+              // Only add if it's a proper sentence (starts with capital, ends with punctuation)
+              const cleaned = match.trim();
+              if (cleaned.length > 15 && cleaned.length < 150 && !foundUsps.includes(cleaned)) {
+                foundUsps.push(cleaned);
+              }
+            });
+          }
         });
-        data.usps = foundUsps.slice(0, 5);
+        
+        // Remove duplicates and limit to 4 best USPs
+        data.usps = Array.from(new Set(foundUsps)).slice(0, 4);
 
         // 8. Extract Contact Info
         const emailMatch = textContent.match(/[\w.-]+@[\w.-]+\.\w+/);

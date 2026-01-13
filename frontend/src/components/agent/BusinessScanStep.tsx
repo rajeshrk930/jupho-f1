@@ -198,116 +198,153 @@ export default function BusinessScanStep({ onComplete }: Props) {
 
   const isValid = mode === 'url' ? url.trim().length > 0 : manualInput.trim().length > 20;
 
-  // Show loading progress UI
+  // Show loading progress UI with website preview
   if (loading) {
     return (
       <div className="bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 rounded-3xl shadow-xl border border-purple-100 p-8 min-h-[600px]">
-        <div className="flex h-full">
-          {/* Left Sidebar */}
-          <div className="w-16 flex-shrink-0 flex flex-col items-center border-r border-purple-200 pr-4 mr-8">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white mb-8">
-              <User className="w-5 h-5" />
-            </div>
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Scanning Your Website
+            </h2>
+            <p className="text-gray-600">This will take approximately 90 seconds</p>
           </div>
 
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Header */}
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Preparing tailored insights for your ads
-              </h2>
-              <p className="text-gray-600">This will take approximately 90 seconds</p>
+          {/* Main Content - Website Preview + Steps */}
+          <div className="flex gap-6 flex-1">
+            {/* Website Preview with Virtual Scanning */}
+            <div className="w-1/2 bg-white rounded-2xl border-2 border-purple-200 overflow-hidden relative group shadow-lg">
+              {/* Website iframe */}
+              <div className="w-full h-full relative">
+                <iframe
+                  src={websiteUrl}
+                  className="w-full h-full border-0"
+                  title="Website Preview"
+                  sandbox="allow-same-origin allow-scripts"
+                  style={{ pointerEvents: 'none' }}
+                />
+                
+                {/* Scanning Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/10 to-transparent pointer-events-none">
+                  {/* Horizontal scanning line */}
+                  <div 
+                    className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-scan-line"
+                    style={{
+                      boxShadow: '0 0 20px rgba(168, 85, 247, 0.8)',
+                      animation: 'scanLine 3s ease-in-out infinite',
+                    }}
+                  />
+                  
+                  {/* Grid overlay */}
+                  <div className="absolute inset-0 bg-grid-pattern opacity-20" />
+                  
+                  {/* Corner brackets */}
+                  <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-purple-500" />
+                  <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-purple-500" />
+                  <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-purple-500" />
+                  <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-purple-500" />
+                </div>
+
+                {/* Current Step Highlight */}
+                {currentStepIndex >= 0 && (
+                  <div className="absolute top-4 left-4 right-4 bg-purple-600/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="text-sm font-semibold">
+                        {scanSteps[currentStepIndex]?.title}
+                      </span>
+                    </div>
+                    <p className="text-xs mt-1 opacity-90">
+                      {scanSteps[currentStepIndex]?.description}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Progress Steps */}
-            <div className="space-y-6">
-              {scanSteps.map((step, index) => {
-                const StepIcon = step.icon;
-                return (
-                  <div
-                    key={step.id}
-                    className={`flex items-start space-x-4 transition-all duration-500 ${
-                      step.status === 'pending' ? 'opacity-40' : 'opacity-100'
-                    }`}
-                  >
-                    {/* Icon/Status */}
-                    <div className="flex-shrink-0 relative">
-                      {step.status === 'complete' ? (
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
-                          <CheckCircle className="w-6 h-6 text-white" />
-                        </div>
-                      ) : step.status === 'in-progress' ? (
-                        <div className="w-10 h-10 bg-white border-2 border-purple-500 rounded-full flex items-center justify-center">
-                          <Loader2 className="w-5 h-5 text-purple-600 animate-spin" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center">
-                          <StepIcon className="w-5 h-5 text-gray-400" />
-                        </div>
-                      )}
-                      
-                      {/* Connecting line */}
-                      {index < scanSteps.length - 1 && (
-                        <div
-                          className={`absolute left-1/2 top-10 w-0.5 h-6 -translate-x-1/2 transition-colors duration-500 ${
-                            step.status === 'complete' ? 'bg-purple-500' : 'bg-gray-300'
+            <div className="w-1/2 flex flex-col">
+              <div className="space-y-4 flex-1">
+                {scanSteps.map((step, index) => {
+                  const StepIcon = step.icon;
+                  return (
+                    <div
+                      key={step.id}
+                      className={`flex items-start space-x-3 transition-all duration-500 ${
+                        step.status === 'pending' ? 'opacity-40' : 'opacity-100'
+                      }`}
+                    >
+                      {/* Icon/Status */}
+                      <div className="flex-shrink-0 relative">
+                        {step.status === 'complete' ? (
+                          <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                            <CheckCircle className="w-5 h-5 text-white" />
+                          </div>
+                        ) : step.status === 'in-progress' ? (
+                          <div className="w-9 h-9 bg-white border-2 border-purple-500 rounded-full flex items-center justify-center">
+                            <Loader2 className="w-4 h-4 text-purple-600 animate-spin" />
+                          </div>
+                        ) : (
+                          <div className="w-9 h-9 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center">
+                            <StepIcon className="w-4 h-4 text-gray-400" />
+                          </div>
+                        )}
+                        
+                        {/* Connecting line */}
+                        {index < scanSteps.length - 1 && (
+                          <div
+                            className={`absolute left-1/2 top-9 w-0.5 h-5 -translate-x-1/2 transition-colors duration-500 ${
+                              step.status === 'complete' ? 'bg-purple-500' : 'bg-gray-300'
+                            }`}
+                          />
+                        )}
+                      </div>
+
+                      {/* Step Content */}
+                      <div className="flex-1 pt-0.5">
+                        <h3
+                          className={`font-semibold text-sm mb-0.5 transition-colors duration-300 ${
+                            step.status === 'in-progress'
+                              ? 'text-purple-900'
+                              : step.status === 'complete'
+                              ? 'text-gray-900'
+                              : 'text-gray-500'
                           }`}
-                        />
-                      )}
+                        >
+                          {step.title}
+                        </h3>
+                        <p
+                          className={`text-xs transition-colors duration-300 ${
+                            step.status === 'in-progress' || step.status === 'complete'
+                              ? 'text-gray-600'
+                              : 'text-gray-400'
+                          }`}
+                        >
+                          {step.description}
+                        </p>
+                        
+                        {/* Show details for current step */}
+                        {step.status === 'in-progress' && currentStepIndex === index && (
+                          <div className="mt-1.5 text-xs text-purple-700 font-medium animate-pulse">
+                            Analyzing your content...
+                          </div>
+                        )}
+                      </div>
                     </div>
-
-                    {/* Step Content */}
-                    <div className="flex-1 pt-1">
-                      <h3
-                        className={`font-semibold mb-1 transition-colors duration-300 ${
-                          step.status === 'in-progress'
-                            ? 'text-purple-900'
-                            : step.status === 'complete'
-                            ? 'text-gray-900'
-                            : 'text-gray-500'
-                        }`}
-                      >
-                        {step.title}
-                      </h3>
-                      <p
-                        className={`text-sm transition-colors duration-300 ${
-                          step.status === 'in-progress' || step.status === 'complete'
-                            ? 'text-gray-600'
-                            : 'text-gray-400'
-                        }`}
-                      >
-                        {step.description}
-                      </p>
-                      
-                      {/* Show details for current step */}
-                      {step.status === 'in-progress' && currentStepIndex === index && (
-                        <div className="mt-2 text-sm text-purple-700 font-medium animate-pulse">
-                          Checking out what's on your page...
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Bottom Details */}
-            {stepDetails && (
-              <div className="mt-8 p-4 bg-white/60 backdrop-blur rounded-xl border border-purple-200">
-                <p className="text-sm text-gray-700">{stepDetails}</p>
+                  );
+                })}
               </div>
-            )}
 
-            {/* What we extract section */}
-            <div className="mt-8 p-4 bg-white/60 backdrop-blur rounded-xl border border-purple-200">
-              <p className="text-sm font-medium text-gray-700 mb-2">💡 What we extract:</p>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Brand name and description</li>
-                <li>• Products/services offerings</li>
-                <li>• Unique selling points</li>
-                <li>• Visual style and branding</li>
-              </ul>
+              {/* What we extract section */}
+              <div className="mt-4 p-4 bg-white/60 backdrop-blur rounded-xl border border-purple-200">
+                <p className="text-sm font-medium text-gray-700 mb-2">💡 What we extract:</p>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Brand name and description</li>
+                  <li>• Products/services offerings</li>
+                  <li>• Unique selling points (no duplicates)</li>
+                  <li>• Visual style and branding</li>
+                </ul>
             </div>
           </div>
         </div>
