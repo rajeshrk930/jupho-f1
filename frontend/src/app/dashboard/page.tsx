@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to support useSearchParams during build/export.
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -9,10 +12,10 @@ import { StatCard } from '@/components/StatCard';
 import MobileTopBar from '@/components/MobileTopBar';
 import PerformanceCard from '@/components/PerformanceCard';
 import { Sparkles, Target, Clock, CheckCircle2, XCircle, Loader2, TrendingUp, RefreshCw } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import toast from 'react-hot-toast';
 
-export default function DashboardPage() {
+function DashboardPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated } = useAuthStore();
@@ -338,5 +341,17 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-coral-500"></div>
+      </div>
+    }>
+      <DashboardPageInner />
+    </Suspense>
   );
 }
