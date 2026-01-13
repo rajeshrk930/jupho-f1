@@ -56,7 +56,7 @@ interface SavedFlowState {
 }
 
 const FLOW_STATE_KEY = 'agent_flow_state';
-const STATE_EXPIRY_HOURS = 24; // Expire after 24 hours
+const STATE_EXPIRY_HOURS = 6; // Expire after 6 hours
 
 export default function AgentPage() {
   const router = useRouter();
@@ -65,7 +65,6 @@ export default function AgentPage() {
   const [taskId, setTaskId] = useState<string | null>(null);
   const [businessData, setBusinessData] = useState<BusinessData | null>(null);
   const [strategy, setStrategy] = useState<CampaignStrategy | null>(null);
-  const [isRestored, setIsRestored] = useState(false);
 
   // Auth guard
   useEffect(() => {
@@ -74,24 +73,23 @@ export default function AgentPage() {
     }
   }, [isAuthenticated, router]);
 
-  // Restore state from localStorage on mount
+  // Auto-restore state from localStorage on mount (Projects page now handles draft choice)
   useEffect(() => {
-    if (!isAuthenticated) return; // Skip if not authenticated
+    if (!isAuthenticated) return;
     
     try {
       const savedState = localStorage.getItem(FLOW_STATE_KEY);
       if (savedState) {
         const parsed: SavedFlowState = JSON.parse(savedState);
         
-        // Check if state is not expired (24 hours)
+        // Check if state is not expired (6 hours)
         const hoursElapsed = (Date.now() - parsed.timestamp) / (1000 * 60 * 60);
         if (hoursElapsed < STATE_EXPIRY_HOURS) {
-          // Restore state
+          // Restore state automatically (user came from Projects or Create Ad cleared it)
           setCurrentStep(parsed.currentStep);
           setTaskId(parsed.taskId);
           setBusinessData(parsed.businessData);
           setStrategy(parsed.strategy);
-          setIsRestored(true);
           console.log('✅ [Flow] Restored from step:', parsed.currentStep);
         } else {
           // Expired, clear it
@@ -107,9 +105,9 @@ export default function AgentPage() {
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
-    if (!isAuthenticated) return; // Skip if not authenticated
+    if (!isAuthenticated) return;
     
-    if (isRestored || currentStep > 1) {
+    if (currentStep > 1) {
       const stateToSave: SavedFlowState = {
         currentStep,
         taskId,
@@ -120,7 +118,7 @@ export default function AgentPage() {
       localStorage.setItem(FLOW_STATE_KEY, JSON.stringify(stateToSave));
       console.log('💾 [Flow] State saved - Step:', currentStep);
     }
-  }, [currentStep, taskId, businessData, strategy, isRestored]);
+  }, [currentStep, taskId, businessData, strategy, isAuthenticated]);
 
   const handleBusinessScanComplete = (data: BusinessData, id: string) => {
     setBusinessData(data);

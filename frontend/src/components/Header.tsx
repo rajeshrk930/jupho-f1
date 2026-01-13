@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sparkles, Plus, History } from 'lucide-react';
+import { Sparkles, Plus, History, Folder } from 'lucide-react';
 import ProfileDropdown from './ProfileDropdown';
 
 export default function Header() {
@@ -10,6 +10,11 @@ export default function Header() {
 
   const isActive = (path: string) => {
     return pathname === path || pathname.startsWith(path);
+  };
+
+  const handleCreateAd = () => {
+    localStorage.removeItem('agent_flow_state');
+    window.location.href = '/agent';
   };
 
   return (
@@ -28,8 +33,8 @@ export default function Header() {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-2">
-            <Link
-              href="/agent"
+            <button
+              onClick={handleCreateAd}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
                 isActive('/agent')
                   ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
@@ -38,6 +43,17 @@ export default function Header() {
             >
               <Plus className="w-5 h-5" />
               Create Ad
+            </button>
+            <Link
+              href="/projects"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
+                isActive('/projects')
+                  ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
+                  : 'text-gray-700 hover:bg-coral-50'
+              }`}
+            >
+              <Folder className="w-5 h-5" />
+              Projects
             </Link>
             <Link
               href="/dashboard"
@@ -59,8 +75,8 @@ export default function Header() {
 
       {/* Mobile Navigation */}
       <div className="md:hidden border-t border-coral-100 px-4 py-2 flex gap-2">
-        <Link
-          href="/agent"
+        <button
+          onClick={handleCreateAd}
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all ${
             isActive('/agent')
               ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
@@ -69,6 +85,17 @@ export default function Header() {
         >
           <Plus className="w-4 h-4" />
           Create Ad
+        </button>
+        <Link
+          href="/projects"
+          className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all ${
+            isActive('/projects')
+              ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
+              : 'text-gray-700 bg-coral-50'
+          }`}
+        >
+          <Folder className="w-4 h-4" />
+          Projects
         </Link>
         <Link
           href="/dashboard"

@@ -13,7 +13,8 @@ import {
   LogOut,
   Crown,
   Shield,
-  Sparkles
+  Sparkles,
+  Folder
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -34,6 +35,11 @@ export function Sidebar() {
     router.push('/login');
   };
 
+  const handleCreateAd = () => {
+    localStorage.removeItem('agent_flow_state');
+    router.push('/agent');
+  };
+
   const isPro = user?.proExpiresAt && new Date(user.proExpiresAt) > new Date();
 
   // Check if user is admin (based on ADMIN_EMAILS env variable)
@@ -42,7 +48,8 @@ export function Sidebar() {
     .includes(user.email.toLowerCase());
 
   const navItems = [
-    { href: '/agent', label: 'Create Ad', icon: Sparkles },
+    { href: '/agent', label: 'Create Ad', icon: Sparkles, onClick: handleCreateAd },
+    { href: '/projects', label: 'Projects', icon: Folder },
     { href: '/dashboard', label: 'History', icon: LayoutDashboard },
   ];
 
@@ -73,6 +80,24 @@ export function Sidebar() {
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
+          
+          if (item.onClick) {
+            return (
+              <button
+                key={item.href}
+                onClick={item.onClick}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-all ${
+                  active
+                    ? 'bg-coral-50 text-coral-600 font-medium'
+                    : 'text-charcoal-600 hover:bg-gray-50'
+                }`}
+              >
+                <Icon size={20} className={active ? 'text-coral-600' : 'text-charcoal-400'} />
+                <span className="text-sm">{item.label}</span>
+              </button>
+            );
+          }
+          
           return (
             <Link
               key={item.href}
