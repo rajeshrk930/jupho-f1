@@ -254,4 +254,22 @@ export const agentApi = {
     const response = await api.get('/agent/tasks', { params: { limit } });
     return response.data;
   },
+
+  // Get specific task details
+  getTaskDetails: async (taskId: string) => {
+    const response = await api.get(`/agent/task/${taskId}`);
+    return response.data;
+  },
+
+  // Sync single task performance
+  syncTaskPerformance: async (taskId: string) => {
+    const response = await api.post('/agent/track-performance', { taskId });
+    return response.data;
+  },
+
+  // Sync all active campaigns
+  syncAllActiveCampaigns: async () => {
+    const response = await api.post('/agent/sync-active');
+    return response.data;
+  },
 };

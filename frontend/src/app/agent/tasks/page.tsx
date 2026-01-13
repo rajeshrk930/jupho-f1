@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Loader2, Sparkles, ExternalLink, Calendar, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles, ExternalLink, Calendar, CheckCircle2, XCircle, Clock, RefreshCw, TrendingUp } from 'lucide-react';
 import { agentApi } from '@/lib/api';
+import PerformanceCard from '@/components/PerformanceCard';
 
 interface Task {
   id: string;
@@ -12,6 +13,14 @@ interface Task {
   businessProfile?: string;
   fbCampaignId?: string;
   fbAdId?: string;
+  actualCPM?: number;
+  actualCTR?: number;
+  actualConversions?: number;
+  actualSpend?: number;
+  impressions?: number;
+  clicks?: number;
+  performanceGrade?: string;
+  lastPerformanceSync?: string;
 }
 
 export default function TasksPage() {
@@ -19,6 +28,7 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [usage, setUsage] = useState<{ used: number; limit: number } | null>(null);
+  const [syncingTaskId, setSyncingTaskId] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -27,7 +37,7 @@ export default function TasksPage() {
   const loadData = async () => {
     try {
       const [tasksResponse, usageResponse] = await Promise.all([
-        agentApi.getTasks(20),
+        agentApi.getTasks(50),
         agentApi.getUsage(),
       ]);
       setTasks(tasksResponse.tasks || []);
@@ -36,6 +46,19 @@ export default function TasksPage() {
       console.error('Failed to load data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSyncTask = async (taskId: string) => {
+    setSyncingTaskId(taskId);
+    try {
+      await agentApi.syncTaskPerformance(taskId);
+      await loadData();
+    } catch (error: any) {
+      console.error('Sync failed:', error);
+      alert(error.response?.data?.error || 'Failed to sync performance data');
+    } finally {
+      setSyncingTaskId(null);
     }
   };
 
@@ -146,11 +169,13 @@ export default function TasksPage() {
                 try {
                   if (task.businessProfile) {
                     const profile = JSON.parse(task.businessProfile);
-                    businessName = profile.brandName || businessName;
+                    businessName = profile.brandName || profile.businessName || businessName;
                   }
                 } catch (e) {
                   // Ignore parse errors
                 }
+
+                const hasMetrics = task.actualCPM !== null && task.actualCPM !== undefined;
 
                 return (
                   <div key={task.id} className="p-6 hover:bg-gray-50 transition-colors">
@@ -175,17 +200,61 @@ export default function TasksPage() {
                       })}
                     </div>
 
+                    {/* Performance Metrics - Compact View */}
                     {task.status === 'COMPLETED' && task.fbAdId && (
-                      <a
-                        href={`https://facebook.com/ads/manager/ad/${task.fbAdId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium"
-                      >
-                        View in Ads Manager
-                        <ExternalLink className="w-4 h-4 ml-1" />
-                      </a>
+                      <div className="mb-4">
+                        <PerformanceCard
+                          cpm={task.actualCPM}
+                          ctr={task.actualCTR}
+                          conversions={task.actualConversions}
+                          spend={task.actualSpend}
+                          impressions={task.impressions}
+                          clicks={task.clicks}
+                          grade={task.performanceGrade}
+                          lastSynced={task.lastPerformanceSync ? new Date(task.lastPerformanceSync) : null}
+                          compact={true}
+                          className="mb-3"
+                        />
+                        {!hasMetrics && task.lastPerformanceSync === undefined && (
+                          <p className="text-xs text-gray-500 mb-2">
+                            Performance data will be available 24 hours after launch
+                          </p>
+                        )}
+                      </div>
                     )}
+
+                    <div className="flex items-center gap-3">
+                      {task.status === 'COMPLETED' && task.fbAdId && (
+                        <>
+                          <button
+                            onClick={() => handleSyncTask(task.id)}
+                            disabled={syncingTaskId === task.id}
+                            className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                          >
+                            <RefreshCw className={`w-4 h-4 mr-1 ${syncingTaskId === task.id ? 'animate-spin' : ''}`} />
+                            {syncingTaskId === task.id ? 'Syncing...' : 'Sync Now'}
+                          </button>
+                          <span className="text-gray-300">|</span>
+                          <a
+                            href={`https://facebook.com/ads/manager/ad/${task.fbAdId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium"
+                          >
+                            View in Ads Manager
+                            <ExternalLink className="w-4 h-4 ml-1" />
+                          </a>
+                          <span className="text-gray-300">|</span>
+                          <button
+                            onClick={() => router.push(`/agent/tasks/${task.id}`)}
+                            className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium"
+                          >
+                            <TrendingUp className="w-4 h-4 mr-1" />
+                            View Details
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 );
               })}

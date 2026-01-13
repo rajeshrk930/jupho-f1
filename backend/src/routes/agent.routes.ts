@@ -322,6 +322,118 @@ router.post(
 );
 
 /**
+ * POST /api/agent/sync-active - Bulk sync performance for all active campaigns
+ * Fetches metrics only for COMPLETED tasks with FB Ad IDs to save API calls
+ */
+router.post('/sync-active', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    
+    // Get Facebook credentials
+    const fbAccount = await prisma.facebookAccount.findUnique({
+      where: { userId }
+    });
+
+    if (!fbAccount) {
+      return res.status(404).json({ error: 'Facebook account not connected' });
+    }
+
+    // Find all COMPLETED tasks with Facebook Ad IDs
+    const tasks = await prisma.agentTask.findMany({
+      where: {
+        userId,
+        status: 'COMPLETED',
+        fbAdId: { not: null }
+      },
+      select: {
+        id: true,
+        fbAdId: true,
+        output: true
+      }
+    });
+
+    if (tasks.length === 0) {
+      return res.json({ 
+        message: 'No active campaigns to sync',
+        synced: 0,
+        failed: 0
+      });
+    }
+
+    // Fetch all ads with insights from Facebook in one call
+    const { FacebookService } = require('../services/facebook.service');
+    const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
+    const allAds = await FacebookService.getActiveAds(accessToken, fbAccount.adAccountId, 1000);
+
+    let synced = 0;
+    let failed = 0;
+
+    // Update each task with latest performance data
+    for (const task of tasks) {
+      try {
+        const targetAd = allAds.find((ad: any) => ad.id === task.fbAdId);
+        
+        if (!targetAd || !targetAd.insights?.data?.[0]) {
+          failed++;
+          continue;
+        }
+
+        const insights = targetAd.insights.data[0];
+        const cpm = parseFloat(insights.cpm || '0');
+        const ctr = parseFloat(insights.ctr || '0');
+        const conversions = parseInt(insights.conversions || '0', 10);
+        
+        // Calculate performance grade
+        let grade = 'PENDING';
+        if (ctr >= 2.0 && cpm <= 100) {
+          grade = 'EXCELLENT';
+        } else if (ctr >= 1.5 && cpm <= 150) {
+          grade = 'GOOD';
+        } else if (ctr >= 1.0 && cpm <= 200) {
+          grade = 'AVERAGE';
+        } else {
+          grade = 'POOR';
+        }
+
+        // Update task
+        const output = task.output ? JSON.parse(task.output) : {};
+        await prisma.agentTask.update({
+          where: { id: task.id },
+          data: {
+            fbCampaignId: output.fbCampaignId || null,
+            fbAdSetId: output.fbAdSetId || null,
+            actualCPM: cpm,
+            actualCTR: ctr,
+            actualConversions: conversions,
+            actualSpend: parseFloat(insights.spend || '0'),
+            impressions: parseInt(insights.impressions || '0', 10),
+            clicks: parseInt(insights.clicks || '0', 10),
+            performanceGrade: grade,
+            fbInsightsData: JSON.stringify(insights),
+            lastPerformanceSync: new Date()
+          }
+        });
+
+        synced++;
+      } catch (err) {
+        console.error(`Failed to sync task ${task.id}:`, err);
+        failed++;
+      }
+    }
+
+    res.json({
+      message: `Synced ${synced} campaigns successfully`,
+      synced,
+      failed,
+      total: tasks.length
+    });
+  } catch (error: any) {
+    console.error('Bulk sync error:', error);
+    res.status(500).json({ error: error.message || 'Failed to sync campaigns' });
+  }
+});
+
+/**
  * POST /api/agent/track-performance - Save campaign performance metrics
  * Updates AgentTask with actual performance data from Meta for future AI learning
  */
