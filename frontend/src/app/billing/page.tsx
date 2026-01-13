@@ -64,15 +64,24 @@ export default function BillingPage() {
     ? Math.max(0, Math.ceil((new Date(usageStats.proExpiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
 
+  // Show loading while checking auth
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-base-surface py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 py-12 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-base-elevated rounded w-64"></div>
+            <div className="h-8 bg-gray-200 rounded w-64"></div>
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="h-64 bg-base-elevated rounded-md"></div>
-              <div className="h-64 bg-base-elevated rounded-md"></div>
+              <div className="h-64 bg-gray-200 rounded-md"></div>
+              <div className="h-64 bg-gray-200 rounded-md"></div>
             </div>
           </div>
         </div>
@@ -81,36 +90,23 @@ export default function BillingPage() {
   }
 
   if (isError) {
-    const errorMessage = (error as any)?.response?.data?.message || (error as any)?.message || 'Unknown error';
-    const errorStatus = (error as any)?.response?.status;
-    
     return (
-      <div className="min-h-screen bg-base-surface py-12 px-4">
-        <div className="max-w-5xl mx-auto space-y-4">
-          <div className="bg-signal-danger/10 border border-signal-danger/20 rounded-md p-6">
-            <h2 className="text-signal-danger font-semibold mb-2">Failed to load usage stats</h2>
-            <p className="text-signal-danger mb-2">Error: {errorMessage}</p>
-            {errorStatus && <p className="text-signal-danger mb-2">Status: {errorStatus}</p>}
-            <p className="text-signal-danger text-sm">Please check the console for more details or try refreshing the page.</p>
-          </div>
-          <button
-            onClick={() => window.location.reload()}
-            className="btn-primary"
-          >
-            Refresh Page
-          </button>
+      <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-6">
+          <h2 className="text-red-800 font-semibold mb-2">Failed to load billing data</h2>
+          <p className="text-red-600 text-sm">{(error as any)?.message || 'Something went wrong'}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-base-surface py-8 px-6">
+    <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 py-8 px-6">
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">Billing & Plans</h1>
-          <p className="text-text-secondary">Manage your subscription and view usage statistics</p>
+          <h1 className="text-3xl font-bold text-charcoal-900 mb-2">Billing & Plans</h1>
+          <p className="text-charcoal-600">Manage your subscription and view usage statistics</p>
         </div>
 
         {/* Current Plan Card */}

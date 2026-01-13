@@ -74,17 +74,10 @@ export default function AgentPage() {
     }
   }, [isAuthenticated, router]);
 
-  // Don't render until auth is checked
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
-      </div>
-    );
-  }
-
   // Restore state from localStorage on mount
   useEffect(() => {
+    if (!isAuthenticated) return; // Skip if not authenticated
+    
     try {
       const savedState = localStorage.getItem(FLOW_STATE_KEY);
       if (savedState) {
@@ -110,10 +103,12 @@ export default function AgentPage() {
       console.error('❌ [Flow] Error restoring state:', error);
       localStorage.removeItem(FLOW_STATE_KEY);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
+    if (!isAuthenticated) return; // Skip if not authenticated
+    
     if (isRestored || currentStep > 1) {
       const stateToSave: SavedFlowState = {
         currentStep,
@@ -156,6 +151,15 @@ export default function AgentPage() {
       router.push('/dashboard');
     }
   };
+
+  // Don't render until auth is checked
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
