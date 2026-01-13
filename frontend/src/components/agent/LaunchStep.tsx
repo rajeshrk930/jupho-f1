@@ -103,7 +103,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
             href={adLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mb-4"
+            className="inline-flex items-center px-6 py-3 bg-coral-600 text-white rounded-lg hover:bg-coral-700 transition-colors mb-4"
           >
             View in Ads Manager
             <ExternalLink className="w-5 h-5 ml-2" />
@@ -138,7 +138,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
           </div>
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-3 sm:px-4 sm:py-2 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 active:scale-95 transition-all text-base sm:text-sm font-medium min-h-[48px] sm:min-h-0"
+            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-3 sm:px-4 sm:py-2 bg-coral-50 text-coral-700 rounded-xl hover:bg-coral-100 active:scale-95 transition-all text-base sm:text-sm font-medium min-h-[48px] sm:min-h-0"
           >
             {showPreview ? (
               <>
@@ -257,7 +257,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
               </div>
               <div>
                 <p className="text-xs text-gray-500 mb-1">Call to Action</p>
-                <span className="inline-block px-3 py-1 bg-blue-600 text-white text-sm rounded-lg">
+                <span className="inline-block px-3 py-1 bg-coral-600 text-white text-sm rounded-lg">
                   {strategy.adCopy.cta}
                 </span>
               </div>
@@ -267,7 +267,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
       </div>
 
       {/* Campaign Settings Summary */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-coral-200 p-6">
+      <div className="bg-gradient-to-r from-coral-50 to-mint-50 rounded-xl border border-coral-200 p-6">
         <h3 className="font-semibold text-gray-900 mb-4">Campaign Settings</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>

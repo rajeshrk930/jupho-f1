@@ -165,8 +165,8 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
         {/* Ad Goal Selection */}
         <div className="mb-10">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-full mb-4">
-              <Target className="w-8 h-8 text-purple-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-coral-50 rounded-full mb-4">
+              <Target className="w-8 h-8 text-coral-600" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
               Select Your Ad Goal
@@ -341,18 +341,18 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
     return (
       <div className="bg-gradient-to-br from-white to-coral-50/30 rounded-3xl shadow-xl border border-coral-100 p-12 text-center relative overflow-hidden">
         {/* Animated background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-coral-500/5 via-purple-500/5 to-blue-500/5 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-r from-coral-500/5 via-mint-500/5 to-coral-400/5 animate-pulse" />
         
         <div className="relative z-10">
           {/* Animated brain icon with glow effect */}
           <div className="relative inline-block mb-6">
             <div className="absolute inset-0 bg-coral-500/20 rounded-full blur-xl animate-pulse" />
-            <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-coral-500 to-purple-600 rounded-full shadow-lg">
+            <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-coral-500 to-coral-600 rounded-full shadow-lg">
               <Sparkles className="w-10 h-10 text-white animate-pulse" />
             </div>
           </div>
 
-          <h3 className="text-2xl font-bold text-gray-900 mb-3 bg-gradient-to-r from-coral-600 to-purple-600 bg-clip-text text-transparent">
+          <h3 className="text-2xl font-bold text-gray-900 mb-3 bg-gradient-to-r from-coral-500 to-coral-600 bg-clip-text text-transparent">
             AI is Crafting Your Strategy...
           </h3>
           <p className="text-gray-600 mb-8 text-lg">
@@ -362,7 +362,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           {/* Animated progress bar */}
           <div className="max-w-md mx-auto mb-8">
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-coral-500 via-purple-500 to-blue-500 rounded-full animate-loading" 
+              <div className="h-full bg-gradient-to-r from-coral-500 via-mint-500 to-coral-600 rounded-full animate-loading" 
                    style={{ width: '70%' }} />
             </div>
           </div>
@@ -377,7 +377,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
             </div>
             
             <div className="flex items-center text-sm bg-white/80 backdrop-blur rounded-lg px-4 py-3 shadow-sm border border-coral-100 transform transition-all hover:scale-105">
-              <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-coral-500 to-purple-600 rounded-full flex items-center justify-center mr-3 animate-pulse">
+              <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-coral-500 to-coral-600 rounded-full flex items-center justify-center mr-3 animate-pulse">
                 <Loader2 className="w-5 h-5 text-white animate-spin" />
               </div>
               <span className="text-gray-700 font-medium">Finding target audience interests...</span>
@@ -434,7 +434,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl shadow-lg p-8 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-r from-coral-500 via-mint-500 to-coral-600 rounded-2xl shadow-lg p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
@@ -516,8 +516,8 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
       {/* Targeting */}
       <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-all">
         <div className="flex items-center mb-6">
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mr-3">
-            <Users className="w-5 h-5 text-blue-600" />
+          <div className="w-10 h-10 bg-mint-50 rounded-xl flex items-center justify-center mr-3">
+            <Users className="w-5 h-5 text-mint-600" />
           </div>
           <h3 className="font-semibold text-gray-900">Target Audience</h3>
         </div>
@@ -548,7 +548,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
               {strategy.targeting.interests.slice(0, 6).map((interest, i) => (
                 <span
                   key={i}
-                  className="px-3 py-1.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg"
+                  className="px-3 py-1.5 bg-mint-50 text-mint-700 text-sm font-medium rounded-lg"
                 >
                   {interest.name}
                 </span>

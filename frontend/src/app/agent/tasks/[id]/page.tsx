@@ -47,20 +47,20 @@ export default function TaskDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-purple-600 animate-spin" />
+      <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50 flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-coral-600 animate-spin" />
       </div>
     );
   }
 
   if (!task) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Task not found</p>
+          <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={() => router.push('/agent/tasks')}
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+            className="px-6 py-3 bg-coral-600 text-white rounded-lg hover:bg-coral-700"
           >
             Back to Tasks
           </button>
@@ -87,7 +87,7 @@ export default function TaskDetailsPage() {
   const hasMetrics = task.actualCPM !== null && task.actualCPM !== undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -104,7 +104,7 @@ export default function TaskDetailsPage() {
                 href={`https://facebook.com/ads/manager/ad/${task.fbAdId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className="flex items-center px-4 py-2 bg-coral-600 text-white rounded-lg hover:bg-coral-700 transition-colors"
               >
                 View in Ads Manager
                 <ExternalLink className="w-4 h-4 ml-2" />
@@ -221,14 +221,14 @@ export default function TaskDetailsPage() {
                       key={creative.id}
                       className={`p-3 rounded-lg border ${
                         creative.isSelected
-                          ? 'border-purple-300 bg-purple-50'
+                          ? 'border-coral-300 bg-coral-50'
                           : 'border-gray-200 bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
                         <p className="text-gray-900">{creative.content}</p>
                         {creative.isSelected && (
-                          <span className="ml-2 px-2 py-1 bg-purple-600 text-white text-xs rounded">
+                          <span className="ml-2 px-2 py-1 bg-coral-600 text-white text-xs rounded">
                             Selected
                           </span>
                         )}
@@ -249,14 +249,14 @@ export default function TaskDetailsPage() {
                       key={creative.id}
                       className={`p-3 rounded-lg border ${
                         creative.isSelected
-                          ? 'border-purple-300 bg-purple-50'
+                          ? 'border-coral-300 bg-coral-50'
                           : 'border-gray-200 bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
                         <p className="text-gray-900">{creative.content}</p>
                         {creative.isSelected && (
-                          <span className="ml-2 px-2 py-1 bg-purple-600 text-white text-xs rounded flex-shrink-0">
+                          <span className="ml-2 px-2 py-1 bg-coral-600 text-white text-xs rounded flex-shrink-0">
                             Selected
                           </span>
                         )}
@@ -277,14 +277,14 @@ export default function TaskDetailsPage() {
                       key={creative.id}
                       className={`p-3 rounded-lg border ${
                         creative.isSelected
-                          ? 'border-purple-300 bg-purple-50'
+                          ? 'border-coral-300 bg-coral-50'
                           : 'border-gray-200 bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
                         <p className="text-gray-900">{creative.content}</p>
                         {creative.isSelected && (
-                          <span className="ml-2 px-2 py-1 bg-purple-600 text-white text-xs rounded flex-shrink-0">
+                          <span className="ml-2 px-2 py-1 bg-coral-600 text-white text-xs rounded flex-shrink-0">
                             Selected
                           </span>
                         )}
@@ -332,7 +332,7 @@ export default function TaskDetailsPage() {
                   <h3 className="text-sm font-medium text-gray-700 mb-2">Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {recommendations.targeting.interests.slice(0, 10).map((interest: string, idx: number) => (
-                      <span key={idx} className="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-full">
+                      <span key={idx} className="px-3 py-1 bg-coral-100 text-coral-700 text-sm rounded-full">
                         {interest}
                       </span>
                     ))}
