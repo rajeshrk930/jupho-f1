@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Helper function to format relative time
+// Helper function to format relative time (no dependencies)
 function getTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
   
