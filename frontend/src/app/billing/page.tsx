@@ -3,15 +3,16 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/store';
-import { chatApi } from '@/lib/api';
+import { agentApi } from '@/lib/api';
 import { Zap, Check, Calendar, TrendingUp, Clock, Download, Receipt } from 'lucide-react';
 import UpgradeModal from '@/components/UpgradeModal';
 import toast from 'react-hot-toast';
 
 interface UsageStats {
-  apiUsageCount: number;
-  isPro: boolean;
+  used: number;
   limit: number;
+  remaining: number;
+  plan: string;
   resetsAt: string;
   proExpiresAt: string | null;
 }
@@ -25,7 +26,7 @@ export default function BillingPage() {
     queryKey: ['usage-stats'],
     queryFn: async () => {
       try {
-        const response = await chatApi.getUsage();
+        const response = await agentApi.getUsage();
         return response.data;
       } catch (err: any) {
         console.error('Usage API Error:', err);
@@ -113,7 +114,7 @@ export default function BillingPage() {
                     {isPro ? 'Jupho Pro' : 'Free Plan'}
                   </h2>
                   <p className={`text-sm ${isPro ? 'text-text-secondary' : 'text-text-secondary'}`}>
-                    {isPro ? '₹499 / month' : 'No payment required'}
+                    {isPro ? '₹1,999 / month' : 'No payment required'}
                   </p>
                 </div>
               </div>
@@ -129,15 +130,15 @@ export default function BillingPage() {
                 <>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Unlimited AI-generated Meta ads</span>
+                    <span className="text-text-secondary text-sm">50 AI-created campaigns per month</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Unlimited ad campaigns</span>
+                    <span className="text-text-secondary text-sm">Unlimited AI ad copy generation</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Auto-generated ad copy & headlines</span>
+                    <span className="text-text-secondary text-sm">Advanced targeting recommendations</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
@@ -152,7 +153,7 @@ export default function BillingPage() {
                 <>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">3 AI-generated ads per day</span>
+                    <span className="text-text-secondary text-sm">5 campaigns per month</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
@@ -208,15 +209,15 @@ export default function BillingPage() {
               <p className="text-sm text-text-secondary">Your current usage this period</p>
             </div>
 
-            {/* Questions Used */}
+            {/* Campaigns Created */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-text-secondary" />
-                  <span className="text-sm font-medium text-text-secondary">Questions Used</span>
+                  <span className="text-sm font-medium text-text-secondary">Campaigns Created</span>
                 </div>
                 <span className="text-sm font-bold text-text-primary">
-                  {isPro ? '∞' : `${usageStats?.apiUsageCount || 0}/${usageStats?.limit || 10}`}
+                  {isPro ? `${usageStats?.used || 0}/50` : `${usageStats?.used || 0}/${usageStats?.limit || 5}`}
                 </span>
               </div>
               {!isPro && (
@@ -224,7 +225,7 @@ export default function BillingPage() {
                   <div
                     className="h-3 rounded-sm bg-signal-primary transition-all"
                     style={{ 
-                      width: `${Math.min(((usageStats?.apiUsageCount || 0) / (usageStats?.limit || 10)) * 100, 100)}%` 
+                      width: `${Math.min(((usageStats?.used || 0) / (usageStats?.limit || 5)) * 100, 100)}%` 
                     }}
                   />
                 </div>
@@ -236,18 +237,13 @@ export default function BillingPage() {
               <div className="bg-signal-primary/10 border border-signal-primary/20 rounded-md p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Clock className="w-4 h-4 text-signal-primary" />
-                  <span className="text-sm font-medium text-text-primary">Daily Reset</span>
+                  <span className="text-sm font-medium text-text-primary">Monthly Reset</span>
                 </div>
                 <p className="text-xs text-text-secondary">
-                  Your question limit resets at midnight (IST)
+                  Your campaign limit resets on the 1st of each month
                 </p>
                 <p className="text-xs text-text-secondary mt-1">
-                  Next reset: {usageStats?.resetsAt ? new Date(usageStats.resetsAt).toLocaleString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  }) : 'Tonight'}
+                  Remaining: {usageStats?.remaining || 0} campaigns this month
                 </p>
               </div>
             )}
