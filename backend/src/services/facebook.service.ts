@@ -332,7 +332,7 @@ export class FacebookService {
     adAccountId: string,
     name: string,
     objective: string, // 'OUTCOME_LEADS', 'OUTCOME_SALES', 'OUTCOME_TRAFFIC'
-    status: string = 'PAUSED' // 'ACTIVE' or 'PAUSED'
+    status: string = 'ACTIVE' // 'ACTIVE' or 'PAUSED' - Auto-publish campaigns
   ): Promise<string> {
     try {
       const cleanAccountId = this.normalizeAdAccountId(adAccountId);
@@ -400,7 +400,7 @@ export class FacebookService {
         billing_event: 'IMPRESSIONS',
         optimization_goal: 'LEAD_GENERATION',
         bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
-        status: 'PAUSED',
+        status: 'ACTIVE',
         
         // ✅ FOR LEAD GENERATION: Use ON_AD (Instant Forms)
         destination_type: 'ON_AD',
@@ -487,7 +487,7 @@ export class FacebookService {
     name: string,
     adSetId: string,
     creativeId: string,
-    status: string = 'PAUSED'
+    status: string = 'ACTIVE'
   ): Promise<string> {
     try {
       console.log(`[DEBUG] 🚨 STOP! The Ad Account ID I am using is: act_${this.normalizeAdAccountId(adAccountId)}`);
