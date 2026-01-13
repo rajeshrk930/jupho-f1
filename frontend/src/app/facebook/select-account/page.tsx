@@ -3,7 +3,7 @@
 // Force dynamic rendering to allow useSearchParams during build
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
 import { Building2, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
@@ -17,7 +17,7 @@ interface AdAccount {
   balance?: string;
 }
 
-export default function SelectAccountPage() {
+function SelectAccountPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isAuthenticated } = useAuthStore();
@@ -230,5 +230,22 @@ export default function SelectAccountPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SelectAccountPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-coral-50/30 via-mint-50/20 to-white">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500 mx-auto mb-4"></div>
+            <p className="text-charcoal-600">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <SelectAccountPageInner />
+    </Suspense>
   );
 }
