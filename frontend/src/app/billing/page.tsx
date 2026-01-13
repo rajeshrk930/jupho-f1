@@ -129,19 +129,19 @@ export default function BillingPage() {
                 <>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Unlimited analyses per day</span>
+                    <span className="text-text-secondary text-sm">Unlimited AI-generated Meta ads</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Unlimited Quick Fix Generators</span>
+                    <span className="text-text-secondary text-sm">Unlimited ad campaigns</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Unlimited PDF exports</span>
+                    <span className="text-text-secondary text-sm">Auto-generated ad copy & headlines</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Saved Templates Library</span>
+                    <span className="text-text-secondary text-sm">Direct Facebook ad publishing</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
@@ -152,19 +152,19 @@ export default function BillingPage() {
                 <>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">3 analyses per day</span>
+                    <span className="text-text-secondary text-sm">3 AI-generated ads per day</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Unlimited generators per analysis</span>
+                    <span className="text-text-secondary text-sm">Auto-generated ad copy</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">PDF export included</span>
+                    <span className="text-text-secondary text-sm">Campaign history tracking</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Saved Templates Library</span>
+                    <span className="text-text-secondary text-sm">Basic support</span>
                   </div>
                 </>
               )}
@@ -398,9 +398,9 @@ export default function BillingPage() {
               <div className="w-16 h-16 bg-base-elevated rounded-full flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-8 h-8 text-signal-primary" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Ready to unlock unlimited potential?</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">Ready to create unlimited Meta ads?</h2>
               <p className="text-white/90 mb-6">
-                Upgrade to Jupho Pro and get unlimited analyses, priority support, and advanced features for just ₹499/month.
+                Upgrade to Jupho Pro and get unlimited AI-generated ads, unlimited campaigns, and priority support for just ₹499/month.
               </p>
               <button
                 onClick={() => setShowUpgradeModal(true)}

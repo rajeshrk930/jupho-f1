@@ -30,7 +30,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
-          <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+          <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50">
             <Header />
             <main className="w-full">
               {children}

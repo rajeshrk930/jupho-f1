@@ -201,7 +201,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
   // Show loading progress UI with website preview
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 rounded-3xl shadow-xl border border-purple-100 p-8 min-h-[600px]">
+      <div className="bg-gradient-to-br from-coral-50 via-mint-50 to-white rounded-3xl shadow-xl border border-coral-100 p-8 min-h-[600px]">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="mb-6">
@@ -214,7 +214,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
           {/* Main Content - Website Preview + Steps */}
           <div className="flex gap-6 flex-1">
             {/* Website Preview with Virtual Scanning */}
-            <div className="w-1/2 bg-white rounded-2xl border-2 border-purple-200 overflow-hidden relative group shadow-lg">
+            <div className="w-1/2 bg-white rounded-2xl border-2 border-coral-200 overflow-hidden relative group shadow-lg">
               {/* Website iframe */}
               <div className="w-full h-full relative">
                 <iframe
@@ -226,12 +226,12 @@ export default function BusinessScanStep({ onComplete }: Props) {
                 />
                 
                 {/* Scanning Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/10 to-transparent pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-coral-500/10 to-transparent pointer-events-none">
                   {/* Horizontal scanning line */}
                   <div 
-                    className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-scan-line"
+                    className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-coral-500 to-transparent animate-scan-line"
                     style={{
-                      boxShadow: '0 0 20px rgba(168, 85, 247, 0.8)'
+                      boxShadow: '0 0 20px rgba(255, 127, 80, 0.8)'
                     }}
                   />
                   
@@ -239,15 +239,15 @@ export default function BusinessScanStep({ onComplete }: Props) {
                   <div className="absolute inset-0 bg-grid-pattern opacity-20" />
                   
                   {/* Corner brackets */}
-                  <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-purple-500" />
-                  <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-purple-500" />
-                  <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-purple-500" />
-                  <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-purple-500" />
+                  <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-coral-500" />
+                  <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-coral-500" />
+                  <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-coral-500" />
+                  <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-coral-500" />
                 </div>
 
                 {/* Current Step Highlight */}
                 {currentStepIndex >= 0 && (
-                  <div className="absolute top-4 left-4 right-4 bg-purple-600/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
+                  <div className="absolute top-4 left-4 right-4 bg-coral-600/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
                       <span className="text-sm font-semibold">
@@ -277,12 +277,12 @@ export default function BusinessScanStep({ onComplete }: Props) {
                       {/* Icon/Status */}
                       <div className="flex-shrink-0 relative">
                         {step.status === 'complete' ? (
-                          <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                          <div className="w-9 h-9 bg-gradient-to-br from-coral-500 to-coral-600 rounded-full flex items-center justify-center">
                             <CheckCircle className="w-5 h-5 text-white" />
                           </div>
                         ) : step.status === 'in-progress' ? (
-                          <div className="w-9 h-9 bg-white border-2 border-purple-500 rounded-full flex items-center justify-center">
-                            <Loader2 className="w-4 h-4 text-purple-600 animate-spin" />
+                          <div className="w-9 h-9 bg-white border-2 border-coral-500 rounded-full flex items-center justify-center">
+                            <Loader2 className="w-4 h-4 text-coral-600 animate-spin" />
                           </div>
                         ) : (
                           <div className="w-9 h-9 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center">
@@ -294,7 +294,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                         {index < scanSteps.length - 1 && (
                           <div
                             className={`absolute left-1/2 top-9 w-0.5 h-5 -translate-x-1/2 transition-colors duration-500 ${
-                              step.status === 'complete' ? 'bg-purple-500' : 'bg-gray-300'
+                              step.status === 'complete' ? 'bg-coral-500' : 'bg-gray-300'
                             }`}
                           />
                         )}
@@ -305,7 +305,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                         <h3
                           className={`font-semibold text-sm mb-0.5 transition-colors duration-300 ${
                             step.status === 'in-progress'
-                              ? 'text-purple-900'
+                              ? 'text-coral-900'
                               : step.status === 'complete'
                               ? 'text-gray-900'
                               : 'text-gray-500'
@@ -325,7 +325,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                         
                         {/* Show details for current step */}
                         {step.status === 'in-progress' && currentStepIndex === index && (
-                          <div className="mt-1.5 text-xs text-purple-700 font-medium animate-pulse">
+                          <div className="mt-1.5 text-xs text-coral-700 font-medium animate-pulse">
                             Analyzing your content...
                           </div>
                         )}
@@ -336,7 +336,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
               </div>
 
               {/* What we extract section */}
-              <div className="mt-4 p-4 bg-white/60 backdrop-blur rounded-xl border border-purple-200">
+              <div className="mt-4 p-4 bg-white/60 backdrop-blur rounded-xl border border-coral-200">
                 <p className="text-sm font-medium text-gray-700 mb-2">💡 What we extract:</p>
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>• Brand name and description</li>
@@ -379,11 +379,11 @@ export default function BusinessScanStep({ onComplete }: Props) {
 
           {/* Description */}
           {scannedData.description && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="p-4 bg-coral-50 border border-coral-200 rounded-lg">
               <div className="flex items-start">
-                <FileText className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+                <FileText className="w-5 h-5 text-coral-600 mt-0.5 mr-3 flex-shrink-0" />
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-blue-900 mb-1">Business Description</h3>
+                  <h3 className="text-sm font-semibold text-coral-900 mb-1">Business Description</h3>
                   <p className="text-sm text-gray-700">{scannedData.description}</p>
                 </div>
               </div>
@@ -392,17 +392,17 @@ export default function BusinessScanStep({ onComplete }: Props) {
 
           {/* Products */}
           {scannedData.products && scannedData.products.length > 0 && (
-            <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+            <div className="p-4 bg-mint-50 border border-mint-200 rounded-lg">
               <div className="flex items-start">
-                <Package className="w-5 h-5 text-purple-600 mt-0.5 mr-3 flex-shrink-0" />
+                <Package className="w-5 h-5 text-mint-600 mt-0.5 mr-3 flex-shrink-0" />
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-purple-900 mb-2">
-                    Products/Services <span className="text-xs font-normal text-purple-600">({scannedData.products.length} found)</span>
+                  <h3 className="text-sm font-semibold text-mint-900 mb-2">
+                    Products/Services <span className="text-xs font-normal text-mint-600">({scannedData.products.length} found)</span>
                   </h3>
                   <ul className="space-y-1">
                     {scannedData.products.map((product, idx) => (
                       <li key={idx} className="text-sm text-gray-700 flex items-start">
-                        <span className="text-purple-600 mr-2">•</span>
+                        <span className="text-mint-600 mr-2">•</span>
                         <span>{product}</span>
                       </li>
                     ))}
@@ -455,11 +455,11 @@ export default function BusinessScanStep({ onComplete }: Props) {
 
           {/* Images */}
           {scannedData.visualStyle?.imageUrls && scannedData.visualStyle.imageUrls.length > 0 && (
-            <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+            <div className="p-4 bg-coral-50 border border-coral-200 rounded-lg">
               <div className="flex items-start mb-3">
-                <Image className="w-5 h-5 text-indigo-600 mt-0.5 mr-3 flex-shrink-0" />
-                <h3 className="text-sm font-semibold text-indigo-900">
-                  Extracted Images <span className="text-xs font-normal text-indigo-600">({scannedData.visualStyle.imageUrls.length} found)</span>
+                <Image className="w-5 h-5 text-coral-600 mt-0.5 mr-3 flex-shrink-0" />
+                <h3 className="text-sm font-semibold text-coral-900">
+                  Extracted Images <span className="text-xs font-normal text-coral-600">({scannedData.visualStyle.imageUrls.length} found)</span>
                 </h3>
               </div>
               <div className="grid grid-cols-4 gap-2">
@@ -500,28 +500,28 @@ export default function BusinessScanStep({ onComplete }: Props) {
   }
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 rounded-3xl shadow-2xl border-0 p-8">
+    <div className="relative overflow-hidden bg-gradient-to-br from-coral-50 via-mint-50 to-white rounded-3xl shadow-2xl border-0 p-8">
       {/* Animated Background Blobs */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
-      <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-coral-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-mint-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+      <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-coral-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
       
       <div className="relative z-10">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg transform hover:scale-110 transition-transform">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-coral-500 to-coral-600 rounded-2xl mb-4 shadow-lg transform hover:scale-110 transition-transform">
             <Sparkles className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-3">
+          <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-600 mb-3">
             What's Your Website? ✨
           </h2>
           <p className="text-lg text-gray-700 max-w-xl mx-auto">
             Drop your URL and watch the magic happen! We'll analyze everything in 90 seconds 🚀
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-purple-200">
+          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-coral-200">
             <div className="flex -space-x-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-white" />
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 border-2 border-white" />
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 border-2 border-white" />
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-coral-400 to-coral-500 border-2 border-white" />
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-mint-400 to-mint-500 border-2 border-white" />
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-coral-300 to-mint-400 border-2 border-white" />
             </div>
             <span className="text-xs font-semibold text-gray-700">2,847 businesses analyzed this week</span>
           </div>
@@ -534,7 +534,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
             onClick={() => setMode('url')}
             className={`flex-1 py-5 px-6 rounded-2xl transition-all active:scale-95 transform hover:scale-105 ${
               mode === 'url'
-                ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-xl shadow-purple-300/50'
+                ? 'bg-gradient-to-br from-coral-500 to-coral-600 text-white shadow-xl shadow-coral-300/50'
                 : 'bg-white/70 backdrop-blur-sm text-gray-700 border-2 border-white shadow-md hover:shadow-lg'
             }`}
           >
@@ -546,7 +546,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
             onClick={() => setMode('manual')}
             className={`flex-1 py-5 px-6 rounded-2xl transition-all active:scale-95 transform hover:scale-105 ${
               mode === 'manual'
-                ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-xl shadow-purple-300/50'
+                ? 'bg-gradient-to-br from-coral-500 to-coral-600 text-white shadow-xl shadow-coral-300/50'
                 : 'bg-white/70 backdrop-blur-sm text-gray-700 border-2 border-white shadow-md hover:shadow-lg'
             }`}
           >
@@ -563,18 +563,18 @@ export default function BusinessScanStep({ onComplete }: Props) {
                 🔗 Paste Your Website URL
               </label>
               <div className="relative">
-                <Globe className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-purple-400" />
+                <Globe className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-coral-400" />
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://yourawesome.business"
-                  className="w-full pl-14 pr-4 py-5 text-lg font-medium border-2 border-purple-200 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-400 bg-white shadow-inner"
+                  className="w-full pl-14 pr-4 py-5 text-lg font-medium border-2 border-coral-200 rounded-xl focus:ring-4 focus:ring-coral-300 focus:border-coral-400 bg-white shadow-inner"
                   disabled={loading}
                 />
               </div>
-              <div className="mt-4 flex items-start gap-2 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
-                <Sparkles className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
+              <div className="mt-4 flex items-start gap-2 p-3 bg-gradient-to-r from-coral-50 to-mint-50 rounded-lg border border-coral-100">
+                <Sparkles className="w-5 h-5 text-coral-500 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-gray-700">
                   <span className="font-semibold">AI will extract:</span> Brand identity, products, unique selling points, visual style & contact info
                 </p>
@@ -587,11 +587,11 @@ export default function BusinessScanStep({ onComplete }: Props) {
               <label className="block text-base font-bold text-gray-800 mb-3">
                 ✨ Tell Us Your Story
               </label>
-              <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl">
-                <p className="text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
+              <div className="mb-4 p-4 bg-gradient-to-br from-mint-50 to-mint-100 border-2 border-mint-200 rounded-xl">
+                <p className="text-sm font-bold text-mint-900 mb-2 flex items-center gap-2">
                   <span className="text-lg">💡</span> What should you include?
                 </p>
-                <ul className="text-sm text-blue-800 space-y-2">
+                <ul className="text-sm text-mint-800 space-y-2">
                   <li className="flex items-start gap-2">
                     <span className="text-lg">🎯</span>
                     <span>What products or services you sell</span>
@@ -615,11 +615,11 @@ export default function BusinessScanStep({ onComplete }: Props) {
                 onChange={(e) => setManualInput(e.target.value)}
                 placeholder="Example: I run a boutique coffee roastery in Portland. We source organic beans from Ethiopia and Colombia, roast them in small batches, and sell to local cafes and online. Our customers are coffee enthusiasts who care about sustainability and taste. We're known for our unique honey-processed beans and eco-friendly packaging. Goal: Get 50 new wholesale clients this quarter!"
                 rows={8}
-                className="w-full px-5 py-4 text-base border-2 border-purple-200 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-400 resize-none bg-white shadow-inner font-medium"
+                className="w-full px-5 py-4 text-base border-2 border-coral-200 rounded-xl focus:ring-4 focus:ring-coral-300 focus:border-coral-400 resize-none bg-white shadow-inner font-medium"
                 disabled={loading}
               />
               <p className="mt-3 text-sm text-gray-600 font-medium">
-                <span className="text-purple-600">Pro tip:</span> The more details you share, the better your AI-powered ads will be! 🎨
+                <span className="text-coral-600">Pro tip:</span> The more details you share, the better your AI-powered ads will be! 🎨
               </p>
             </div>
           </div>
@@ -634,7 +634,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
         <button
           type="submit"
           disabled={!isValid || loading}
-          className="w-full py-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-2xl hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-xl shadow-purple-300/50 hover:shadow-2xl hover:shadow-purple-400/50 transform hover:scale-105"
+          className="w-full py-6 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-bold rounded-2xl hover:from-coral-600 hover:to-coral-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-xl shadow-coral-300/50 hover:shadow-2xl hover:shadow-coral-400/50 transform hover:scale-105"
         >
           {loading ? (
             <>
@@ -657,23 +657,23 @@ export default function BusinessScanStep({ onComplete }: Props) {
         </p>
         <ul className="text-sm text-gray-700 space-y-2">
           <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
             Brand name and description
           </li>
           <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
             Products/services offered
           </li>
           <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
             Unique selling points (USPs)
           </li>
           <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
             Visual style and branding
           </li>
           <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600"></span>
             Contact information
           </li>
         </ul>
