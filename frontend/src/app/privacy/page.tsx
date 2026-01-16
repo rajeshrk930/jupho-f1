@@ -1,21 +1,32 @@
 import Link from 'next/link';
+import { Sparkles, ArrowLeft } from 'lucide-react';
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-coral-50 to-mint-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-charcoal-100 p-8 md:p-12">
-        <div className="mb-8">
-          <Link 
-            href="/"
-            className="text-sm text-charcoal-600 hover:text-charcoal-800 mb-4 inline-block"
-          >
-            ← Back to Home
+    <div className="min-h-screen bg-gradient-to-br from-white via-coral-50 to-mint-50">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <ArrowLeft className="w-5 h-5 text-charcoal-600" />
+            <Sparkles className="w-6 h-6 text-coral-600" />
+            <span className="text-2xl font-bold text-charcoal-900">Jupho</span>
           </Link>
-          <h1 className="text-4xl font-bold text-charcoal-900 mb-2">Privacy Policy</h1>
-          <p className="text-charcoal-600">Last updated: January 10, 2026</p>
+          <Link
+            href="/sign-up"
+            className="bg-coral-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-coral-700 transition-colors"
+          >
+            Get Started
+          </Link>
         </div>
+      </header>
 
-        <div className="prose prose-charcoal max-w-none space-y-6">
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h1 className="text-4xl font-bold text-charcoal-900 mb-4">Privacy Policy</h1>
+        <p className="text-charcoal-600 mb-8">Last updated: January 16, 2026</p>
+
+        <div className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
           <section>
             <p className="text-charcoal-700 leading-relaxed">
               Welcome to Jupho ("we", "our", "us").
@@ -273,7 +284,21 @@ export default function PrivacyPolicyPage() {
             Terms of Service
           </Link>
         </div>
-      </div>
+        {/* Footer */}
+        <footer className="mt-16 pt-8 border-t border-charcoal-200">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center gap-2 mb-4 md:mb-0">
+              <Sparkles className="h-5 w-5 text-primary-500" />
+              <span className="font-semibold text-charcoal-900">Jupho</span>
+            </div>
+            <div className="flex gap-6 text-sm text-charcoal-600">
+              <Link href="/privacy" className="hover:text-primary-500 transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-primary-500 transition-colors">Terms of Service</Link>
+              <Link href="mailto:support@jupho.io" className="hover:text-primary-500 transition-colors">Contact</Link>
+            </div>
+          </div>
+          <p className="text-center text-sm text-charcoal-500 mt-6">© 2026 Jupho. All rights reserved.</p>
+        </footer>      </div>
     </div>
   );
 }

@@ -1,21 +1,34 @@
 import Link from 'next/link';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-coral-50 to-mint-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-charcoal-100 p-8 md:p-12">
-        <div className="mb-8">
-          <Link 
-            href="/"
-            className="text-sm text-charcoal-600 hover:text-charcoal-800 mb-4 inline-block"
-          >
-            ← Back to Home
+    <div className="min-h-screen bg-gradient-to-br from-charcoal-50 via-white to-primary-50">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 text-charcoal-600 hover:text-charcoal-900 transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+            <span>Back to Home</span>
           </Link>
-          <h1 className="text-4xl font-bold text-charcoal-900 mb-2">Terms of Service</h1>
-          <p className="text-charcoal-600">Last updated: January 10, 2026</p>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-6 w-6 text-primary-500" />
+              <span className="text-xl font-bold text-charcoal-900">Jupho</span>
+            </div>
+            <Link
+              href="/sign-up"
+              className="px-6 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+            >
+              Get Started
+            </Link>
+          </div>
         </div>
 
-        <div className="prose prose-charcoal max-w-none space-y-8">
+        <h1 className="text-4xl font-bold text-charcoal-900 mb-4">Terms of Service</h1>
+        <p className="text-charcoal-600 mb-8">Last updated: January 16, 2026</p>
+
+        <div className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
           <section>
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">1. Agreement to Terms</h2>
             <p className="text-charcoal-700 leading-relaxed">
@@ -376,21 +389,21 @@ export default function TermsOfServicePage() {
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-charcoal-200 text-center">
-          <Link 
-            href="/login"
-            className="text-sm text-coral-600 hover:text-coral-700 font-medium"
-          >
-            Back to Login
-          </Link>
-          <span className="mx-3 text-charcoal-300">|</span>
-          <Link 
-            href="/privacy"
-            className="text-sm text-coral-600 hover:text-coral-700 font-medium"
-          >
-            Privacy Policy
-          </Link>
-        </div>
+        {/* Footer */}
+        <footer className="mt-16 pt-8 border-t border-charcoal-200">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center gap-2 mb-4 md:mb-0">
+              <Sparkles className="h-5 w-5 text-primary-500" />
+              <span className="font-semibold text-charcoal-900">Jupho</span>
+            </div>
+            <div className="flex gap-6 text-sm text-charcoal-600">
+              <Link href="/privacy" className="hover:text-primary-500 transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-primary-500 transition-colors">Terms of Service</Link>
+              <Link href="mailto:support@jupho.io" className="hover:text-primary-500 transition-colors">Contact</Link>
+            </div>
+          </div>
+          <p className="text-center text-sm text-charcoal-500 mt-6">© 2026 Jupho. All rights reserved.</p>
+        </footer>
       </div>
     </div>
   );
