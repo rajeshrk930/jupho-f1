@@ -8,9 +8,9 @@ const isPublicRoute = createRouteMatcher([
   "/privacy(.*)",
 ]);
 
+// Enforce Clerk auth for all non-public routes
 export default clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
-    // Enforce auth for all non-public routes
     await auth.protect();
   }
 });
