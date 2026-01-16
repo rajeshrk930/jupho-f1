@@ -13,13 +13,13 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="https://app.jupho.io/sign-in"
+              href="/sign-in"
               className="text-charcoal-700 hover:text-coral-600 font-medium transition-colors"
             >
               Sign In
             </a>
             <a
-              href="https://app.jupho.io/sign-up"
+              href="/sign-up"
               className="bg-coral-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-coral-700 transition-colors"
             >
               Get Started
@@ -42,7 +42,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="https://app.jupho.io/sign-up"
+              href="/sign-up"
               className="group inline-flex items-center gap-2 bg-gradient-to-r from-coral-600 to-mint-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-2xl transition-all duration-200 hover:-translate-y-1"
             >
               Start Creating Free
@@ -129,7 +129,7 @@ export default function LandingPage() {
             Join business owners who are already creating high-performing Meta ads with AI.
           </p>
           <a
-            href="https://app.jupho.io/sign-up"
+            href="/sign-up"
             className="inline-flex items-center gap-2 bg-white text-coral-600 px-8 py-4 rounded-lg font-bold text-lg hover:shadow-2xl transition-all duration-200 hover:-translate-y-1"
           >
             Get Started Free
