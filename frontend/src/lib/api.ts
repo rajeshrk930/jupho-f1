@@ -59,14 +59,12 @@ api.interceptors.response.use(
       isHandling401 = true;
 
       try {
-        // Clerk will handle authentication state
+        // Redirect to sign-in page on 401
         if (typeof window !== 'undefined') {
-          const { signOut } = await import('@clerk/nextjs');
-          await signOut();
-          window.location.replace('/sign-in');
+          window.location.href = '/sign-in';
         }
       } catch (e) {
-        console.error('Error during signout from response interceptor', e);
+        console.error('Error during redirect from response interceptor', e);
       }
 
       // allow subsequent 401s to be handled later after a short delay
