@@ -2,10 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
 import { prisma } from '../lib/prisma';
 
-// Extend Express Request type to include user
+// Extend Express Request type to include user and auth
 declare global {
   namespace Express {
     interface Request {
+      auth?: {
+        userId: string;
+        sessionId: string;
+        actor?: any;
+        sessionClaims?: any;
+      };
       user?: {
         id: string;
         email: string;
