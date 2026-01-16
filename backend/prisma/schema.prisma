@@ -9,8 +9,8 @@ datasource db {
 
 model User {
   id            String     @id @default(uuid())
+  clerkId       String     @unique
   email         String     @unique
-  password      String
   name          String?
   plan          String     @default("FREE")
   apiUsageCount Int        @default(0)
@@ -113,6 +113,7 @@ model AgentTask {
   // Conversion tracking
   conversionMethod    String? @default("lead_form") // "lead_form" or "website"
   leadFormId          String? // Meta Lead Form ID (if using lead form)
+  privacyPolicyUrl    String? // Privacy policy URL used for lead form
   originalWebsiteUrl  String? // Original website URL from business scan
   
   // Error tracking

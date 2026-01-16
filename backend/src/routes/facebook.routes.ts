@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { clerkAuth } from '../middleware/clerkAuth';
+import { AuthRequest } from '../middleware/auth';
 import { FacebookService } from '../services/facebook.service';
 import { prisma } from '../lib/prisma';
 
@@ -10,7 +11,7 @@ const router = Router();
  * GET /api/facebook/auth-url
  * Generate Facebook OAuth URL for user to connect their account
  */
-router.get('/auth-url', authenticate, (req: AuthRequest, res: Response) => {
+router.get('/auth-url', ...clerkAuth, (req: AuthRequest, res: Response) => {
   try {
     // Log environment variables for debugging
     console.log('[Facebook OAuth] APP_ID:', process.env.FACEBOOK_APP_ID ? 'Set' : 'MISSING');
@@ -114,7 +115,7 @@ router.get('/callback', async (req, res: Response) => {
  * GET /api/facebook/ad-accounts
  * Get list of ad accounts for current user's Facebook connection
  */
-router.get('/ad-accounts', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/ad-accounts', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const fbAccount = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }
@@ -149,7 +150,7 @@ router.get('/ad-accounts', authenticate, async (req: AuthRequest, res: Response)
  * Save user's selected ad account
  */
 router.post('/select-account', 
-  authenticate,
+  ...clerkAuth,
   [
     body('adAccountId').notEmpty().withMessage('Ad account ID is required'),
     body('adAccountName').notEmpty().withMessage('Ad account name is required')
@@ -196,7 +197,7 @@ router.post('/select-account',
  * GET /api/facebook/status
  * Get connected Facebook account status
  */
-router.get('/status', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const account = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }
@@ -234,7 +235,7 @@ router.get('/status', authenticate, async (req: AuthRequest, res: Response) => {
  * DELETE /api/facebook/disconnect
  * Disconnect Facebook account
  */
-router.delete('/disconnect', authenticate, async (req: AuthRequest, res: Response) => {
+router.delete('/disconnect', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const account = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }
@@ -260,7 +261,7 @@ router.delete('/disconnect', authenticate, async (req: AuthRequest, res: Respons
  * GET /api/facebook/ads
  * Fetch active ads from Facebook Ad Account
  */
-router.get('/ads', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/ads', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const fbAccount = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }
@@ -319,7 +320,7 @@ router.get('/ads', authenticate, async (req: AuthRequest, res: Response) => {
  * GET /api/facebook/ad/:adId
  * Get specific ad details with metrics
  */
-router.get('/ad/:adId', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/ad/:adId', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { adId } = req.params;
     
@@ -354,7 +355,7 @@ router.get('/ad/:adId', authenticate, async (req: AuthRequest, res: Response) =>
  * POST /api/facebook/refresh-token
  * Refresh Facebook access token
  */
-router.post('/refresh-token', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/refresh-token', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const fbAccount = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }

@@ -10,6 +10,7 @@ import { chatRoutes } from './routes/chat.routes';
 import adminRoutes from './routes/admin.routes';
 import facebookRoutes from './routes/facebook.routes';
 import agentRoutes from './routes/agent.routes';
+import clerkRoutes from './routes/clerk.routes';
 import { errorHandler } from './middleware/errorHandler';
 import path from 'path';
 
@@ -82,6 +83,9 @@ app.use(cookieParser());
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Clerk webhook (must come before body parser limits)
+app.use('/api', clerkRoutes);
 
 // Routes with specific rate limiters
 app.use('/api/auth', authLimiter, authRoutes);

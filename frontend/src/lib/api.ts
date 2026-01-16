@@ -1,6 +1,5 @@
 import axios from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
-import { useAuthStore } from '@/lib/store';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -15,29 +14,36 @@ if (!process.env.NEXT_PUBLIC_API_URL && process.env.NODE_ENV === 'production') {
   );
 }
 
+// Helper to get Clerk token (must be called from React component)
+let getClerkToken: (() => Promise<string | null>) | null = null;
+
+export const setClerkTokenGetter = (getter: () => Promise<string | null>) => {
+  getClerkToken = getter;
+};
+
 export const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  // Send httpOnly cookies for auth (backend sets the JWT cookie)
+  // Send httpOnly cookies for auth (Clerk session tokens)
   withCredentials: true,
 });
 
-// Add auth token to requests
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  // If an explicit token exists in the client store, attach it.
-  // In cookie-based auth this will normally be undefined and cookies are sent automatically.
+// Add Clerk session token to requests
+api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Get Clerk token if getter is set
+    if (getClerkToken && typeof window !== 'undefined') {
+      const token = await getClerkToken();
+      
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
   } catch (e) {
-    // When running outside of React (eg. during SSR or in tests) accessing the store
-    // may throw — surface a debug message rather than silently swallowing it.
-    // eslint-disable-next-line no-console
-    console.warn('api request interceptor: could not read auth token from store', e);
+    // Log error but don't block the request
+    console.warn('api request interceptor: could not get Clerk token', e);
   }
   return config;
 });
@@ -46,29 +52,21 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 let isHandling401 = false;
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
-      const reqUrl = error.config?.url || '';
-      // Don't trigger logout/redirect for the auth/me probe — let callers handle it.
-      if (reqUrl.includes('/auth/me')) {
-        return Promise.reject(error);
-      }
-
       // Prevent duplicate logout/redirect attempts when multiple requests fail.
       if (isHandling401) return Promise.reject(error);
       isHandling401 = true;
 
       try {
-        useAuthStore.getState().logout();
+        // Clerk will handle authentication state
+        if (typeof window !== 'undefined') {
+          const { signOut } = await import('@clerk/nextjs');
+          await signOut();
+          window.location.replace('/sign-in');
+        }
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Error during logout from response interceptor', e);
-      }
-
-      if (typeof window !== 'undefined') {
-        // Use direct location replacement so browser history isn't polluted.
-        // If you prefer client-side routing integration, replace this with Router.push in a component.
-        window.location.replace('/login');
+        console.error('Error during signout from response interceptor', e);
       }
 
       // allow subsequent 401s to be handled later after a short delay
@@ -206,8 +204,15 @@ export const adminApi = {
 
 // Agent API
 export const agentApi = {
-  // Step 1: Business Scan
-  startBusinessScan: async (data: { url?: string; manualInput?: string }) => {
+  // Step 1: Business Scan (NEW: 3-field input, LEGACY: url/manualInput supported)
+  startBusinessScan: async (data: { 
+    description?: string; 
+    location?: string; 
+    website?: string; 
+    // Legacy support
+    url?: string; 
+    manualInput?: string;
+  }) => {
     const response = await api.post('/agent/scan', data);
     return response.data;
   },

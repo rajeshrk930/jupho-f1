@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth';
+import { clerkAuth } from '../middleware/clerkAuth';
 import { requireAdmin } from '../middleware/admin';
 import { prisma } from '../lib/prisma';
 
 const router = Router();
 
 // Apply authentication and admin middleware to all routes
-router.use(authenticate);
+router.use(...clerkAuth);
 router.use(requireAdmin);
 
 /**

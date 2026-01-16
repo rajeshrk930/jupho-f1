@@ -1,7 +1,8 @@
 import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { prisma } from '../lib/prisma';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { clerkAuth } from '../middleware/clerkAuth';
+import { AuthRequest } from '../middleware/auth';
 import { checkUsageLimit } from '../middleware/usageLimit';
 import { getAssistantReply } from '../services/openai.service';
 
@@ -18,7 +19,7 @@ const buildAnalysisTitle = (diagnosis: string) => {
 
 router.post(
   '/',
-  authenticate,
+  ...clerkAuth,
   [
     body('message').isString().isLength({ min: 1 }),
     body('conversationId').optional().isString(),
@@ -126,7 +127,7 @@ router.post(
   }
 );
 
-router.get('/history', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/history', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   const user = req.user!;
   const conversations = await prisma.conversation.findMany({
     where: { userId: user.id },
@@ -150,7 +151,7 @@ router.get('/history', authenticate, async (req: AuthRequest, res: Response) => 
   res.json({ success: true, data: items });
 });
 
-router.get('/export/jsonl', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/export/jsonl', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   const user = req.user!;
   const messages = await prisma.message.findMany({
     where: { userId: user.id },
@@ -182,7 +183,7 @@ router.get('/export/jsonl', authenticate, async (req: AuthRequest, res: Response
 });
 
 // Get usage stats
-router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
@@ -228,7 +229,7 @@ router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
   }
 });
 
-router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/:id', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   const user = req.user!;
   const convo = await prisma.conversation.findFirst({
     where: { id: req.params.id, userId: user.id },
@@ -248,7 +249,7 @@ router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
 
 router.post(
   '/:messageId/feedback',
-  authenticate,
+  ...clerkAuth,
   [body('feedback').isIn(['up', 'down'])],
   async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);

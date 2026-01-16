@@ -1,7 +1,9 @@
 import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { clerkAuth } from '../middleware/clerkAuth';
+import { AuthRequest } from '../middleware/auth';
 import { AgentService } from '../services/agent.service';
+import { IntelligentAnalysisService } from '../services/intelligentAnalysis.service';
 import { upload } from '../middleware/upload';
 import { prisma } from '../lib/prisma';
 
@@ -67,16 +69,82 @@ const checkUsageLimit = async (req: AuthRequest, res: Response, next: any) => {
 
 /**
  * 🔍 STEP 1: SCAN BUSINESS (POST /api/agent/scan)
- * Input: { url: "https://my-coaching.com" } OR { manualInput: "I sell..." }
- * Output: { taskId: "...", scrapedData: { ... } }
+ * NEW: Accepts 3-field input (description, location?, website?)
+ * LEGACY: Still supports { url } OR { manualInput } for backward compatibility
+ * Output: { taskId: "...", businessData: { ... } }
  */
-router.post('/scan', authenticate, checkUsageLimit, async (req: AuthRequest, res: Response) => {
+router.post('/scan', ...clerkAuth, checkUsageLimit, async (req: AuthRequest, res: Response) => {
   try {
-    const { url, manualInput } = req.body;
+    const { description, location, website, url, manualInput } = req.body;
     const userId = req.user!.id;
 
+    // NEW FLOW: 3-field intelligent analysis
+    if (description) {
+      try {
+        // Step 1: Validate location requirement (will throw if LOCAL business without location)
+        const validation = await IntelligentAnalysisService.validateLocationRequirement(
+          description,
+          location
+        );
+
+        if (!validation.valid) {
+          return res.status(400).json({ 
+            error: validation.error,
+            requiresLocation: true,
+            businessType: validation.businessType
+          });
+        }
+
+        // Step 2: Perform intelligent analysis
+        const analysis = await IntelligentAnalysisService.analyze({
+          description,
+          location,
+          website
+        });
+
+        // Step 3: Create task and store data
+        const task = await prisma.agentTask.create({
+          data: {
+            userId,
+            type: 'CREATE_AD',
+            status: 'PENDING',
+            conversationState: 'STRATEGY_GENERATION',
+            businessProfile: JSON.stringify(analysis)
+          }
+        });
+
+        // Step 4: Return success with extracted data
+        return res.json({
+          taskId: task.id,
+          success: true,
+          businessData: {
+            brandName: analysis.brandName,
+            description: analysis.description,
+            industry: analysis.industry,
+            products: analysis.products,
+            usps: analysis.usps,
+            targetAudience: analysis.targetAudience,
+            location: analysis.location,
+            businessType: analysis.businessType,
+            confidence: analysis.confidence,
+            source: 'intelligent_analysis'
+          },
+          message: `✅ Got it! You run ${analysis.brandName} in the ${analysis.industry} industry. I've analyzed your target audience and location. Let's create your campaign!`
+        });
+      } catch (error: any) {
+        console.error('[Agent Scan] Intelligent analysis error:', error);
+        return res.status(400).json({ 
+          error: error.message || 'Failed to analyze business description',
+          requiresLocation: error.message?.includes('specify your city')
+        });
+      }
+    }
+
+    // LEGACY FLOW: URL or manual input (keep for backward compatibility)
     if (!url && !manualInput) {
-      return res.status(400).json({ error: 'URL or manual input is required' });
+      return res.status(400).json({ 
+        error: 'Either description (recommended) or url/manualInput is required' 
+      });
     }
 
     const agentService = new AgentService();
@@ -94,7 +162,7 @@ router.post('/scan', authenticate, checkUsageLimit, async (req: AuthRequest, res
  * Input: { taskId: "...", userGoal?: "Get more leads", conversionMethod?: "lead_form" | "website", objective?: "TRAFFIC" | "LEADS" | "SALES", budget?: number }
  * Output: { strategy: { budget, targeting, copy... } }
  */
-router.post('/strategy', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/strategy', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { taskId, userGoal, conversionMethod, objective, budget } = req.body;
     
@@ -134,7 +202,7 @@ router.post('/strategy', authenticate, async (req: AuthRequest, res: Response) =
  */
 router.post(
   '/launch',
-  authenticate,
+  ...clerkAuth,
   upload.single('image'),
   async (req: AuthRequest, res: Response) => {
     try {
@@ -164,6 +232,19 @@ router.post(
       res.json(result);
     } catch (error: any) {
       console.error('Launch Error:', error);
+      
+      // Handle structured Facebook errors
+      if (error.type) {
+        return res.status(400).json({ 
+          error: error.message,
+          type: error.type,
+          action: error.action,
+          helpUrl: error.helpUrl,
+          retryable: error.retryable
+        });
+      }
+      
+      // Generic error
       res.status(500).json({ error: error.message || 'Failed to launch campaign' });
     }
   }
@@ -172,7 +253,7 @@ router.post(
 /**
  * GET /api/agent/tasks - Get user's task history
  */
-router.get('/tasks', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/tasks', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 20;
     
@@ -195,7 +276,7 @@ router.get('/tasks', authenticate, async (req: AuthRequest, res: Response) => {
 /**
  * GET /api/agent/task/:taskId - Get specific task details
  */
-router.get('/task/:taskId', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/task/:taskId', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const task = await prisma.agentTask.findUnique({
       where: { 
@@ -221,7 +302,7 @@ router.get('/task/:taskId', authenticate, async (req: AuthRequest, res: Response
 /**
  * DELETE /api/agent/task/:taskId - Delete a task
  */
-router.delete('/task/:taskId', authenticate, async (req: AuthRequest, res: Response) => {
+router.delete('/task/:taskId', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     await prisma.agentTask.delete({
       where: { 
@@ -240,7 +321,7 @@ router.delete('/task/:taskId', authenticate, async (req: AuthRequest, res: Respo
 /**
  * GET /api/agent/usage - Get current usage stats
  */
-router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
@@ -277,7 +358,7 @@ router.get('/usage', authenticate, async (req: AuthRequest, res: Response) => {
  */
 router.post(
   '/select-variant',
-  authenticate,
+  ...clerkAuth,
   [
     body('taskId').notEmpty().withMessage('Task ID is required'),
     body('creativeId').notEmpty().withMessage('Creative ID is required'),
@@ -325,7 +406,7 @@ router.post(
  * POST /api/agent/sync-active - Bulk sync performance for all active campaigns
  * Fetches metrics only for COMPLETED tasks with FB Ad IDs to save API calls
  */
-router.post('/sync-active', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/sync-active', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     
@@ -439,7 +520,7 @@ router.post('/sync-active', authenticate, async (req: AuthRequest, res: Response
  */
 router.post(
   '/track-performance',
-  authenticate,
+  ...clerkAuth,
   [
     body('taskId').notEmpty().withMessage('Task ID is required')
   ],

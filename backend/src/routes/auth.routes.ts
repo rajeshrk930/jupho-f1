@@ -3,7 +3,8 @@ import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { clerkAuth } from '../middleware/clerkAuth';
+import { AuthRequest } from '../middleware/auth';
 import { Sanitizer } from '../utils/sanitizer';
 import { getCsrfToken } from '../middleware/csrf';
 
@@ -163,7 +164,7 @@ router.post(
 );
 
 // Get current user
-router.get('/me', authenticate, async (req: AuthRequest, res) => {
+router.get('/me', ...clerkAuth, async (req: AuthRequest, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
@@ -195,7 +196,7 @@ router.get('/me', authenticate, async (req: AuthRequest, res) => {
 // Update profile
 router.patch(
   '/profile',
-  authenticate,
+  ...clerkAuth,
   [
     body('name').optional().trim().isLength({ min: 1, max: 100 }),
     body('email').optional().isEmail().normalizeEmail()
@@ -252,7 +253,7 @@ router.patch(
 // Change password
 router.patch(
   '/password',
-  authenticate,
+  ...clerkAuth,
   [
     body('currentPassword').notEmpty(),
     body('newPassword').isLength({ min: 6 })
@@ -310,7 +311,7 @@ router.patch(
 );
 
 // Export user data
-router.get('/export', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/export', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
 
@@ -370,7 +371,7 @@ router.get('/export', authenticate, async (req: AuthRequest, res: Response) => {
 });
 
 // Delete account
-router.delete('/account', authenticate, async (req: AuthRequest, res: Response) => {
+router.delete('/account', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
 
@@ -393,6 +394,6 @@ router.delete('/account', authenticate, async (req: AuthRequest, res: Response) 
 });
 
 // Get CSRF token
-router.get('/csrf-token', authenticate, getCsrfToken);
+router.get('/csrf-token', ...clerkAuth, getCsrfToken);
 
 export { router as authRoutes };

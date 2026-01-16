@@ -1,14 +1,29 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Loader2, Globe, FileText, Sparkles, CheckCircle, Package, Zap, Mail, Phone, Image, Link as LinkIcon, User } from 'lucide-react';
+import { useState } from 'react';
+import { Loader2, Sparkles, AlertCircle, MapPin, Globe, Lightbulb } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 
 interface BusinessData {
   brandName: string;
   description: string;
+  industry?: string;
   products?: string[];
   usps?: string[];
+  targetAudience?: {
+    ageMin: number;
+    ageMax: number;
+    gender: string;
+    interests: string[];
+    description: string;
+  };
+  location?: {
+    type: string;
+    name: string;
+    detected: boolean;
+  };
+  businessType?: 'LOCAL' | 'GLOBAL';
+  confidence?: number;
   visualStyle?: {
     logoUrl?: string;
     imageUrls?: string[];
@@ -36,549 +51,280 @@ type ScanStep = {
 };
 
 export default function BusinessScanStep({ onComplete }: Props) {
-  const [mode, setMode] = useState<InputMode>('url');
-  const [viewMode, setViewMode] = useState<ViewMode>('input');
-  const [url, setUrl] = useState('');
-  const [manualInput, setManualInput] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [website, setWebsite] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [scannedData, setScannedData] = useState<BusinessData | null>(null);
-  const [taskId, setTaskId] = useState<string>('');
-  const [scanSteps, setScanSteps] = useState<ScanStep[]>([
+  const [locationRequired, setLocationRequired] = useState(false);
+  const [showExamples, setShowExamples] = useState(false);
+
+  const examples = [
     {
-      id: 'parsing',
-      title: 'Parsing URL',
-      description: 'Connecting to your website and validating the URL',
-      icon: LinkIcon,
-      status: 'pending',
+      title: "🏋️ Gym/Fitness",
+      text: "I run Urban Fitness Studio in Hyderabad. We provide personal training and group fitness classes for busy professionals. Get 50% off on 6am morning batch this month."
     },
     {
-      id: 'brand',
-      title: 'Extracting Brand Info',
-      description: 'Identifying your brand name and business description',
-      icon: Sparkles,
-      status: 'pending',
+      title: "🍕 Restaurant",
+      text: "Mama's Pizza in Bangalore. We serve authentic wood-fired pizzas with free home delivery. Order now and get 2+1 offer on large pizzas."
     },
     {
-      id: 'products',
-      title: 'Identifying Products',
-      description: 'Discovering your products, services, and offerings',
-      icon: Package,
-      status: 'pending',
+      title: "📚 Online Course",
+      text: "NEET preparation online course with 500+ video lectures and doubt clearing sessions. Pan-India students can enroll. Limited seats for 2026 batch."
     },
     {
-      id: 'usps',
-      title: 'Analyzing Selling Points',
-      description: 'Finding your unique competitive advantages and USPs',
-      icon: Zap,
-      status: 'pending',
+      title: "💄 Beauty Salon",
+      text: "Glamour Beauty Salon in Mumbai. We offer bridal makeup, haircuts, and spa services. Book now for 30% off on bridal packages."
     },
     {
-      id: 'visuals',
-      title: 'Gathering Visuals',
-      description: 'Extracting images, colors, and brand visual style',
-      icon: Image,
-      status: 'pending',
-    },
-  ]);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [stepDetails, setStepDetails] = useState<string>('');
-
-  // Simulate progress through steps
-  useEffect(() => {
-    if (!loading) return;
-
-    const stepTimings = [
-      { index: 0, delay: 500, duration: 8000 },    // Parsing URL: 0-8s
-      { index: 1, delay: 8500, duration: 15000 },  // Brand Info: 8-23s
-      { index: 2, delay: 23500, duration: 25000 }, // Products: 23-48s
-      { index: 3, delay: 48500, duration: 25000 }, // USPs: 48-73s
-      { index: 4, delay: 73500, duration: 16500 }, // Visuals: 73-90s
-    ];
-
-    const timeouts: NodeJS.Timeout[] = [];
-
-    stepTimings.forEach(({ index, delay, duration }) => {
-      // Mark step as in-progress
-      const startTimeout = setTimeout(() => {
-        setScanSteps((prev) =>
-          prev.map((step, i) => ({
-            ...step,
-            status: i === index ? 'in-progress' : i < index ? 'complete' : 'pending',
-          }))
-        );
-        setCurrentStepIndex(index);
-      }, delay);
-      timeouts.push(startTimeout);
-
-      // Mark step as complete
-      const completeTimeout = setTimeout(() => {
-        setScanSteps((prev) =>
-          prev.map((step, i) => ({
-            ...step,
-            status: i <= index ? 'complete' : 'pending',
-          }))
-        );
-      }, delay + duration);
-      timeouts.push(completeTimeout);
-    });
-
-    return () => {
-      timeouts.forEach((timeout) => clearTimeout(timeout));
-    };
-  }, [loading]);
+      title: "🛍️ E-commerce",
+      text: "Handmade jewelry online store. We ship all across India. Each piece is unique and made with natural stones. Free shipping on orders above ₹999."
+    }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLocationRequired(false);
     setLoading(true);
-    setStepDetails('');
-    setCurrentStepIndex(0);
-    
-    // Reset steps to pending
-    setScanSteps((prev) =>
-      prev.map((step) => ({ ...step, status: 'pending' as const }))
-    );
 
     try {
       const response = await agentApi.startBusinessScan({
-        url: mode === 'url' ? url : undefined,
-        manualInput: mode === 'manual' ? manualInput : undefined,
+        description: description.trim(),
+        location: location.trim() || undefined,
+        website: website.trim() || undefined,
       });
 
-      // Update step details with actual data when scan completes
-      const data = response.businessData;
-      const details: string[] = [];
-      
-      if (data.brandName) {
-        details.push(`Found ${data.brandName}`);
+      if (response.success) {
+        onComplete(response.businessData, response.taskId);
       }
-      if (data.products && data.products.length > 0) {
-        details.push(`Identified ${data.products.length} products/services`);
-      }
-      if (data.usps && data.usps.length > 0) {
-        details.push(`Discovered ${data.usps.length} key differentiators`);
-      }
-      if (data.visualStyle?.imageUrls && data.visualStyle.imageUrls.length > 0) {
-        details.push(`Extracted ${data.visualStyle.imageUrls.length} images`);
-      }
-      
-      setStepDetails(details.join(' • '));
-      
-      // Mark all steps complete
-      setScanSteps((prev) =>
-        prev.map((step) => ({ ...step, status: 'complete' as const }))
-      );
-
-      setScannedData(response.businessData);
-      setTaskId(response.taskId);
-      
-      // Small delay to show completion before transitioning
-      setTimeout(() => {
-        setViewMode('preview');
-      }, 1000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to scan business. Please try again.');
+      const errorData = err.response?.data;
+      
+      if (errorData?.requiresLocation) {
+        setLocationRequired(true);
+        setError(errorData.error || 'Location is required for your business type');
+        // Auto-focus location field
+        setTimeout(() => {
+          document.getElementById('location-field')?.focus();
+        }, 100);
+      } else {
+        setError(errorData?.error || 'Failed to analyze business. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleContinue = () => {
-    if (scannedData && taskId) {
-      onComplete(scannedData, taskId);
-    }
-  };
-
-  const handleBack = () => {
-    setViewMode('input');
-    setScannedData(null);
-    setTaskId('');
-  };
-
-  const isValid = mode === 'url' ? url.trim().length > 0 : manualInput.trim().length > 20;
-
-  // Show loading progress UI with website preview
-  if (loading) {
-    return (
-      <div className="bg-gradient-to-br from-coral-50 via-mint-50 to-white rounded-3xl shadow-xl border border-coral-100 p-8 min-h-[600px]">
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Scanning Your Website
-            </h2>
-            <p className="text-gray-600">This will take approximately 90 seconds</p>
-          </div>
-
-          {/* Main Content - Website Preview + Steps */}
-          <div className="flex gap-6 flex-1">
-            {/* Website Preview with Virtual Scanning */}
-            <div className="w-1/2 bg-white rounded-2xl border-2 border-coral-200 overflow-hidden relative group shadow-lg">
-              {/* Website iframe */}
-              <div className="w-full h-full relative">
-                <iframe
-                  src={url}
-                  className="w-full h-full border-0"
-                  title="Website Preview"
-                  sandbox="allow-same-origin allow-scripts"
-                  style={{ pointerEvents: 'none' }}
-                />
-                
-                {/* Scanning Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-coral-500/10 to-transparent pointer-events-none">
-                  {/* Horizontal scanning line */}
-                  <div 
-                    className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-coral-500 to-transparent animate-scan-line"
-                    style={{
-                      boxShadow: '0 0 20px rgba(255, 127, 80, 0.8)'
-                    }}
-                  />
-                  
-                  {/* Grid overlay */}
-                  <div className="absolute inset-0 bg-grid-pattern opacity-20" />
-                  
-                  {/* Corner brackets */}
-                  <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-coral-500" />
-                  <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-coral-500" />
-                  <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-coral-500" />
-                  <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-coral-500" />
-                </div>
-
-                {/* Current Step Highlight */}
-                {currentStepIndex >= 0 && (
-                  <div className="absolute top-4 left-4 right-4 bg-coral-600/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-sm font-semibold">
-                        {scanSteps[currentStepIndex]?.title}
-                      </span>
-                    </div>
-                    <p className="text-xs mt-1 opacity-90">
-                      {scanSteps[currentStepIndex]?.description}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Progress Steps */}
-            <div className="w-1/2 flex flex-col">
-              <div className="space-y-4 flex-1">
-                {scanSteps.map((step, index) => {
-                  const StepIcon = step.icon;
-                  return (
-                    <div
-                      key={step.id}
-                      className={`flex items-start space-x-3 transition-all duration-500 ${
-                        step.status === 'pending' ? 'opacity-40' : 'opacity-100'
-                      }`}
-                    >
-                      {/* Icon/Status */}
-                      <div className="flex-shrink-0 relative">
-                        {step.status === 'complete' ? (
-                          <div className="w-9 h-9 bg-gradient-to-br from-coral-500 to-coral-600 rounded-full flex items-center justify-center">
-                            <CheckCircle className="w-5 h-5 text-white" />
-                          </div>
-                        ) : step.status === 'in-progress' ? (
-                          <div className="w-9 h-9 bg-white border-2 border-coral-500 rounded-full flex items-center justify-center">
-                            <Loader2 className="w-4 h-4 text-coral-600 animate-spin" />
-                          </div>
-                        ) : (
-                          <div className="w-9 h-9 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center">
-                            <StepIcon className="w-4 h-4 text-gray-400" />
-                          </div>
-                        )}
-                        
-                        {/* Connecting line */}
-                        {index < scanSteps.length - 1 && (
-                          <div
-                            className={`absolute left-1/2 top-9 w-0.5 h-5 -translate-x-1/2 transition-colors duration-500 ${
-                              step.status === 'complete' ? 'bg-coral-500' : 'bg-gray-300'
-                            }`}
-                          />
-                        )}
-                      </div>
-
-                      {/* Step Content */}
-                      <div className="flex-1 pt-0.5">
-                        <h3
-                          className={`font-semibold text-sm mb-0.5 transition-colors duration-300 ${
-                            step.status === 'in-progress'
-                              ? 'text-coral-900'
-                              : step.status === 'complete'
-                              ? 'text-gray-900'
-                              : 'text-gray-500'
-                          }`}
-                        >
-                          {step.title}
-                        </h3>
-                        <p
-                          className={`text-xs transition-colors duration-300 ${
-                            step.status === 'in-progress' || step.status === 'complete'
-                              ? 'text-gray-600'
-                              : 'text-gray-400'
-                          }`}
-                        >
-                          {step.description}
-                        </p>
-                        
-                        {/* Show details for current step */}
-                        {step.status === 'in-progress' && currentStepIndex === index && (
-                          <div className="mt-1.5 text-xs text-coral-700 font-medium animate-pulse">
-                            Analyzing your content...
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Outcome note */}
-              <div className="mt-4 p-4 bg-white/60 backdrop-blur rounded-xl border border-coral-200">
-                <p className="text-sm text-gray-700">
-                  AI will understand your business and create a ready-to-launch Meta lead ad.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (viewMode === 'preview' && scannedData) {
-    const industry = (scannedData as any)?.industry || '';
-    const location = (scannedData as any)?.location || '';
-    const offer = scannedData.products?.[0] || (scannedData.description ? scannedData.description.split('.')[0] : '');
-
-    return (
-      <div className="bg-white rounded-3xl shadow-xl border border-green-100 p-8">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-50 rounded-full mb-4">
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Business Identified</h2>
-          <p className="text-gray-600">This is how your business will be advertised on Meta.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <div className="flex items-start">
-              <Sparkles className="w-5 h-5 text-gray-600 mt-0.5 mr-3 flex-shrink-0" />
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold text-gray-900 mb-1">Business Identified As</h3>
-                <p className="text-lg font-bold text-gray-900">{scannedData.brandName || '—'}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <div className="flex items-start">
-              <FileText className="w-5 h-5 text-gray-600 mt-0.5 mr-3 flex-shrink-0" />
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold text-gray-900 mb-1">Industry</h3>
-                <p className="text-sm text-gray-700">{industry || '—'}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <div className="flex items-start">
-              <Package className="w-5 h-5 text-gray-600 mt-0.5 mr-3 flex-shrink-0" />
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold text-gray-900 mb-1">Offer</h3>
-                <p className="text-sm text-gray-700">{offer || '—'}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <div className="flex items-start">
-              <Globe className="w-5 h-5 text-gray-600 mt-0.5 mr-3 flex-shrink-0" />
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold text-gray-900 mb-1">Location</h3>
-                <p className="text-sm text-gray-700">{location || '—'}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <button
-            onClick={handleBack}
-            className="flex-1 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 active:scale-98 transition-all min-h-[56px] text-base"
-          >
-            Scan Again
-          </button>
-          <button
-            onClick={handleContinue}
-            className="flex-1 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-black active:scale-98 transition-all flex items-center justify-center min-h-[56px] text-base"
-          >
-            <CheckCircle className="w-5 h-5 mr-2" />
-            Continue
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const isValid = description.trim().length >= 20;
+  const charCount = description.length;
+  const charMin = 20;
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-coral-50 via-mint-50 to-white rounded-3xl shadow-2xl border-0 p-8">
-      {/* Animated Background Blobs */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-coral-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-mint-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
-      <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-coral-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
-      
-      <div className="relative z-10">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-coral-500 to-coral-600 rounded-2xl mb-4 shadow-lg transform hover:scale-110 transition-transform">
-            <Sparkles className="w-10 h-10 text-white" />
+    <div className="max-w-3xl mx-auto">
+      <div className="bg-gradient-to-br from-coral-50 via-mint-50 to-white rounded-3xl shadow-xl border border-coral-100 p-8">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-coral-500 to-coral-600 rounded-2xl shadow-lg mb-4">
+            <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-600 mb-3">
-            What's Your Website? ✨
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Tell Us About Your Business 🚀
           </h2>
-          <p className="text-lg text-gray-700 max-w-xl mx-auto">
-            Drop your URL and watch the magic happen! We'll analyze everything in 90 seconds 🚀
+          <p className="text-gray-600">
+            Just describe what you sell. AI will handle the rest.
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-coral-200">
-            <div className="flex -space-x-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-coral-400 to-coral-500 border-2 border-white" />
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-mint-400 to-mint-500 border-2 border-white" />
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-coral-300 to-mint-400 border-2 border-white" />
-            </div>
-            <span className="text-xs font-semibold text-gray-700">2,847 businesses analyzed this week</span>
-          </div>
         </div>
 
-        {/* Mode Selector */}
-        <div className="flex gap-4 mb-6">
-          <button
-            type="button"
-            onClick={() => setMode('url')}
-            className={`flex-1 py-5 px-6 rounded-2xl transition-all active:scale-95 transform hover:scale-105 ${
-              mode === 'url'
-                ? 'bg-gradient-to-br from-coral-500 to-coral-600 text-white shadow-xl shadow-coral-300/50'
-                : 'bg-white/70 backdrop-blur-sm text-gray-700 border-2 border-white shadow-md hover:shadow-lg'
-            }`}
-          >
-            <Globe className="w-7 h-7 mx-auto mb-2" />
-            <span className="text-base font-bold">🌐 Scan Website</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('manual')}
-            className={`flex-1 py-5 px-6 rounded-2xl transition-all active:scale-95 transform hover:scale-105 ${
-              mode === 'manual'
-                ? 'bg-gradient-to-br from-coral-500 to-coral-600 text-white shadow-xl shadow-coral-300/50'
-                : 'bg-white/70 backdrop-blur-sm text-gray-700 border-2 border-white shadow-md hover:shadow-lg'
-            }`}
-          >
-            <FileText className="w-7 h-7 mx-auto mb-2" />
-            <span className="text-base font-bold">✍️ Describe It</span>
-          </button>
-        </div>
-
-      <form onSubmit={handleSubmit}>
-        {mode === 'url' ? (
-          <div className="mb-6">
-            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-lg border-2 border-white">
-              <label className="block text-base font-bold text-gray-800 mb-3">
-                🔗 Paste Your Website URL
-              </label>
-              <div className="relative">
-                <Globe className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-coral-400" />
-                <input
-                  type="url"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://yourawesome.business"
-                  className="w-full pl-14 pr-4 py-5 text-lg font-medium border-2 border-coral-200 rounded-xl focus:ring-4 focus:ring-coral-300 focus:border-coral-400 bg-white shadow-inner"
-                  disabled={loading}
-                />
-              </div>
-              <div className="mt-4 flex items-start gap-2 p-3 bg-gradient-to-r from-coral-50 to-mint-50 rounded-lg border border-coral-100">
-                <Sparkles className="w-5 h-5 text-coral-500 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-gray-700">
-                  <span className="font-semibold">AI will extract:</span> Brand identity, products, unique selling points, visual style & contact info
-                </p>
-              </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Field 1: Description (Mandatory) */}
+          <div>
+            <label className="block font-semibold text-gray-900 mb-2">
+              1️⃣ What do you sell? <span className="text-coral-600">*</span>
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="e.g., I run Rajesh Gym in Hyderabad. I want to get more students for my 6am batch with a 50% discount offer."
+              className={`w-full p-4 border-2 rounded-xl h-32 focus:outline-none focus:ring-2 transition-all resize-none ${
+                charCount < charMin 
+                  ? 'border-gray-300 focus:border-coral-500 focus:ring-coral-200' 
+                  : 'border-green-300 focus:border-green-500 focus:ring-green-200'
+              }`}
+              disabled={loading}
+            />
+            <div className="flex items-center justify-between mt-2">
+              <button
+                type="button"
+                onClick={() => setShowExamples(!showExamples)}
+                className="text-sm text-coral-600 hover:text-coral-700 font-medium flex items-center gap-1"
+              >
+                <Lightbulb className="w-4 h-4" />
+                {showExamples ? 'Hide Examples' : 'See Examples'}
+              </button>
+              <span className={`text-sm font-medium ${
+                charCount >= charMin ? 'text-green-600' : 'text-gray-500'
+              }`}>
+                {charCount >= charMin ? `✓ ${charCount} characters` : `${charCount}/${charMin} characters minimum`}
+              </span>
             </div>
-          </div>
-        ) : (
-          <div className="mb-6">
-            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-lg border-2 border-white">
-              <label className="block text-base font-bold text-gray-800 mb-3">
-                ✨ Tell Us Your Story
-              </label>
-              <div className="mb-4 p-4 bg-gradient-to-br from-mint-50 to-mint-100 border-2 border-mint-200 rounded-xl">
-                <p className="text-sm font-bold text-mint-900 mb-2 flex items-center gap-2">
-                  <span className="text-lg">💡</span> What should you include?
+
+            {/* Examples Dropdown */}
+            {showExamples && (
+              <div className="mt-4 p-4 bg-white rounded-xl border border-coral-200 space-y-3">
+                <p className="text-sm font-semibold text-gray-700 mb-2">
+                  Click any example to use it:
                 </p>
-                <ul className="text-sm text-mint-800 space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="text-lg">🎯</span>
-                    <span>What products or services you sell</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-lg">👥</span>
-                    <span>Who your dream customers are</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-lg">⭐</span>
-                    <span>What makes you special & different</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-lg">🚀</span>
-                    <span>Your main business goal right now</span>
-                  </li>
-                </ul>
+                {examples.map((example, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => {
+                      setDescription(example.text);
+                      setShowExamples(false);
+                    }}
+                    className="w-full text-left p-3 bg-gray-50 hover:bg-coral-50 rounded-lg border border-gray-200 hover:border-coral-300 transition-all"
+                  >
+                    <p className="text-sm font-semibold text-gray-900 mb-1">
+                      {example.title}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      {example.text}
+                    </p>
+                  </button>
+                ))}
               </div>
-              <textarea
-                value={manualInput}
-                onChange={(e) => setManualInput(e.target.value)}
-                placeholder="Example: I run a boutique coffee roastery in Portland. We source organic beans from Ethiopia and Colombia, roast them in small batches, and sell to local cafes and online. Our customers are coffee enthusiasts who care about sustainability and taste. We're known for our unique honey-processed beans and eco-friendly packaging. Goal: Get 50 new wholesale clients this quarter!"
-                rows={8}
-                className="w-full px-5 py-4 text-base border-2 border-coral-200 rounded-xl focus:ring-4 focus:ring-coral-300 focus:border-coral-400 resize-none bg-white shadow-inner font-medium"
+            )}
+          </div>
+
+          {/* Field 2: Location (Optional with smart validation) */}
+          <div>
+            <label className="block font-semibold text-gray-900 mb-2">
+              2️⃣ Where are most of your customers? 
+              <span className="text-gray-500 font-normal ml-2">(Optional)</span>
+            </label>
+            <div className="relative">
+              <MapPin className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${
+                locationRequired ? 'text-red-500' : 'text-gray-400'
+              }`} />
+              <input
+                id="location-field"
+                type="text"
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                  if (locationRequired && e.target.value.trim()) {
+                    setLocationRequired(false);
+                    setError('');
+                  }
+                }}
+                placeholder="e.g., Hyderabad"
+                className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                  locationRequired
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                    : 'border-gray-300 focus:border-coral-500 focus:ring-coral-200'
+                }`}
                 disabled={loading}
               />
-              <p className="mt-3 text-sm text-gray-600 font-medium">
-                <span className="text-coral-600">Pro tip:</span> The more details you share, the better your AI-powered ads will be! 🎨
+            </div>
+            {locationRequired && error && (
+              <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
+            {!locationRequired && (
+              <p className="mt-2 text-sm text-gray-600 flex items-center gap-1">
+                <span>💡</span>
+                Leave blank if you serve all of India
+              </p>
+            )}
+          </div>
+
+          {/* Field 3: Website/Instagram (Optional) */}
+          <div>
+            <label className="block font-semibold text-gray-900 mb-2">
+              3️⃣ Website or Instagram Link 
+              <span className="text-gray-500 font-normal ml-2">(Optional)</span>
+            </label>
+            <div className="relative">
+              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://..."
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-coral-500 focus:ring-2 focus:ring-coral-200 transition-all"
+                disabled={loading}
+              />
+            </div>
+            <p className="mt-2 text-sm text-gray-600 flex items-center gap-1">
+              <span>💡</span>
+              For scraping images & branding (not required)
+            </p>
+          </div>
+
+          {/* General Error (not location-specific) */}
+          {error && !locationRequired && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-800">{error}</p>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={!isValid || loading}
+            className="w-full py-5 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-bold rounded-2xl hover:from-coral-600 hover:to-coral-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-xl shadow-coral-300/50 hover:shadow-2xl hover:shadow-coral-400/50 transform hover:scale-105"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-6 h-6 animate-spin mr-3" />
+                <span>AI is analyzing your business...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-6 h-6 mr-3" />
+                <span>✨ Generate AI Strategy</span>
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Info Box */}
+        <div className="mt-6 p-5 bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-white shadow-lg">
+          <div className="flex items-start gap-3">
+            <div className="text-2xl">🎯</div>
+            <div>
+              <p className="text-sm font-semibold text-gray-900 mb-1">
+                What happens next?
+              </p>
+              <p className="text-sm text-gray-700">
+                AI will analyze your business, identify your target audience, and create a complete Meta ad campaign with headlines, ad copy, and targeting—all in about 15 seconds.
               </p>
             </div>
           </div>
-        )}
+        </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-            <p className="text-sm text-red-800">{error}</p>
+        {/* Trust Indicators */}
+        <div className="mt-6 grid grid-cols-3 gap-4">
+          <div className="text-center p-4 bg-white/50 rounded-xl">
+            <div className="text-2xl mb-1">⚡</div>
+            <p className="text-xs font-semibold text-gray-900">30 Seconds</p>
+            <p className="text-xs text-gray-600">Average setup time</p>
           </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={!isValid || loading}
-          className="w-full py-6 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-bold rounded-2xl hover:from-coral-600 hover:to-coral-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-xl shadow-coral-300/50 hover:shadow-2xl hover:shadow-coral-400/50 transform hover:scale-105"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-6 h-6 animate-spin mr-3" />
-              <span>Analyzing Your Business... 🔍</span>
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-6 h-6 mr-3" />
-              <span>{mode === 'url' ? '🚀 Scan My Website' : '✨ Generate My Ads'}</span>
-            </>
-          )}
-        </button>
-      </form>
-
-      {/* Outcome Section */}
-      <div className="mt-8 p-5 bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-white shadow-lg">
-        <p className="text-sm text-gray-800 flex items-center gap-2">
-          <span className="text-lg">💡</span>
-          AI will understand your business and create a ready-to-launch Meta lead ad.
-        </p>
-      </div>
+          <div className="text-center p-4 bg-white/50 rounded-xl">
+            <div className="text-2xl mb-1">🎯</div>
+            <p className="text-xs font-semibold text-gray-900">Zero Knowledge</p>
+            <p className="text-xs text-gray-600">Required to start</p>
+          </div>
+          <div className="text-center p-4 bg-white/50 rounded-xl">
+            <div className="text-2xl mb-1">🚀</div>
+            <p className="text-xs font-semibold text-gray-900">Ready to Launch</p>
+            <p className="text-xs text-gray-600">Campaign in minutes</p>
+          </div>
+        </div>
       </div>
     </div>
   );

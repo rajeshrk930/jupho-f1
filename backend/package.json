@@ -12,6 +12,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
     "@prisma/client": "^5.7.1",
     "axios": "^1.13.2",
     "bcryptjs": "^2.4.3",
@@ -29,6 +30,7 @@
     "pdfkit": "^0.14.0",
     "puppeteer": "^24.34.0",
     "razorpay": "^2.9.2",
+    "svix": "^1.84.1",
     "uuid": "^9.0.1",
     "validator": "^13.15.26"
   },

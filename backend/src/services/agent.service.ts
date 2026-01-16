@@ -3,10 +3,43 @@ import { prisma } from '../lib/prisma';
 import { FacebookService } from './facebook.service';
 import { ScraperService } from './scraper.service';
 import { MasterPromptService, CampaignStrategy } from './masterPrompt.service';
+import { mapFacebookError, extractFacebookError, isFacebookError } from '../utils/facebookErrorMapper';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export class AgentService {
+  /**
+   * Get privacy policy URL with fallback logic
+   * Priority: User Website > Jupho Hosted > Facebook Page
+   */
+  private getPrivacyPolicyUrl(
+    userWebsite: string | undefined,
+    taskId: string,
+    fbPageId?: string
+  ): string {
+    // Priority 1: User has website with /privacy path
+    if (userWebsite && this.isValidUrl(userWebsite)) {
+      // Clean URL and add /privacy
+      const cleanUrl = userWebsite.replace(/\/$/, ''); // Remove trailing slash
+      return `${cleanUrl}/privacy`;
+    }
+    
+    // Priority 2: Jupho hosted privacy policy
+    const frontendUrl = process.env.FRONTEND_URL || 'https://jupho.com';
+    return `${frontendUrl}/privacy/${taskId}`;
+  }
+
+  /**
+   * Validate URL format
+   */
+  private isValidUrl(url: string): boolean {
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
   /**
    * STEP 1: Start Business Scan
    * Scrapes website or accepts manual input
@@ -383,13 +416,22 @@ export class AgentService {
         console.log('[AgentService] Intro Text:', selectedPrimaryText.substring(0, 50) + '...');
 
         try {
+          // Get privacy policy URL with fallback
+          const privacyPolicyUrl = this.getPrivacyPolicyUrl(
+            businessData.contact?.website,
+            taskId,
+            pageId
+          );
+
+          console.log('[AgentService] Using Privacy Policy URL:', privacyPolicyUrl);
+
           // Create Lead Form
           leadFormId = await FacebookService.createLeadForm(
             accessToken,
             pageId,
             `${businessData.brandName || 'Business'} - Lead Form`,
             selectedPrimaryText, // Use primary text as intro
-            'https://jupho.io/privacy',
+            privacyPolicyUrl,
             'Thank you! We\'ll contact you soon.',
             undefined // Use default questions (Name, Phone, Email)
           );
@@ -402,10 +444,13 @@ export class AgentService {
           console.log('[AgentService] Lead Form ID:', leadFormId);
           console.log('[AgentService] Check in Facebook Ads Manager → Forms Library\n');
 
-          // Save lead form ID
+          // Save lead form ID and privacy policy URL
           await prisma.agentTask.update({
             where: { id: taskId },
-            data: { leadFormId }
+            data: { 
+              leadFormId,
+              privacyPolicyUrl
+            }
           });
 
           // Create creative with lead form
@@ -506,6 +551,39 @@ export class AgentService {
     } catch (error: any) {
       console.error('[AgentService] Launch campaign error:', error);
 
+      // Check if it's a Facebook API error
+      if (isFacebookError(error)) {
+        const fbError = extractFacebookError(error);
+        if (fbError) {
+          const mappedError = mapFacebookError(fbError);
+          
+          console.error('[AgentService] Facebook API Error:', {
+            type: mappedError.type,
+            message: mappedError.userMessage,
+            originalCode: fbError.code,
+            originalMessage: fbError.message
+          });
+
+          // Update task with structured error
+          await prisma.agentTask.update({
+            where: { id: taskId },
+            data: {
+              status: 'FAILED',
+              errorMessage: `${mappedError.userMessage} ${mappedError.actionRequired}`
+            }
+          });
+
+          // Throw structured error for frontend
+          const structuredError: any = new Error(mappedError.userMessage);
+          structuredError.type = mappedError.type;
+          structuredError.action = mappedError.actionRequired;
+          structuredError.helpUrl = mappedError.helpUrl;
+          structuredError.retryable = mappedError.retryable;
+          throw structuredError;
+        }
+      }
+
+      // Generic error handling
       await prisma.agentTask.update({
         where: { id: taskId },
         data: {

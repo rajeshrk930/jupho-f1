@@ -3,7 +3,8 @@ import { body, validationResult } from 'express-validator';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { prisma } from '../lib/prisma';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { clerkAuth } from '../middleware/clerkAuth';
+import { AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
@@ -33,7 +34,7 @@ const PLANS = {
 // Create order / subscription
 router.post(
   '/create-order',
-  authenticate,
+  ...clerkAuth,
   [body('plan').isIn(['PRO_MONTHLY', 'PRO_ANNUAL'])],
   async (req: AuthRequest, res: Response) => {
     try {
@@ -95,7 +96,7 @@ router.post(
 // Verify payment
 router.post(
   '/verify',
-  authenticate,
+  ...clerkAuth,
   [
     body('razorpay_payment_id').notEmpty(),
     body('razorpay_signature').notEmpty(),
@@ -185,7 +186,7 @@ router.post(
 );
 
 // Get payment history
-router.get('/history', authenticate, async (req: AuthRequest, res) => {
+router.get('/history', ...clerkAuth, async (req: AuthRequest, res) => {
   try {
     const payments = await prisma.payment.findMany({
       where: { userId: req.user!.id },

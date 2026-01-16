@@ -4,6 +4,8 @@ import './globals.css';
 import { Providers } from '@/app/providers';
 import { Toaster } from 'react-hot-toast';
 import ConditionalHeader from '@/components/ConditionalHeader';
+import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkTokenProvider } from '@/components/ClerkTokenProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,21 +26,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
-      </head>
-      <body className={inter.className}>
-        <Providers>
-          <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50">
-            <ConditionalHeader />
-            <main className="w-full">
-              {children}
-            </main>
-          </div>
-          <Toaster position="top-right" />
-        </Providers>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <head>
+          <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+        </head>
+        <body className={inter.className}>
+          <ClerkTokenProvider>
+            <Providers>
+              <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50">
+                <ConditionalHeader />
+                <main className="w-full">
+                  {children}
+                </main>
+              </div>
+              <Toaster position="top-right" />
+            </Providers>
+          </ClerkTokenProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

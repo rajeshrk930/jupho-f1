@@ -35,6 +35,14 @@ interface Props {
   onBack: () => void;
 }
 
+interface LaunchError {
+  type?: 'PAYMENT_REQUIRED' | 'ACCOUNT_DISABLED' | 'RATE_LIMIT' | 'AD_DISAPPROVED' | 'PERMISSION_DENIED' | 'GENERIC';
+  message: string;
+  action?: string;
+  helpUrl?: string;
+  retryable?: boolean;
+}
+
 export default function LaunchStep({ taskId, strategy, businessData, onComplete, onBack }: Props) {
   const [selectedImage, setSelectedImage] = useState<string | null>(
     businessData.visualStyle?.imageUrls?.[0] || null
@@ -43,7 +51,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [launching, setLaunching] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<LaunchError | null>(null);
   const [adLink, setAdLink] = useState('');
   const [showDetails, setShowDetails] = useState(false);
 
@@ -62,7 +70,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
 
   const handleLaunch = async () => {
     setLaunching(true);
-    setError('');
+    setError(null);
 
     try {
       const response = await agentApi.launchCampaign(
@@ -80,7 +88,23 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
         onComplete();
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to launch campaign. Please try again.');
+      const errorData = err.response?.data;
+      
+      // Handle structured Facebook errors
+      if (errorData?.type) {
+        setError({
+          type: errorData.type,
+          message: errorData.error,
+          action: errorData.action,
+          helpUrl: errorData.helpUrl,
+          retryable: errorData.retryable
+        });
+      } else {
+        // Generic error
+        setError({
+          message: errorData?.error || 'Failed to launch campaign. Please try again.'
+        });
+      }
     } finally {
       setLaunching(false);
     }
@@ -275,8 +299,52 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
           )}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <p className="text-xs text-red-800">{error}</p>
+            <div className={`rounded-xl border-2 p-6 ${
+              error.type === 'PAYMENT_REQUIRED' ? 'bg-yellow-50 border-yellow-300' :
+              error.type === 'ACCOUNT_DISABLED' ? 'bg-red-50 border-red-300' :
+              error.type === 'RATE_LIMIT' ? 'bg-blue-50 border-blue-300' :
+              'bg-red-50 border-red-200'
+            }`}>
+              <div className="flex items-start gap-4">
+                <AlertCircle className={`w-6 h-6 flex-shrink-0 ${
+                  error.type === 'PAYMENT_REQUIRED' ? 'text-yellow-600' :
+                  error.type === 'RATE_LIMIT' ? 'text-blue-600' :
+                  'text-red-600'
+                }`} />
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900 mb-2">{error.message}</p>
+                  {error.action && (
+                    <p className="text-sm text-gray-700 mb-4">{error.action}</p>
+                  )}
+                  {error.helpUrl && (
+                    <a
+                      href={error.helpUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-white transition-all hover:scale-105 active:scale-95 ${
+                        error.type === 'PAYMENT_REQUIRED' ? 'bg-yellow-600 hover:bg-yellow-700' :
+                        error.type === 'PERMISSION_DENIED' ? 'bg-blue-600 hover:bg-blue-700' :
+                        'bg-red-600 hover:bg-red-700'
+                      }`}
+                    >
+                      {error.type === 'PAYMENT_REQUIRED' ? 'Add Payment Method' :
+                       error.type === 'ACCOUNT_DISABLED' ? 'Fix Account Issues' :
+                       error.type === 'PERMISSION_DENIED' ? 'Reconnect Facebook' :
+                       'Get Help'}
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                  {error.retryable && (
+                    <button
+                      onClick={handleLaunch}
+                      disabled={launching}
+                      className="ml-3 inline-flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-all disabled:opacity-50"
+                    >
+                      Try Again
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>
