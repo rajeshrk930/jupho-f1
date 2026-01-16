@@ -135,8 +135,7 @@ router.get('/ad-accounts', ...clerkAuth, async (req: AuthRequest, res: Response)
         id: account.id,
         name: account.name,
         accountStatus: account.account_status,
-        currency: account.currency,
-        balance: account.balance
+        currency: account.currency
       }))
     });
   } catch (error: any) {
