@@ -1,33 +1,24 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const PROTECTED_PATHS = [
-  '/dashboard',
-  '/analyze',
-  '/history',
-];
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/api/webhooks/clerk",
+  "/privacy(.*)",
+]);
 
-export function middleware(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-
-  const isProtected = PROTECTED_PATHS.some((path) => pathname.startsWith(path));
-  if (!isProtected) return NextResponse.next();
-
-  const token = request.cookies.get('token')?.value;
-  if (!token) {
-    const redirectTarget = `/login?redirect=${encodeURIComponent(pathname + search)}`;
-    return NextResponse.redirect(new URL(redirectTarget, request.url));
+export default clerkMiddleware((auth, request) => {
+  if (!isPublicRoute(request)) {
+    auth().protect();
   }
-
-  return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
-    '/dashboard',
-    '/dashboard/:path*',
-    '/analyze',
-    '/history',
-    '/history/:path*',
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
   ],
 };
