@@ -5,9 +5,13 @@ import Header from './Header';
 
 export default function ConditionalHeader() {
   const pathname = usePathname();
-  const AUTH_FREE_PATHS = ['/login', '/signup', '/', '/privacy', '/help'];
   
-  if (AUTH_FREE_PATHS.includes(pathname)) {
+  // Hide header on landing page, auth pages, and public pages
+  const isLandingPage = pathname === '/';
+  const isAuthPage = pathname?.startsWith('/sign-in') || pathname?.startsWith('/sign-up');
+  const isPublicPage = pathname === '/privacy' || pathname === '/terms' || pathname === '/help';
+  
+  if (isLandingPage || isAuthPage || isPublicPage) {
     return null;
   }
   
