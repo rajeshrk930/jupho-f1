@@ -17,10 +17,18 @@ const isAuthRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, request) => {
   const url = new URL(request.url);
   const hostname = url.hostname;
+  const { userId } = await auth(); // Get current user's authentication status
   
   // Determine if we're on www or app subdomain
   const isWwwDomain = hostname === 'www.jupho.io' || hostname === 'localhost' || hostname.startsWith('localhost:');
   const isAppDomain = hostname === 'app.jupho.io' || (!isWwwDomain && !hostname.includes('www'));
+  
+  // 🔒 REDIRECT ALREADY-LOGGED-IN USERS AWAY FROM AUTH PAGES
+  // If user is authenticated AND trying to access /sign-in or /sign-up
+  if (userId && isAuthRoute(request) && !request.nextUrl.pathname.includes('/webhooks')) {
+    const dashboardUrl = new URL('/dashboard', request.url);
+    return Response.redirect(dashboardUrl);
+  }
   
   // On www domain: allow landing pages, redirect app routes to app subdomain
   if (isWwwDomain) {
