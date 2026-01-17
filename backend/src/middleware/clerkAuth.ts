@@ -12,11 +12,18 @@ declare global {
 }
 
 /**
- * Cleaned up Clerk Auth - Removing strict authorizedParties to fix 401
+ * Clerk Auth - MUST include all domains that send requests to API
  */
 export const clerkAuth = [
-  // 🦁 We removed the strict list. Clerk will now use your Railway Env Vars instead.
-  ClerkExpressRequireAuth(), 
+  ClerkExpressRequireAuth({
+    authorizedParties: [
+      'https://app.jupho.io',      // Production frontend
+      'https://api.jupho.io',      // Production API (CRITICAL!)
+      'https://www.jupho.io',      // Legacy frontend
+      'http://localhost:3000',     // Local frontend dev
+      'http://localhost:5000'      // Local backend dev
+    ]
+  }), 
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const clerkUserId = req.auth?.userId;
