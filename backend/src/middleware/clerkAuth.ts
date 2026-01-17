@@ -12,18 +12,10 @@ declare global {
 }
 
 /**
- * Clerk Auth - MUST include all domains that send requests to API
+ * Clerk Auth - TEMPORARY: Removed authorizedParties to test if that's the issue
  */
 export const clerkAuth = [
-  ClerkExpressRequireAuth({
-    authorizedParties: [
-      'https://app.jupho.io',      // Production frontend
-      'https://api.jupho.io',      // Production API (CRITICAL!)
-      'https://www.jupho.io',      // Legacy frontend
-      'http://localhost:3000',     // Local frontend dev
-      'http://localhost:5000'      // Local backend dev
-    ]
-  }), 
+  ClerkExpressRequireAuth(), 
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 🔍 DEBUG: Log what Clerk gives us
