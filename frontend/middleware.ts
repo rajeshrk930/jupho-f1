@@ -11,8 +11,6 @@ const isLandingRoute = createRouteMatcher([
 const isAuthRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/login(.*)",      // Old route - will redirect to sign-in
-  "/signup(.*)",     // Old route - will redirect to sign-up
   "/api/webhooks/clerk",
 ]);
 
@@ -33,7 +31,7 @@ export default clerkMiddleware(async (auth, request) => {
   }
   
   // 🔀 REDIRECT OLD AUTH ROUTES TO NEW CLERK ROUTES
-  if (request.nextUrl.pathname === '/login') {
+  if (request.nextUrl.pathname.startsWith('/login')) {
     const signInUrl = new URL('/sign-in', request.url);
     if (request.nextUrl.searchParams.get('redirect')) {
       signInUrl.searchParams.set('redirect_url', request.nextUrl.searchParams.get('redirect')!);
@@ -41,7 +39,7 @@ export default clerkMiddleware(async (auth, request) => {
     return Response.redirect(signInUrl);
   }
   
-  if (request.nextUrl.pathname === '/signup') {
+  if (request.nextUrl.pathname.startsWith('/signup')) {
     const signUpUrl = new URL('/sign-up', request.url);
     return Response.redirect(signUpUrl);
   }
