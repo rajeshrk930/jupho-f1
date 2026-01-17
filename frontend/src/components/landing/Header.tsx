@@ -10,13 +10,13 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-4">
           <a
-            href="/sign-in"
+            href="https://app.jupho.io/sign-in"
             className="text-charcoal-700 hover:text-coral-600 font-medium transition-colors"
           >
             Sign In
           </a>
           <a
-            href="/sign-up"
+            href="https://app.jupho.io/sign-up"
             className="bg-coral-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-coral-700 transition-colors"
           >
             Get Started

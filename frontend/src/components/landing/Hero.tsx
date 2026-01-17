@@ -15,7 +15,7 @@ export default function Hero() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href="/sign-up"
+            href="https://app.jupho.io/sign-up"
             className="group inline-flex items-center gap-2 bg-gradient-to-r from-coral-600 to-mint-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-2xl transition-all duration-200 hover:-translate-y-1"
           >
             Start Creating Free

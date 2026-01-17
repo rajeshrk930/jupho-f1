@@ -11,7 +11,7 @@ export default function CTA() {
           Join business owners who are already creating high-performing Meta ads with AI.
         </p>
         <a
-          href="/sign-up"
+          href="https://app.jupho.io/sign-up"
           className="inline-flex items-center gap-2 bg-white text-coral-600 px-8 py-4 rounded-lg font-bold text-lg hover:shadow-2xl transition-all duration-200 hover:-translate-y-1"
         >
           Get Started Free
