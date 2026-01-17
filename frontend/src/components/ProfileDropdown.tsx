@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { LogOut, CreditCard, Facebook, Mail, ChevronDown } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
+import { useClerk } from '@clerk/nextjs';
+import { api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
@@ -12,6 +14,7 @@ export default function ProfileDropdown() {
   const [connecting, setConnecting] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuthStore();
+  const { signOut } = useClerk();
   const router = useRouter();
 
   // Close dropdown when clicking outside
@@ -29,9 +32,7 @@ export default function ProfileDropdown() {
   useEffect(() => {
     const checkFacebookStatus = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/facebook/status`, {
-          withCredentials: true
-        });
+        const response = await api.get('/facebook/status');
         setFacebookConnected(response.data.connected || false);
       } catch (error) {
         console.error('Failed to check Facebook status:', error);
@@ -41,7 +42,11 @@ export default function ProfileDropdown() {
     checkFacebookStatus();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      // Sign out from Clerk to avoid auth-loop when visiting /sign-in
+      await signOut();
+    } catch {}
     logout();
     router.push('/sign-in');
   };
@@ -53,10 +58,8 @@ export default function ProfileDropdown() {
   const handleConnectMeta = async () => {
     try {
       setConnecting(true);
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/facebook/auth-url`, {
-        withCredentials: true,
-      });
-      const authUrl = response.data?.url;
+      const response = await api.get('/facebook/auth-url');
+      const authUrl = (response.data as any)?.url;
       if (authUrl) {
         window.location.href = authUrl;
       } else {
@@ -72,9 +75,7 @@ export default function ProfileDropdown() {
   const handleDisconnectMeta = async () => {
     try {
       setConnecting(true);
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/facebook/disconnect`, {
-        withCredentials: true,
-      });
+      await api.delete('/facebook/disconnect');
       setFacebookConnected(false);
     } catch (error) {
       console.error('Failed to disconnect Meta:', error);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { api } from '@/lib/api';
 import { X, Facebook, Building2, CheckCircle2, Globe, LogOut, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -38,19 +39,8 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
   const fetchConnectionStatus = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facebook/status`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch connection status');
-      }
-
-      const data = await response.json();
-      setConnectionData(data);
+      const response = await api.get('/facebook/status');
+      setConnectionData(response.data);
     } catch (error: any) {
       console.error('Error fetching Meta connection status:', error);
       toast.error('Failed to load connection details');
@@ -66,17 +56,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
 
     try {
       setDisconnecting(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facebook/disconnect`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to disconnect account');
-      }
+      await api.delete('/facebook/disconnect');
 
       toast.success('Meta account disconnected successfully');
       onClose();
@@ -91,8 +71,8 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
 
   const handleChangeConnection = () => {
     onClose();
-    // Trigger re-auth flow
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/facebook/auth-url`;
+    const res = await api.get('/facebook/auth-url');
+    window.location.href = res.data?.url || '#';
   };
 
   if (!isOpen) return null;
