@@ -67,8 +67,11 @@ export default clerkMiddleware(async (auth, request) => {
     if (isAuthRoute(request)) {
       return; // Allow auth pages and webhooks
     }
-    // Protect all other routes
-    await auth.protect();
+    // Protect all other routes; force Clerk to use /sign-in (not /login)
+    await auth.protect({
+      unauthenticatedUrl: '/sign-in',
+      signInUrl: '/sign-in',
+    });
   }
 });
 
