@@ -29,7 +29,7 @@ function SelectAccountPageInner() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.replace('/login?redirect=/facebook/select-account');
+      router.replace('/sign-in?redirect=/facebook/select-account');
       return;
     }
 

@@ -19,7 +19,7 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/sign-in');
   };
 
   const isPro = user?.proExpiresAt && new Date(user.proExpiresAt) > new Date();

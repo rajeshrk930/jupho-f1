@@ -24,7 +24,7 @@ function DashboardPageInner() {
   // Auth guard
   useEffect(() => {
     if (!isAuthenticated) {
-      router.replace('/login?redirect=/dashboard');
+      router.replace('/sign-in?redirect=/dashboard');
     }
   }, [isAuthenticated, router]);
 

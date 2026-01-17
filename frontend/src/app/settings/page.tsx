@@ -30,7 +30,7 @@ export default function SettingsPage() {
   // Auth guard
   useEffect(() => {
     if (!isAuthenticated) {
-      router.replace('/login?redirect=/settings');
+      router.replace('/sign-in?redirect=/settings');
     }
   }, [isAuthenticated, router]);
   

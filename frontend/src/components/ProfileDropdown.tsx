@@ -43,7 +43,7 @@ export default function ProfileDropdown() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/sign-in');
   };
 
   const getInitials = (email: string) => {

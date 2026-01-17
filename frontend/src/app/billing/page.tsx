@@ -27,7 +27,7 @@ export default function BillingPage() {
   // Auth guard
   useEffect(() => {
     if (!isAuthenticated) {
-      router.replace('/login?redirect=/billing');
+      router.replace('/sign-in?redirect=/billing');
     }
   }, [isAuthenticated, router]);
 

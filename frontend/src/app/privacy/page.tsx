@@ -271,7 +271,7 @@ export default function PrivacyPolicyPage() {
 
         <div className="mt-12 pt-8 border-t border-charcoal-200 text-center">
           <Link 
-            href="/login"
+            href="/sign-in"
             className="text-sm text-coral-600 hover:text-coral-700 font-medium"
           >
             Back to Login

@@ -69,7 +69,7 @@ export default function AgentPage() {
   // Auth guard
   useEffect(() => {
     if (!isAuthenticated) {
-      router.replace('/login?redirect=/agent');
+      router.replace('/sign-in?redirect=/agent');
     }
   }, [isAuthenticated, router]);
 

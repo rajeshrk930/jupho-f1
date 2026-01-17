@@ -23,7 +23,7 @@ export function Sidebar() {
   const { user, logout } = useAuthStore();
 
   // Hide sidebar on public pages (unauthenticated)
-  const publicPages = ['/', '/login', '/signup', '/privacy', '/terms'];
+  const publicPages = ['/', '/sign-in', '/sign-up', '/privacy', '/terms'];
   const isPublicPage = publicPages.includes(pathname);
   
   if (isPublicPage) {
@@ -32,7 +32,7 @@ export function Sidebar() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/sign-in');
   };
 
   const handleCreateAd = () => {

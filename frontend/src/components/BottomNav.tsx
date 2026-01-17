@@ -15,7 +15,7 @@ export default function BottomNav() {
   };
 
   // Hide bottom nav on public pages (unauthenticated)
-  const publicPages = ['/', '/login', '/signup', '/privacy', '/terms'];
+  const publicPages = ['/', '/sign-in', '/sign-up', '/privacy', '/terms'];
   if (publicPages.includes(pathname)) {
     return null;
   }

@@ -23,7 +23,7 @@ export default function ProjectsPage() {
   // Auth guard
   useEffect(() => {
     if (!isAuthenticated) {
-      router.replace('/login?redirect=/projects');
+      router.replace('/sign-in?redirect=/projects');
     }
   }, [isAuthenticated, router]);
 

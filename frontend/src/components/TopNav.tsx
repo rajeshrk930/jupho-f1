@@ -24,7 +24,7 @@ export function TopNav() {
   const { isAuthenticated, user, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const isAuthPage = ['/', '/login', '/signup'].includes(pathname);
+  const isAuthPage = ['/', '/sign-in', '/sign-up'].includes(pathname);
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
@@ -118,7 +118,7 @@ export function TopNav() {
                     onClick={() => {
                       logout();
                       setMenuOpen(false);
-                      router.push("/login");
+                      router.push("/sign-in");
                     }}
                   >
                     <LogOut size={16} />
@@ -129,7 +129,7 @@ export function TopNav() {
             </div>
           ) : (
             <div className="hidden sm:flex items-center gap-3">
-              <Link href="/login" className="nav-link">Login</Link>
+              <Link href="/sign-in" className="nav-link">Login</Link>
               <Link href="/signup" className="btn-primary py-2 px-4 text-sm">Get started</Link>
             </div>
           )}
