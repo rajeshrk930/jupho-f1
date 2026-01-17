@@ -11,33 +11,37 @@ declare global {
   }
 }
 
+/**
+ * Cleaned up Clerk Auth - Removing strict authorizedParties to fix 401
+ */
 export const clerkAuth = [
-  ClerkExpressRequireAuth({
-    authorizedParties: [
-      'https://app.jupho.io',      // Frontend
-      'https://www.jupho.io',      // Old Frontend
-      'https://api.jupho.io',      // Backend (The VS Code AI Fix)
-      'http://localhost:3000',
-      'http://localhost:5000'
-    ]
-  }),
+  // 🦁 We removed the strict list. Clerk will now use your Railway Env Vars instead.
+  ClerkExpressRequireAuth(), 
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const clerkUserId = req.auth?.userId;
-      if (!clerkUserId) return res.status(401).json({ error: 'Unauthorized' });
+      
+      // If Clerk says no userId, the token is invalid
+      if (!clerkUserId) {
+        console.error('Clerk Auth Failed: No userId in request.auth');
+        return res.status(401).json({ error: 'Unauthorized', message: 'Invalid Session' });
+      }
 
       const user = await prisma.user.findUnique({
         where: { clerkId: clerkUserId },
-        select: { id: true, email: true, clerkId: true } // keeping it simple for speed
+        select: { id: true, email: true, clerkId: true }
       });
 
-      if (!user) return res.status(404).json({ error: 'User not found' });
+      if (!user) {
+        console.error(`Database Error: User ${clerkUserId} not found in Prisma`);
+        return res.status(404).json({ error: 'User not found' });
+      }
 
       req.user = { id: user.id, email: user.email, clerkId: user.clerkId };
       next();
     } catch (error) {
-      console.error('Clerk auth error:', error);
-      return res.status(500).json({ error: 'Auth failed' });
+      console.error('Clerk auth middleware error:', error);
+      return res.status(500).json({ error: 'Internal Auth Error' });
     }
   }
 ];
