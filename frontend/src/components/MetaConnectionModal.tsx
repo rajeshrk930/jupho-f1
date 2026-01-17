@@ -69,10 +69,14 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
     }
   };
 
-  const handleChangeConnection = () => {
-    onClose();
-    const res = await api.get('/facebook/auth-url');
-    window.location.href = res.data?.url || '#';
+  const handleChangeConnection = async () => {
+    try {
+      onClose();
+      const res = await api.get('/facebook/auth-url');
+      window.location.href = res.data?.url || '#';
+    } catch (error) {
+      console.error('Failed to start Meta re-auth:', error);
+    }
   };
 
   if (!isOpen) return null;
