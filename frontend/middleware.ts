@@ -70,7 +70,7 @@ export default clerkMiddleware(async (auth, request) => {
     // Protect all other routes; force Clerk to use /sign-in (not /login)
     await auth.protect({
       unauthenticatedUrl: '/sign-in',
-      signInUrl: '/sign-in',
+      redirectUrl: '/sign-in',
     });
   }
 });
