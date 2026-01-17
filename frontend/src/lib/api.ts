@@ -49,28 +49,13 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
 });
 
 // Handle auth errors
-let isHandling401 = false;
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Prevent duplicate logout/redirect attempts when multiple requests fail.
-      if (isHandling401) return Promise.reject(error);
-      isHandling401 = true;
-
-      try {
-        // Redirect to sign-in page on 401
-        if (typeof window !== 'undefined') {
-          window.location.href = '/sign-in';
-        }
-      } catch (e) {
-        console.error('Error during redirect from response interceptor', e);
-      }
-
-      // allow subsequent 401s to be handled later after a short delay
-      setTimeout(() => {
-        isHandling401 = false;
-      }, 1000);
+      // Let callers handle 401 instead of forcing a full-page redirect.
+      // This avoids refresh loops when Clerk cookies aren't yet hydrated client-side.
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   }
