@@ -628,4 +628,18 @@ router.post(
   }
 );
 
+/**
+ * DEBUG ENDPOINT - Test if Clerk auth is working at all
+ */
+router.get('/debug-auth', ...clerkAuth, async (req: AuthRequest, res: Response) => {
+  res.json({
+    success: true,
+    message: 'Clerk auth is working!',
+    userId: req.user?.id,
+    email: req.user?.email,
+    clerkId: req.user?.clerkId,
+    timestamp: new Date().toISOString()
+  });
+});
+
 export default router;
