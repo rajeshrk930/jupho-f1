@@ -10,6 +10,8 @@ export default function SignInPage() {
             card: "shadow-2xl"
           }
         }}
+        forceRedirectUrl="/dashboard"
+        signUpUrl="/sign-up"
       />
     </div>
   );
