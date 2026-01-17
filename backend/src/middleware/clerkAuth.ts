@@ -26,7 +26,14 @@ declare global {
  * Validates Clerk session and loads user from database
  */
 export const clerkAuth = [
-  ClerkExpressRequireAuth(),
+  // 🦁 FIX: We explicitly tell Clerk to allow your new domain here
+  ClerkExpressRequireAuth({
+    authorizedParties: [
+      'https://app.jupho.io',
+      'https://www.jupho.io',
+      'http://localhost:3000' 
+    ]
+  }),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Get Clerk user ID from authenticated request
