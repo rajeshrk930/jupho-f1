@@ -15,57 +15,53 @@ const isAuthRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
-  const url = new URL(request.url);
-  const hostname = url.hostname;
-  const { userId } = await auth(); // Get current user's authentication status
-  
-  // Determine if we're on www or app subdomain
-  const isWwwDomain = hostname === 'www.jupho.io' || hostname === 'localhost' || hostname.startsWith('localhost:');
-  const isAppDomain = hostname === 'app.jupho.io' || (!isWwwDomain && !hostname.includes('www'));
-  
-  // 🔒 REDIRECT ALREADY-LOGGED-IN USERS AWAY FROM AUTH PAGES
-  // If user is authenticated AND trying to access /sign-in or /sign-up
-  if (userId && isAuthRoute(request) && !request.nextUrl.pathname.includes('/webhooks')) {
-    const dashboardUrl = new URL('/dashboard', request.url);
-    return Response.redirect(dashboardUrl);
+  const { nextUrl } = request;
+  const hostname = nextUrl.hostname;
+  const { userId } = await auth();
+
+  const isWwwDomain =
+    hostname === "www.jupho.io" ||
+    hostname === "localhost" ||
+    hostname.startsWith("localhost:");
+  const isAppDomain = hostname === "app.jupho.io" || (!isWwwDomain && !hostname.includes("www"));
+
+  // Redirect signed-in users away from auth pages
+  if (userId && isAuthRoute(request) && !nextUrl.pathname.includes("/webhooks")) {
+    return Response.redirect(new URL("/dashboard", request.url));
   }
-  
-  // 🔀 REDIRECT OLD AUTH ROUTES TO NEW CLERK ROUTES
-  if (request.nextUrl.pathname.startsWith('/login')) {
-    const signInUrl = new URL('/sign-in', request.url);
-    if (request.nextUrl.searchParams.get('redirect')) {
-      signInUrl.searchParams.set('redirect_url', request.nextUrl.searchParams.get('redirect')!);
+
+  // Redirect legacy auth routes
+  if (nextUrl.pathname.startsWith("/login")) {
+    const signInUrl = new URL("/sign-in", request.url);
+    const redirect = nextUrl.searchParams.get("redirect");
+    if (redirect) {
+      signInUrl.searchParams.set("redirect_url", redirect);
     }
     return Response.redirect(signInUrl);
   }
-  
-  if (request.nextUrl.pathname.startsWith('/signup')) {
-    const signUpUrl = new URL('/sign-up', request.url);
-    return Response.redirect(signUpUrl);
+
+  if (nextUrl.pathname.startsWith("/signup")) {
+    return Response.redirect(new URL("/sign-up", request.url));
   }
-  
+
   // On www domain: allow landing pages, redirect app routes to app subdomain
   if (isWwwDomain) {
     if (isLandingRoute(request)) {
-      return; // Allow public landing pages
+      return;
     }
-    // Redirect app routes to app subdomain
-    if (!isAuthRoute(request) && !request.nextUrl.pathname.startsWith('/api')) {
+
+    if (!isAuthRoute(request) && !nextUrl.pathname.startsWith("/api")) {
       const appUrl = new URL(request.url);
-      appUrl.hostname = appUrl.hostname.replace('www.', 'app.');
-      if (appUrl.hostname === 'localhost' || appUrl.hostname.startsWith('localhost:')) {
-        appUrl.hostname = appUrl.hostname; // Keep localhost as-is for dev
-      }
+      appUrl.hostname = appUrl.hostname.replace("www.", "app.");
       return Response.redirect(appUrl);
     }
   }
-  
+
   // On app domain: require auth except for sign-in/sign-up and webhooks
   if (isAppDomain || !isWwwDomain) {
     if (isAuthRoute(request)) {
-      return; // Allow auth pages and webhooks
+      return;
     }
-    // Protect all other routes (Clerk will use configured sign-in URL)
     await auth.protect();
   }
 });
@@ -73,8 +69,8 @@ export default clerkMiddleware(async (auth, request) => {
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Always run for API routes
-    '/(api|trpc)(.*)',
+    "/(api|trpc)(.*)",
   ],
 };
