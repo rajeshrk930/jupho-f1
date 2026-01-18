@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
+import { api } from '@/lib/api';
 import { Building2, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -39,18 +40,7 @@ function SelectAccountPageInner() {
   const fetchAdAccounts = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/facebook/ad-accounts`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch ad accounts');
-      }
-
-      const data = await response.json();
+      const { data } = await api.get('/facebook/ad-accounts');
       setAdAccounts(data.adAccounts || []);
 
       // Auto-select if only one account
@@ -75,23 +65,11 @@ function SelectAccountPageInner() {
     try {
       setSaving(true);
       const selectedAccountData = adAccounts.find((acc) => acc.id === selectedAccount);
-      const token = localStorage.getItem('token');
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/facebook/select-account`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          adAccountId: selectedAccount,
-          adAccountName: selectedAccountData?.name || 'Unknown',
-        }),
+      await api.post('/facebook/select-account', {
+        adAccountId: selectedAccount,
+        adAccountName: selectedAccountData?.name || 'Unknown',
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to save ad account selection');
-      }
 
       toast.success('Facebook account connected successfully!');
       router.push('/dashboard?facebook=connected');
