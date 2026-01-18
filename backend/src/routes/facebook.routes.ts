@@ -296,7 +296,9 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
         adAccountName: account.adAccountName,
         pageNames: account.pageNames,
         lastSyncAt: account.lastSyncAt,
-        tokenExpiring: account.tokenExpiresAt < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Expires in < 7 days
+        tokenExpiring: account.tokenExpiresAt 
+          ? account.tokenExpiresAt < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) 
+          : false // Expires in < 7 days
       }
     });
   } catch (error: any) {
