@@ -213,19 +213,37 @@ router.post('/select-account',
  */
 router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
+    console.log('📡 Facebook status check for user:', {
+      userId: req.user?.id,
+      email: req.user?.email,
+    });
+
     const account = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }
     });
     
     if (!account || !account.isActive || account.adAccountId === 'PENDING') {
+      console.log('ℹ️ No active Facebook account or pending ad account selection', {
+        hasAccount: !!account,
+        isActive: account?.isActive,
+        adAccountId: account?.adAccountId,
+      });
       return res.json({
         connected: false,
         account: null
       });
     }
     
-    // Check if token is still valid
-    const isTokenValid = account.tokenExpiresAt > new Date();
+    console.log('📦 Facebook account record', {
+      adAccountId: account.adAccountId,
+      isActive: account.isActive,
+      tokenExpiresAt: account.tokenExpiresAt,
+    });
+
+    // Check if token is still valid (guard against null)
+    const isTokenValid = account.tokenExpiresAt
+      ? account.tokenExpiresAt > new Date()
+      : false;
     
     res.json({
       connected: isTokenValid,
@@ -240,8 +258,11 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       }
     });
   } catch (error: any) {
-    console.error('Facebook status error:', error);
-    res.status(500).json({ error: 'Failed to check Facebook account status' });
+    console.error('❌ Facebook status error:', error?.response?.data || error?.message || error);
+    res.status(500).json({
+      error: 'Failed to check Facebook account status',
+      detail: error?.message || 'Unknown error',
+    });
   }
 });
 
