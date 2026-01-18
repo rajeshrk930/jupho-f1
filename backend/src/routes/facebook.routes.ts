@@ -172,8 +172,13 @@ router.post('/select-account',
   async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      const firstError = errors.array()[0];
       console.warn('⚠️ select-account validation errors:', errors.array());
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ 
+        error: firstError.msg,
+        field: firstError.param,
+        errors: errors.array()
+      });
     }
 
     try {
@@ -190,7 +195,7 @@ router.post('/select-account',
       }
       
       // Update with selected ad account
-      await prisma.facebookAccount.update({
+      const updated = await prisma.facebookAccount.update({
         where: { userId: req.user!.id },
         data: {
           adAccountId,
@@ -198,7 +203,12 @@ router.post('/select-account',
           isActive: true
         }
       });
-      console.log('✅ select-account saved', { userId: req.user?.id, adAccountId, adAccountName });
+      console.log('✅ select-account saved - CONFIRMED:', { 
+        userId: req.user?.id, 
+        newAdAccountId: updated.adAccountId,
+        adAccountName: updated.adAccountName,
+        wasUpdated: updated.adAccountId !== 'PENDING'
+      });
       res.json({ 
         success: true, 
         message: 'Ad account selected successfully'

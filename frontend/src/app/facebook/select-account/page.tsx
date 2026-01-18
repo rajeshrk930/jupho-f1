@@ -66,16 +66,24 @@ function SelectAccountPageInner() {
       setSaving(true);
       const selectedAccountData = adAccounts.find((acc) => acc.id === selectedAccount);
 
+      console.log('📤 Sending ad account selection:', { 
+        adAccountId: selectedAccount, 
+        adAccountName: selectedAccountData?.name 
+      });
+
       await api.post('/facebook/select-account', {
         adAccountId: selectedAccount,
         adAccountName: selectedAccountData?.name || 'Unknown',
       });
 
+      console.log('✅ Ad account selection saved successfully');
       toast.success('Facebook account connected successfully!');
       router.push('/dashboard?facebook=connected');
     } catch (err: any) {
       console.error('Error saving ad account:', err);
-      toast.error(err.message || 'Failed to save selection');
+      console.error('Error response:', err.response?.data);
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to save selection';
+      toast.error(errorMsg);
     } finally {
       setSaving(false);
     }
