@@ -12,10 +12,14 @@ declare global {
 }
 
 /**
- * Clerk Auth - TEMPORARY: Removed authorizedParties to test if that's the issue
+ * Clerk Auth with proper configuration
  */
 export const clerkAuth = [
-  ClerkExpressRequireAuth(), 
+  ClerkExpressRequireAuth({
+    onError: (error) => {
+      console.error('❌ ClerkExpressRequireAuth Error:', error);
+    }
+  }), 
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 🔍 DEBUG: Log what Clerk gives us
