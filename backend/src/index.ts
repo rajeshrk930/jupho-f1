@@ -78,15 +78,18 @@ app.use(cors({
       ],
   credentials: true
 }));
+
+// 🚨 CRITICAL: Clerk webhook MUST come BEFORE express.json()
+// Webhooks need raw body for signature verification
+app.use('/api/webhooks/clerk', express.raw({ type: 'application/json' }), clerkRoutes);
+
+// Body parsers (after webhook routes)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// Clerk webhook (must come before body parser limits)
-app.use('/api', clerkRoutes);
 
 // Routes with specific rate limiters
 app.use('/api/auth', authLimiter, authRoutes);

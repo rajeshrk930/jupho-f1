@@ -7,8 +7,9 @@ const router = Router();
 /**
  * Clerk webhook endpoint for syncing users
  * Handles user.created and user.updated events
+ * Route: POST /api/webhooks/clerk (path is '/' because it's already mounted at /api/webhooks/clerk in index.ts)
  */
-router.post('/webhooks/clerk', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     // Get webhook secret from environment
     const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
@@ -32,7 +33,12 @@ router.post('/webhooks/clerk', async (req: Request, res: Response) => {
     let evt;
 
     try {
-      evt = wh.verify(JSON.stringify(req.body), {
+      // Convert raw body buffer to string if needed
+      const payload = Buffer.isBuffer(req.body) 
+        ? req.body.toString('utf8') 
+        : JSON.stringify(req.body);
+      
+      evt = wh.verify(payload, {
         'svix-id': svixId,
         'svix-timestamp': svixTimestamp,
         'svix-signature': svixSignature,
