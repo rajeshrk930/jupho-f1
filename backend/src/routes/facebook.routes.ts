@@ -128,8 +128,19 @@ router.get('/ad-accounts', ...clerkAuth, async (req: AuthRequest, res: Response)
       });
     }
     
+    console.log('📊 Fetching ad accounts for user:', req.user!.email);
     const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
     const adAccounts = await FacebookService.getAdAccounts(accessToken);
+    
+    console.log(`✅ Found ${adAccounts.length} ad accounts`);
+    
+    // Handle case where user has no ad accounts
+    if (adAccounts.length === 0) {
+      return res.json({
+        adAccounts: [],
+        message: 'No ad accounts found. You need to create an ad account in Facebook Business Manager first.'
+      });
+    }
     
     res.json({ 
       adAccounts: adAccounts.map(account => ({
@@ -140,8 +151,11 @@ router.get('/ad-accounts', ...clerkAuth, async (req: AuthRequest, res: Response)
       }))
     });
   } catch (error: any) {
-    console.error('Fetch ad accounts error:', error);
-    res.status(500).json({ error: 'Failed to fetch ad accounts' });
+    console.error('❌ Fetch ad accounts error:', error);
+    res.status(500).json({ 
+      error: error.message || 'Failed to fetch ad accounts',
+      details: 'Check if you have an ad account in Facebook Business Manager'
+    });
   }
 });
 

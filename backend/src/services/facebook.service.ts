@@ -123,10 +123,27 @@ export class FacebookService {
           fields: 'id,name,account_status,currency'
         }
       });
+      
+      console.log('✅ Facebook ad accounts response:', JSON.stringify(response.data, null, 2));
+      
+      // Return empty array if no ad accounts
+      if (!response.data.data || response.data.data.length === 0) {
+        console.log('⚠️ No ad accounts found for this user');
+        return [];
+      }
+      
       return response.data.data;
     } catch (error: any) {
-      console.error('Facebook get ad accounts error:', error.response?.data || error.message);
-      throw new Error('Failed to fetch Facebook ad accounts');
+      console.error('❌ Facebook get ad accounts error:', error.response?.data || error.message);
+      console.error('Full error:', JSON.stringify(error.response?.data, null, 2));
+      
+      // Return empty array instead of throwing - user might not have ad accounts yet
+      if (error.response?.status === 400 || error.response?.data?.error?.code === 190) {
+        console.log('⚠️ Token might be invalid or user has no ad accounts');
+        return [];
+      }
+      
+      throw new Error(error.response?.data?.error?.message || 'Failed to fetch Facebook ad accounts');
     }
   }
   
