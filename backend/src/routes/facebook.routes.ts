@@ -231,10 +231,38 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
         isActive: account?.isActive,
         adAccountId: account?.adAccountId,
       });
-      return res.json({
-        connected: false,
-        account: null
-      });
+
+      // Auto-select first ad account if only one is available to unblock users
+      if (account && account.isActive && account.adAccountId === 'PENDING') {
+        try {
+          const accessToken = FacebookService.decryptToken(account.accessToken);
+          const adAccounts = await FacebookService.getAdAccounts(accessToken);
+          if (adAccounts && adAccounts.length === 1) {
+            const first = adAccounts[0];
+            await prisma.facebookAccount.update({
+              where: { userId: req.user!.id },
+              data: {
+                adAccountId: first.id,
+                adAccountName: first.name,
+                isActive: true,
+              },
+            });
+            console.log('✅ Auto-selected sole ad account', { userId: req.user!.id, adAccountId: first.id, name: first.name });
+          }
+        } catch (autoErr) {
+          console.warn('⚠️ Auto-select ad account failed', autoErr?.message || autoErr);
+        }
+      }
+
+      // Re-check after potential auto-selection
+      const refreshed = await prisma.facebookAccount.findUnique({ where: { userId: req.user!.id } });
+      if (!refreshed || !refreshed.isActive || refreshed.adAccountId === 'PENDING') {
+        return res.json({
+          connected: false,
+          account: null
+        });
+      }
+      account = refreshed;
     }
     
     console.log('📦 Facebook account record', {
