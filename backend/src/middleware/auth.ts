@@ -6,7 +6,7 @@ export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
-    clerkId?: string;
+    clerkId: string;
   };
 }
 
