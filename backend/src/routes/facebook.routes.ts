@@ -20,7 +20,8 @@ router.get('/auth-url', ...clerkAuth, (req: AuthRequest, res: Response) => {
     const url = `https://www.facebook.com/v19.0/dialog/oauth?` +
       `client_id=${process.env.FACEBOOK_APP_ID}` +
       `&redirect_uri=${encodeURIComponent(process.env.FACEBOOK_REDIRECT_URI!)}` +
-      `&scope=email,ads_management,ads_read,read_insights,pages_manage_ads,pages_read_engagement` +
+      `&scope=email,public_profile,ads_management,ads_read,read_insights,pages_manage_ads,pages_read_engagement,business_management` +
+      `&auth_type=rerequest` +
       `&state=${req.user!.id}`;
     
     res.json({ url });
