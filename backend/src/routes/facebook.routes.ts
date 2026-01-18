@@ -172,17 +172,20 @@ router.post('/select-account',
   async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.warn('⚠️ select-account validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
     try {
       const { adAccountId, adAccountName } = req.body;
+      console.log('📥 select-account request', { adAccountId, adAccountName, userId: req.user?.id });
       
       const fbAccount = await prisma.facebookAccount.findUnique({
         where: { userId: req.user!.id }
       });
       
       if (!fbAccount) {
+        console.warn('⚠️ select-account: facebook account not found for user', req.user?.id);
         return res.status(400).json({ error: 'No Facebook account connected' });
       }
       
@@ -195,14 +198,14 @@ router.post('/select-account',
           isActive: true
         }
       });
-      
+      console.log('✅ select-account saved', { userId: req.user?.id, adAccountId, adAccountName });
       res.json({ 
         success: true, 
         message: 'Ad account selected successfully'
       });
     } catch (error: any) {
-      console.error('Select ad account error:', error);
-      res.status(500).json({ error: 'Failed to save ad account selection' });
+      console.error('❌ Select ad account error:', error?.response?.data || error?.message || error);
+      res.status(500).json({ error: 'Failed to save ad account selection', detail: error?.message || 'unknown' });
     }
   }
 );
