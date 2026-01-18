@@ -232,22 +232,22 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
         adAccountId: account?.adAccountId,
       });
 
-      // Auto-select first ad account if only one is available to unblock users
+      // Auto-select an ad account to unblock users
       if (account && account.isActive && account.adAccountId === 'PENDING') {
         try {
           const accessToken = FacebookService.decryptToken(account.accessToken);
           const adAccounts = await FacebookService.getAdAccounts(accessToken);
-          if (adAccounts && adAccounts.length === 1) {
-            const first = adAccounts[0];
+          if (adAccounts && adAccounts.length > 0) {
+            const pick = adAccounts.find((a) => a.account_status === 1) || adAccounts[0];
             await prisma.facebookAccount.update({
               where: { userId: req.user!.id },
               data: {
-                adAccountId: first.id,
-                adAccountName: first.name,
+                adAccountId: pick.id,
+                adAccountName: pick.name,
                 isActive: true,
               },
             });
-            console.log('✅ Auto-selected sole ad account', { userId: req.user!.id, adAccountId: first.id, name: first.name });
+            console.log('✅ Auto-selected ad account', { userId: req.user!.id, adAccountId: pick.id, name: pick.name });
           }
         } catch (autoErr) {
           const autoMsg = (autoErr as any)?.message || autoErr;
