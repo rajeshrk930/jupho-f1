@@ -76,18 +76,27 @@ router.post('/', async (req: Request, res: Response) => {
           return res.status(400).json({ error: 'Email required' });
         }
 
-        await prisma.user.create({
-          data: {
-            clerkId: data.id,
-            email: email,
-            name: name,
-            plan: 'FREE',
-            apiUsageCount: 0,
-            agentTasksCreated: 0,
+        try {
+          await prisma.user.create({
+            data: {
+              clerkId: data.id,
+              email: email,
+              name: name,
+              plan: 'FREE',
+              apiUsageCount: 0,
+              agentTasksCreated: 0,
+            }
+          });
+          console.log(`✅ User created: ${email} (Clerk ID: ${data.id})`);
+        } catch (error: any) {
+          // Handle duplicate user gracefully (happens on webhook resends)
+          if (error.code === 'P2002') {
+            console.log(`⚠️ User already exists: ${email} (Clerk ID: ${data.id})`);
+            // Return success anyway - user exists, which is what we want
+          } else {
+            throw error; // Re-throw other errors
           }
-        });
-
-        console.log(`User created: ${email} (Clerk ID: ${data.id})`);
+        }
         break;
       }
 
