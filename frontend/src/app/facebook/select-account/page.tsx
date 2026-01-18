@@ -40,7 +40,7 @@ function SelectAccountPageInner() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facebook/ad-accounts`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/facebook/ad-accounts`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -77,7 +77,7 @@ function SelectAccountPageInner() {
       const selectedAccountData = adAccounts.find((acc) => acc.id === selectedAccount);
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facebook/select-account`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/facebook/select-account`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
