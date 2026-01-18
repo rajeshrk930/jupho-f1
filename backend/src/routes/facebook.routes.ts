@@ -221,7 +221,7 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       email: req.user?.email,
     });
 
-    const account = await prisma.facebookAccount.findUnique({
+    let account = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }
     });
     
@@ -250,7 +250,8 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
             console.log('✅ Auto-selected sole ad account', { userId: req.user!.id, adAccountId: first.id, name: first.name });
           }
         } catch (autoErr) {
-          console.warn('⚠️ Auto-select ad account failed', autoErr?.message || autoErr);
+          const autoMsg = (autoErr as any)?.message || autoErr;
+          console.warn('⚠️ Auto-select ad account failed', autoMsg);
         }
       }
 
