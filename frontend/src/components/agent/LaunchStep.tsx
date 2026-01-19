@@ -54,6 +54,8 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
   const [error, setError] = useState<LaunchError | null>(null);
   const [adLink, setAdLink] = useState('');
   const [showDetails, setShowDetails] = useState(false);
+  const [savingTemplate, setSavingTemplate] = useState(false);
+  const [templateSaved, setTemplateSaved] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -112,6 +114,34 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
 
   const imageUrl = previewUrl || selectedImage;
 
+  const handleSaveAsTemplate = async () => {
+    setSavingTemplate(true);
+    try {
+      // Prompt for template name
+      const templateName = prompt('Enter a name for this template:');
+      if (!templateName) {
+        setSavingTemplate(false);
+        return;
+      }
+
+      const category = prompt('Enter category (optional - e.g., RESTAURANT, GYM, SALON):') || undefined;
+
+      await agentApi.post(`/templates/from-task/${taskId}`, {
+        name: templateName,
+        category,
+        description: `Template created from successful campaign`,
+      });
+
+      setTemplateSaved(true);
+      setTimeout(() => setTemplateSaved(false), 3000);
+    } catch (err) {
+      console.error('Failed to save template:', err);
+      alert('Failed to save template. Please try again.');
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
   if (success) {
     return (
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-12 text-center">
@@ -122,17 +152,38 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
         <p className="text-gray-600 mb-6">
           Your Meta ad campaign is now live and running
         </p>
-        {adLink && (
-          <a
-            href={adLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 bg-coral-600 text-white rounded-lg hover:bg-coral-700 transition-colors mb-4"
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+          {adLink && (
+            <a
+              href={adLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-6 py-3 bg-coral-600 text-white rounded-lg hover:bg-coral-700 transition-colors"
+            >
+              View in Ads Manager
+              <ExternalLink className="w-5 h-5 ml-2" />
+            </a>
+          )}
+          <button
+            onClick={handleSaveAsTemplate}
+            disabled={savingTemplate || templateSaved}
+            className="inline-flex items-center justify-center px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50"
           >
-            View in Ads Manager
-            <ExternalLink className="w-5 h-5 ml-2" />
-          </a>
-        )}
+            {savingTemplate ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : templateSaved ? (
+              <>
+                <Check className="w-5 h-5 mr-2" />
+                Saved!
+              </>
+            ) : (
+              '💾 Save as Template'
+            )}
+          </button>
+        </div>
         <div className="mt-6 p-4 bg-gray-50 rounded-lg text-left max-w-md mx-auto">
           <p className="text-sm font-medium text-gray-900 mb-2">What happens next?</p>
           <ul className="text-sm text-gray-600 space-y-1">

@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Router, Response, Request } from 'express';
 import { body, validationResult } from 'express-validator';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
@@ -197,6 +197,117 @@ router.get('/history', ...clerkAuth, async (req: AuthRequest, res) => {
   } catch (error) {
     console.error('Get payment history error:', error);
     res.status(500).json({ success: false, message: 'Failed to get payment history' });
+  }
+});
+
+/**
+ * POST /api/payments/webhook
+ * Handle Razorpay webhooks for payment events
+ * This ensures payment is recorded even if browser closes before callback
+ * SECURITY: Validates webhook signature before processing
+ */
+router.post('/webhook', async (req: Request, res: Response) => {
+  try {
+    if (!process.env.RAZORPAY_WEBHOOK_SECRET) {
+      console.error('[Payment Webhook] RAZORPAY_WEBHOOK_SECRET not configured');
+      return res.status(503).json({ error: 'Webhook not configured' });
+    }
+
+    // Verify webhook signature
+    const webhookSignature = req.headers['x-razorpay-signature'] as string;
+    if (!webhookSignature) {
+      console.error('[Payment Webhook] Missing signature header');
+      return res.status(400).json({ error: 'Missing signature' });
+    }
+
+    // Razorpay sends webhook body as JSON string
+    const webhookBody = JSON.stringify(req.body);
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
+      .update(webhookBody)
+      .digest('hex');
+
+    if (webhookSignature !== expectedSignature) {
+      console.error('[Payment Webhook] Invalid signature');
+      return res.status(400).json({ error: 'Invalid signature' });
+    }
+
+    const { event, payload } = req.body;
+    console.log('[Payment Webhook] Event received:', event);
+
+    // Handle payment.captured event (successful payment)
+    if (event === 'payment.captured') {
+      const paymentEntity = payload.payment.entity;
+      const orderId = paymentEntity.order_id;
+      const paymentId = paymentEntity.id;
+      const amount = paymentEntity.amount;
+
+      console.log('[Payment Webhook] Payment captured:', { orderId, paymentId, amount });
+
+      // Find payment record
+      const payment = await prisma.payment.findUnique({
+        where: { razorpayOrderId: orderId }
+      });
+
+      if (!payment) {
+        console.error('[Payment Webhook] Payment record not found for order:', orderId);
+        return res.status(404).json({ error: 'Payment not found' });
+      }
+
+      // Skip if already processed
+      if (payment.status === 'COMPLETED') {
+        console.log('[Payment Webhook] Payment already processed:', orderId);
+        return res.json({ success: true, message: 'Already processed' });
+      }
+
+      // Update payment status
+      await prisma.payment.update({
+        where: { razorpayOrderId: orderId },
+        data: {
+          razorpayPaymentId: paymentId,
+          status: 'COMPLETED'
+        }
+      });
+
+      // Upgrade user to PRO
+      // Determine plan duration from payment amount
+      const isAnnual = amount >= 1999000; // ₹19,990 or more = annual
+      const durationDays = isAnnual ? 365 : 30;
+      const proExpiresAt = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000);
+
+      await prisma.user.update({
+        where: { id: payment.userId },
+        data: {
+          plan: 'PRO',
+          proExpiresAt,
+          agentTasksCreated: 0 // Reset usage count on upgrade
+        }
+      });
+
+      console.log('[Payment Webhook] User upgraded to PRO:', payment.userId);
+      return res.json({ success: true, message: 'Payment processed' });
+    }
+
+    // Handle payment.failed event
+    if (event === 'payment.failed') {
+      const paymentEntity = payload.payment.entity;
+      const orderId = paymentEntity.order_id;
+
+      console.log('[Payment Webhook] Payment failed:', orderId);
+
+      await prisma.payment.update({
+        where: { razorpayOrderId: orderId },
+        data: { status: 'FAILED' }
+      });
+
+      return res.json({ success: true, message: 'Failure recorded' });
+    }
+
+    // Acknowledge other events
+    res.json({ success: true, message: 'Event received' });
+  } catch (error: any) {
+    console.error('[Payment Webhook] Error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
 

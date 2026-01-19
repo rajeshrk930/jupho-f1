@@ -66,7 +66,11 @@ export default function AdminPage() {
       setStats(data);
     } catch (error: any) {
       if (error.response?.status === 403) {
-        toast.error('Admin access required');
+        toast.error('Admin access required - Contact system administrator');
+        // Redirect to dashboard after 2 seconds
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 2000);
       } else {
         toast.error('Failed to load statistics');
       }

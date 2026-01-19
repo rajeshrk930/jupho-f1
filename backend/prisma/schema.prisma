@@ -13,6 +13,7 @@ model User {
   email         String     @unique
   name          String?
   plan          String     @default("FREE")
+  isAdmin       Boolean    @default(false)
   apiUsageCount Int        @default(0)
   lastResetDate DateTime   @default(now())
   agentTasksCreated Int    @default(0) // FREE: 5/month, PRO: 50/month
@@ -24,6 +25,7 @@ model User {
   conversations Conversation[]
   messages      Message[]
   facebookAccount FacebookAccount?
+  adTemplates   AdTemplate[]
 }
 
 model Payment {
@@ -82,6 +84,7 @@ model FacebookAccount {
   adAccountName     String?
   pageIds           String?  // Comma-separated page IDs
   pageNames         String?  // Comma-separated page names
+  csrfToken         String?  // OAuth CSRF protection
   isActive          Boolean  @default(true)
   lastSyncAt        DateTime?
   createdAt         DateTime @default(now())
@@ -167,4 +170,42 @@ model GeneratedCreative {
   
   @@index([taskId])
   @@index([type])
+}
+
+model AdTemplate {
+  id          String   @id @default(uuid())
+  userId      String?  // null = system template, userId = user's saved template
+  name        String
+  category    String?  // RESTAURANT, GYM, REAL_ESTATE, SALON, HOME_SERVICES, ECOMMERCE, etc.
+  description String?  // Short description of template
+  isPublic    Boolean  @default(false) // System templates are public
+  
+  // Campaign Settings
+  objective        String   // OUTCOME_LEADS, OUTCOME_SALES, OUTCOME_TRAFFIC
+  conversionMethod String   @default("lead_form")
+  
+  // Targeting Template (stored as JSON)
+  targeting   String   // { ageMin, ageMax, interestKeywords: string[], location: { isLocal, radius } }
+  
+  // Budget Template (stored as JSON)
+  budget      String   // { dailyAmount, currency, reasoning }
+  
+  // Ad Copy Template (stored as JSON)
+  // Can include placeholders like {{brandName}}, {{location}}, {{product}}
+  adCopy      String   // { headlines: string[], primaryTexts: string[], descriptions: string[], cta: string }
+  
+  // Optional reference image URL
+  imageUrl    String?
+  
+  // Metadata
+  usageCount  Int      @default(0) // How many times this template was used
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([category])
+  @@index([isPublic])
 }

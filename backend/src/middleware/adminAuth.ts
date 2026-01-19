@@ -7,14 +7,14 @@ import { prisma } from '../lib/prisma';
  * Verifies user has isAdmin=true in database
  * Must be used after clerkAuth middleware
  */
-export const requireAdmin = async (
+export const adminAuth = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     if (!req.user?.id) {
-      return res.status(401).json({ message: 'Authentication required' });
+      return res.status(401).json({ error: 'Unauthorized - Not authenticated' });
     }
 
     const user = await prisma.user.findUnique({
@@ -24,13 +24,13 @@ export const requireAdmin = async (
 
     if (!user || !user.isAdmin) {
       console.warn('[Admin Auth] Forbidden access attempt by user:', req.user.email);
-      return res.status(403).json({ message: 'Admin access required' });
+      return res.status(403).json({ error: 'Forbidden - Admin access required' });
     }
 
     // User is admin, proceed to route
     next();
   } catch (error: any) {
     console.error('[Admin Auth] Error:', error);
-    return res.status(500).json({ message: 'Server error during admin verification' });
+    return res.status(500).json({ error: 'Failed to verify admin status' });
   }
 };

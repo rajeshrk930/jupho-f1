@@ -4,6 +4,8 @@ import { clerkAuth } from '../middleware/clerkAuth';
 import { AuthRequest } from '../middleware/auth';
 import { FacebookService } from '../services/facebook.service';
 import { prisma } from '../lib/prisma';
+import crypto from 'crypto';
+import axios from 'axios';
 
 const router = Router();
 
@@ -11,18 +13,46 @@ const router = Router();
  * GET /api/facebook/auth-url
  * Generate Facebook OAuth URL for user to connect their account
  */
-router.get('/auth-url', ...clerkAuth, (req: AuthRequest, res: Response) => {
+router.get('/auth-url', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
     // Log environment variables for debugging
     console.log('[Facebook OAuth] APP_ID:', process.env.FACEBOOK_APP_ID ? 'Set' : 'MISSING');
     console.log('[Facebook OAuth] REDIRECT_URI:', process.env.FACEBOOK_REDIRECT_URI ? 'Set' : 'MISSING');
+    
+    // Generate CSRF token for OAuth security
+    const csrfToken = crypto.randomBytes(32).toString('hex');
+    
+    // Store CSRF token in database (create or update FacebookAccount)
+    const existingAccount = await prisma.facebookAccount.findUnique({
+      where: { userId: req.user!.id }
+    });
+    
+    if (existingAccount) {
+      await prisma.facebookAccount.update({
+        where: { userId: req.user!.id },
+        data: { csrfToken }
+      });
+    } else {
+      // Create placeholder record with CSRF token
+      await prisma.facebookAccount.create({
+        data: {
+          userId: req.user!.id,
+          facebookUserId: 'PENDING',
+          accessToken: 'PENDING',
+          tokenExpiresAt: new Date(),
+          adAccountId: 'PENDING',
+          csrfToken,
+          isActive: false
+        }
+      });
+    }
     
     const url = `https://www.facebook.com/v19.0/dialog/oauth?` +
       `client_id=${process.env.FACEBOOK_APP_ID}` +
       `&redirect_uri=${encodeURIComponent(process.env.FACEBOOK_REDIRECT_URI!)}` +
       `&scope=email,public_profile,ads_management,ads_read,read_insights,pages_manage_ads,pages_read_engagement,business_management` +
       `&auth_type=rerequest` +
-      `&state=${req.user!.id}`;
+      `&state=${csrfToken}`;
     
     res.json({ url });
   } catch (error: any) {
@@ -36,6 +66,7 @@ router.get('/auth-url', ...clerkAuth, (req: AuthRequest, res: Response) => {
  * Handle OAuth callback and store access token
  * Facebook redirects here after user authorizes the app
  * NOTE: No authentication middleware - Facebook calls this directly
+ * SECURITY: Validates CSRF token from state parameter
  */
 router.get('/callback', async (req, res: Response) => {
   try {
@@ -51,7 +82,18 @@ router.get('/callback', async (req, res: Response) => {
       return res.redirect(`${process.env.FRONTEND_URL}/settings?error=missing_code`);
     }
     
-    const userId = state; // We passed userId as state
+    // Validate CSRF token - state parameter contains csrfToken
+    const csrfToken = state;
+    const fbAccount = await prisma.facebookAccount.findFirst({
+      where: { csrfToken }
+    });
+    
+    if (!fbAccount) {
+      console.error('[Facebook OAuth] Invalid CSRF token:', csrfToken);
+      return res.redirect(`${process.env.FRONTEND_URL}/settings?error=invalid_state`);
+    }
+    
+    const userId = fbAccount.userId;
       
       // Exchange code for access token
       const accessToken = await FacebookService.exchangeCodeForToken(code);
@@ -65,44 +107,21 @@ router.get('/callback', async (req, res: Response) => {
       // Store encrypted token and user info temporarily (without ad account yet)
       const encryptedToken = FacebookService.encryptToken(accessToken);
       
-      // Check if account already exists
-      const existingAccount = await prisma.facebookAccount.findUnique({
-        where: { userId }
+      // Update account with new token and clear CSRF token
+      await prisma.facebookAccount.update({
+        where: { userId },
+        data: {
+          facebookUserId: userInfo.id,
+          facebookUserName: userInfo.name,
+          facebookUserEmail: userInfo.email,
+          accessToken: encryptedToken,
+          tokenExpiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
+          pageIds: pages.map(p => p.id).join(','),
+          pageNames: pages.map(p => p.name).join(','),
+          csrfToken: null, // Clear CSRF token after successful OAuth
+          lastSyncAt: new Date()
+        }
       });
-      
-      if (existingAccount) {
-        // Update existing account with new token and user info
-        await prisma.facebookAccount.update({
-          where: { userId },
-          data: {
-            facebookUserId: userInfo.id,
-            facebookUserName: userInfo.name,
-            facebookUserEmail: userInfo.email,
-            accessToken: encryptedToken,
-            tokenExpiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
-            pageIds: pages.map(p => p.id).join(','),
-            pageNames: pages.map(p => p.name).join(','),
-            lastSyncAt: new Date()
-          }
-        });
-      } else {
-        // Create new account record (without ad account yet)
-        await prisma.facebookAccount.create({
-          data: {
-            userId,
-            facebookUserId: userInfo.id,
-            facebookUserName: userInfo.name,
-            facebookUserEmail: userInfo.email,
-            accessToken: encryptedToken,
-            tokenExpiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-            pageIds: pages.map(p => p.id).join(','),
-            pageNames: pages.map(p => p.name).join(','),
-            adAccountId: 'PENDING', // Placeholder until user selects
-            adAccountName: null,
-            lastSyncAt: new Date()
-          }
-        });
-      }
     
     // Redirect to ad account selection page with userId in query
     return res.redirect(`${process.env.FRONTEND_URL}/facebook/select-account?userId=${userId}`);
@@ -176,7 +195,7 @@ router.post('/select-account',
       console.warn('⚠️ select-account validation errors:', errors.array());
       return res.status(400).json({ 
         error: firstError.msg,
-        field: firstError.param,
+        field: (firstError as any).param || (firstError as any).path,
         errors: errors.array()
       });
     }
@@ -466,6 +485,73 @@ router.post('/refresh-token', ...clerkAuth, async (req: AuthRequest, res: Respon
     console.error('Facebook refresh token error:', error);
     res.status(500).json({ 
       error: error.message || 'Failed to refresh access token' 
+    });
+  }
+});
+
+/**
+ * GET /api/facebook/leads/:formId
+ * Retrieve lead submissions from a Facebook Lead Form
+ */
+router.get('/leads/:formId', ...clerkAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const { formId } = req.params;
+    
+    const fbAccount = await prisma.facebookAccount.findUnique({
+      where: { userId: req.user!.id }
+    });
+    
+    if (!fbAccount || !fbAccount.isActive) {
+      return res.status(400).json({ 
+        error: 'No Facebook account connected. Please connect your Facebook account first.' 
+      });
+    }
+    
+    // Check if token is expired
+    if (fbAccount.tokenExpiresAt < new Date()) {
+      return res.status(401).json({ 
+        error: 'Facebook access token expired. Please reconnect your account.' 
+      });
+    }
+    
+    const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
+    
+    // Fetch leads from Facebook Graph API
+    const response = await axios.get(
+      `https://graph.facebook.com/v19.0/${formId}/leads`,
+      {
+        params: {
+          access_token: accessToken,
+          fields: 'id,created_time,field_data'
+        }
+      }
+    );
+    
+    const leads = response.data.data || [];
+    
+    // Transform lead data to more readable format
+    const formattedLeads = leads.map((lead: any) => {
+      const fields: Record<string, string> = {};
+      lead.field_data?.forEach((field: any) => {
+        fields[field.name] = field.values.join(', ');
+      });
+      
+      return {
+        id: lead.id,
+        createdAt: lead.created_time,
+        fields
+      };
+    });
+    
+    res.json({ 
+      success: true,
+      leads: formattedLeads,
+      totalCount: formattedLeads.length
+    });
+  } catch (error: any) {
+    console.error('Facebook fetch leads error:', error.response?.data || error.message);
+    res.status(500).json({ 
+      error: error.response?.data?.error?.message || 'Failed to fetch leads from Facebook' 
     });
   }
 });

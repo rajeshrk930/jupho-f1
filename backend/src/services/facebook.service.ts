@@ -57,8 +57,12 @@ export class FacebookService {
    * Generates random IV for each encryption and prepends it to ciphertext
    */
   static encryptToken(token: string): string {
+    if (!process.env.ENCRYPTION_KEY) {
+      throw new Error('ENCRYPTION_KEY environment variable is required for secure token storage');
+    }
+    
     const algorithm = 'aes-256-cbc';
-    const key = Buffer.from(process.env.ENCRYPTION_KEY || '12345678901234567890123456789012', 'utf8').slice(0, 32);
+    const key = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8').slice(0, 32);
     const iv = crypto.randomBytes(16); // Generate random IV for each encryption
     
     const cipher = crypto.createCipheriv(algorithm, key, iv);
@@ -74,8 +78,12 @@ export class FacebookService {
    * Extracts IV from prepended data before decryption
    */
   static decryptToken(encrypted: string): string {
+    if (!process.env.ENCRYPTION_KEY) {
+      throw new Error('ENCRYPTION_KEY environment variable is required for token decryption');
+    }
+    
     const algorithm = 'aes-256-cbc';
-    const key = Buffer.from(process.env.ENCRYPTION_KEY || '12345678901234567890123456789012', 'utf8').slice(0, 32);
+    const key = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8').slice(0, 32);
     
     // Split IV and encrypted data
     const parts = encrypted.split(':');

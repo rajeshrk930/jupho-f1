@@ -134,13 +134,42 @@ function DashboardPageInner() {
               <h1 className="text-2xl font-semibold text-charcoal-900">Welcome back{user?.name ? `, ${user.name}` : ''}!</h1>
               <p className="text-sm text-charcoal-600">Create high-performing Meta ads with AI</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/agent" className="bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2">
-                <Sparkles size={16} />
-                Create Ad with AI
-              </Link>
-            </div>
           </div>
+        </div>
+
+        {/* Dual-Path: AI Agent vs Templates */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link href="/agent" className="bg-gradient-to-br from-coral-500 to-coral-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
+            <div className="flex items-start justify-between mb-4">
+              <div className="bg-white/20 p-3 rounded-lg">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <span className="text-xs bg-white/20 px-3 py-1 rounded-full">Custom</span>
+            </div>
+            <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">AI Agent</h3>
+            <p className="text-coral-50 text-sm mb-3">Let AI create custom ads tailored to your business. Full strategy and creative generation.</p>
+            <div className="flex items-center text-sm font-medium">
+              <span>Create with AI</span>
+              <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <p className="text-xs text-coral-100 mt-3">⏱️ 5-10 minutes</p>
+          </Link>
+
+          <Link href="/templates" className="bg-white border-2 border-blue-600 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
+            <div className="flex items-start justify-between mb-4">
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <Target className="w-6 h-6 text-blue-600" />
+              </div>
+              <span className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full">⚡ Fast</span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:translate-x-1 transition-transform">Templates</h3>
+            <p className="text-gray-600 text-sm mb-3">Choose from proven winning ad templates. Quick edits and instant launch.</p>
+            <div className="flex items-center text-sm font-medium text-blue-600">
+              <span>Browse Templates</span>
+              <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <p className="text-xs text-gray-500 mt-3">⚡ 2-3 minutes</p>
+          </Link>
         </div>
 
         {/* Quick Stats */}
