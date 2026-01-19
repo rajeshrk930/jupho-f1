@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Loader2, Rocket, Upload, Check, ExternalLink, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
-import { agentApi } from '@/lib/api';
+import { agentApi, api } from '@/lib/api';
 import MetaAdPreview from './MetaAdPreview';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 
@@ -126,7 +126,7 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
 
       const category = prompt('Enter category (optional - e.g., RESTAURANT, GYM, SALON):') || undefined;
 
-      await agentApi.post(`/templates/from-task/${taskId}`, {
+      await api.post(`/templates/from-task/${taskId}`, {
         name: templateName,
         category,
         description: `Template created from successful campaign`,
