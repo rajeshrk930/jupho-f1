@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { clerkAuth } from '../middleware/clerkAuth';
 import { AuthRequest } from '../middleware/auth';
+import { checkCampaignUsageLimit } from '../middleware/usageLimit';
 import { TemplateService } from '../services/template.service';
 import { AgentService } from '../services/agent.service';
 import { upload } from '../middleware/upload';
@@ -214,6 +215,7 @@ router.post(
 router.post(
   '/:id/launch',
   clerkAuth,
+  checkCampaignUsageLimit('TEMPLATE'),
   upload.single('image'),
   async (req: AuthRequest, res: Response) => {
     try {
@@ -250,12 +252,35 @@ router.post(
       const finalBudget = parsedBudget || parsed.budget;
       const finalTargeting = parsedTargeting || parsed.targeting;
 
-      // Create AgentTask from template
-      const task = await prisma.agentTask.create({
+      // Create AgentTask from template (check for existing task to prevent duplicates)
+      let task = await prisma.agentTask.findFirst({
+        where: {
+          userId,
+          input: {
+            contains: `"templateId":"${template.id}"`,
+          },
+          fbCampaignId: { not: null },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      if (task) {
+        console.log('[Template Launch] Campaign already exists from this template:', task.id);
+        return res.status(409).json({
+          error: 'ALREADY_LAUNCHED',
+          message: 'A campaign has already been launched from this template recently. Please check your campaigns.',
+          taskId: task.id,
+          campaignId: task.fbCampaignId,
+          adId: task.fbAdId,
+        });
+      }
+
+      task = await prisma.agentTask.create({
         data: {
           userId,
           type: 'CREATE_AD',
           status: 'GENERATING',
+          createdVia: 'TEMPLATE',
           conversionMethod: parsed.conversionMethod,
           input: JSON.stringify({
             fromTemplate: true,

@@ -2,9 +2,32 @@ import { Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { AuthRequest } from './auth';
 
-const DAILY_FREE_LIMIT = 3; // 3 analyses per day for free users
+const DAILY_FREE_LIMIT = 3; // 3 chat analyses per day (legacy)
 
-// Helper to check if date is a new day
+// Plan limits
+const PLAN_LIMITS = {
+  STARTER: {
+    campaignsPerMonth: 5,
+    aiCampaignsPerMonth: 1,
+  },
+  GROWTH: {
+    campaignsPerMonth: 25,
+    aiCampaignsPerMonth: 999, // Unlimited AI
+  },
+};
+
+// Helper to check if it's a new month
+const isNewMonth = (lastReset: Date): boolean => {
+  const now = new Date();
+  const lastResetDate = new Date(lastReset);
+  
+  return (
+    now.getMonth() !== lastResetDate.getMonth() ||
+    now.getFullYear() !== lastResetDate.getFullYear()
+  );
+};
+
+// Helper to check if date is a new day (for chat API - legacy)
 const isNewDay = (lastReset: Date): boolean => {
   const now = new Date();
   const lastResetDate = new Date(lastReset);
@@ -16,21 +39,139 @@ const isNewDay = (lastReset: Date): boolean => {
   );
 };
 
-// Helper to check if PRO subscription is active
-const isProActive = (user: { plan: string; proExpiresAt?: Date | null }): boolean => {
-  if (user.plan !== 'PRO') return false;
-  if (!user.proExpiresAt) return false;
-  return new Date(user.proExpiresAt) > new Date();
+// Helper to check if subscription is active
+const isSubscriptionActive = (user: { plan: string; planExpiresAt?: Date | null }): boolean => {
+  if (user.plan === 'STARTER' || user.plan === 'GROWTH') {
+    if (!user.planExpiresAt) return true; // No expiry = lifetime access
+    return new Date(user.planExpiresAt) > new Date();
+  }
+  return false;
 };
 
-// Helper to calculate next reset time (midnight)
+// Helper to calculate next reset time (next month)
 const getNextResetTime = (lastReset: Date): string => {
   const nextReset = new Date(lastReset);
-  nextReset.setDate(nextReset.getDate() + 1);
+  nextReset.setMonth(nextReset.getMonth() + 1);
+  nextReset.setDate(1);
   nextReset.setHours(0, 0, 0, 0);
   return nextReset.toISOString();
 };
 
+/**
+ * Middleware to check campaign usage limits (for AI Agent + Templates)
+ * Checks: Total campaigns/month AND AI campaigns/month (for STARTER)
+ */
+export const checkCampaignUsageLimit = (createdVia: 'AI_AGENT' | 'TEMPLATE') => {
+  return async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user!.id;
+
+      // Fetch user with usage data
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          plan: true,
+          agentTasksCreated: true,
+          agentLastResetDate: true,
+          planExpiresAt: true,
+        },
+      });
+
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'User not found',
+        });
+      }
+
+      // Check if subscription is active
+      if (!isSubscriptionActive(user)) {
+        return res.status(403).json({
+          success: false,
+          error: 'SUBSCRIPTION_EXPIRED',
+          message: 'Your subscription has expired. Please renew to continue.',
+        });
+      }
+
+      // Reset counter if it's a new month
+      if (isNewMonth(user.agentLastResetDate)) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            agentTasksCreated: 0,
+            agentLastResetDate: new Date(),
+          },
+        });
+        // Continue with reset count
+        return next();
+      }
+
+      // Get plan limits
+      const planLimits = PLAN_LIMITS[user.plan as 'STARTER' | 'GROWTH'];
+      
+      if (!planLimits) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid plan type',
+        });
+      }
+
+      // Check total campaign limit
+      if (user.agentTasksCreated >= planLimits.campaignsPerMonth) {
+        return res.status(403).json({
+          success: false,
+          error: 'CAMPAIGN_LIMIT_REACHED',
+          message: user.plan === 'STARTER' 
+            ? `You've reached your limit of ${planLimits.campaignsPerMonth} campaigns this month. Upgrade to GROWTH for 25 campaigns/month.`
+            : `You've reached your limit of ${planLimits.campaignsPerMonth} campaigns this month.`,
+          limit: planLimits.campaignsPerMonth,
+          used: user.agentTasksCreated,
+          resetAt: getNextResetTime(user.agentLastResetDate),
+          upgradeRequired: user.plan === 'STARTER',
+        });
+      }
+
+      // For STARTER users using AI Agent: Check AI campaign limit
+      if (user.plan === 'STARTER' && createdVia === 'AI_AGENT') {
+        // Count AI campaigns created this month
+        const startOfMonth = new Date(user.agentLastResetDate);
+        const aiCampaignsCount = await prisma.agentTask.count({
+          where: {
+            userId,
+            createdVia: 'AI_AGENT',
+            createdAt: { gte: startOfMonth },
+          },
+        });
+
+        if (aiCampaignsCount >= planLimits.aiCampaignsPerMonth) {
+          return res.status(403).json({
+            success: false,
+            error: 'AI_LIMIT_REACHED',
+            message: `You've used your ${planLimits.aiCampaignsPerMonth} free AI campaign this month. Upgrade to GROWTH for unlimited AI campaigns or use templates.`,
+            limit: planLimits.aiCampaignsPerMonth,
+            used: aiCampaignsCount,
+            resetAt: getNextResetTime(user.agentLastResetDate),
+            upgradeRequired: true,
+          });
+        }
+      }
+
+      // All checks passed
+      next();
+    } catch (error: any) {
+      console.error('[Usage Limit] Error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to check usage limits',
+      });
+    }
+  };
+};
+
+/**
+ * Legacy middleware for chat API (daily limits)
+ */
 export const checkUsageLimit = async (
   req: AuthRequest,
   res: Response,
@@ -47,7 +188,7 @@ export const checkUsageLimit = async (
         plan: true,
         apiUsageCount: true,
         lastResetDate: true,
-        proExpiresAt: true,
+        planExpiresAt: true,
       },
     });
 
@@ -58,8 +199,8 @@ export const checkUsageLimit = async (
       });
     }
 
-    // PRO users with active subscription: unlimited access
-    if (isProActive(user)) {
+    // Paid users: unlimited access
+    if (isSubscriptionActive(user)) {
       return next();
     }
 
@@ -76,8 +217,8 @@ export const checkUsageLimit = async (
       return next();
     }
 
-    // Check if FREE user has exceeded limit
-    if (user.plan === 'FREE' && user.apiUsageCount >= DAILY_FREE_LIMIT) {
+    // Check if user has exceeded limit (for free/legacy plans)
+    if (user.apiUsageCount >= DAILY_FREE_LIMIT) {
       return res.status(429).json({
         success: false,
         message: 'Daily limit reached. Upgrade to Pro for unlimited analyses.',

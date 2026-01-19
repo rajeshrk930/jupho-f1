@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { clerkAuth } from '../middleware/clerkAuth';
 import { AuthRequest } from '../middleware/auth';
+import { checkCampaignUsageLimit } from '../middleware/usageLimit';
 import { AgentService } from '../services/agent.service';
 import { IntelligentAnalysisService } from '../services/intelligentAnalysis.service';
 import { upload } from '../middleware/upload';
@@ -9,71 +10,13 @@ import { prisma } from '../lib/prisma';
 
 const router = Router();
 
-// Middleware: Check agent usage limits (FREE: 5/month, PRO: 50/month)
-const checkUsageLimit = async (req: AuthRequest, res: Response, next: any) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user!.id },
-      select: { 
-        plan: true, 
-        agentTasksCreated: true, 
-        agentLastResetDate: true,
-        proExpiresAt: true 
-      }
-    });
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    // Check if we need to reset monthly counter
-    const now = new Date();
-    const lastReset = user.agentLastResetDate ? new Date(user.agentLastResetDate) : new Date(0);
-    const monthsSinceReset = (now.getFullYear() - lastReset.getFullYear()) * 12 + 
-                             (now.getMonth() - lastReset.getMonth());
-
-    if (monthsSinceReset >= 1) {
-      // Reset counter at start of new month
-      await prisma.user.update({
-        where: { id: req.user!.id },
-        data: {
-          agentTasksCreated: 0,
-          agentLastResetDate: now
-        }
-      });
-      user.agentTasksCreated = 0;
-    }
-
-    // Check limits
-    const isPro = user.plan === 'PRO' && user.proExpiresAt && new Date(user.proExpiresAt) > now;
-    const limit = isPro ? 50 : 5;
-
-    if (user.agentTasksCreated >= limit) {
-      return res.status(403).json({ 
-        error: 'LIMIT_EXCEEDED',
-        message: isPro 
-          ? `You've reached your PRO limit of ${limit} campaigns this month. Contact support for more.`
-          : `You've reached your FREE limit of ${limit} campaigns this month. Upgrade to PRO for 50/month.`,
-        limit,
-        used: user.agentTasksCreated,
-        plan: isPro ? 'PRO' : 'FREE'
-      });
-    }
-
-    next();
-  } catch (error) {
-    console.error('Usage limit check error:', error);
-    res.status(500).json({ error: 'Failed to check usage limits' });
-  }
-};
-
 /**
  * 🔍 STEP 1: SCAN BUSINESS (POST /api/agent/scan)
  * NEW: Accepts 3-field input (description, location?, website?)
  * LEGACY: Still supports { url } OR { manualInput } for backward compatibility
  * Output: { taskId: "...", businessData: { ... } }
  */
-router.post('/scan', ...clerkAuth, checkUsageLimit, async (req: AuthRequest, res: Response) => {
+router.post('/scan', ...clerkAuth, checkCampaignUsageLimit('AI_AGENT'), async (req: AuthRequest, res: Response) => {
   try {
     const { description, location, website, url, manualInput } = req.body;
     const userId = req.user!.id;
@@ -108,6 +51,7 @@ router.post('/scan', ...clerkAuth, checkUsageLimit, async (req: AuthRequest, res
             userId,
             type: 'CREATE_AD',
             status: 'PENDING',
+            createdVia: 'AI_AGENT',
             conversationState: 'STRATEGY_GENERATION',
             businessProfile: JSON.stringify(analysis)
           }
@@ -210,6 +154,22 @@ router.post(
 
       if (!taskId) {
         return res.status(400).json({ error: 'Task ID is required' });
+      }
+
+      // Check if campaign already launched (idempotency)
+      const existingTask = await prisma.agentTask.findUnique({
+        where: { id: taskId, userId: req.user!.id },
+        select: { fbCampaignId: true, fbAdId: true }
+      });
+
+      if (existingTask && existingTask.fbCampaignId) {
+        console.log('[Launch] Campaign already exists for task:', taskId);
+        return res.status(409).json({ 
+          error: 'ALREADY_LAUNCHED',
+          message: 'This campaign has already been launched. Refresh the page to see the latest status.',
+          campaignId: existingTask.fbCampaignId,
+          adId: existingTask.fbAdId
+        });
       }
 
       // Get image URL if uploaded
@@ -329,7 +289,7 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
         plan: true,
         agentTasksCreated: true,
         agentLastResetDate: true,
-        proExpiresAt: true
+        planExpiresAt: true
       }
     });
 
@@ -337,7 +297,7 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const isPro = user.plan === 'PRO' && user.proExpiresAt && new Date(user.proExpiresAt) > new Date();
+    const isPro = user.plan === 'PRO' && user.planExpiresAt && new Date(user.planExpiresAt) > new Date();
     const limit = isPro ? 50 : 5;
 
     res.json({

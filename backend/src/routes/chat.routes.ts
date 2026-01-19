@@ -191,7 +191,7 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
         plan: true,
         apiUsageCount: true,
         lastResetDate: true,
-        proExpiresAt: true,
+        planExpiresAt: true,
       },
     });
 
@@ -199,7 +199,7 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const isProActive = user.plan === 'PRO' && user.proExpiresAt && new Date(user.proExpiresAt) > new Date();
+    const isProActive = user.plan === 'PRO' && user.planExpiresAt && new Date(user.planExpiresAt) > new Date();
     const limit = 10; // Frontend expects a number; PRO ignores it
 
     // Guard against any null/legacy values by falling back to "now"
@@ -220,7 +220,7 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
         isPro: isProActive,
         limit,
         resetsAt: getNextResetTime(),
-        proExpiresAt: user.proExpiresAt || null,
+        planExpiresAt: user.planExpiresAt || null,
       },
     });
   } catch (error) {

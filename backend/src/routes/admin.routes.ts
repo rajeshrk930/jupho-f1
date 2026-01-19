@@ -105,7 +105,7 @@ router.get('/users', async (req, res) => {
           name: true,
           plan: true,
           apiUsageCount: true,
-          proExpiresAt: true,
+          planExpiresAt: true,
           createdAt: true,
           _count: {
             select: {
@@ -209,7 +209,7 @@ router.patch('/users/:id', async (req, res) => {
         name: true,
         plan: true,
         apiUsageCount: true,
-        proExpiresAt: true
+        planExpiresAt: true
       }
     });
 

@@ -12,13 +12,13 @@ model User {
   clerkId       String     @unique
   email         String     @unique
   name          String?
-  plan          String     @default("FREE")
+  plan          String     @default("STARTER") // STARTER, GROWTH
   isAdmin       Boolean    @default(false)
   apiUsageCount Int        @default(0)
   lastResetDate DateTime   @default(now())
-  agentTasksCreated Int    @default(0) // FREE: 5/month, PRO: 50/month
+  agentTasksCreated Int    @default(0) // STARTER: 5/month, GROWTH: 25/month
   agentLastResetDate DateTime @default(now())
-  proExpiresAt  DateTime?
+  planExpiresAt DateTime? // Subscription expiry date
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   payments      Payment[]
@@ -100,6 +100,7 @@ model AgentTask {
   userId        String
   type          String   @default("CREATE_AD") // CREATE_AD, OPTIMIZE_AD
   status        String   @default("PENDING") // PENDING, GATHERING_INFO, GENERATING, CREATING, COMPLETED, FAILED
+  createdVia    String   @default("AI_AGENT") // AI_AGENT, TEMPLATE
   
   // User input data (stored as JSON)
   input         String?  // { objective, audience, budget, preferences }

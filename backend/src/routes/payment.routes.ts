@@ -162,13 +162,13 @@ router.post(
       // Monthly: 30 days, Annual: 365 days
       const { plan: planType } = req.body;
       const planDetails = PLANS[planType as keyof typeof PLANS];
-      const proExpiresAt = new Date(Date.now() + planDetails.duration * 24 * 60 * 60 * 1000);
+      const planExpiresAt = new Date(Date.now() + planDetails.duration * 24 * 60 * 60 * 1000);
         
       await prisma.user.update({
         where: { id: req.user!.id },
         data: { 
           plan: 'PRO',
-          proExpiresAt,
+          planExpiresAt,
           apiUsageCount: 0 // Reset usage count on upgrade
         }
       });
@@ -176,7 +176,7 @@ router.post(
       res.json({
         success: true,
         message: 'Payment verified successfully',
-        data: { plan: 'PRO', expiresAt: proExpiresAt }
+        data: { plan: 'PRO', expiresAt: planExpiresAt }
       });
     } catch (error) {
       console.error('Verify payment error:', error);
@@ -273,13 +273,13 @@ router.post('/webhook', async (req: Request, res: Response) => {
       // Determine plan duration from payment amount
       const isAnnual = amount >= 1999000; // ₹19,990 or more = annual
       const durationDays = isAnnual ? 365 : 30;
-      const proExpiresAt = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000);
+      const planExpiresAt = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000);
 
       await prisma.user.update({
         where: { id: payment.userId },
         data: {
           plan: 'PRO',
-          proExpiresAt,
+          planExpiresAt,
           agentTasksCreated: 0 // Reset usage count on upgrade
         }
       });

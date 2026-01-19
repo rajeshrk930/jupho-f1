@@ -5,6 +5,39 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+/**
+ * Retry utility for OpenAI API calls with exponential backoff
+ */
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  initialDelay = 1000
+): Promise<T> {
+  let lastError: Error;
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      lastError = error;
+      
+      // Don't retry on non-retryable errors
+      if (error.status && error.status < 500 && error.status !== 429) {
+        throw error;
+      }
+      
+      if (attempt < maxRetries - 1) {
+        const delay = initialDelay * Math.pow(2, attempt);
+        console.log(`[OpenAI Retry] Attempt ${attempt + 1} failed, retrying in ${delay}ms...`, error.message);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  console.error(`[OpenAI Retry] All ${maxRetries} attempts failed`);
+  throw lastError!;
+}
+
 // Industry Benchmarks (Indian Market - 2026)
 const INDUSTRY_BENCHMARKS = {
   ecommerce: {
@@ -295,23 +328,25 @@ export class MasterPromptService {
         industry
       );
 
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        temperature: 0.7,
-        max_tokens: 2000,
-        response_format: { type: 'json_object' },
-        messages: [
-          { role: 'system', content: MASTER_PROMPT_SYSTEM },
-          {
-            role: 'user',
-            content: `Analyze this business and generate a complete Meta Ads campaign strategy:
+      const response = await retryWithBackoff(() => 
+        openai.chat.completions.create({
+          model: 'gpt-4o',
+          temperature: 0.7,
+          max_tokens: 2000,
+          response_format: { type: 'json_object' },
+          messages: [
+            { role: 'system', content: MASTER_PROMPT_SYSTEM },
+            {
+              role: 'user',
+              content: `Analyze this business and generate a complete Meta Ads campaign strategy:
 
 ${businessContext}
 
 Output: A complete JSON campaign strategy following the system instructions.`
-          }
-        ]
-      });
+            }
+          ]
+        })
+      );
 
       const content = response.choices[0].message.content;
       if (!content) {
@@ -562,22 +597,24 @@ Output: A complete JSON campaign strategy following the system instructions.`
         descriptions: 30
       }[copyType];
 
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        temperature: 0.8,
-        max_tokens: 2000,
-        response_format: { type: 'json_object' },
-        messages: [
-          {
-            role: 'system',
-            content: `Generate 3 DISTINCT ${copyType} variants for a Meta ad. Max ${maxChars} characters each. Return JSON: {"variants": ["...", "...", "..."]}`
-          },
-          {
-            role: 'user',
-            content: `Business: ${businessData.brandName || 'Unknown'}\nDescription: ${businessData.description || ''}\nObjective: ${objective}\n\nGenerate 3 new ${copyType} variants.`
-          }
-        ]
-      });
+      const response = await retryWithBackoff(() =>
+        openai.chat.completions.create({
+          model: 'gpt-4o',
+          temperature: 0.8,
+          max_tokens: 2000,
+          response_format: { type: 'json_object' },
+          messages: [
+            {
+              role: 'system',
+              content: `Generate 3 DISTINCT ${copyType} variants for a Meta ad. Max ${maxChars} characters each. Return JSON: {"variants": ["...", "...", "..."]}`
+            },
+            {
+              role: 'user',
+              content: `Business: ${businessData.brandName || 'Unknown'}\nDescription: ${businessData.description || ''}\nObjective: ${objective}\n\nGenerate 3 new ${copyType} variants.`
+            }
+          ]
+        })
+      );
 
       const content = response.choices[0].message.content;
       if (!content) {
