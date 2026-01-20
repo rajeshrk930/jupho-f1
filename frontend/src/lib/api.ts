@@ -261,3 +261,81 @@ export const agentApi = {
     return response.data;
   },
 };
+
+// Admin API - Payment Management
+export const adminPaymentApi = {
+  getPayments: async (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    userId?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const response = await api.get('/admin/payments', { params });
+    return response.data;
+  },
+
+  getRevenueStats: async () => {
+    const response = await api.get('/admin/revenue-stats');
+    return response.data;
+  },
+
+  refundPayment: async (paymentId: string, reason: string) => {
+    const response = await api.post(`/admin/payments/${paymentId}/refund`, { reason });
+    return response.data;
+  },
+
+  updateSubscription: async (
+    userId: string,
+    action: 'extend' | 'cancel' | 'change_plan',
+    data: { plan?: string; months?: number }
+  ) => {
+    const response = await api.patch(`/admin/payments/${userId}/subscription`, {
+      action,
+      ...data
+    });
+    return response.data;
+  },
+};
+
+// Admin API - Template Management
+export const adminTemplateApi = {
+  getTemplates: async (params?: {
+    page?: number;
+    limit?: number;
+    category?: string;
+    isPublic?: boolean;
+    userId?: string;
+    search?: string;
+  }) => {
+    const response = await api.get('/admin/templates', { params });
+    return response.data;
+  },
+
+  getTemplateStats: async () => {
+    const response = await api.get('/admin/templates/stats');
+    return response.data;
+  },
+
+  updateTemplate: async (templateId: string, data: any) => {
+    const response = await api.patch(`/admin/templates/${templateId}`, data);
+    return response.data;
+  },
+
+  deleteTemplate: async (templateId: string) => {
+    const response = await api.delete(`/admin/templates/${templateId}`);
+    return response.data;
+  },
+
+  bulkDeleteTemplates: async (templateIds: string[]) => {
+    const response = await api.post('/admin/templates/bulk-delete', { templateIds });
+    return response.data;
+  },
+
+  bulkUpdateTemplates: async (templateIds: string[], updates: any) => {
+    const response = await api.patch('/admin/templates/bulk-update', { templateIds, updates });
+    return response.data;
+  },
+};
+
