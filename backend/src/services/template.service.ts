@@ -195,10 +195,13 @@ export class TemplateService {
     }
 
     if (filters.search) {
-      where.OR = [
-        ...where.OR,
-        { name: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
+      where.AND = [
+        {
+          OR: [
+            { name: { contains: filters.search, mode: 'insensitive' } },
+            { description: { contains: filters.search, mode: 'insensitive' } },
+          ],
+        },
       ];
     }
 
