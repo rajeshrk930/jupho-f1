@@ -7,6 +7,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "npx prisma generate && node dist/index.js",
+    "deploy": "npx prisma migrate deploy",
     "lint": "eslint src --ext .ts",
     "test": "jest --passWithNoTests --runInBand",
     "test:watch": "jest --watch"
