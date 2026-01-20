@@ -339,3 +339,30 @@ export const adminTemplateApi = {
   },
 };
 
+// Admin API - Campaign Monitoring
+export const adminCampaignApi = {
+  getCampaigns: async (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    userId?: string;
+    performanceGrade?: string;
+  }) => {
+    const response = await api.get('/admin/campaigns', { params });
+    return response.data;
+  },
+
+  getCampaignStats: async () => {
+    const response = await api.get('/admin/campaigns/stats');
+    return response.data;
+  },
+};
+
+// Admin API - Facebook Integration Health
+export const adminIntegrationApi = {
+  getFacebookConnections: async () => {
+    const response = await api.get('/admin/integrations/facebook');
+    return response.data;
+  },
+};
+

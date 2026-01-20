@@ -2,8 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { adminApi } from '@/lib/api';
-import { Users, TrendingUp, MessageSquare, IndianRupee, Search, Filter, ChevronLeft, ChevronRight, Edit, Trash2, Shield } from 'lucide-react';
+import { 
+  Users, 
+  TrendingUp, 
+  MessageSquare, 
+  IndianRupee, 
+  Search, 
+  Filter, 
+  ChevronLeft, 
+  ChevronRight, 
+  Edit, 
+  Trash2, 
+  Shield,
+  CreditCard,
+  FileText,
+  Target,
+  Facebook,
+  ArrowRight
+} from 'lucide-react';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 interface Stats {
   users: {
@@ -157,9 +175,48 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Quick Navigation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link href="/admin/payments" className="group bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all border-2 border-transparent hover:border-blue-500">
+            <div className="flex items-center justify-between mb-3">
+              <CreditCard className="h-8 w-8 text-blue-500" />
+              <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+            </div>
+            <h3 className="font-semibold text-gray-900 text-lg">Payments</h3>
+            <p className="text-sm text-gray-600 mt-1">Revenue & transactions</p>
+          </Link>
+
+          <Link href="/admin/templates" className="group bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all border-2 border-transparent hover:border-purple-500">
+            <div className="flex items-center justify-between mb-3">
+              <FileText className="h-8 w-8 text-purple-500" />
+              <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
+            </div>
+            <h3 className="font-semibold text-gray-900 text-lg">Templates</h3>
+            <p className="text-sm text-gray-600 mt-1">Manage ad templates</p>
+          </Link>
+
+          <Link href="/admin/campaigns" className="group bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all border-2 border-transparent hover:border-green-500">
+            <div className="flex items-center justify-between mb-3">
+              <Target className="h-8 w-8 text-green-500" />
+              <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-green-500 group-hover:translate-x-1 transition-all" />
+            </div>
+            <h3 className="font-semibold text-gray-900 text-lg">Campaigns</h3>
+            <p className="text-sm text-gray-600 mt-1">Monitor performance</p>
+          </Link>
+
+          <Link href="/admin/integrations" className="group bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all border-2 border-transparent hover:border-indigo-500">
+            <div className="flex items-center justify-between mb-3">
+              <Facebook className="h-8 w-8 text-indigo-600" />
+              <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all" />
+            </div>
+            <h3 className="font-semibold text-gray-900 text-lg">Integrations</h3>
+            <p className="text-sm text-gray-600 mt-1">Facebook health</p>
+          </Link>
+        </div>
+
         {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             {/* Total Users */}
             <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-3">
