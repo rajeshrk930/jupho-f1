@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
+import { setSentryUser } from '../config/sentry.config';
 
 export interface AuthRequest extends Request {
   user?: {
@@ -59,6 +60,9 @@ export const authenticate = async (
       email: user.email,
       clerkId: user.clerkId
     };
+
+    // Track user in Sentry for error attribution
+    setSentryUser(user.id, user.email, user.clerkId);
 
     next();
   } catch (error) {

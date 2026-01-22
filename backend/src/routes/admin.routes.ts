@@ -842,16 +842,6 @@ router.get('/campaigns', async (req, res) => {
           createdAt: true,
           completedAt: true,
           userId: true
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              email: true,
-              name: true,
-              plan: true
-            }
-          }
         }
       }),
       prisma.agentTask.count({ where })
@@ -882,7 +872,7 @@ router.get('/campaigns/stats', async (req, res) => {
       totalCampaigns,
       activeCampaigns,
       completedCampaigns,
-      failedCampaigns,
+      failedCampaignsCount,
       performanceData
     ] = await Promise.all([
       prisma.agentTask.count(),
@@ -917,7 +907,7 @@ router.get('/campaigns/stats', async (req, res) => {
     });
 
     // Get failing campaigns (POOR performance or FAILED status)
-    const failingCampaigns = await prisma.agentTask.findMany({
+    const failingCampaignsList = await prisma.agentTask.findMany({
       where: {
         OR: [
           { performanceGrade: 'POOR' },
@@ -934,12 +924,7 @@ router.get('/campaigns/stats', async (req, res) => {
         actualCPM: true,
         actualCTR: true,
         createdAt: true,
-        user: {
-          select: {
-            email: true,
-            name: true
-          }
-        }
+        userId: true
       }
     });
 
@@ -947,7 +932,7 @@ router.get('/campaigns/stats', async (req, res) => {
       totalCampaigns,
       activeCampaigns,
       completedCampaigns,
-      failedCampaigns: failedCampaigns.length,
+      failedCampaigns: failingCampaignsList.length,
       platformMetrics: {
         totalSpend: performanceData._sum.actualSpend || 0,
         totalImpressions: performanceData._sum.impressions || 0,
@@ -957,7 +942,7 @@ router.get('/campaigns/stats', async (req, res) => {
         avgCTR: performanceData._avg.actualCTR || 0
       },
       gradeDistribution,
-      failingCampaigns
+      failingCampaigns: failingCampaignsList
     });
   } catch (error) {
     console.error('Admin campaign stats error:', error);

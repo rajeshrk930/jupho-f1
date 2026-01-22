@@ -13,6 +13,7 @@ import agentRoutes from './routes/agent.routes';
 import templateRoutes from './routes/template.routes';
 import clerkRoutes from './routes/clerk.routes';
 import { errorHandler } from './middleware/errorHandler';
+import { requestLogger } from './middleware/logger.middleware';
 import path from 'path';
 import * as Sentry from '@sentry/node';
 import { initializeSentry } from './config/sentry.config';
@@ -106,6 +107,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Request logger - tracks all API calls with timing and user context
+app.use('/api', requestLogger);
+
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
@@ -124,9 +128,17 @@ app.get('/api/health', (req, res) => {
     status: 'ok', 
     timestamp: new Date().toISOString(),
     version: '1.1.0-oauth-fix',
-    features: ['facebook-oauth-get-callback', 'lead-forms']
+    features: ['facebook-oauth-get-callback', 'lead-forms'],
+    sentry: !!process.env.SENTRY_DSN
   });
 });
+
+// Test error route (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/api/test-error', (req, res) => {
+    throw new Error('Test Sentry Error - This should appear in Sentry dashboard');
+  });
+}
 
 // Sentry error handler MUST be before other error handlers
 Sentry.setupExpressErrorHandler(app);
