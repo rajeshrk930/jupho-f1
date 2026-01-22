@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { prisma } from '../lib/prisma';
 import { clerkAuth } from '../middleware/clerkAuth';
 import { AuthRequest } from '../middleware/auth';
+import * as Sentry from '@sentry/node';
 
 const router = Router();
 
@@ -37,59 +38,82 @@ router.post(
   ...clerkAuth,
   [body('plan').isIn(['PRO_MONTHLY', 'PRO_ANNUAL'])],
   async (req: AuthRequest, res: Response) => {
-    try {
-      if (!razorpay) {
-        return res.status(503).json({
-          success: false,
-          message: 'Payment service is not configured'
-        });
-      }
+    return await Sentry.startSpan({ op: 'payment', name: 'Create Razorpay Order' }, async () => {
+      try {
+        if (!razorpay) {
+          return res.status(503).json({
+            success: false,
+            message: 'Payment service is not configured'
+          });
+        }
 
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
-      }
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(400).json({ success: false, errors: errors.array() });
+        }
 
-      const { plan } = req.body;
-      const planDetails = PLANS[plan as keyof typeof PLANS];
+        const { plan } = req.body;
+        const planDetails = PLANS[plan as keyof typeof PLANS];
 
-      // Create one-time order for both monthly and annual plans
-      const order = await razorpay.orders.create({
-        amount: planDetails.amount,
-        currency: planDetails.currency,
-        receipt: `order_${Date.now()}`,
-        notes: {
-          userId: req.user!.id,
+        Sentry.setContext('payment', {
           plan,
-        },
-      });
-
-      await prisma.payment.create({
-        data: {
-          userId: req.user!.id,
-          razorpayOrderId: order.id,
           amount: planDetails.amount,
           currency: planDetails.currency,
-          plan: 'PRO',
-          status: 'PENDING',
-        },
-      });
+        });
 
-      res.json({
-        success: true,
-        data: {
-          orderId: order.id,
+        // Create one-time order for both monthly and annual plans
+        const order = await razorpay.orders.create({
           amount: planDetails.amount,
           currency: planDetails.currency,
-          keyId: process.env.RAZORPAY_KEY_ID,
-          mode: 'order',
-          planDuration: planDetails.duration,
-        },
-      });
-    } catch (error) {
-      console.error('Create order error:', error);
-      res.status(500).json({ success: false, message: 'Failed to create order' });
-    }
+          receipt: `order_${Date.now()}`,
+          notes: {
+            userId: req.user!.id,
+            plan,
+          },
+        });
+
+        await prisma.payment.create({
+          data: {
+            userId: req.user!.id,
+            razorpayOrderId: order.id,
+            amount: planDetails.amount,
+            currency: planDetails.currency,
+            plan: 'PRO',
+            status: 'PENDING',
+          },
+        });
+
+        Sentry.addBreadcrumb({
+          category: 'payment',
+          message: 'Razorpay order created',
+          level: 'info',
+          data: { orderId: order.id, plan },
+        });
+
+        res.json({
+          success: true,
+          data: {
+            orderId: order.id,
+            amount: planDetails.amount,
+            currency: planDetails.currency,
+            keyId: process.env.RAZORPAY_KEY_ID,
+            mode: 'order',
+            planDuration: planDetails.duration,
+          },
+        });
+      } catch (error) {
+        console.error('Create order error:', error);
+        
+        Sentry.captureException(error, {
+          tags: {
+            service: 'razorpay',
+            operation: 'create_order',
+          },
+        });
+        
+        res.status(500).json({ success: false, message: 'Failed to create order' });
+      }
+    });
   }
 );
 

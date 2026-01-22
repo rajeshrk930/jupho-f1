@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import * as Sentry from '@sentry/node';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -58,25 +59,67 @@ export async function getAssistantReply(history: ChatMessageInput[], briefing?: 
     throw new Error('OPENAI_API_KEY is not configured');
   }
 
-  const systemPrompt = isGenerator ? GENERATOR_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT;
-  const systemContent = briefing ? `${systemPrompt}\n\n${briefing}` : systemPrompt;
+  // Start Sentry span for OpenAI API call
+  return await Sentry.startSpan({
+    op: 'openai.completion',
+    name: isGenerator ? 'OpenAI Generator Completion' : 'OpenAI Chat Completion',
+  }, async () => {
+    try {
+      const systemPrompt = isGenerator ? GENERATOR_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT;
+      const systemContent = briefing ? `${systemPrompt}\n\n${briefing}` : systemPrompt;
 
-  const messages = [
-    { role: 'system' as const, content: systemContent },
-    ...history.map((m) => ({ role: m.role, content: m.content })),
-  ];
+      const messages = [
+        { role: 'system' as const, content: systemContent },
+        ...history.map((m) => ({ role: m.role, content: m.content })),
+      ];
 
-  const completion = await client.chat.completions.create({
-    model: 'gpt-4o',
-    messages,
-    temperature: isGenerator ? 0.7 : 0.4, // Higher creativity for generators
-    max_tokens: isGenerator ? 800 : 500, // More tokens for detailed copy
+      // Track token usage
+      Sentry.setContext('openai', {
+        model: 'gpt-4o',
+        messageCount: messages.length,
+        isGenerator,
+        temperature: isGenerator ? 0.7 : 0.4,
+        maxTokens: isGenerator ? 800 : 500,
+      });
+
+      const completion = await client.chat.completions.create({
+        model: 'gpt-4o',
+        messages,
+        temperature: isGenerator ? 0.7 : 0.4,
+        max_tokens: isGenerator ? 800 : 500,
+      });
+
+      // Track token usage in Sentry
+      if (completion.usage) {
+        Sentry.setMeasurement('openai.tokens.prompt', completion.usage.prompt_tokens, 'none');
+        Sentry.setMeasurement('openai.tokens.completion', completion.usage.completion_tokens, 'none');
+        Sentry.setMeasurement('openai.tokens.total', completion.usage.total_tokens, 'none');
+      }
+
+      const content = completion.choices[0]?.message?.content?.trim();
+      if (!content) {
+        throw new Error('No content returned from OpenAI');
+      }
+
+      return content;
+    } catch (error) {
+      // Capture OpenAI-specific errors
+      Sentry.captureException(error, {
+        level: 'error',
+        tags: {
+          service: 'openai',
+          operation: isGenerator ? 'generator' : 'chat',
+        },
+        contexts: {
+          openai: {
+            model: 'gpt-4o',
+            isGenerator,
+            historyLength: history.length,
+          },
+        },
+      });
+
+      throw error;
+    }
   });
-
-  const content = completion.choices[0]?.message?.content?.trim();
-  if (!content) {
-    throw new Error('No content returned from OpenAI');
-  }
-
-  return content;
 }

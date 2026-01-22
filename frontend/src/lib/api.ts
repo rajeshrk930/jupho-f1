@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
+import * as Sentry from '@sentry/nextjs';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -41,6 +42,17 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+
+    // Add breadcrumb for request tracking
+    Sentry.addBreadcrumb({
+      category: 'api.request',
+      message: `${config.method?.toUpperCase()} ${config.url}`,
+      level: 'info',
+      data: {
+        method: config.method,
+        url: config.url,
+      },
+    });
   } catch (e) {
     // Log error but don't block the request
     console.warn('api request interceptor: could not get Clerk token', e);
@@ -50,8 +62,64 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
 
 // Handle auth errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Add breadcrumb for successful response
+    Sentry.addBreadcrumb({
+      category: 'api.response',
+      message: `${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`,
+      level: 'info',
+      data: {
+        status: response.status,
+        statusText: response.statusText,
+      },
+    });
+    return response;
+  },
   async (error) => {
+    // Capture API errors in Sentry
+    if (error.response) {
+      const { status, data, config } = error.response;
+      
+      // Add context about the failed API call
+      Sentry.setContext('api_error', {
+        url: config.url,
+        method: config.method,
+        status,
+        statusText: error.response.statusText,
+        errorMessage: data?.message,
+      });
+
+      // Only capture 5xx errors (server errors) to avoid noise from client errors
+      if (status >= 500) {
+        Sentry.captureException(error, {
+          tags: {
+            api_endpoint: config.url,
+            http_status: status.toString(),
+          },
+          level: 'error',
+        });
+      }
+
+      // Capture auth errors as warnings
+      if (status === 401 || status === 403) {
+        Sentry.captureException(error, {
+          tags: {
+            api_endpoint: config.url,
+            http_status: status.toString(),
+          },
+          level: 'warning',
+        });
+      }
+    } else if (error.request) {
+      // Network error (no response received)
+      Sentry.captureException(error, {
+        tags: {
+          error_type: 'network_error',
+        },
+        level: 'error',
+      });
+    }
+
     if (error.response?.status === 401) {
       // Let callers handle 401 instead of forcing a full-page redirect.
       // This avoids refresh loops when Clerk cookies aren't yet hydrated client-side.

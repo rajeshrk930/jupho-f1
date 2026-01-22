@@ -14,10 +14,18 @@ import templateRoutes from './routes/template.routes';
 import clerkRoutes from './routes/clerk.routes';
 import { errorHandler } from './middleware/errorHandler';
 import path from 'path';
+import * as Sentry from '@sentry/node';
+import { initializeSentry } from './config/sentry.config';
 
 dotenv.config();
 
+// Initialize Sentry FIRST (before any other code)
+initializeSentry();
+
 const app = express();
+
+// Sentry will automatically instrument Express
+
 // Trust proxy so secure cookies (SameSite=None + Secure) work behind Railway/Vercel proxies
 app.set('trust proxy', 1);
 // Disable etag to avoid 304/Not Modified on auth/me causing empty bodies on the client
@@ -119,6 +127,9 @@ app.get('/api/health', (req, res) => {
     features: ['facebook-oauth-get-callback', 'lead-forms']
   });
 });
+
+// Sentry error handler MUST be before other error handlers
+Sentry.setupExpressErrorHandler(app);
 
 // Error handler
 app.use(errorHandler);

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import crypto from 'crypto';
 import FormData from 'form-data';
+import * as Sentry from '@sentry/node';
 
 export interface FacebookAdMetrics {
   impressions: string;
@@ -377,26 +378,54 @@ export class FacebookService {
     objective: string, // 'OUTCOME_LEADS', 'OUTCOME_SALES', 'OUTCOME_TRAFFIC'
     status: string = 'ACTIVE' // 'ACTIVE' or 'PAUSED' - Auto-publish campaigns
   ): Promise<string> {
-    try {
-      const cleanAccountId = this.normalizeAdAccountId(adAccountId);
-      
-      const response = await axios.post(
-        `${this.BASE_URL}/act_${cleanAccountId}/campaigns`,
-        {
-          name,
+    const span = Sentry.startSpan({ op: 'facebook.api', name: 'Create Campaign' }, async () => {
+      try {
+        const cleanAccountId = this.normalizeAdAccountId(adAccountId);
+        
+        Sentry.setContext('facebook_campaign', {
+          adAccountId: cleanAccountId,
           objective,
           status,
-          special_ad_categories: [], // Required for some verticals
-          is_adset_budget_sharing_enabled: false,
-          access_token: accessToken
-        }
-      );
-      
-      return response.data.id;
-    } catch (error: any) {
-      console.error('Facebook campaign creation error:', error.response?.data || error.message);
-      throw new Error('Failed to create Facebook campaign');
-    }
+        });
+        
+        const response = await axios.post(
+          `${this.BASE_URL}/act_${cleanAccountId}/campaigns`,
+          {
+            name,
+            objective,
+            status,
+            special_ad_categories: [], // Required for some verticals
+            is_adset_budget_sharing_enabled: false,
+            access_token: accessToken
+          }
+        );
+        
+        Sentry.addBreadcrumb({
+          category: 'facebook',
+          message: 'Campaign created successfully',
+          level: 'info',
+          data: { campaignId: response.data.id, objective },
+        });
+        
+        return response.data.id;
+      } catch (error: any) {
+        console.error('Facebook campaign creation error:', error.response?.data || error.message);
+        
+        Sentry.captureException(error, {
+          tags: {
+            service: 'facebook',
+            operation: 'create_campaign',
+          },
+          contexts: {
+            facebook_error: error.response?.data,
+          },
+        });
+        
+        throw new Error('Failed to create Facebook campaign');
+      }
+    });
+    
+    return span;
   }
 
   /**

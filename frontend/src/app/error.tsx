@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import Link from 'next/link';
+import * as Sentry from '@sentry/nextjs';
+import { useUser } from '@clerk/nextjs';
 
 export default function Error({
   error,
@@ -11,10 +13,34 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { user } = useUser();
+
   useEffect(() => {
-    // Log error to error reporting service
+    // Set user context if available
+    if (user) {
+      Sentry.setUser({
+        id: user.id,
+        email: user.primaryEmailAddress?.emailAddress,
+        username: user.username || undefined,
+      });
+    }
+
+    // Capture error in Sentry
+    Sentry.captureException(error, {
+      tags: {
+        component: 'global_error_boundary',
+      },
+      contexts: {
+        error: {
+          digest: error.digest,
+          message: error.message,
+        },
+      },
+    });
+
+    // Also log to console for development
     console.error('Global error:', error);
-  }, [error]);
+  }, [error, user]);
 
   return (
     <div className="min-h-screen bg-base-surface flex items-center justify-center px-4">
