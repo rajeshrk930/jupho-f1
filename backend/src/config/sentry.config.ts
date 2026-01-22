@@ -104,6 +104,12 @@ export const initializeSentry = () => {
     // Custom trace sampling for critical paths
     tracesSampler(samplingContext) {
       const { transactionContext, parentSampled } = samplingContext;
+      
+      // Handle case where transactionContext might be undefined
+      if (!transactionContext || !transactionContext.name) {
+        return environment === 'production' ? 0.1 : 1.0;
+      }
+      
       const transactionName = transactionContext.name;
 
       // Always sample critical operations
