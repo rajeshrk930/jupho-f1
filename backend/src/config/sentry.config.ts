@@ -3,7 +3,7 @@ import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 export const initializeSentry = () => {
   const dsn = process.env.SENTRY_DSN;
-  const environment = process.env.NODE_ENV || 'development';
+  const environment = process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || 'development';
 
   if (!dsn) {
     console.warn('SENTRY_DSN not configured. Skipping Sentry initialization.');
