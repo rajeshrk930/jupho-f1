@@ -18,7 +18,9 @@ import {
   Plus,
   Facebook,
   CreditCard,
-  HelpCircle
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
@@ -31,6 +33,15 @@ export function Sidebar() {
   const { signOut } = useClerk();
   const [facebookConnected, setFacebookConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Initialize collapse state from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('sidebar-collapsed');
+    if (saved) {
+      setIsCollapsed(saved === 'true');
+    }
+  }, []);
 
   // Check Facebook connection status
   useEffect(() => {
@@ -97,6 +108,14 @@ export function Sidebar() {
     }
   };
 
+  const toggleCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem('sidebar-collapsed', String(newState));
+    // Trigger event for MainContent to update
+    window.dispatchEvent(new Event('sidebar-toggle'));
+  };
+
   const isPro = user?.proExpiresAt && new Date(user.proExpiresAt) > new Date();
 
   // Check if user is admin (based on ADMIN_EMAILS env variable)
@@ -128,10 +147,23 @@ export function Sidebar() {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-600">
-            Jupho
-          </span>
+          {!isCollapsed && (
+            <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-600">
+              Jupho
+            </span>
+          )}
         </Link>
+      </div>
+
+      {/* Toggle Button */}
+      <div className="px-3 py-2">
+        <button
+          onClick={toggleCollapse}
+          className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 hover:text-coral-600"
+          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+        </button>
       </div>
 
       {/* Navigation */}
@@ -145,14 +177,15 @@ export function Sidebar() {
               <button
                 key={item.href}
                 onClick={item.onClick}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-all ${
+                className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-md transition-all ${
                   active
                     ? 'bg-coral-50 text-coral-600 font-medium'
                     : 'text-charcoal-600 hover:bg-gray-50'
                 }`}
+                title={isCollapsed ? item.label : undefined}
               >
                 <Icon size={20} className={active ? 'text-coral-600' : 'text-charcoal-400'} />
-                <span className="text-sm">{item.label}</span>
+                {!isCollapsed && <span className="text-sm">{item.label}</span>}
               </button>
             );
           }
@@ -161,14 +194,15 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all ${
+              className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-md transition-all ${
                 active
                   ? 'bg-coral-50 text-coral-600 font-medium'
                   : 'text-charcoal-600 hover:bg-gray-50'
               }`}
+              title={isCollapsed ? item.label : undefined}
             >
               <Icon size={20} className={active ? 'text-coral-600' : 'text-charcoal-400'} />
-              <span className="text-sm">{item.label}</span>
+              {!isCollapsed && <span className="text-sm">{item.label}</span>}
             </Link>
           );
         })}
@@ -177,7 +211,7 @@ export function Sidebar() {
       {/* User Section */}
       <div className="border-t border-gray-200 p-4 space-y-3">
         {/* PRO Badge */}
-        {isPro && (
+        {isPro && !isCollapsed && (
           <Link
             href="/billing"
             className="flex items-center gap-2 px-3 py-2 rounded-xl bg-mint-50 border border-mint-200 hover:border-mint-300 transition-colors"
@@ -191,21 +225,24 @@ export function Sidebar() {
         )}
 
         {/* User Info */}
-        <div className="px-3 py-3 rounded-xl bg-gradient-to-br from-coral-50 to-coral-100">
-          <div className="flex items-center gap-3 mb-2">
+        <div className={`px-3 py-3 rounded-xl bg-gradient-to-br from-coral-50 to-coral-100 ${isCollapsed ? 'flex justify-center' : ''}`}>
+          <div className={`flex items-center ${isCollapsed ? '' : 'gap-3 mb-2'}`}>
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center text-white font-bold shadow-lg">
               {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-gray-900 truncate">
-                {user?.email || 'User'}
-              </p>
-            </div>
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-gray-900 truncate">
+                  {user?.email || 'User'}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Meta Connection Status */}
-        <div className="px-3 py-3 rounded-xl bg-white border border-gray-200 space-y-2">
+        {!isCollapsed && (
+          <div className="px-3 py-3 rounded-xl bg-white border border-gray-200 space-y-2">
           <div className="flex items-center gap-3">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
               facebookConnected 
@@ -240,40 +277,45 @@ export function Sidebar() {
             </button>
           )}
         </div>
+        )}
 
         {/* Action Buttons */}
         <div className="space-y-1">
           <Link
             href="/billing"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-charcoal-600 hover:bg-gray-50 transition-colors"
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg text-charcoal-600 hover:bg-gray-50 transition-colors`}
+            title={isCollapsed ? 'Billing & Plans' : undefined}
           >
             <CreditCard size={18} className="text-charcoal-400" />
-            <span className="text-sm font-medium">Billing & Plans</span>
+            {!isCollapsed && <span className="text-sm font-medium">Billing & Plans</span>}
           </Link>
           <Link
             href="/settings"
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg transition-colors ${
               pathname === '/settings'
                 ? 'bg-coral-50 text-coral-600'
                 : 'text-charcoal-600 hover:bg-gray-50'
             }`}
+            title={isCollapsed ? 'Settings' : undefined}
           >
             <Settings size={18} className={pathname === '/settings' ? 'text-coral-600' : 'text-charcoal-400'} />
-            <span className="text-sm font-medium">Settings</span>
+            {!isCollapsed && <span className="text-sm font-medium">Settings</span>}
           </Link>
           <a
             href="mailto:support@jupho.com"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-charcoal-600 hover:bg-gray-50 transition-colors"
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg text-charcoal-600 hover:bg-gray-50 transition-colors`}
+            title={isCollapsed ? 'Help Center' : undefined}
           >
             <HelpCircle size={18} className="text-charcoal-400" />
-            <span className="text-sm font-medium">Help Center</span>
+            {!isCollapsed && <span className="text-sm font-medium">Help Center</span>}
           </a>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-charcoal-600 hover:bg-red-50 hover:text-red-600 transition-colors"
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg text-charcoal-600 hover:bg-red-50 hover:text-red-600 transition-colors`}
+            title={isCollapsed ? 'Logout' : undefined}
           >
             <LogOut size={18} className="text-charcoal-400" />
-            <span className="text-sm font-medium">Logout</span>
+            {!isCollapsed && <span className="text-sm font-medium">Logout</span>}
           </button>
         </div>
       </div>
@@ -283,12 +325,9 @@ export function Sidebar() {
   return (
     <>
       {/* Sidebar - Desktop only, hidden on mobile (bottom nav used instead) */}
-      <aside className="hidden lg:flex fixed top-0 left-0 h-full w-64 bg-base-surface border-r border-border-default flex-col z-40">
+      <aside className={`hidden lg:flex fixed top-0 left-0 h-full ${isCollapsed ? 'w-20' : 'w-64'} bg-base-surface border-r border-border-default flex-col z-40 transition-all duration-300`}>
         <SidebarContent />
       </aside>
-
-      {/* Spacer for desktop */}
-      <div className="hidden lg:block w-64 flex-shrink-0" />
     </>
   );
 }

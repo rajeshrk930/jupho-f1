@@ -5,6 +5,7 @@ import { Providers } from '@/app/providers';
 import { Toaster } from 'react-hot-toast';
 import { Sidebar } from '@/components/Sidebar';
 import { BottomNav } from '@/components/BottomNav';
+import { MainContent } from '@/components/MainContent';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ClerkTokenProvider } from '@/components/ClerkTokenProvider';
 
@@ -39,10 +40,10 @@ export default function RootLayout({
                 {/* Desktop: Left Sidebar (hidden on mobile) */}
                 <Sidebar />
                 
-                {/* Main content with sidebar spacing on desktop */}
-                <main className="w-full lg:pl-64">
+                {/* Main content with conditional sidebar spacing */}
+                <MainContent>
                   {children}
-                </main>
+                </MainContent>
                 
                 {/* Mobile: Bottom Navigation (hidden on desktop) */}
                 <BottomNav />
