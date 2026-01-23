@@ -3,7 +3,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/app/providers';
 import { Toaster } from 'react-hot-toast';
-import ConditionalHeader from '@/components/ConditionalHeader';
+import { Sidebar } from '@/components/Sidebar';
+import { BottomNav } from '@/components/BottomNav';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ClerkTokenProvider } from '@/components/ClerkTokenProvider';
 
@@ -35,10 +36,16 @@ export default function RootLayout({
           <ClerkTokenProvider>
             <Providers>
               <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50">
-                <ConditionalHeader />
-                <main className="w-full">
+                {/* Desktop: Left Sidebar (hidden on mobile) */}
+                <Sidebar />
+                
+                {/* Main content with sidebar spacing on desktop */}
+                <main className="w-full lg:pl-64">
                   {children}
                 </main>
+                
+                {/* Mobile: Bottom Navigation (hidden on desktop) */}
+                <BottomNav />
               </div>
               <Toaster position="top-right" />
             </Providers>

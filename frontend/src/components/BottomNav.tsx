@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { LayoutDashboard, FileText, History, BookTemplate, User, Shield, Sparkles, Folder } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 
-export default function BottomNav() {
+export function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuthStore();
 
