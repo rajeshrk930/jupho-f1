@@ -185,7 +185,16 @@ export function Sidebar() {
                 title={isCollapsed ? item.label : undefined}
               >
                 <Icon size={20} className={active ? 'text-coral-600' : 'text-charcoal-400'} />
-                {!isCollapsed && <span className="text-sm">{item.label}</span>}
+                {!isCollapsed && (
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="text-sm">{item.label}</span>
+                    {item.href === '/agent' && (
+                      <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-md bg-purple-100 text-purple-700 border border-purple-200">
+                        AI
+                      </span>
+                    )}
+                  </div>
+                )}
               </button>
             );
           }

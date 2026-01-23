@@ -144,7 +144,7 @@ function DashboardPageInner() {
               <div className="bg-white/20 p-3 rounded-lg">
                 <Sparkles className="w-6 h-6" />
               </div>
-              <span className="text-xs bg-white/20 px-3 py-1 rounded-full">Custom</span>
+              <span className="text-xs bg-purple-500/90 px-3 py-1 rounded-full font-semibold">✨ AI Powered</span>
             </div>
             <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">AI Agent</h3>
             <p className="text-coral-50 text-sm mb-3">Let AI create custom ads tailored to your business. Full strategy and creative generation.</p>
@@ -155,20 +155,20 @@ function DashboardPageInner() {
             <p className="text-xs text-coral-100 mt-3">⏱️ 5-10 minutes</p>
           </Link>
 
-          <Link href="/templates" className="bg-white border-2 border-blue-600 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
+          <Link href="/templates" className="bg-gradient-to-br from-mint-500 to-mint-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
             <div className="flex items-start justify-between mb-4">
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <Target className="w-6 h-6 text-blue-600" />
+              <div className="bg-white/20 p-3 rounded-lg">
+                <Target className="w-6 h-6" />
               </div>
-              <span className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full">⚡ Fast</span>
+              <span className="text-xs bg-white/20 px-3 py-1 rounded-full font-semibold">⚡ Fast</span>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:translate-x-1 transition-transform">Templates</h3>
-            <p className="text-gray-600 text-sm mb-3">Choose from proven winning ad templates. Quick edits and instant launch.</p>
-            <div className="flex items-center text-sm font-medium text-blue-600">
+            <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">Templates</h3>
+            <p className="text-mint-50 text-sm mb-3">Choose from proven winning ad templates. Quick edits and instant launch.</p>
+            <div className="flex items-center text-sm font-medium text-white">
               <span>Browse Templates</span>
               <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
             </div>
-            <p className="text-xs text-gray-500 mt-3">⚡ 2-3 minutes</p>
+            <p className="text-xs text-mint-100 mt-3">⚡ 2-3 minutes</p>
           </Link>
         </div>
 
