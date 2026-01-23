@@ -32,14 +32,6 @@ export function Sidebar() {
   const [facebookConnected, setFacebookConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
-  // Hide sidebar on public pages (unauthenticated)
-  const publicPages = ['/', '/sign-in', '/sign-up', '/privacy', '/terms', '/help'];
-  const isPublicPage = publicPages.includes(pathname);
-  
-  if (isPublicPage) {
-    return null;
-  }
-
   // Check Facebook connection status
   useEffect(() => {
     const checkFacebookStatus = async () => {
@@ -53,6 +45,14 @@ export function Sidebar() {
     };
     checkFacebookStatus();
   }, []);
+
+  // Hide sidebar on public pages (unauthenticated)
+  const publicPages = ['/', '/sign-in', '/sign-up', '/privacy', '/terms', '/help'];
+  const isPublicPage = publicPages.includes(pathname);
+  
+  if (isPublicPage) {
+    return null;
+  }
 
   const handleLogout = async () => {
     try {
