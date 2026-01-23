@@ -238,11 +238,21 @@ router.post(
       } = req.body;
 
       // Parse JSON strings if they come as strings
-      const parsedHeadlines = typeof headlines === 'string' ? JSON.parse(headlines) : headlines;
-      const parsedPrimaryTexts = typeof primaryTexts === 'string' ? JSON.parse(primaryTexts) : primaryTexts;
-      const parsedDescriptions = typeof descriptions === 'string' ? JSON.parse(descriptions) : descriptions;
-      const parsedBudget = typeof budget === 'string' ? JSON.parse(budget) : budget;
-      const parsedTargeting = typeof targeting === 'string' ? JSON.parse(targeting) : targeting;
+      let parsedHeadlines, parsedPrimaryTexts, parsedDescriptions, parsedBudget, parsedTargeting;
+      
+      try {
+        parsedHeadlines = typeof headlines === 'string' ? JSON.parse(headlines) : headlines;
+        parsedPrimaryTexts = typeof primaryTexts === 'string' ? JSON.parse(primaryTexts) : primaryTexts;
+        parsedDescriptions = typeof descriptions === 'string' ? JSON.parse(descriptions) : descriptions;
+        parsedBudget = typeof budget === 'string' ? JSON.parse(budget) : budget;
+        parsedTargeting = typeof targeting === 'string' ? JSON.parse(targeting) : targeting;
+      } catch (parseError) {
+        console.error('JSON parse error in template data:', parseError);
+        return res.status(400).json({ 
+          error: 'Invalid JSON format in template data',
+          details: parseError instanceof Error ? parseError.message : 'Unknown parse error'
+        });
+      }
 
       // Use provided data or fall back to template defaults
       const finalHeadlines = parsedHeadlines || parsed.adCopy.headlines;

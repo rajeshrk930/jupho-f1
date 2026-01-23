@@ -20,6 +20,24 @@ import { initializeSentry } from './config/sentry.config';
 
 dotenv.config();
 
+// Validate critical environment variables
+const requiredEnvVars = [
+  'DATABASE_URL',
+  'CLERK_SECRET_KEY',
+  'OPENAI_API_KEY',
+];
+
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingEnvVars.join(', '));
+  process.exit(1);
+}
+
+// Warn about optional but recommended variables
+if (!process.env.FACEBOOK_PAGE_ID || !process.env.FACEBOOK_FORM_ID) {
+  console.warn('⚠️  FACEBOOK_PAGE_ID and/or FACEBOOK_FORM_ID not set. Lead form creation will fail.');
+}
+
 // Initialize Sentry FIRST (before any other code)
 initializeSentry();
 

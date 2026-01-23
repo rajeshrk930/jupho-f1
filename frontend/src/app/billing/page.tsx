@@ -380,12 +380,6 @@ export default function BillingPage() {
                     : 'renewal date'}</p>
                 </div>
               </div>
-              <button 
-                onClick={() => toast.success('Payment method management coming soon')}
-                className="text-signal-primary hover:text-signal-primary/80 font-medium text-sm"
-              >
-                Update
-              </button>
             </div>
 
             <div className="mt-4 bg-signal-warning/10 border border-signal-warning/20 rounded-md p-4">

@@ -54,10 +54,32 @@ export default function BusinessScanStep({ onComplete }: Props) {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
   const [website, setWebsite] = useState('');
+  const [websiteError, setWebsiteError] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [locationRequired, setLocationRequired] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
+
+  // URL validation helper
+  const isValidUrl = (url: string): boolean => {
+    if (!url) return true; // Empty is valid (optional field)
+    try {
+      const urlObj = new URL(url);
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
+  // Handle website input change with validation
+  const handleWebsiteChange = (value: string) => {
+    setWebsite(value);
+    if (value && !isValidUrl(value)) {
+      setWebsiteError('Please enter a valid URL (e.g., https://example.com)');
+    } else {
+      setWebsiteError('');
+    }
+  };
 
   const examples = [
     {
@@ -86,6 +108,13 @@ export default function BusinessScanStep({ onComplete }: Props) {
     e.preventDefault();
     setError('');
     setLocationRequired(false);
+    
+    // Validate website URL if provided
+    if (website && !isValidUrl(website)) {
+      setWebsiteError('Please enter a valid URL before submitting');
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -252,16 +281,28 @@ export default function BusinessScanStep({ onComplete }: Props) {
               <input
                 type="url"
                 value={website}
-                onChange={(e) => setWebsite(e.target.value)}
+                onChange={(e) => handleWebsiteChange(e.target.value)}
                 placeholder="https://..."
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-coral-500 focus:ring-2 focus:ring-coral-200 transition-all"
+                className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none transition-all ${
+                  websiteError 
+                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200' 
+                    : 'border-gray-300 focus:border-coral-500 focus:ring-2 focus:ring-coral-200'
+                }`}
                 disabled={loading}
               />
             </div>
-            <p className="mt-2 text-sm text-gray-600 flex items-center gap-1">
-              <span>💡</span>
-              For scraping images & branding (not required)
-            </p>
+            {websiteError && (
+              <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {websiteError}
+              </p>
+            )}
+            {!websiteError && (
+              <p className="mt-2 text-sm text-gray-600 flex items-center gap-1">
+                <span>💡</span>
+                For scraping images & branding (not required)
+              </p>
+            )}
           </div>
 
           {/* General Error (not location-specific) */}

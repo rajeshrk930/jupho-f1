@@ -148,6 +148,8 @@ model AgentTask {
   
   @@index([userId])
   @@index([status])
+  @@index([fbCampaignId])
+  @@index([fbAdId])
   @@index([createdAt])
 }
 

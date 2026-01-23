@@ -15,10 +15,6 @@ const router = Router();
  */
 router.get('/auth-url', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
-    // Log environment variables for debugging
-    console.log('[Facebook OAuth] APP_ID:', process.env.FACEBOOK_APP_ID ? 'Set' : 'MISSING');
-    console.log('[Facebook OAuth] REDIRECT_URI:', process.env.FACEBOOK_REDIRECT_URI ? 'Set' : 'MISSING');
-    
     // Generate CSRF token for OAuth security
     const csrfToken = crypto.randomBytes(32).toString('hex');
     

@@ -90,11 +90,9 @@ export default function AgentPage() {
           setTaskId(parsed.taskId);
           setBusinessData(parsed.businessData);
           setStrategy(parsed.strategy);
-          console.log('✅ [Flow] Restored from step:', parsed.currentStep);
         } else {
           // Expired, clear it
           localStorage.removeItem(FLOW_STATE_KEY);
-          console.log('⏰ [Flow] Expired state cleared');
         }
       }
     } catch (error) {
@@ -116,7 +114,7 @@ export default function AgentPage() {
         timestamp: Date.now(),
       };
       localStorage.setItem(FLOW_STATE_KEY, JSON.stringify(stateToSave));
-      console.log('💾 [Flow] State saved - Step:', currentStep);
+
     }
   }, [currentStep, taskId, businessData, strategy, isAuthenticated]);
 
