@@ -32,6 +32,7 @@ export function Sidebar() {
   const { user, logout } = useAuthStore();
   const { signOut } = useClerk();
   const [facebookConnected, setFacebookConnected] = useState(false);
+  const [adAccountName, setAdAccountName] = useState<string>('');
   const [connecting, setConnecting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -49,9 +50,13 @@ export function Sidebar() {
       try {
         const response = await api.get('/facebook/status');
         setFacebookConnected(response.data.connected || false);
+        if (response.data.connected && response.data.account?.adAccountName) {
+          setAdAccountName(response.data.account.adAccountName);
+        }
       } catch (error) {
         console.error('Failed to check Facebook status:', error);
         setFacebookConnected(false);
+        setAdAccountName('');
       }
     };
     checkFacebookStatus();
@@ -101,6 +106,7 @@ export function Sidebar() {
       setConnecting(true);
       await api.delete('/facebook/disconnect');
       setFacebookConnected(false);
+      setAdAccountName('');
     } catch (error) {
       console.error('Failed to disconnect Meta:', error);
     } finally {
@@ -260,11 +266,20 @@ export function Sidebar() {
             }`}>
               <Facebook className="w-4 h-4" />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-gray-900">Meta Ads</p>
-              <p className={`text-xs ${facebookConnected ? 'text-green-600 font-medium' : 'text-gray-500'}`}>
-                {facebookConnected ? '✓ Connected' : 'Not connected'}
-              </p>
+              {facebookConnected ? (
+                <>
+                  <p className="text-xs text-green-600 font-medium">✓ Connected</p>
+                  {adAccountName && (
+                    <p className="text-xs text-gray-600 truncate" title={adAccountName}>
+                      {adAccountName}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="text-xs text-gray-500">Not connected</p>
+              )}
             </div>
           </div>
 
