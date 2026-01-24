@@ -24,12 +24,12 @@ router.get('/stats', async (req, res) => {
       revenueData
     ] = await Promise.all([
       prisma.user.count(),
-      prisma.user.count({ where: { plan: 'FREE' } }),
-      prisma.user.count({ where: { plan: 'PRO' } }),
+      prisma.user.count({ where: { plan: 'STARTER' } }),
+      prisma.user.count({ where: { plan: 'GROWTH' } }),
       prisma.conversation.count(),
       prisma.agentTask.count(),
       prisma.user.aggregate({
-        where: { plan: 'PRO' },
+        where: { plan: 'GROWTH' },
         _sum: { apiUsageCount: true }
       })
     ]);
@@ -88,7 +88,7 @@ router.get('/users', async (req, res) => {
       ];
     }
     
-    if (plan && (plan === 'FREE' || plan === 'PRO')) {
+    if (plan && (plan === 'STARTER' || plan === 'GROWTH')) {
       where.plan = plan;
     }
 
@@ -183,7 +183,7 @@ router.patch('/users/:id', async (req, res) => {
     const { plan, subscriptionStatus, usageLimit } = req.body;
 
     // Validate plan
-    if (plan && !['FREE', 'PRO'].includes(plan)) {
+    if (plan && !['STARTER', 'GROWTH'].includes(plan)) {
       return res.status(400).json({ message: 'Invalid plan type' });
     }
 
@@ -194,9 +194,16 @@ router.patch('/users/:id', async (req, res) => {
 
     // Build update object
     const updateData: any = {};
-    if (plan) updateData.plan = plan;
+    if (plan) {
+      updateData.plan = plan;
+      // When admin assigns GROWTH plan, set planExpiresAt to null (lifetime access)
+      // Or set a future date for time-limited access
+      if (plan === 'GROWTH') {
+        updateData.planExpiresAt = null; // Lifetime access for admin-assigned plans
+      }
+    }
     if (usageLimit !== undefined) {
-      // For FREE users, set to 3. For PRO, set to -1 (unlimited)
+      // For STARTER users, limited. For GROWTH, unlimited
       updateData.apiUsageCount = 0; // Reset count when updating
     }
 

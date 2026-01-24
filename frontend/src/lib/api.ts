@@ -230,7 +230,7 @@ export const adminApi = {
     page?: number;
     limit?: number;
     search?: string;
-    plan?: 'FREE' | 'PRO' | '';
+    plan?: 'STARTER' | 'GROWTH' | '';
     sortBy?: string;
     order?: 'asc' | 'desc';
   }) => {
@@ -242,7 +242,7 @@ export const adminApi = {
     return response.data;
   },
   updateUser: async (userId: string, data: {
-    plan?: 'FREE' | 'PRO';
+    plan?: 'STARTER' | 'GROWTH';
   }) => {
     const response = await api.patch(`/admin/users/${userId}`, data);
     return response.data;

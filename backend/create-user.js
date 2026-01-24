@@ -8,7 +8,7 @@ async function createUser() {
         clerkId: 'user_38QGPUAHWERukQjztkYw5oF3bss',
         email: 'newuser@test.com',
         name: 'New User',
-        plan: 'FREE',
+        plan: 'STARTER',
         apiUsageCount: 0,
         agentTasksCreated: 0,
       }

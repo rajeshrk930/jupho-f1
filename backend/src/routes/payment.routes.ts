@@ -78,7 +78,7 @@ router.post(
             razorpayOrderId: order.id,
             amount: planDetails.amount,
             currency: planDetails.currency,
-            plan: 'PRO',
+            plan: 'GROWTH',
             status: 'PENDING',
           },
         });
@@ -191,7 +191,7 @@ router.post(
       await prisma.user.update({
         where: { id: req.user!.id },
         data: { 
-          plan: 'PRO',
+          plan: 'GROWTH',
           planExpiresAt,
           apiUsageCount: 0 // Reset usage count on upgrade
         }
@@ -200,7 +200,7 @@ router.post(
       res.json({
         success: true,
         message: 'Payment verified successfully',
-        data: { plan: 'PRO', expiresAt: planExpiresAt }
+        data: { plan: 'GROWTH', expiresAt: planExpiresAt }
       });
     } catch (error) {
       console.error('Verify payment error:', error);
@@ -302,13 +302,13 @@ router.post('/webhook', async (req: Request, res: Response) => {
       await prisma.user.update({
         where: { id: payment.userId },
         data: {
-          plan: 'PRO',
+          plan: 'GROWTH',
           planExpiresAt,
           agentTasksCreated: 0 // Reset usage count on upgrade
         }
       });
 
-      console.log('[Payment Webhook] User upgraded to PRO:', payment.userId);
+      console.log('[Payment Webhook] User upgraded to GROWTH:', payment.userId);
       return res.json({ success: true, message: 'Payment processed' });
     }
 

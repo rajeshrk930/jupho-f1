@@ -44,7 +44,7 @@ interface User {
   id: string;
   email: string;
   name: string;
-  plan: 'FREE' | 'PRO';
+  plan: 'STARTER' | 'GROWTH';
   apiUsageCount: number;
   proExpiresAt: string | null;
   createdAt: string;
@@ -64,7 +64,7 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState('');
-  const [planFilter, setPlanFilter] = useState<'' | 'FREE' | 'PRO'>('');
+  const [planFilter, setPlanFilter] = useState<'' | 'STARTER' | 'GROWTH'>('');
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -309,14 +309,14 @@ export default function AdminPage() {
                 <select
                   value={planFilter}
                   onChange={(e) => {
-                    setPlanFilter(e.target.value as '' | 'FREE' | 'PRO');
+                    setPlanFilter(e.target.value as '' | 'STARTER' | 'GROWTH');
                     setPage(1);
                   }}
                   className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none bg-white"
                 >
                   <option value="">All Plans</option>
-                  <option value="FREE">FREE</option>
-                  <option value="PRO">PRO</option>
+                  <option value="STARTER">STARTER</option>
+                  <option value="GROWTH">GROWTH</option>
                 </select>
               </div>
             </div>
@@ -371,7 +371,7 @@ export default function AdminPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user.plan === 'PRO'
+                          user.plan === 'GROWTH'
                             ? 'bg-teal-100 text-teal-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}>
@@ -492,14 +492,14 @@ function EditUserModal({
             <label className="label">Plan</label>
             <select
               value={plan}
-              onChange={(e) => setPlan(e.target.value as 'FREE' | 'PRO')}
+              onChange={(e) => setPlan(e.target.value as 'STARTER' | 'GROWTH')}
               className="input"
             >
-              <option value="FREE">FREE</option>
-              <option value="PRO">PRO</option>
+              <option value="STARTER">STARTER</option>
+              <option value="GROWTH">GROWTH</option>
             </select>
             <p className="text-xs text-gray-500 mt-1">
-              FREE: 5 campaigns/month · PRO: 50 campaigns/month
+              STARTER: 5 campaigns/month, 1 AI/month · GROWTH: 25 campaigns/month, unlimited AI
             </p>
           </div>
 

@@ -297,14 +297,14 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const isPro = user.plan === 'PRO' && user.planExpiresAt && new Date(user.planExpiresAt) > new Date();
+    const isPro = user.plan === 'GROWTH' && (!user.planExpiresAt || new Date(user.planExpiresAt) > new Date());
     const limit = isPro ? 50 : 5;
 
     res.json({
       used: user.agentTasksCreated,
       limit,
       remaining: Math.max(0, limit - user.agentTasksCreated),
-      plan: isPro ? 'PRO' : 'FREE',
+      plan: isPro ? 'GROWTH' : 'STARTER',
       resetDate: user.agentLastResetDate
     });
   } catch (error) {

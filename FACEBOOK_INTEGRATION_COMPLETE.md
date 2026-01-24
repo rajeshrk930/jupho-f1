@@ -8,7 +8,7 @@ I've successfully implemented the Facebook Ad Account integration for your Creat
 
 ### Phase 1: Database (Completed)
 - ✅ Added `FacebookAccount` model to store user connections
-- ✅ Added `FacebookAdCreative` model to store ad data
+- ✅ Added `FacebookAdCrdel to store ad data
 - ✅ Updated `Analysis` model with `dataSource` field ('MANUAL' or 'FACEBOOK')
 - ✅ Created database migration (fixed SQLite compatibility)
 

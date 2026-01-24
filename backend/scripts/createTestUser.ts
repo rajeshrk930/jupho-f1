@@ -11,7 +11,7 @@ import { prisma } from '../src/lib/prisma';
         email: 'test@test.com',
         password,
         name: 'Test User',
-        plan: 'FREE'
+        plan: 'STARTER'
       }
     });
     // eslint-disable-next-line no-console

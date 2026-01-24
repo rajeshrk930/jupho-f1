@@ -199,8 +199,8 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const isProActive = user.plan === 'PRO' && user.planExpiresAt && new Date(user.planExpiresAt) > new Date();
-    const limit = 10; // Frontend expects a number; PRO ignores it
+    const isProActive = user.plan === 'GROWTH' && (!user.planExpiresAt || new Date(user.planExpiresAt) > new Date());
+    const limit = 10; // Frontend expects a number; GROWTH ignores it
 
     // Guard against any null/legacy values by falling back to "now"
     const safeLastReset = user.lastResetDate ? new Date(user.lastResetDate) : new Date();
