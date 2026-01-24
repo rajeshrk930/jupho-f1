@@ -317,6 +317,22 @@ export default function BillingPage() {
                 </p>
               </div>
             )}
+            
+            {/* Billing Cycle Info for Paid Users */}
+            {isPaid && usageStats?.resetsAt && (
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-text-primary">Billing Cycle</span>
+                </div>
+                <p className="text-xs text-text-secondary">
+                  Your {planLimit} campaigns reset every 30 days from subscription date
+                </p>
+                <p className="text-xs text-blue-700 mt-1 font-medium">
+                  Next reset: {new Date(usageStats.resetsAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </p>
+              </div>
+            )}
 
             {/* Account Info */}
             <div className="pt-4 border-t border-border-default">

@@ -20,15 +20,13 @@ const PLAN_LIMITS = {
   },
 };
 
-// Helper to check if it's a new month
+// Helper to check if 30 days have passed since last reset (billing cycle)
 const isNewMonth = (lastReset: Date): boolean => {
   const now = new Date();
   const lastResetDate = new Date(lastReset);
+  const daysSinceReset = Math.floor((now.getTime() - lastResetDate.getTime()) / (1000 * 60 * 60 * 24));
   
-  return (
-    now.getMonth() !== lastResetDate.getMonth() ||
-    now.getFullYear() !== lastResetDate.getFullYear()
-  );
+  return daysSinceReset >= 30;
 };
 
 // Helper to check if date is a new day (for chat API - legacy)
@@ -52,12 +50,10 @@ const isSubscriptionActive = (user: { plan: string; planExpiresAt?: Date | null 
   return false;
 };
 
-// Helper to calculate next reset time (next month)
+// Helper to calculate next reset time (30 days from last reset)
 const getNextResetTime = (lastReset: Date): string => {
   const nextReset = new Date(lastReset);
-  nextReset.setMonth(nextReset.getMonth() + 1);
-  nextReset.setDate(1);
-  nextReset.setHours(0, 0, 0, 0);
+  nextReset.setDate(nextReset.getDate() + 30);
   return nextReset.toISOString();
 };
 
@@ -127,7 +123,7 @@ export const checkCampaignUsageLimit = (createdVia: 'AI_AGENT' | 'TEMPLATE') => 
           ? `You've reached your FREE limit of ${planLimits.campaignsPerMonth} campaigns. Upgrade to BASIC (\u20b91,499) for 10 campaigns or GROWTH (\u20b91,999) for 25 campaigns + AI Agent.`
           : user.plan === 'BASIC'
           ? `You've reached your BASIC limit of ${planLimits.campaignsPerMonth} campaigns. Upgrade to GROWTH (\u20b91,999) for 25 campaigns + AI Agent.`
-          : `You've reached your GROWTH limit of ${planLimits.campaignsPerMonth} campaigns this month.`;
+          : `You've reached your GROWTH limit of ${planLimits.campaignsPerMonth} campaigns. Resets in 30 days from subscription date.`;
         
         return res.status(403).json({
           success: false,

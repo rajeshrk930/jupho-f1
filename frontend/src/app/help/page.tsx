@@ -26,7 +26,7 @@ const faqs = [
     questions: [
       {
         q: 'How many questions can I ask the AI?',
-        a: 'Free plan users get 5 campaigns per month. Pro users get 50 campaigns per month. Your limit resets on the 1st of each month.'
+        a: 'Free plan users get 2 campaigns per month. Basic users get 10 campaigns, Growth users get 25 campaigns. Your limit resets 30 days from your subscription date (or on the 1st of each month for free users).'
       },
       {
         q: 'What kind of questions can I ask?',

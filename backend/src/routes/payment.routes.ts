@@ -196,7 +196,8 @@ router.post(
           plan: planDetails.planType, // BASIC or GROWTH
           planExpiresAt,
           apiUsageCount: 0, // Reset usage count on upgrade
-          agentTasksCreated: 0 // Reset campaign count
+          agentTasksCreated: 0, // Reset campaign count
+          agentLastResetDate: new Date() // Start billing cycle from payment date
         }
       });
 
