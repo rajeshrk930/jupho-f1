@@ -1,18 +1,19 @@
 import { SignIn } from '@clerk/nextjs';
+import AuthLayout from '@/components/auth/AuthLayout';
 
 export default function SignInPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
+    <AuthLayout>
       <SignIn 
         appearance={{
           elements: {
             rootBox: "mx-auto",
-            card: "shadow-2xl"
+            card: "shadow-lg"
           }
         }}
         forceRedirectUrl="/dashboard"
         signUpUrl="/sign-up"
       />
-    </div>
+    </AuthLayout>
   );
 }
