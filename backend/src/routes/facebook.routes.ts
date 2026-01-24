@@ -10,6 +10,21 @@ import axios from 'axios';
 const router = Router();
 
 /**
+ * GET /api/facebook/debug-env
+ * Debug endpoint to check if ENCRYPTION_KEY is loaded (REMOVE IN PRODUCTION)
+ */
+router.get('/debug-env', async (req, res: Response) => {
+  res.json({
+    hasEncryptionKey: !!process.env.ENCRYPTION_KEY,
+    encryptionKeyLength: process.env.ENCRYPTION_KEY?.length || 0,
+    hasFacebookAppId: !!process.env.FACEBOOK_APP_ID,
+    hasFacebookAppSecret: !!process.env.FACEBOOK_APP_SECRET,
+    frontendUrl: process.env.FRONTEND_URL,
+    nodeEnv: process.env.NODE_ENV
+  });
+});
+
+/**
  * GET /api/facebook/auth-url
  * Generate Facebook OAuth URL for user to connect their account
  */
