@@ -230,7 +230,7 @@ export const adminApi = {
     page?: number;
     limit?: number;
     search?: string;
-    plan?: 'STARTER' | 'GROWTH' | '';
+    plan?: 'FREE' | 'BASIC' | 'GROWTH' | '';
     sortBy?: string;
     order?: 'asc' | 'desc';
   }) => {

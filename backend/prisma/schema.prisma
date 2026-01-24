@@ -8,24 +8,24 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(uuid())
-  clerkId       String     @unique
-  email         String     @unique
-  name          String?
-  plan          String     @default("FREE") // FREE, BASIC, GROWTH
-  isAdmin       Boolean    @default(false)
-  apiUsageCount Int        @default(0)
-  lastResetDate DateTime   @default(now())
-  agentTasksCreated Int    @default(0) // FREE: 2/month, BASIC: 10/month, GROWTH: 25/month
-  agentLastResetDate DateTime @default(now())
-  planExpiresAt DateTime? // Subscription expiry date
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  payments      Payment[]
-  conversations Conversation[]
-  messages      Message[]
-  facebookAccount FacebookAccount?
-  adTemplates   AdTemplate[]
+  id                 String           @id @default(uuid())
+  clerkId            String           @unique
+  email              String           @unique
+  name               String?
+  plan               String           @default("STARTER")
+  isAdmin            Boolean          @default(false)
+  apiUsageCount      Int              @default(0)
+  lastResetDate      DateTime         @default(now())
+  agentTasksCreated  Int              @default(0)
+  agentLastResetDate DateTime         @default(now())
+  planExpiresAt      DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  adTemplates        AdTemplate[]
+  conversations      Conversation[]
+  facebookAccount    FacebookAccount?
+  messages           Message[]
+  payments           Payment[]
 }
 
 model Payment {
@@ -45,169 +45,130 @@ model Payment {
 }
 
 model Conversation {
-  id         String    @id @default(uuid())
-  userId     String
-  title      String?
-  goal       String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages   Message[]
+  id        String    @id @default(uuid())
+  userId    String
+  title     String?
+  goal      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
 
   @@index([userId, createdAt])
 }
 
 model Message {
-  id             String   @id @default(uuid())
+  id             String       @id @default(uuid())
   conversationId String
   userId         String
   role           String
   content        String
   feedback       String?
-  createdAt      DateTime @default(now())
+  createdAt      DateTime     @default(now())
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([conversationId])
   @@index([userId, createdAt])
 }
 
 model FacebookAccount {
-  id                String   @id @default(uuid())
-  userId            String   @unique
+  id                String    @id @default(uuid())
+  userId            String    @unique
   facebookUserId    String
-  facebookUserName  String?  // Facebook account name
-  facebookUserEmail String?  // Facebook account email
-  accessToken       String   // Encrypted
+  facebookUserName  String?
+  facebookUserEmail String?
+  accessToken       String
   tokenExpiresAt    DateTime
   adAccountId       String
   adAccountName     String?
-  pageIds           String?  // Comma-separated page IDs
-  pageNames         String?  // Comma-separated page names
-  csrfToken         String?  // OAuth CSRF protection
-  isActive          Boolean  @default(true)
+  pageIds           String?
+  pageNames         String?
+  csrfToken         String?
+  isActive          Boolean   @default(true)
   lastSyncAt        DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([adAccountId])
 }
 
 model AgentTask {
-  id            String   @id @default(uuid())
-  userId        String
-  type          String   @default("CREATE_AD") // CREATE_AD, OPTIMIZE_AD
-  status        String   @default("PENDING") // PENDING, GATHERING_INFO, GENERATING, CREATING, COMPLETED, FAILED
-  createdVia    String   @default("AI_AGENT") // AI_AGENT, TEMPLATE
-  
-  // User input data (stored as JSON)
-  input         String?  // { objective, audience, budget, preferences }
-  
-  // Generated output (stored as JSON)
-  output        String?  // { headlines, primaryTexts, descriptions, fbAdId, fbCampaignId }
-  
-  // AI-generated business profile (stored as JSON)
-  businessProfile String? // { industry, subCategory, targetMarket, businessGoal, painPoint, differentiator }
-  
-  // AI recommendations (stored as JSON)
-  recommendations String? // { objective: {recommended, reasoning, chosen}, audience: {}, budget: {}, cta: {}, acceptanceRate }
-  
-  // Conversion tracking
-  conversionMethod    String? @default("lead_form") // "lead_form" or "website"
-  leadFormId          String? // Meta Lead Form ID (if using lead form)
-  privacyPolicyUrl    String? // Privacy policy URL used for lead form
-  originalWebsiteUrl  String? // Original website URL from business scan
-  
-  // Error tracking
-  errorMessage  String?
-  
-  // Conversation state
-  conversationState String? // Current step in the flow
-  
-  // Performance tracking (fetched post-launch)
-  fbCampaignId      String? // Meta Campaign ID
-  fbAdSetId         String? // Meta Ad Set ID
-  fbAdId            String? // Meta Ad ID
-  actualCPM         Float?  // Cost per 1000 impressions
-  actualCTR         Float?  // Click-through rate (%)
-  actualConversions Int?    // Total conversions
-  actualSpend       Float?  // Total spend in INR
-  impressions       Int?    // Total impressions
-  clicks            Int?    // Total clicks
-  performanceGrade  String? // EXCELLENT, GOOD, AVERAGE, POOR, PENDING
-  fbInsightsData    String? // Full insights JSON from Meta
-  lastPerformanceSync DateTime? // When metrics were last fetched
-  
-  createdAt     DateTime @default(now())
-  completedAt   DateTime?
-  updatedAt     DateTime @updatedAt
-  
-  generatedCreatives GeneratedCreative[]
-  
+  id                  String              @id @default(uuid())
+  userId              String
+  type                String              @default("CREATE_AD")
+  status              String              @default("PENDING")
+  createdVia          String              @default("AI_AGENT")
+  input               String?
+  output              String?
+  businessProfile     String?
+  recommendations     String?
+  conversionMethod    String?             @default("lead_form")
+  leadFormId          String?
+  privacyPolicyUrl    String?
+  originalWebsiteUrl  String?
+  errorMessage        String?
+  conversationState   String?
+  fbCampaignId        String?
+  fbAdSetId           String?
+  fbAdId              String?
+  actualCPM           Float?
+  actualCTR           Float?
+  actualConversions   Int?
+  actualSpend         Float?
+  impressions         Int?
+  clicks              Int?
+  performanceGrade    String?
+  fbInsightsData      String?
+  lastPerformanceSync DateTime?
+  createdAt           DateTime            @default(now())
+  completedAt         DateTime?
+  updatedAt           DateTime            @updatedAt
+  generatedCreatives  GeneratedCreative[]
+
   @@index([userId])
   @@index([status])
-  @@index([fbCampaignId])
-  @@index([fbAdId])
   @@index([createdAt])
 }
 
 model GeneratedCreative {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   taskId      String
-  type        String   // HEADLINE, PRIMARY_TEXT, DESCRIPTION, CTA, IMAGE_URL
-  content     String   // The actual generated text or URL
-  isSelected  Boolean  @default(false)
-  metadata    String?  // JSON: { characterCount, validationStatus, score }
-  
-  // A/B Test Performance Tracking
-  impressions Int?     // How many times this variant was shown
-  clicks      Int?     // How many clicks this variant got
-  conversions Int?     // How many conversions this variant drove
-  winRate     Float?   // % of time this variant outperformed others (0-100)
-  
-  createdAt   DateTime @default(now())
-  
+  type        String
+  content     String
+  isSelected  Boolean   @default(false)
+  metadata    String?
+  impressions Int?
+  clicks      Int?
+  conversions Int?
+  winRate     Float?
+  createdAt   DateTime  @default(now())
   task        AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  
+
   @@index([taskId])
   @@index([type])
 }
 
 model AdTemplate {
-  id          String   @id @default(uuid())
-  userId      String?  // null = system template, userId = user's saved template
-  name        String
-  category    String?  // RESTAURANT, GYM, REAL_ESTATE, SALON, HOME_SERVICES, ECOMMERCE, etc.
-  description String?  // Short description of template
-  isPublic    Boolean  @default(false) // System templates are public
-  
-  // Campaign Settings
-  objective        String   // OUTCOME_LEADS, OUTCOME_SALES, OUTCOME_TRAFFIC
+  id               String   @id @default(uuid())
+  userId           String?
+  name             String
+  category         String?
+  description      String?
+  isPublic         Boolean  @default(false)
+  objective        String
   conversionMethod String   @default("lead_form")
-  
-  // Targeting Template (stored as JSON)
-  targeting   String   // { ageMin, ageMax, interestKeywords: string[], location: { isLocal, radius } }
-  
-  // Budget Template (stored as JSON)
-  budget      String   // { dailyAmount, currency, reasoning }
-  
-  // Ad Copy Template (stored as JSON)
-  // Can include placeholders like {{brandName}}, {{location}}, {{product}}
-  adCopy      String   // { headlines: string[], primaryTexts: string[], descriptions: string[], cta: string }
-  
-  // Optional reference image URL
-  imageUrl    String?
-  
-  // Metadata
-  usageCount  Int      @default(0) // How many times this template was used
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  targeting        String
+  budget           String
+  adCopy           String
+  imageUrl         String?
+  usageCount       Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([category])
   @@index([isPublic])

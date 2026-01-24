@@ -33,7 +33,7 @@ export function ClerkTokenProvider({ children }: { children: React.ReactNode }) 
           id: user.id,
           email: user.primaryEmailAddress?.emailAddress || user.emailAddresses[0]?.emailAddress || '',
           name: user.fullName || user.firstName || user.username || null,
-          plan: 'PRO',
+          plan: 'GROWTH',
           createdAt: user.createdAt?.toISOString?.() || new Date().toISOString(),
         },
         null
