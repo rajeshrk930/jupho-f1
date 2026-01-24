@@ -274,7 +274,8 @@ export class AgentService {
   async launchCampaign(
     taskId: string,
     userId: string,
-    imageUrl?: string
+    imageUrl?: string,
+    providedLeadFormId?: string
   ): Promise<any> {
     try {
       // Get task and strategy
@@ -300,6 +301,7 @@ export class AgentService {
       console.log('[AgentService] 🚀 Starting Campaign Creation');
       console.log('[AgentService] Task ID:', taskId);
       console.log('[AgentService] Conversion Method:', conversionMethod);
+      console.log('[AgentService] Provided Lead Form ID:', providedLeadFormId || 'None');
       console.log('[AgentService] Brand:', businessData.brandName || 'Unknown');
       console.log('========================================\n');
 
@@ -402,76 +404,84 @@ export class AgentService {
       let leadFormId: string | null = null;
 
       if (conversionMethod === 'lead_form') {
-        // LEAD FORM FLOW: Create Meta Instant Form + Lead Form Creative
+        // LEAD FORM FLOW: Use provided form OR create new one
         console.log('\n🎯 [AgentService] === LEAD FORM CONVERSION METHOD ===');
-        console.log('[AgentService] Creating Meta Instant Lead Form...');
         
-        const pageId = process.env.FACEBOOK_PAGE_ID;
-        if (!pageId) {
-          throw new Error('❌ FACEBOOK_PAGE_ID not configured in environment variables');
-        }
-
-        console.log('[AgentService] Facebook Page ID:', pageId);
-        console.log('[AgentService] Lead Form Name:', `${businessData.brandName || 'Business'} - Lead Form`);
-        console.log('[AgentService] Intro Text:', selectedPrimaryText.substring(0, 50) + '...');
-
-        try {
-          // Get privacy policy URL with fallback
-          const privacyPolicyUrl = this.getPrivacyPolicyUrl(
-            businessData.contact?.website,
-            taskId,
-            pageId
-          );
-
-          console.log('[AgentService] Using Privacy Policy URL:', privacyPolicyUrl);
-
-          // Create Lead Form
-          leadFormId = await FacebookService.createLeadForm(
-            accessToken,
-            pageId,
-            `${businessData.brandName || 'Business'} - Lead Form`,
-            selectedPrimaryText, // Use primary text as intro
-            privacyPolicyUrl,
-            'Thank you! We\'ll contact you soon.',
-            undefined // Use default questions (Name, Phone, Email)
-          );
-
-          if (!leadFormId) {
-            throw new Error('❌ Lead Form creation returned empty/null ID');
+        if (providedLeadFormId) {
+          // USE EXISTING FORM
+          console.log('[AgentService] Using provided Lead Form ID:', providedLeadFormId);
+          leadFormId = providedLeadFormId;
+        } else {
+          // CREATE NEW DEFAULT FORM
+          console.log('[AgentService] Creating new Meta Instant Lead Form...');
+          
+          const pageId = process.env.FACEBOOK_PAGE_ID;
+          if (!pageId) {
+            throw new Error('❌ FACEBOOK_PAGE_ID not configured in environment variables');
           }
 
-          console.log('\n✅ [AgentService] Lead Form Created Successfully!');
-          console.log('[AgentService] Lead Form ID:', leadFormId);
-          console.log('[AgentService] Check in Facebook Ads Manager → Forms Library\n');
+          console.log('[AgentService] Facebook Page ID:', pageId);
+          console.log('[AgentService] Lead Form Name:', `${businessData.brandName || 'Business'} - Lead Form`);
+          console.log('[AgentService] Intro Text:', selectedPrimaryText.substring(0, 50) + '...');
 
-          // Save lead form ID and privacy policy URL
-          await prisma.agentTask.update({
-            where: { id: taskId },
-            data: { 
-              leadFormId,
-              privacyPolicyUrl
+          try {
+            // Get privacy policy URL with fallback
+            const privacyPolicyUrl = this.getPrivacyPolicyUrl(
+              businessData.contact?.website,
+              taskId,
+              pageId
+            );
+
+            console.log('[AgentService] Using Privacy Policy URL:', privacyPolicyUrl);
+
+            // Create Lead Form
+            leadFormId = await FacebookService.createLeadForm(
+              accessToken,
+              pageId,
+              `${businessData.brandName || 'Business'} - Lead Form`,
+              selectedPrimaryText, // Use primary text as intro
+              privacyPolicyUrl,
+              'Thank you! We\'ll contact you soon.',
+              undefined // Use default questions (Name, Phone, Email)
+            );
+
+            if (!leadFormId) {
+              throw new Error('❌ Lead Form creation returned empty/null ID');
             }
-          });
 
-          // Create creative with lead form
-          console.log('[AgentService] Creating Ad Creative with Lead Form...');
-          creativeId = await FacebookService.createAdCreativeWithLeadForm(
-            accessToken,
-            fbAccount.adAccountId,
-            `Creative - ${businessData.brandName || 'Default'}`,
-            imageHash,
-            selectedHeadline,
-            selectedPrimaryText,
-            leadFormId
-          );
+            console.log('\n✅ [AgentService] Lead Form Created Successfully!');
+            console.log('[AgentService] Lead Form ID:', leadFormId);
+            console.log('[AgentService] Check in Facebook Ads Manager → Forms Library\n');
 
-          console.log('✅ [AgentService] Lead Form Creative Created:', creativeId);
-        } catch (leadFormError: any) {
-          console.error('\n❌ [AgentService] LEAD FORM CREATION FAILED');
-          console.error('[AgentService] Error:', leadFormError.message);
-          console.error('[AgentService] Full Error:', JSON.stringify(leadFormError.response?.data || leadFormError, null, 2));
-          throw new Error(`Lead Form creation failed: ${leadFormError.message}`);
+            // Save lead form ID and privacy policy URL
+            await prisma.agentTask.update({
+              where: { id: taskId },
+              data: { 
+                leadFormId,
+                privacyPolicyUrl
+              }
+            });
+          } catch (leadFormError: any) {
+            console.error('\n❌ [AgentService] LEAD FORM CREATION FAILED');
+            console.error('[AgentService] Error:', leadFormError.message);
+            console.error('[AgentService] Full Error:', JSON.stringify(leadFormError.response?.data || leadFormError, null, 2));
+            throw new Error(`Lead Form creation failed: ${leadFormError.message}`);
+          }
         }
+
+        // Create creative with lead form (for both existing and new forms)
+        console.log('[AgentService] Creating Ad Creative with Lead Form...');
+        creativeId = await FacebookService.createAdCreativeWithLeadForm(
+          accessToken,
+          fbAccount.adAccountId,
+          `Creative - ${businessData.brandName || 'Default'}`,
+          imageHash,
+          selectedHeadline,
+          selectedPrimaryText,
+          leadFormId
+        );
+
+        console.log('✅ [AgentService] Lead Form Creative Created:', creativeId);
       } else {
         // WEBSITE FLOW: Create regular creative with link URL
         console.log('[AgentService] Using WEBSITE conversion method');

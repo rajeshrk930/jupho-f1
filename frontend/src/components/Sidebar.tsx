@@ -20,7 +20,8 @@ import {
   CreditCard,
   HelpCircle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  FileText
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
@@ -305,6 +306,20 @@ export function Sidebar() {
 
         {/* Action Buttons */}
         <div className="space-y-1">
+          {facebookConnected && (
+            <Link
+              href="/forms"
+              className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg transition-colors ${
+                pathname === '/forms'
+                  ? 'bg-coral-50 text-coral-600'
+                  : 'text-charcoal-600 hover:bg-gray-50'
+              }`}
+              title={isCollapsed ? 'Lead Forms' : undefined}
+            >
+              <FileText size={18} className={pathname === '/forms' ? 'text-coral-600' : 'text-charcoal-400'} />
+              {!isCollapsed && <span className="text-sm font-medium">Lead Forms</span>}
+            </Link>
+          )}
           <Link
             href="/billing"
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg text-charcoal-600 hover:bg-gray-50 transition-colors`}

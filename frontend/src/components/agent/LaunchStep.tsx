@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Loader2, Rocket, Upload, Check, ExternalLink, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Loader2, Rocket, Upload, Check, ExternalLink, AlertCircle, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { agentApi, api } from '@/lib/api';
 import MetaAdPreview from './MetaAdPreview';
 import PrimaryButton from '@/components/ui/PrimaryButton';
@@ -25,6 +25,14 @@ interface CampaignStrategy {
     descriptions: string[];
     cta: string;
   };
+}
+
+interface LeadForm {
+  id: string;
+  name: string;
+  status: string;
+  questionCount: number;
+  leadsCount: number;
 }
 
 interface Props {
@@ -56,6 +64,33 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
   const [showDetails, setShowDetails] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
   const [templateSaved, setTemplateSaved] = useState(false);
+  
+  // Lead Form Selection
+  const [leadForms, setLeadForms] = useState<LeadForm[]>([]);
+  const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
+  const [loadingForms, setLoadingForms] = useState(true);
+  const [useCustomForm, setUseCustomForm] = useState(false);
+
+  useEffect(() => {
+    fetchLeadForms();
+  }, []);
+
+  const fetchLeadForms = async () => {
+    try {
+      const response = await api.get('/facebook/forms');
+      setLeadForms(response.data.forms || []);
+      // Auto-select first active form if available
+      const activeForm = response.data.forms.find((f: LeadForm) => f.status === 'ACTIVE');
+      if (activeForm) {
+        setSelectedFormId(activeForm.id);
+        setUseCustomForm(true);
+      }
+    } catch (err) {
+      console.error('Error fetching forms:', err);
+    } finally {
+      setLoadingForms(false);
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,7 +112,8 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
     try {
       const response = await agentApi.launchCampaign(
         taskId,
-        uploadedFile || undefined
+        uploadedFile || undefined,
+        useCustomForm ? selectedFormId || undefined : undefined
       );
 
       setSuccess(true);
@@ -223,6 +259,75 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Left Side: Compact Image Upload - 3 columns */}
         <div className="lg:col-span-3 space-y-4">
+          {/* Lead Form Selection */}
+          <div className="bg-white rounded-xl shadow border border-gray-200 p-4">
+            <h3 className="font-semibold text-gray-900 mb-3 text-sm flex items-center gap-2">
+              <FileText className="w-4 h-4 text-coral-600" />
+              Lead Form Selection
+            </h3>
+            
+            {loadingForms ? (
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Loading forms...
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {/* Use existing form option */}
+                <label className="flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                  <input
+                    type="radio"
+                    name="formOption"
+                    checked={useCustomForm}
+                    onChange={() => setUseCustomForm(true)}
+                    disabled={leadForms.length === 0}
+                    className="mt-0.5"
+                  />
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900 text-sm">Use my Facebook form</p>
+                    <p className="text-xs text-gray-600 mt-1">Select a form you've created in Facebook</p>
+                    
+                    {useCustomForm && leadForms.length > 0 && (
+                      <select
+                        value={selectedFormId || ''}
+                        onChange={(e) => setSelectedFormId(e.target.value)}
+                        className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-coral-500 focus:border-coral-500"
+                      >
+                        <option value="">Select a form...</option>
+                        {leadForms.map((form) => (
+                          <option key={form.id} value={form.id}>
+                            {form.name} ({form.questionCount} questions • {form.status})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    
+                    {useCustomForm && leadForms.length === 0 && (
+                      <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                        No forms found. <a href="/forms" className="underline font-medium">Create one first</a>
+                      </div>
+                    )}
+                  </div>
+                </label>
+
+                {/* Create new default form option */}
+                <label className="flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                  <input
+                    type="radio"
+                    name="formOption"
+                    checked={!useCustomForm}
+                    onChange={() => setUseCustomForm(false)}
+                    className="mt-0.5"
+                  />
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900 text-sm">Create new default form</p>
+                    <p className="text-xs text-gray-600 mt-1">Auto-create with Name, Phone, Email fields</p>
+                  </div>
+                </label>
+              </div>
+            )}
+          </div>
+
           <div className="bg-white rounded-xl shadow border border-gray-200 p-4">
             <h3 className="font-semibold text-gray-900 mb-3 text-sm">Creative Image</h3>
             <div className="space-y-3">

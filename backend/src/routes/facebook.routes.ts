@@ -552,4 +552,73 @@ router.get('/leads/:formId', ...clerkAuth, async (req: AuthRequest, res: Respons
   }
 });
 
+/**
+ * GET /api/facebook/forms
+ * Retrieve all lead forms from user's Facebook page
+ */
+router.get('/forms', ...clerkAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const fbAccount = await prisma.facebookAccount.findUnique({
+      where: { userId: req.user!.id }
+    });
+    
+    if (!fbAccount || !fbAccount.isActive) {
+      return res.status(400).json({ 
+        error: 'No Facebook account connected. Please connect your Facebook account first.' 
+      });
+    }
+    
+    // Check if token is expired
+    if (fbAccount.tokenExpiresAt < new Date()) {
+      return res.status(401).json({ 
+        error: 'Facebook access token expired. Please reconnect your account.' 
+      });
+    }
+    
+    const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
+    const pageId = fbAccount.pageId || process.env.FACEBOOK_PAGE_ID;
+    
+    if (!pageId) {
+      return res.status(400).json({ 
+        error: 'No Facebook Page ID found. Please reconnect your account.' 
+      });
+    }
+    
+    // Fetch lead forms from Facebook Graph API
+    const response = await axios.get(
+      `https://graph.facebook.com/v19.0/${pageId}/leadgen_forms`,
+      {
+        params: {
+          access_token: accessToken,
+          fields: 'id,name,status,created_time,questions,leads_count,context_card'
+        }
+      }
+    );
+    
+    const forms = response.data.data || [];
+    
+    // Transform form data
+    const formattedForms = forms.map((form: any) => ({
+      id: form.id,
+      name: form.name,
+      status: form.status,
+      createdAt: form.created_time,
+      questionCount: form.questions?.length || 0,
+      leadsCount: form.leads_count || 0,
+      introText: form.context_card?.content?.[0] || ''
+    }));
+    
+    res.json({ 
+      success: true,
+      forms: formattedForms,
+      totalCount: formattedForms.length
+    });
+  } catch (error: any) {
+    console.error('Facebook fetch forms error:', error.response?.data || error.message);
+    res.status(500).json({ 
+      error: error.response?.data?.error?.message || 'Failed to fetch forms from Facebook' 
+    });
+  }
+});
+
 export default router;

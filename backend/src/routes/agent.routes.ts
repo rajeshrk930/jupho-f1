@@ -156,7 +156,7 @@ router.post('/strategy', ...clerkAuth, async (req: AuthRequest, res: Response) =
 
 /**
  * 🚀 STEP 3: LAUNCH CAMPAIGN (POST /api/agent/launch)
- * Input: { taskId: "...", imageFile: File }
+ * Input: { taskId: "...", imageFile: File, leadFormId?: string }
  * Output: { success: true, campaignId: "...", adId: "..." }
  */
 router.post(
@@ -165,7 +165,7 @@ router.post(
   upload.single('image'),
   async (req: AuthRequest, res: Response) => {
     try {
-      const { taskId } = req.body;
+      const { taskId, leadFormId } = req.body;
 
       if (!taskId) {
         return res.status(400).json({ error: 'Task ID is required' });
@@ -194,7 +194,12 @@ router.post(
       }
 
       const agentService = new AgentService();
-      const result = await agentService.launchCampaign(taskId, req.user!.id, imageUrl);
+      const result = await agentService.launchCampaign(
+        taskId, 
+        req.user!.id, 
+        imageUrl,
+        leadFormId || undefined
+      );
       
       // Increment usage counter on successful launch
       await prisma.user.update({

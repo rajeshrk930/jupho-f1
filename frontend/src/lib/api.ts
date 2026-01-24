@@ -287,11 +287,14 @@ export const agentApi = {
   },
   
   // Step 3: Launch Campaign
-  launchCampaign: async (taskId: string, imageFile?: File) => {
+  launchCampaign: async (taskId: string, imageFile?: File, leadFormId?: string) => {
     const formData = new FormData();
     formData.append('taskId', taskId);
     if (imageFile) {
       formData.append('image', imageFile);
+    }
+    if (leadFormId) {
+      formData.append('leadFormId', leadFormId);
     }
     const response = await api.post('/agent/launch', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
