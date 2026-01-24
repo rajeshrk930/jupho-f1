@@ -59,9 +59,15 @@ export default function BillingPage() {
     toast.success('Welcome to your new plan!');
   };
 
-  const isPro = usageStats?.plan === 'BASIC' || usageStats?.plan === 'GROWTH';
-  const planName = usageStats?.plan === 'FREE' ? 'Free' : usageStats?.plan === 'BASIC' ? 'Basic' : usageStats?.plan === 'GROWTH' ? 'Growth' : 'Free';
-  const planPrice = usageStats?.plan === 'BASIC' ? '₹1,499 / month' : usageStats?.plan === 'GROWTH' ? '₹1,999 / month' : 'No payment required';
+  const isFree = usageStats?.plan === 'FREE';
+  const isBasic = usageStats?.plan === 'BASIC';
+  const isGrowth = usageStats?.plan === 'GROWTH';
+  const isPaid = isBasic || isGrowth;
+  
+  const planName = isGrowth ? 'Growth' : isBasic ? 'Basic' : 'Free';
+  const planPrice = isGrowth ? '₹1,999 / month' : isBasic ? '₹1,499 / month' : 'No payment required';
+  const planLimit = isGrowth ? 25 : isBasic ? 10 : 2;
+  
   const daysLeft = usageStats?.proExpiresAt
     ? Math.max(0, Math.ceil((new Date(usageStats.proExpiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
@@ -114,24 +120,42 @@ export default function BillingPage() {
         {/* Current Plan Card */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Plan Status */}
-          <div className={`rounded-md p-6 border-2 ${isPro ? 'bg-base-elevated border-signal-primary' : 'bg-base-elevated border-border-default'}`}>
+          <div className={`rounded-md p-6 border-2 ${
+            isGrowth ? 'bg-coral-50 border-coral-500' : 
+            isBasic ? 'bg-blue-50 border-blue-500' : 
+            'bg-base-elevated border-border-default'
+          }`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-md flex items-center justify-center ${isPro ? 'bg-signal-primary/10' : 'bg-base-surface'}`}>
-                  <Zap className={`w-6 h-6 ${isPro ? 'text-signal-primary' : 'text-text-secondary'}`} />
+                <div className={`w-12 h-12 rounded-md flex items-center justify-center ${
+                  isGrowth ? 'bg-coral-100' : 
+                  isBasic ? 'bg-blue-100' : 
+                  'bg-base-surface'
+                }`}>
+                  <Zap className={`w-6 h-6 ${
+                    isGrowth ? 'text-coral-600' : 
+                    isBasic ? 'text-blue-600' : 
+                    'text-text-secondary'
+                  }`} />
                 </div>
                 <div>
-                  <h2 className={`text-2xl font-bold ${isPro ? 'text-signal-primary' : 'text-text-primary'}`}>
+                  <h2 className={`text-2xl font-bold ${
+                    isGrowth ? 'text-coral-600' : 
+                    isBasic ? 'text-blue-600' : 
+                    'text-text-primary'
+                  }`}>
                     Jupho {planName}
                   </h2>
-                  <p className={`text-sm ${isPro ? 'text-text-secondary' : 'text-text-secondary'}`}>
+                  <p className="text-sm text-text-secondary">
                     {planPrice}
                   </p>
                 </div>
               </div>
-              {isPro && (
-                <div className="bg-signal-primary/10 px-3 py-1 rounded-sm">
-                  <span className="text-signal-primary text-sm font-medium">Active</span>
+              {isPaid && (
+                <div className={`px-3 py-1 rounded-sm ${
+                  isGrowth ? 'bg-coral-100 text-coral-700' : 'bg-blue-100 text-blue-700'
+                }`}>
+                  <span className="text-sm font-medium">Active</span>
                 </div>
               )}
             </div>
@@ -183,53 +207,69 @@ export default function BillingPage() {
                 <>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">5 campaigns per month</span>
+                    <span className="text-text-secondary text-sm">2 campaigns per month</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Auto-generated ad copy</span>
+                    <span className="text-text-secondary text-sm">Templates preview (limited)</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Campaign history tracking</span>
+                    <span className="text-text-secondary text-sm">Basic campaign creation</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Basic support</span>
+                    <span className="text-text-secondary text-sm">Community support</span>
                   </div>
                 </>
               )}
             </div>
 
-            {isPro ? (
-              <div className="bg-signal-primary/10 rounded-md p-4 border border-signal-primary/20">
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="w-4 h-4 text-signal-primary" />
-                  <span className="text-text-primary text-sm font-medium">Subscription Details</span>
+            <div className="space-y-3">
+              {isPaid ? (
+                <div className={`rounded-md p-4 border ${
+                  isGrowth ? 'bg-coral-50 border-coral-200' : 'bg-blue-50 border-blue-200'
+                }`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className={`w-4 h-4 ${
+                      isGrowth ? 'text-coral-600' : 'text-blue-600'
+                    }`} />
+                    <span className="text-text-primary text-sm font-medium">Subscription Details</span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-text-secondary text-xs">
+                      Expires in: <span className="font-semibold text-text-primary">{daysLeft} days</span>
+                    </p>
+                    <p className="text-text-secondary text-xs">
+                      Next renewal: <span className="font-semibold text-text-primary">
+                        {usageStats?.proExpiresAt ? new Date(usageStats.proExpiresAt).toLocaleDateString('en-US', { 
+                          month: 'long', 
+                          day: 'numeric', 
+                          year: 'numeric' 
+                        }) : 'N/A'}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-text-secondary text-xs">
-                    Expires in: <span className="font-semibold text-text-primary">{daysLeft} days</span>
-                  </p>
-                  <p className="text-text-secondary text-xs">
-                    Next renewal: <span className="font-semibold text-text-primary">
-                      {usageStats?.proExpiresAt ? new Date(usageStats.proExpiresAt).toLocaleDateString('en-US', { 
-                        month: 'long', 
-                        day: 'numeric', 
-                        year: 'numeric' 
-                      }) : 'N/A'}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowUpgradeModal(true)}
-                className="btn-primary w-full"
-              >
-                Upgrade to Pro
-              </button>
-            )}
+              ) : (
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="btn-primary w-full"
+                >
+                  Choose Your Plan
+                </button>
+              )}
+              
+              {isBasic && (
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <Zap className="w-4 h-4" />
+                  Upgrade to Growth (AI Agent)
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Usage Stats */}
@@ -247,33 +287,33 @@ export default function BillingPage() {
                   <span className="text-sm font-medium text-text-secondary">Campaigns Created</span>
                 </div>
                 <span className="text-sm font-bold text-text-primary">
-                  {isPro ? `${usageStats?.used || 0}/50` : `${usageStats?.used || 0}/${usageStats?.limit || 5}`}
+                  {usageStats?.used || 0}/{planLimit}
                 </span>
               </div>
-              {!isPro && (
-                <div className="w-full bg-base-surface rounded-sm h-3">
-                  <div
-                    className="h-3 rounded-sm bg-signal-primary transition-all"
-                    style={{ 
-                      width: `${Math.min(((usageStats?.used || 0) / (usageStats?.limit || 5)) * 100, 100)}%` 
-                    }}
-                  />
-                </div>
-              )}
+              <div className="w-full bg-base-surface rounded-sm h-3">
+                <div
+                  className={`h-3 rounded-sm transition-all ${
+                    isGrowth ? 'bg-coral-500' : isBasic ? 'bg-blue-500' : 'bg-gray-500'
+                  }`}
+                  style={{ 
+                    width: `${Math.min(((usageStats?.used || 0) / planLimit) * 100, 100)}%` 
+                  }}
+                />
+              </div>
             </div>
 
             {/* Reset Info */}
-            {!isPro && (
-              <div className="bg-signal-primary/10 border border-signal-primary/20 rounded-md p-4">
+            {isFree && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Clock className="w-4 h-4 text-signal-primary" />
+                  <Clock className="w-4 h-4 text-yellow-600" />
                   <span className="text-sm font-medium text-text-primary">Monthly Reset</span>
                 </div>
                 <p className="text-xs text-text-secondary">
                   Your campaign limit resets on the 1st of each month
                 </p>
-                <p className="text-xs text-text-secondary mt-1">
-                  Remaining: {usageStats?.remaining || 0} campaigns this month
+                <p className="text-xs text-yellow-700 mt-1 font-medium">
+                  Remaining: {usageStats?.remaining || 0} of 2 campaigns
                 </p>
               </div>
             )}
@@ -296,8 +336,10 @@ export default function BillingPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-text-secondary">Current Plan</span>
-                  <span className={`font-bold ${isPro ? 'text-signal-primary' : 'text-text-primary'}`}>
-                    {isPro ? 'PRO' : 'FREE'}
+                  <span className={`font-bold ${
+                    isGrowth ? 'text-coral-600' : isBasic ? 'text-blue-600' : 'text-gray-600'
+                  }`}>
+                    {planName.toUpperCase()}
                   </span>
                 </div>
               </div>
@@ -305,8 +347,8 @@ export default function BillingPage() {
           </div>
         </div>
 
-        {/* Transaction History - Only show for Pro users */}
-        {isPro && (
+        {/* Transaction History - Only show for paid users */}
+        {isPaid && (
           <div className="bg-base-elevated rounded-md border border-border-default p-6">
             <div className="flex items-center gap-3 mb-5">
               <Receipt className="w-5 h-5 text-text-secondary" />
@@ -343,10 +385,10 @@ export default function BillingPage() {
                           })}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-sm font-medium text-text-primary">Jupho Pro Subscription</div>
+                      <div className="text-sm font-medium text-text-primary">Jupho {planName} Subscription</div>
                       <div className="text-xs text-text-tertiary">Monthly plan renewal</div>
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-text-primary">₹1,999.00</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-text-primary">{planPrice.split(' / ')[0]}</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-base-elevated text-text-primary">
                         Paid
@@ -373,8 +415,8 @@ export default function BillingPage() {
           </div>
         )}
 
-        {/* Payment Method (Pro users only) */}
-        {isPro && (
+        {/* Payment Method (Paid users only) */}
+        {isPaid && (
           <div className="bg-base-elevated rounded-md border border-border-default p-6">
             <div className="flex items-center justify-between mb-5">
               <div>
@@ -411,25 +453,122 @@ export default function BillingPage() {
           </div>
         )}
 
-        {/* Upgrade CTA for Free Users */}
-        {!isPro && (
-          <div className="bg-signal-primary border-2 border-signal-primary rounded-md p-8 text-center">
-            <div className="max-w-2xl mx-auto">
-              <div className="w-16 h-16 bg-base-elevated rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-8 h-8 text-signal-primary" />
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Ready to create unlimited Meta ads?</h2>
-              <p className="text-white/90 mb-6">
-                Upgrade to Jupho Pro and get 50 AI-created campaigns per month, unlimited ad copy generation, and priority support for just ₹1,999/month.
+        {/* Upgrade CTA for Free/Basic Users */}
+        {!isGrowth && (
+          <div className="bg-gradient-to-br from-coral-50 to-blue-50 border-2 border-coral-200 rounded-lg p-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-charcoal-900 mb-2">
+                {isFree ? 'Ready to scale your Meta ads?' : 'Unlock AI-Powered Creation'}
+              </h2>
+              <p className="text-charcoal-600">
+                {isFree 
+                  ? 'Choose the perfect plan for your business growth' 
+                  : 'Upgrade to Growth and get AI Agent + 25 campaigns/month'}
               </p>
-              <button
-                onClick={() => setShowUpgradeModal(true)}
-                className="bg-white text-signal-primary px-8 py-3 rounded-md font-medium hover:bg-base-elevated transition-colors shadow-sm inline-flex items-center gap-2"
-              >
-                <Zap className="w-5 h-5" />
-                Upgrade to Pro Now
-              </button>
             </div>
+            
+            {isFree ? (
+              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {/* BASIC Plan Card */}
+                <div className="bg-white border-2 border-blue-200 rounded-lg p-6 hover:border-blue-400 transition-all">
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-blue-600 mb-1">BASIC</h3>
+                    <div className="text-3xl font-bold text-charcoal-900 mb-1">₹1,499</div>
+                    <p className="text-sm text-charcoal-600">/month</p>
+                  </div>
+                  <ul className="space-y-2 mb-6">
+                    <li className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-green-500" />
+                      <span>10 campaigns/month</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-green-500" />
+                      <span>Templates library</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-green-500" />
+                      <span>Instant Lead Ads</span>
+                    </li>
+                  </ul>
+                  <button
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-colors"
+                  >
+                    Get Basic
+                  </button>
+                </div>
+                
+                {/* GROWTH Plan Card */}
+                <div className="bg-white border-2 border-coral-400 rounded-lg p-6 relative hover:border-coral-500 transition-all shadow-lg">
+                  <div className="absolute -top-3 right-4 bg-coral-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    RECOMMENDED
+                  </div>
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-coral-600 mb-1 flex items-center justify-center gap-2">
+                      GROWTH
+                      <Zap className="w-5 h-5" />
+                    </h3>
+                    <div className="text-3xl font-bold text-charcoal-900 mb-1">₹1,999</div>
+                    <p className="text-sm text-charcoal-600">/month</p>
+                  </div>
+                  <ul className="space-y-2 mb-6">
+                    <li className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-coral-500" />
+                      <span className="font-semibold">25 campaigns/month</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-coral-500" />
+                      <span className="font-semibold">AI Agent (smart creation)</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-coral-500" />
+                      <span>AI-generated copy</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-coral-500" />
+                      <span>Everything in BASIC</span>
+                    </li>
+                  </ul>
+                  <button
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 rounded-lg transition-colors"
+                  >
+                    Get Growth
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="max-w-md mx-auto bg-white border-2 border-coral-400 rounded-lg p-6 text-center">
+                <Zap className="w-12 h-12 text-coral-500 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-charcoal-900 mb-2">Upgrade to Growth</h3>
+                <div className="text-3xl font-bold text-coral-600 mb-4">₹1,999/month</div>
+                <ul className="text-left space-y-2 mb-6">
+                  <li className="flex items-center gap-2 text-sm">
+                    <Check className="w-4 h-4 text-coral-500" />
+                    <span>25 campaigns (vs 10 in Basic)</span>
+                  </li>
+                  <li className="flex items-center gap-2 text-sm">
+                    <Check className="w-4 h-4 text-coral-500" />
+                    <span className="font-semibold">AI Agent - Smart campaign creation</span>
+                  </li>
+                  <li className="flex items-center gap-2 text-sm">
+                    <Check className="w-4 h-4 text-coral-500" />
+                    <span>AI-generated copy + strategy</span>
+                  </li>
+                  <li className="flex items-center gap-2 text-sm">
+                    <Check className="w-4 h-4 text-coral-500" />
+                    <span>Priority support</span>
+                  </li>
+                </ul>
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <Zap className="w-5 h-5" />
+                  Upgrade to Growth
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
