@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
       <div className="text-center max-w-4xl mx-auto">
-        <h1 className="text-5xl lg:text-6xl font-bold text-charcoal-900 mb-6 leading-tight">
+        <h1 className="text-5xl lg:text-6xl font-bold text-charcoal-900 mb-6 leading-tight tracking-tight">
           Create High-Performing
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-coral-600 to-mint-600"> Meta Ads </span>
           with AI
@@ -16,7 +16,7 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
             href="https://app.jupho.io/sign-up"
-            className="group inline-flex items-center gap-2 bg-gradient-to-r from-coral-600 to-mint-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-2xl transition-all duration-200 hover:-translate-y-1"
+            className="group inline-flex items-center gap-2 bg-gradient-to-r from-coral-600 to-mint-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
           >
             Start Creating Free
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

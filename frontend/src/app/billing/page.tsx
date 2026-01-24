@@ -101,8 +101,14 @@ export default function BillingPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-red-800 font-semibold mb-2">Failed to load billing data</h2>
-          <p className="text-red-600 text-sm">{(error as any)?.message || 'Something went wrong'}</p>
+          <h2 className="text-red-800 font-semibold mb-2 tracking-tight">Failed to load billing data</h2>
+          <p className="text-red-600 text-sm mb-4">{(error as any)?.message || 'Something went wrong'}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="text-sm text-red-700 hover:text-red-800 font-medium"
+          >
+            Try again →
+          </button>
         </div>
       </div>
     );
@@ -113,7 +119,7 @@ export default function BillingPage() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-charcoal-900 mb-2">Billing & Plans</h1>
+          <h1 className="text-3xl font-bold text-charcoal-900 mb-2 tracking-tight">Billing & Plans</h1>
           <p className="text-charcoal-600">Manage your subscription and view usage statistics</p>
         </div>
 
@@ -139,7 +145,7 @@ export default function BillingPage() {
                   }`} />
                 </div>
                 <div>
-                  <h2 className={`text-2xl font-bold ${
+                  <h2 className={`text-2xl font-bold tracking-tight ${
                     isGrowth ? 'text-coral-600' : 
                     isBasic ? 'text-blue-600' : 
                     'text-text-primary'

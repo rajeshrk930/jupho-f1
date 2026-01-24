@@ -143,41 +143,49 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @layer components {
-  /* Primary action button - coral */
+  /* Primary action button - coral gradient */
   .btn-primary {
-    @apply bg-coral-500 hover:bg-coral-600 text-white font-semibold text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg shadow-sm transition-all duration-150;
+    @apply inline-flex items-center justify-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white font-semibold px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5;
   }
   
-  .btn-primary:hover {
-    box-shadow: 0 0 0 3px rgba(255, 107, 71, 0.15);
+  .btn-primary:focus-visible {
+    @apply ring-4 ring-coral-200 ring-offset-2 outline-none;
   }
   
-  .btn-primary:disabled,
-  .btn-disabled {
-    @apply bg-gray-300 text-charcoal-400 cursor-not-allowed shadow-none;
+  .btn-primary:disabled {
+    @apply bg-gray-300 text-charcoal-400 cursor-not-allowed shadow-none hover:translate-y-0 from-gray-300 to-gray-300;
   }
   
-  .btn-loading {
-    @apply bg-coral-500 text-white opacity-70 cursor-wait;
-  }
-
-  /* Secondary button - neutral surface */
+  /* Secondary button - outline style */
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-charcoal-900 font-medium text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg border border-gray-300 shadow-sm transition-colors;
+    @apply inline-flex items-center justify-center gap-2 bg-white hover:bg-coral-50 text-charcoal-900 hover:text-coral-700 font-semibold px-6 py-3 rounded-lg border-2 border-charcoal-300 hover:border-coral-500 transition-all duration-200;
   }
   
-  /* Danger button - red for irreversible actions only */
+  .btn-secondary:focus-visible {
+    @apply ring-4 ring-coral-200 ring-offset-2 outline-none;
+  }
+  
+  /* Tertiary button - ghost/text only */
+  .btn-tertiary {
+    @apply inline-flex items-center justify-center gap-2 bg-transparent hover:bg-coral-50 text-charcoal-700 hover:text-coral-600 font-medium px-4 py-2 rounded-lg transition-all duration-200;
+  }
+  
+  /* Danger button - red for destructive actions */
   .btn-danger {
-    @apply bg-red-600 hover:bg-red-700 text-white font-semibold text-sm sm:text-base py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg shadow-sm transition-colors;
+    @apply inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  .btn-danger:focus-visible {
+    @apply ring-4 ring-red-200 ring-offset-2 outline-none;
   }
 
-  /* Input with coral focus */
+  /* Input with coral focus ring */
   .input {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg outline-none bg-white text-charcoal-900 text-base transition-colors;
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg outline-none bg-white text-charcoal-900 transition-all duration-200;
   }
   
   .input:focus {
-    @apply border-coral-500 ring-2 ring-coral-500;
+    @apply border-coral-500 ring-4 ring-coral-200;
   }
   
   .input-error {
@@ -192,13 +200,13 @@ h1, h2, h3, h4, h5, h6 {
     @apply block text-sm font-medium text-charcoal-700 mb-2;
   }
 
-  /* Card - light surface, rounded corners */
+  /* Card - light surface with subtle hover effect */
   .card {
-    @apply bg-white border border-gray-200 rounded-lg shadow-sm;
+    @apply bg-white border border-gray-200 rounded-lg shadow-sm transition-all duration-200;
   }
 
   .card-hover {
-    @apply card hover:border-gray-300 transition-colors;
+    @apply card hover:shadow-md hover:-translate-y-0.5;
   }
   
   /* Card with coral border for active/important state */

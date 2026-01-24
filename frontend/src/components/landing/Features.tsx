@@ -4,7 +4,7 @@ export default function Features() {
   return (
     <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-charcoal-900 mb-4">
+        <h2 className="text-4xl font-bold text-charcoal-900 mb-4 tracking-tight">
           Why Business Owners Love Jupho
         </h2>
         <p className="text-xl text-charcoal-600 max-w-2xl mx-auto">
