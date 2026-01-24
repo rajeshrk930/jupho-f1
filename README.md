@@ -35,9 +35,9 @@ An **"Agency-in-a-Box"** tool that automatically creates high-performing Meta ad
 
 ## Pricing
 
-- **FREE**: 5 campaigns/month (resets monthly)
-- **PRO**: ₹1,999/month for 50 campaigns
-- **PRO Annual**: ₹19,990/year for 600 campaigns (save ₹3,998)
+- **FREE**: 2 campaigns/month (templates preview)
+- **BASIC**: ₹1,499/month for 10 campaigns (templates-based)
+- **GROWTH**: ₹1,999/month for 25 campaigns (AI Agent + templates)
 
 **vs Agency**: ₹20,000/month + setup fees
 

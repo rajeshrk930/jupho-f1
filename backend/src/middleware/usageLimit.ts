@@ -4,11 +4,15 @@ import { AuthRequest } from './auth';
 
 const DAILY_FREE_LIMIT = 3; // 3 chat analyses per day (legacy)
 
-// Plan limits
+// Plan limits - 3-tier system
 const PLAN_LIMITS = {
-  STARTER: {
-    campaignsPerMonth: 5,
-    aiCampaignsPerMonth: 1,
+  FREE: {
+    campaignsPerMonth: 2,
+    aiCampaignsPerMonth: 0, // No AI access
+  },
+  BASIC: {
+    campaignsPerMonth: 10,
+    aiCampaignsPerMonth: 0, // Templates only, no AI Agent
   },
   GROWTH: {
     campaignsPerMonth: 25,
@@ -108,7 +112,7 @@ export const checkCampaignUsageLimit = (createdVia: 'AI_AGENT' | 'TEMPLATE') => 
       }
 
       // Get plan limits
-      const planLimits = PLAN_LIMITS[user.plan as 'STARTER' | 'GROWTH'];
+      const planLimits = PLAN_LIMITS[user.plan as 'FREE' | 'BASIC' | 'GROWTH'];
       
       if (!planLimits) {
         return res.status(400).json({
@@ -119,22 +123,37 @@ export const checkCampaignUsageLimit = (createdVia: 'AI_AGENT' | 'TEMPLATE') => 
 
       // Check total campaign limit
       if (user.agentTasksCreated >= planLimits.campaignsPerMonth) {
+        const upgradeMessage = user.plan === 'FREE' 
+          ? `You've reached your FREE limit of ${planLimits.campaignsPerMonth} campaigns. Upgrade to BASIC (\u20b91,499) for 10 campaigns or GROWTH (\u20b91,999) for 25 campaigns + AI Agent.`
+          : user.plan === 'BASIC'
+          ? `You've reached your BASIC limit of ${planLimits.campaignsPerMonth} campaigns. Upgrade to GROWTH (\u20b91,999) for 25 campaigns + AI Agent.`
+          : `You've reached your GROWTH limit of ${planLimits.campaignsPerMonth} campaigns this month.`;
+        
         return res.status(403).json({
           success: false,
           error: 'CAMPAIGN_LIMIT_REACHED',
-          message: user.plan === 'STARTER' 
-            ? `You've reached your limit of ${planLimits.campaignsPerMonth} campaigns this month. Upgrade to GROWTH for 25 campaigns/month.`
-            : `You've reached your limit of ${planLimits.campaignsPerMonth} campaigns this month.`,
+          message: upgradeMessage,
           limit: planLimits.campaignsPerMonth,
           used: user.agentTasksCreated,
           resetAt: getNextResetTime(user.agentLastResetDate),
-          upgradeRequired: user.plan === 'STARTER',
+          upgradeRequired: user.plan === 'FREE' || user.plan === 'BASIC',
         });
       }
 
-      // For STARTER users using AI Agent: Check AI campaign limit
-      if (user.plan === 'STARTER' && createdVia === 'AI_AGENT') {
-        // Count AI campaigns created this month
+      // For FREE/BASIC users using AI Agent: AI campaigns are blocked (handled in agent.routes.ts)
+      // This check is for additional safety
+      if ((user.plan === 'FREE' || user.plan === 'BASIC') && createdVia === 'AI_AGENT') {
+        return res.status(403).json({
+          success: false,
+          error: 'AI_AGENT_LOCKED',
+          message: `AI Agent is only available on GROWTH plan (\u20b91,999/month). Upgrade to unlock smart campaign creation!`,
+          upgradeRequired: true,
+          upgradeTo: 'GROWTH'
+        });
+      }
+
+      // For GROWTH users: Check AI campaign limit (unlimited, so this won't trigger)
+      if (user.plan === 'GROWTH' && createdVia === 'AI_AGENT') {
         const startOfMonth = new Date(user.agentLastResetDate);
         const aiCampaignsCount = await prisma.agentTask.count({
           where: {
@@ -148,11 +167,10 @@ export const checkCampaignUsageLimit = (createdVia: 'AI_AGENT' | 'TEMPLATE') => 
           return res.status(403).json({
             success: false,
             error: 'AI_LIMIT_REACHED',
-            message: `You've used your ${planLimits.aiCampaignsPerMonth} free AI campaign this month. Upgrade to GROWTH for unlimited AI campaigns or use templates.`,
+            message: `You've reached your AI campaign limit. This should not happen on GROWTH plan.`,
             limit: planLimits.aiCampaignsPerMonth,
             used: aiCampaignsCount,
             resetAt: getNextResetTime(user.agentLastResetDate),
-            upgradeRequired: true,
           });
         }
       }

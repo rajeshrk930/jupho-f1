@@ -147,7 +147,7 @@ export const authApi = {
 
 // Payment API
 export const paymentApi = {
-  createOrder: async (plan: 'PRO_MONTHLY' | 'PRO_ANNUAL' = 'PRO_MONTHLY') => {
+  createOrder: async (plan: 'BASIC_MONTHLY' | 'GROWTH_MONTHLY' = 'GROWTH_MONTHLY') => {
     const response = await api.post('/payments/create-order', { plan });
     // Backend wraps payload as { success, data }, we only need the data block for the modal
     return response.data.data;

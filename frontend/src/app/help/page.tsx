@@ -42,8 +42,12 @@ const faqs = [
     category: 'Pricing & Billing',
     questions: [
       {
-        q: 'How much does Jupho Pro cost?',
-        a: 'Jupho Pro costs ₹1,999/month or ₹19,990/year (save ₹3,998!). You get 50 campaigns per month, unlimited AI ad copy generation, advanced targeting, and priority support.'
+        q: 'How much does Jupho cost?',
+        a: 'We offer 3 plans: FREE (2 campaigns/month), BASIC (₹1,499/month for 10 campaigns with templates), and GROWTH (₹1,999/month for 25 campaigns with AI Agent, AI-generated copy, and priority support).'
+      },
+      {
+        q: 'What\'s the difference between BASIC and GROWTH?',
+        a: 'BASIC gives you templates-based campaign creation (fast and proven). GROWTH adds AI Agent that intelligently creates campaigns, generates copy, and provides strategic recommendations. GROWTH also includes more campaigns (25 vs 10) and priority support.'
       },
       {
         q: 'Can I cancel anytime?',

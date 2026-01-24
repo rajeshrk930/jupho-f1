@@ -82,7 +82,7 @@ router.post('/', async (req: Request, res: Response) => {
               clerkId: data.id,
               email: email,
               name: name,
-              plan: 'STARTER',
+              plan: 'FREE',
               apiUsageCount: 0,
               agentTasksCreated: 0,
             }

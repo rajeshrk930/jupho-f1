@@ -12,11 +12,11 @@ model User {
   clerkId       String     @unique
   email         String     @unique
   name          String?
-  plan          String     @default("STARTER") // STARTER, GROWTH
+  plan          String     @default("FREE") // FREE, BASIC, GROWTH
   isAdmin       Boolean    @default(false)
   apiUsageCount Int        @default(0)
   lastResetDate DateTime   @default(now())
-  agentTasksCreated Int    @default(0) // STARTER: 5/month, GROWTH: 25/month
+  agentTasksCreated Int    @default(0) // FREE: 2/month, BASIC: 10/month, GROWTH: 25/month
   agentLastResetDate DateTime @default(now())
   planExpiresAt DateTime? // Subscription expiry date
   createdAt     DateTime   @default(now())

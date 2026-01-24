@@ -18,30 +18,34 @@ router.get('/stats', async (req, res) => {
     const [
       totalUsers,
       freeUsers,
-      proUsers,
+      basicUsers,
+      growthUsers,
       totalConversations,
       totalAgentTasks,
       revenueData
     ] = await Promise.all([
       prisma.user.count(),
-      prisma.user.count({ where: { plan: 'STARTER' } }),
+      prisma.user.count({ where: { plan: 'FREE' } }),
+      prisma.user.count({ where: { plan: 'BASIC' } }),
       prisma.user.count({ where: { plan: 'GROWTH' } }),
       prisma.conversation.count(),
       prisma.agentTask.count(),
       prisma.user.aggregate({
-        where: { plan: 'GROWTH' },
+        where: { plan: { in: ['BASIC', 'GROWTH'] } },
         _sum: { apiUsageCount: true }
       })
     ]);
 
-    // Calculate estimated revenue (₹299 per PRO user)
-    const estimatedRevenue = proUsers * 299;
+    // Calculate estimated monthly recurring revenue
+    // BASIC: ₹1,499/month, GROWTH: ₹1,999/month
+    const estimatedRevenue = (basicUsers * 1499) + (growthUsers * 1999);
 
     res.json({
       users: {
         total: totalUsers,
         free: freeUsers,
-        pro: proUsers
+        basic: basicUsers,
+        growth: growthUsers
       },
       analytics: {
         totalAgentTasks,
@@ -50,7 +54,7 @@ router.get('/stats', async (req, res) => {
       },
       revenue: {
         estimated: estimatedRevenue,
-        proSubscriptions: proUsers
+        paidSubscriptions: basicUsers + growthUsers
       }
     });
   } catch (error) {
@@ -88,7 +92,7 @@ router.get('/users', async (req, res) => {
       ];
     }
     
-    if (plan && (plan === 'STARTER' || plan === 'GROWTH')) {
+    if (plan && (plan === 'FREE' || plan === 'BASIC' || plan === 'GROWTH')) {
       where.plan = plan;
     }
 
@@ -183,8 +187,8 @@ router.patch('/users/:id', async (req, res) => {
     const { plan, subscriptionStatus, usageLimit } = req.body;
 
     // Validate plan
-    if (plan && !['STARTER', 'GROWTH'].includes(plan)) {
-      return res.status(400).json({ message: 'Invalid plan type' });
+    if (plan && !['FREE', 'BASIC', 'GROWTH'].includes(plan)) {
+      return res.status(400).json({ message: 'Invalid plan type. Must be FREE, BASIC, or GROWTH' });
     }
 
     // Validate subscription status
@@ -196,15 +200,18 @@ router.patch('/users/:id', async (req, res) => {
     const updateData: any = {};
     if (plan) {
       updateData.plan = plan;
-      // When admin assigns GROWTH plan, set planExpiresAt to null (lifetime access)
-      // Or set a future date for time-limited access
-      if (plan === 'GROWTH') {
+      // Admin-assigned paid plans get lifetime access (null expiry)
+      // FREE plan doesn't need expiry
+      if (plan === 'BASIC' || plan === 'GROWTH') {
         updateData.planExpiresAt = null; // Lifetime access for admin-assigned plans
+      } else if (plan === 'FREE') {
+        updateData.planExpiresAt = null; // FREE plan has no expiry
       }
     }
     if (usageLimit !== undefined) {
-      // For STARTER users, limited. For GROWTH, unlimited
-      updateData.apiUsageCount = 0; // Reset count when updating
+      // Reset usage count when updating plan
+      updateData.apiUsageCount = 0;
+      updateData.agentTasksCreated = 0;
     }
 
     const updatedUser = await prisma.user.update({

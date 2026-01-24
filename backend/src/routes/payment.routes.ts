@@ -18,17 +18,19 @@ const razorpay = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
   : null;
 
 const PLANS = {
-  PRO_MONTHLY: {
+  BASIC_MONTHLY: {
+    amount: 149900, // ₹1,499 in paise
+    currency: 'INR',
+    name: 'Basic Plan - Monthly (10 campaigns, templates only)',
+    duration: 30, // days
+    planType: 'BASIC'
+  },
+  GROWTH_MONTHLY: {
     amount: 199900, // ₹1,999 in paise
     currency: 'INR',
-    name: 'Pro Plan - Monthly (50 campaigns)',
-    duration: 30 // days
-  },
-  PRO_ANNUAL: {
-    amount: 1999000, // ₹19,990 in paise (2 months free!)
-    currency: 'INR',
-    name: 'Pro Plan - Annual (600 campaigns)',
-    duration: 365 // days
+    name: 'Growth Plan - Monthly (25 campaigns, AI Agent included)',
+    duration: 30, // days
+    planType: 'GROWTH'
   }
 };
 
@@ -36,7 +38,7 @@ const PLANS = {
 router.post(
   '/create-order',
   ...clerkAuth,
-  [body('plan').isIn(['PRO_MONTHLY', 'PRO_ANNUAL'])],
+  [body('plan').isIn(['BASIC_MONTHLY', 'GROWTH_MONTHLY'])],
   async (req: AuthRequest, res: Response) => {
     return await Sentry.startSpan({ op: 'payment', name: 'Create Razorpay Order' }, async () => {
       try {
@@ -183,7 +185,7 @@ router.post(
       });
 
       // Determine expiry based on plan duration
-      // Monthly: 30 days, Annual: 365 days
+      // Monthly: 30 days
       const { plan: planType } = req.body;
       const planDetails = PLANS[planType as keyof typeof PLANS];
       const planExpiresAt = new Date(Date.now() + planDetails.duration * 24 * 60 * 60 * 1000);
@@ -191,16 +193,17 @@ router.post(
       await prisma.user.update({
         where: { id: req.user!.id },
         data: { 
-          plan: 'GROWTH',
+          plan: planDetails.planType, // BASIC or GROWTH
           planExpiresAt,
-          apiUsageCount: 0 // Reset usage count on upgrade
+          apiUsageCount: 0, // Reset usage count on upgrade
+          agentTasksCreated: 0 // Reset campaign count
         }
       });
 
       res.json({
         success: true,
         message: 'Payment verified successfully',
-        data: { plan: 'GROWTH', expiresAt: planExpiresAt }
+        data: { plan: planDetails.planType, expiresAt: planExpiresAt }
       });
     } catch (error) {
       console.error('Verify payment error:', error);
@@ -293,22 +296,24 @@ router.post('/webhook', async (req: Request, res: Response) => {
         }
       });
 
-      // Upgrade user to PRO
-      // Determine plan duration from payment amount
-      const isAnnual = amount >= 1999000; // ₹19,990 or more = annual
-      const durationDays = isAnnual ? 365 : 30;
+      // Upgrade user based on payment amount
+      // Determine plan from payment amount
+      const isBasic = amount === 149900; // ₹1,499 = BASIC
+      const isGrowth = amount === 199900; // ₹1,999 = GROWTH
+      const userPlan = isBasic ? 'BASIC' : isGrowth ? 'GROWTH' : 'FREE';
+      const durationDays = 30; // All plans are monthly
       const planExpiresAt = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000);
 
       await prisma.user.update({
         where: { id: payment.userId },
         data: {
-          plan: 'GROWTH',
+          plan: userPlan,
           planExpiresAt,
           agentTasksCreated: 0 // Reset usage count on upgrade
         }
       });
 
-      console.log('[Payment Webhook] User upgraded to GROWTH:', payment.userId);
+      console.log('[Payment Webhook] User upgraded to', userPlan, ':', payment.userId);
       return res.json({ success: true, message: 'Payment processed' });
     }
 

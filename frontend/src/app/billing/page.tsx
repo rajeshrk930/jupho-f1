@@ -56,10 +56,12 @@ export default function BillingPage() {
 
   const handleUpgradeComplete = () => {
     queryClient.invalidateQueries({ queryKey: ['usage-stats'] });
-    toast.success('Welcome to Jupho Pro! You now have unlimited questions.');
+    toast.success('Welcome to your new plan!');
   };
 
-  const isPro = usageStats?.plan === 'PRO';
+  const isPro = usageStats?.plan === 'BASIC' || usageStats?.plan === 'GROWTH';
+  const planName = usageStats?.plan === 'FREE' ? 'Free' : usageStats?.plan === 'BASIC' ? 'Basic' : usageStats?.plan === 'GROWTH' ? 'Growth' : 'Free';
+  const planPrice = usageStats?.plan === 'BASIC' ? '₹1,499 / month' : usageStats?.plan === 'GROWTH' ? '₹1,999 / month' : 'No payment required';
   const daysLeft = usageStats?.proExpiresAt
     ? Math.max(0, Math.ceil((new Date(usageStats.proExpiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
@@ -120,10 +122,10 @@ export default function BillingPage() {
                 </div>
                 <div>
                   <h2 className={`text-2xl font-bold ${isPro ? 'text-signal-primary' : 'text-text-primary'}`}>
-                    {isPro ? 'Jupho Pro' : 'Free Plan'}
+                    Jupho {planName}
                   </h2>
                   <p className={`text-sm ${isPro ? 'text-text-secondary' : 'text-text-secondary'}`}>
-                    {isPro ? '₹1,999 / month' : 'No payment required'}
+                    {planPrice}
                   </p>
                 </div>
               </div>
@@ -135,27 +137,46 @@ export default function BillingPage() {
             </div>
 
             <div className="space-y-3 mb-6">
-              {isPro ? (
+              {usageStats?.plan === 'GROWTH' ? (
                 <>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">50 AI-created campaigns per month</span>
+                    <span className="text-text-secondary text-sm">25 campaigns per month</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Unlimited AI ad copy generation</span>
+                    <span className="text-text-secondary text-sm">AI Agent (smart creation)</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Advanced targeting recommendations</span>
+                    <span className="text-text-secondary text-sm">AI-generated copy + strategy</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-text-secondary text-sm">Direct Facebook ad publishing</span>
+                    <span className="text-text-secondary text-sm">Templates library</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
                     <span className="text-text-secondary text-sm">Priority support</span>
+                  </div>
+                </>
+              ) : usageStats?.plan === 'BASIC' ? (
+                <>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">10 campaigns per month</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Templates library (50+)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Instant Lead Ads</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-text-secondary text-sm">Leads dashboard</span>
                   </div>
                 </>
               ) : (

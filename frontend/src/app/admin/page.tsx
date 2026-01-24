@@ -44,7 +44,7 @@ interface User {
   id: string;
   email: string;
   name: string;
-  plan: 'STARTER' | 'GROWTH';
+  plan: 'FREE' | 'BASIC' | 'GROWTH';
   apiUsageCount: number;
   proExpiresAt: string | null;
   createdAt: string;
@@ -64,7 +64,7 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState('');
-  const [planFilter, setPlanFilter] = useState<'' | 'STARTER' | 'GROWTH'>('');
+  const [planFilter, setPlanFilter] = useState<'' | 'FREE' | 'BASIC' | 'GROWTH'>('');
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -309,13 +309,14 @@ export default function AdminPage() {
                 <select
                   value={planFilter}
                   onChange={(e) => {
-                    setPlanFilter(e.target.value as '' | 'STARTER' | 'GROWTH');
+                    setPlanFilter(e.target.value as '' | 'FREE' | 'BASIC' | 'GROWTH');
                     setPage(1);
                   }}
                   className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none bg-white"
                 >
                   <option value="">All Plans</option>
-                  <option value="STARTER">STARTER</option>
+                  <option value="FREE">FREE</option>
+                  <option value="BASIC">BASIC</option>
                   <option value="GROWTH">GROWTH</option>
                 </select>
               </div>
@@ -373,6 +374,8 @@ export default function AdminPage() {
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           user.plan === 'GROWTH'
                             ? 'bg-teal-100 text-teal-800'
+                            : user.plan === 'BASIC'
+                            ? 'bg-blue-100 text-blue-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}>
                           {user.plan}
@@ -492,14 +495,15 @@ function EditUserModal({
             <label className="label">Plan</label>
             <select
               value={plan}
-              onChange={(e) => setPlan(e.target.value as 'STARTER' | 'GROWTH')}
+              onChange={(e) => setPlan(e.target.value as 'FREE' | 'BASIC' | 'GROWTH')}
               className="input"
             >
-              <option value="STARTER">STARTER</option>
+              <option value="FREE">FREE</option>
+              <option value="BASIC">BASIC</option>
               <option value="GROWTH">GROWTH</option>
             </select>
             <p className="text-xs text-gray-500 mt-1">
-              STARTER: 5 campaigns/month, 1 AI/month · GROWTH: 25 campaigns/month, unlimited AI
+              FREE: 2 campaigns/month · BASIC: 10 campaigns/month (templates) · GROWTH: 25 campaigns/month (AI Agent)
             </p>
           </div>
 

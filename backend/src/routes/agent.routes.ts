@@ -21,6 +21,21 @@ router.post('/scan', ...clerkAuth, checkCampaignUsageLimit('AI_AGENT'), async (r
     const { description, location, website, url, manualInput } = req.body;
     const userId = req.user!.id;
 
+    // FEATURE GATE: AI Agent is GROWTH-only
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { plan: true } });
+    if (!user || (user.plan !== 'GROWTH')) {
+      return res.status(403).json({
+        success: false,
+        error: 'AI_AGENT_LOCKED',
+        message: user?.plan === 'BASIC' 
+          ? 'AI Agent is available on GROWTH plan only. Upgrade to unlock smart campaign creation!' 
+          : 'AI Agent is available on GROWTH plan. Upgrade from FREE to unlock!',
+        requiresUpgrade: true,
+        currentPlan: user?.plan || 'FREE',
+        upgradeTo: 'GROWTH'
+      });
+    }
+
     // NEW FLOW: 3-field intelligent analysis
     if (description) {
       try {

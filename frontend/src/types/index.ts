@@ -2,7 +2,7 @@ export interface User {
   id: string;
   email: string;
   name: string | null;
-  plan: 'STARTER' | 'GROWTH' | 'AGENCY';
+  plan: 'FREE' | 'BASIC' | 'GROWTH';
   proExpiresAt?: string | null;
   apiUsageCount?: number;
   lastResetDate?: string;
