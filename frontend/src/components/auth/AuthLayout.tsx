@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Product Showcase (Hidden on mobile) */}
-      <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-coral-600 via-coral-500 to-mint-600 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden md:flex md:w-2/5 bg-coral-600 p-12 flex-col justify-between relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>

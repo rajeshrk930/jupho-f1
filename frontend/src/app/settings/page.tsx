@@ -154,7 +154,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 pt-6">
+    <div className="min-h-screen bg-gray-50 pt-6">
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div>

@@ -83,7 +83,7 @@ export default function BillingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 py-12 px-4">
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-gray-200 rounded w-64"></div>
@@ -99,7 +99,7 @@ export default function BillingPage() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-6">
           <h2 className="text-red-800 font-semibold mb-2 tracking-tight">Failed to load billing data</h2>
           <p className="text-red-600 text-sm mb-4">{(error as any)?.message || 'Something went wrong'}</p>
@@ -115,7 +115,7 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 py-8 px-6">
+    <div className="min-h-screen bg-gray-50 py-8 px-6">
       <div className="space-y-8">
         {/* Header */}
         <div>

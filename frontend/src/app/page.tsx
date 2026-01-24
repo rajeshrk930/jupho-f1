@@ -6,7 +6,7 @@ import Footer from '@/components/landing/Footer';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-coral-50 to-mint-50">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       <Hero />
       <Features />

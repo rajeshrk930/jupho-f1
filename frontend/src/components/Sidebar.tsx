@@ -150,11 +150,11 @@ export function Sidebar() {
       {/* Logo */}
       <div className="px-6 py-5 border-b border-gray-200">
         <Link href="/dashboard" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+          <div className="w-10 h-10 rounded-xl bg-coral-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           {!isCollapsed && (
-            <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-600">
+            <span className="text-xl font-black text-coral-600">
               Jupho
             </span>
           )}
@@ -242,7 +242,7 @@ export function Sidebar() {
         {/* User Info */}
         <div className={`px-3 py-3 rounded-xl bg-gradient-to-br from-coral-50 to-coral-100 ${isCollapsed ? 'flex justify-center' : ''}`}>
           <div className={`flex items-center ${isCollapsed ? '' : 'gap-3 mb-2'}`}>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center text-white font-bold shadow-lg">
+            <div className="w-10 h-10 rounded-full bg-coral-500 flex items-center justify-center text-white font-bold shadow-sm">
               {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
             </div>
             {!isCollapsed && (
@@ -287,7 +287,7 @@ export function Sidebar() {
             <button
               onClick={handleConnectMeta}
               disabled={connecting}
-              className="w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-md hover:shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+              className="w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-coral-500 hover:bg-coral-600 text-white shadow-sm hover:shadow-md active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
             >
               {connecting ? 'Connecting…' : 'Connect Meta'}
             </button>

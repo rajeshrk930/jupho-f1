@@ -143,9 +143,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @layer components {
-  /* Primary action button - coral gradient */
+  /* Primary action button - solid coral */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white font-semibold px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5;
+    @apply inline-flex items-center justify-center gap-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5;
   }
   
   .btn-primary:focus-visible {

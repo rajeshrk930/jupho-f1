@@ -23,10 +23,10 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-coral-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-600">
+            <span className="text-xl font-black text-coral-600">
               Jupho
             </span>
           </Link>

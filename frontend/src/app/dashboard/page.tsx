@@ -58,7 +58,7 @@ function DashboardPageInner() {
   // Show error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white to-coral-50 p-6">
+      <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
             <h2 className="text-red-800 font-semibold mb-2">Failed to load dashboard</h2>
@@ -123,7 +123,7 @@ function DashboardPageInner() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-coral-50">
+    <div className="min-h-screen bg-gray-50">
       <MobileTopBar title="Dashboard" />
       <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-6 pb-20 lg:pb-6">
         {/* Header */}
