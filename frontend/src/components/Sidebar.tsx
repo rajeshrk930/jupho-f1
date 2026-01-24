@@ -54,14 +54,23 @@ export function Sidebar() {
         if (response.data.connected && response.data.account?.adAccountName) {
           setAdAccountName(response.data.account.adAccountName);
         }
-      } catch (error) {
-        console.error('Failed to check Facebook status:', error);
+      } catch (error: any) {
+        // Silently handle auth errors (user not logged in yet or session expired)
+        if (error.response?.status === 401) {
+          console.log('User not authenticated - skipping Facebook status check');
+        } else {
+          console.error('Failed to check Facebook status:', error);
+        }
         setFacebookConnected(false);
         setAdAccountName('');
       }
     };
-    checkFacebookStatus();
-  }, []);
+    
+    // Only check if user exists (avoid calling API before Clerk initializes)
+    if (user) {
+      checkFacebookStatus();
+    }
+  }, [user]);
 
   // Hide sidebar on public pages (unauthenticated)
   const publicPages = ['/', '/sign-in', '/sign-up', '/privacy', '/terms', '/help'];
