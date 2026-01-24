@@ -313,13 +313,13 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
     }
 
     const isPro = user.plan === 'GROWTH' && (!user.planExpiresAt || new Date(user.planExpiresAt) > new Date());
-    const limit = isPro ? 50 : 5;
+    const limit = isPro ? 50 : user.plan === 'BASIC' ? 10 : 2;
 
     res.json({
       used: user.agentTasksCreated,
       limit,
       remaining: Math.max(0, limit - user.agentTasksCreated),
-      plan: isPro ? 'GROWTH' : 'STARTER',
+      plan: user.plan, // Return actual plan: FREE, BASIC, or GROWTH
       resetDate: user.agentLastResetDate
     });
   } catch (error) {

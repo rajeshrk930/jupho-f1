@@ -45,7 +45,7 @@ const isNewDay = (lastReset: Date): boolean => {
 
 // Helper to check if subscription is active
 const isSubscriptionActive = (user: { plan: string; planExpiresAt?: Date | null }): boolean => {
-  if (user.plan === 'STARTER' || user.plan === 'GROWTH') {
+  if (user.plan === 'BASIC' || user.plan === 'GROWTH') {
     if (!user.planExpiresAt) return true; // No expiry = lifetime access
     return new Date(user.planExpiresAt) > new Date();
   }
@@ -63,7 +63,7 @@ const getNextResetTime = (lastReset: Date): string => {
 
 /**
  * Middleware to check campaign usage limits (for AI Agent + Templates)
- * Checks: Total campaigns/month AND AI campaigns/month (for STARTER)
+ * Checks: Total campaigns/month AND AI campaigns/month (for BASIC)
  */
 export const checkCampaignUsageLimit = (createdVia: 'AI_AGENT' | 'TEMPLATE') => {
   return async (req: AuthRequest, res: Response, next: NextFunction) => {

@@ -40,7 +40,7 @@ interface RevenueStats {
   totalRevenue: number;
   totalTransactions: number;
   activeSubscriptions: {
-    starter: number;
+    basic: number;
     growth: number;
     total: number;
   };
@@ -233,7 +233,7 @@ export default function AdminPaymentsPage() {
                 {revenueStats.activeSubscriptions.total}
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                {revenueStats.activeSubscriptions.starter} Starter, {revenueStats.activeSubscriptions.growth} Growth
+                {revenueStats.activeSubscriptions.basic} Basic, {revenueStats.activeSubscriptions.growth} Growth
               </p>
             </div>
           </div>

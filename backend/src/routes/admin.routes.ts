@@ -342,10 +342,10 @@ router.get('/revenue-stats', async (req, res) => {
     const last6Months = new Date(now.getFullYear(), now.getMonth() - 6, 1);
     
     // Get current active subscriptions
-    const [starterUsers, growthUsers, totalPayments, recentPayments] = await Promise.all([
+    const [basicUsers, growthUsers, totalPayments, recentPayments] = await Promise.all([
       prisma.user.count({
         where: {
-          plan: 'STARTER',
+          plan: 'BASIC',
           planExpiresAt: { gte: now }
         }
       }),
@@ -375,7 +375,8 @@ router.get('/revenue-stats', async (req, res) => {
     ]);
 
     // Calculate MRR (Monthly Recurring Revenue)
-    const mrr = (starterUsers * 999) + (growthUsers * 1999);
+    // BASIC: ₹1,499/month, GROWTH: ₹1,999/month
+    const mrr = (basicUsers * 1499) + (growthUsers * 1999);
     
     // Calculate ARR (Annual Recurring Revenue)
     const arr = mrr * 12;
@@ -406,7 +407,7 @@ router.get('/revenue-stats', async (req, res) => {
           gte: lastMonth,
           lt: now
         },
-        plan: 'STARTER' // Assuming churned users go back to STARTER
+        plan: 'FREE' // Churned users go back to FREE
       }
     });
 
@@ -419,12 +420,12 @@ router.get('/revenue-stats', async (req, res) => {
       totalRevenue: totalRevenue / 100, // Convert to rupees
       totalTransactions,
       activeSubscriptions: {
-        starter: starterUsers,
+        basic: basicUsers,
         growth: growthUsers,
-        total: starterUsers + growthUsers
+        total: basicUsers + growthUsers
       },
       monthlyRevenue,
-      churnRate: expiredLastMonth > 0 ? ((expiredLastMonth / (starterUsers + growthUsers)) * 100).toFixed(2) : 0
+      churnRate: expiredLastMonth > 0 ? ((expiredLastMonth / (basicUsers + growthUsers)) * 100).toFixed(2) : 0
     });
   } catch (error) {
     console.error('Admin revenue stats error:', error);
@@ -473,7 +474,7 @@ router.post('/payments/:id/refund', async (req, res) => {
       await prisma.user.update({
         where: { id: payment.userId },
         data: {
-          plan: 'STARTER',
+          plan: 'FREE',
           planExpiresAt: null
         }
       });
@@ -520,13 +521,13 @@ router.patch('/payments/:userId/subscription', async (req, res) => {
     }
 
     if (action === 'cancel') {
-      updateData.plan = 'STARTER';
+      updateData.plan = 'FREE';
       updateData.planExpiresAt = null;
     }
 
-    if (action === 'change_plan' && plan && ['STARTER', 'GROWTH'].includes(plan)) {
+    if (action === 'change_plan' && plan && ['FREE', 'BASIC', 'GROWTH'].includes(plan)) {
       updateData.plan = plan;
-      if (plan === 'STARTER') {
+      if (plan === 'FREE') {
         updateData.planExpiresAt = null;
       }
     }

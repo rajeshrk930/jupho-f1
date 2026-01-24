@@ -242,7 +242,7 @@ export const adminApi = {
     return response.data;
   },
   updateUser: async (userId: string, data: {
-    plan?: 'STARTER' | 'GROWTH';
+    plan?: 'FREE' | 'BASIC' | 'GROWTH';
   }) => {
     const response = await api.patch(`/admin/users/${userId}`, data);
     return response.data;
