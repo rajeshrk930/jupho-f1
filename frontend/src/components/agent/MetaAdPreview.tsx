@@ -25,7 +25,7 @@ export default function MetaAdPreview({
       {/* Facebook Post Header */}
       <div className="p-3 flex items-center justify-between border-b border-gray-100">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-coral-500 to-coral-600 rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-coral-500 rounded-full flex items-center justify-center">
             <span className="text-white font-bold text-sm">
               {brandName.charAt(0).toUpperCase()}
             </span>

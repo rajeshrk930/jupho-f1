@@ -240,7 +240,7 @@ export function Sidebar() {
         )}
 
         {/* User Info */}
-        <div className={`px-3 py-3 rounded-xl bg-gradient-to-br from-coral-50 to-coral-100 ${isCollapsed ? 'flex justify-center' : ''}`}>
+        <div className={`px-3 py-3 rounded-xl bg-coral-50 ${isCollapsed ? 'flex justify-center' : ''}`}>
           <div className={`flex items-center ${isCollapsed ? '' : 'gap-3 mb-2'}`}>
             <div className="w-10 h-10 rounded-full bg-coral-500 flex items-center justify-center text-white font-bold shadow-sm">
               {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}

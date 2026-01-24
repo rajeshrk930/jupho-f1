@@ -88,7 +88,7 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-coral-50/30 via-mint-50/20 to-white pb-20 lg:pb-8">
+    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-8">
       {/* Mobile Top Bar */}
       <div className="lg:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-coral-100 px-4 py-4">
         <h1 className="text-xl font-bold text-charcoal-900">Projects</h1>
@@ -106,7 +106,7 @@ export default function ProjectsPage() {
           <div className="bg-white rounded-2xl shadow-lg border-2 border-coral-100 overflow-hidden">
             <div className="p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-coral-500 flex items-center justify-center flex-shrink-0">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">

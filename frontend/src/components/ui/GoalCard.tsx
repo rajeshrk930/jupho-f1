@@ -29,7 +29,7 @@ export default function GoalCard({
       onClick={onClick}
       className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-200 group ${
         isSelected
-          ? 'border-coral-500 bg-gradient-to-br from-coral-50 to-white shadow-lg scale-[1.02]'
+          ? 'border-coral-500 bg-coral-50 shadow-lg scale-[1.02]'
           : 'border-gray-200 bg-white hover:border-coral-200 hover:shadow-md hover:scale-[1.01]'
       }`}
     >
@@ -38,7 +38,7 @@ export default function GoalCard({
         <div
           className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
             isSelected
-              ? 'bg-gradient-to-br from-coral-500 to-coral-600 text-white shadow-md'
+              ? 'bg-coral-500 text-white shadow-sm'
               : 'bg-gray-100 text-gray-500 group-hover:bg-coral-50 group-hover:text-coral-500'
           }`}
         >

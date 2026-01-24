@@ -70,7 +70,7 @@ export default function BudgetSlider({
         <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
           {/* Progress */}
           <div
-            className="absolute h-full bg-gradient-to-r from-coral-400 to-coral-600 rounded-full transition-all duration-200"
+            className="absolute h-full bg-coral-500 rounded-full transition-all duration-200"
             style={{ width: `${percentage}%` }}
           />
         </div>
@@ -103,7 +103,7 @@ export default function BudgetSlider({
 
       {/* Estimates */}
       {showEstimates && (
-        <div className="bg-gradient-to-br from-coral-50 to-orange-50 rounded-xl p-4 border border-coral-100">
+        <div className="bg-coral-50 rounded-xl p-4 border border-coral-100">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-gray-600 mb-1">Estimated Reach</p>

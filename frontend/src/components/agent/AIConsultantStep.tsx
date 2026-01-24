@@ -266,7 +266,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           {/* Animated brain icon with glow effect */}
           <div className="relative inline-block mb-6">
             <div className="absolute inset-0 bg-coral-500/20 rounded-full blur-xl animate-pulse" />
-            <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-coral-500 to-coral-600 rounded-full shadow-lg">
+            <div className="relative inline-flex items-center justify-center w-20 h-20 bg-coral-500 rounded-full shadow-sm">
               <Sparkles className="w-10 h-10 text-white animate-pulse" />
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           {/* Animated progress bar */}
           <div className="max-w-md mx-auto mb-8">
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-coral-500 via-mint-500 to-coral-600 rounded-full animate-loading" 
+              <div className="h-full bg-coral-500 rounded-full animate-loading" 
                    style={{ width: '70%' }} />
             </div>
           </div>
@@ -285,14 +285,14 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           {/* Status steps with checkmarks */}
           <div className="max-w-md mx-auto space-y-3">
             <div className="flex items-center text-sm bg-white/80 backdrop-blur rounded-lg px-4 py-3 shadow-sm border border-coral-100 transform transition-all hover:scale-105">
-              <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mr-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
                 <Check className="w-5 h-5 text-white" />
               </div>
               <span className="text-gray-700 font-medium">Campaign objective selected</span>
             </div>
             
             <div className="flex items-center text-sm bg-white/80 backdrop-blur rounded-lg px-4 py-3 shadow-sm border border-coral-100 transform transition-all hover:scale-105">
-              <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-coral-500 to-coral-600 rounded-full flex items-center justify-center mr-3 animate-pulse">
+              <div className="flex-shrink-0 w-8 h-8 bg-coral-500 rounded-full flex items-center justify-center mr-3 animate-pulse">
                 <Loader2 className="w-5 h-5 text-white animate-spin" />
               </div>
               <span className="text-gray-700 font-medium">Finding target audience interests...</span>

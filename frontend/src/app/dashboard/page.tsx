@@ -139,7 +139,7 @@ function DashboardPageInner() {
 
         {/* Dual-Path: AI Agent vs Templates */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link href="/agent" className="bg-gradient-to-br from-coral-500 to-coral-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
+          <Link href="/agent" className="bg-coral-500 hover:bg-coral-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
             <div className="flex items-start justify-between mb-4">
               <div className="bg-white/20 p-3 rounded-lg">
                 <Sparkles className="w-6 h-6" />
@@ -155,7 +155,7 @@ function DashboardPageInner() {
             <p className="text-xs text-coral-100 mt-3">⏱️ 5-10 minutes</p>
           </Link>
 
-          <Link href="/templates" className="bg-gradient-to-br from-mint-500 to-mint-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
+          <Link href="/templates" className="bg-mint-500 hover:bg-mint-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
             <div className="flex items-start justify-between mb-4">
               <div className="bg-white/20 p-3 rounded-lg">
                 <Target className="w-6 h-6" />
@@ -280,7 +280,7 @@ function DashboardPageInner() {
         {/* Quick Action */}
         <Link
           href="/agent"
-          className="block bg-gradient-to-r from-coral-500 to-mint-500 rounded-2xl p-8 text-white hover:shadow-xl transition-all"
+          className="block bg-coral-500 hover:bg-coral-600 rounded-2xl p-8 text-white hover:shadow-xl transition-all"
         >
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
@@ -351,7 +351,7 @@ function DashboardPageInner() {
         </div>
 
         {/* Help Section */}
-        <div className="bg-gradient-to-br from-coral-50 to-mint-50 rounded-2xl border border-coral-100 p-6">
+        <div className="bg-coral-50 rounded-2xl border border-coral-100 p-6">
           <h2 className="text-lg font-semibold text-charcoal-900 mb-2">How it works</h2>
           <div className="grid md:grid-cols-3 gap-4 text-sm text-charcoal-700">
             <div>

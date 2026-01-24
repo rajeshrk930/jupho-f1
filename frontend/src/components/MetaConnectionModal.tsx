@@ -121,7 +121,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
               <p className="text-charcoal-600 mb-6">Connect your Meta account to start creating Facebook ads</p>
               <button
                 onClick={handleChangeConnection}
-                className="px-6 py-3 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+                className="px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
               >
                 Connect Meta Account
               </button>

@@ -151,10 +151,10 @@ export default function BusinessScanStep({ onComplete }: Props) {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="bg-gradient-to-br from-coral-50 via-mint-50 to-white rounded-3xl shadow-xl border border-coral-100 p-8">
+      <div className="bg-white rounded-3xl shadow-xl border border-coral-100 p-8">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-coral-500 to-coral-600 rounded-2xl shadow-lg mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-coral-500 rounded-2xl shadow-sm mb-4">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -317,7 +317,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
           <button
             type="submit"
             disabled={!isValid || loading}
-            className="w-full py-5 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-bold rounded-2xl hover:from-coral-600 hover:to-coral-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-xl shadow-coral-300/50 hover:shadow-2xl hover:shadow-coral-400/50 transform hover:scale-105"
+            className="w-full py-5 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-bold rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             {loading ? (
               <>

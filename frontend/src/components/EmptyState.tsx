@@ -35,7 +35,7 @@ export default function EmptyState({
         actionHref ? (
           <Link 
             href={actionHref}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
           >
             <Sparkles className="w-4 h-4" />
             {actionLabel}
@@ -43,7 +43,7 @@ export default function EmptyState({
         ) : (
           <button
             onClick={onAction}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
           >
             <Sparkles className="w-4 h-4" />
             {actionLabel}

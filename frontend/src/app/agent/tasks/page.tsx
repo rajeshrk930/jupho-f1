@@ -86,14 +86,14 @@ export default function TasksPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="w-12 h-12 text-coral-600 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
