@@ -34,12 +34,12 @@ export default function PrimaryButton({
 
   const variantClasses = {
     primary: `
-      bg-gradient-to-r from-coral-500 to-coral-600
-      hover:from-coral-600 hover:to-coral-700
-      active:from-coral-700 active:to-coral-800
-      text-white font-bold shadow-lg
-      hover:shadow-xl active:shadow-md
-      disabled:from-gray-300 disabled:to-gray-400
+      bg-coral-500
+      hover:bg-coral-600
+      active:bg-coral-700
+      text-white font-bold shadow-sm
+      hover:shadow-lg active:shadow-sm
+      disabled:bg-gray-300
       disabled:cursor-not-allowed disabled:shadow-none
     `,
     secondary: `

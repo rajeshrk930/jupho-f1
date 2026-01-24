@@ -36,7 +36,7 @@ export default function RootLayout({
         <body className={inter.className}>
           <ClerkTokenProvider>
             <Providers>
-              <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-mint-50">
+              <div className="min-h-screen bg-gray-50">
                 {/* Desktop: Left Sidebar (hidden on mobile) */}
                 <Sidebar />
                 

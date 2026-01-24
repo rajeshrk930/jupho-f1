@@ -91,7 +91,7 @@ function SelectAccountPageInner() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-coral-50/30 via-mint-50/20 to-white">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500 mx-auto mb-4"></div>
           <p className="text-charcoal-600">Loading ad accounts...</p>
