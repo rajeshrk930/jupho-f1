@@ -3,7 +3,7 @@ import { ArrowLeft, Sparkles } from 'lucide-react';
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-charcoal-50 via-white to-primary-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
@@ -18,7 +18,7 @@ export default function TermsOfServicePage() {
             </div>
             <Link
               href="/sign-up"
-              className="px-6 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+              className="px-6 py-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white rounded-lg font-medium hover:shadow-lg transition-all"
             >
               Get Started
             </Link>

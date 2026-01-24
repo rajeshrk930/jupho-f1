@@ -166,7 +166,7 @@ export default function AdminPage() {
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 rounded-lg bg-teal-500 flex items-center justify-center shadow-sm">
             <Shield className="w-6 h-6 text-white" />
           </div>
           <div>

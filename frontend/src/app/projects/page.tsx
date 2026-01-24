@@ -133,7 +133,7 @@ export default function ProjectsPage() {
                   <div className="flex gap-3">
                     <button
                       onClick={handleResumeDraft}
-                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+                      className="flex items-center gap-2 px-4 py-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
                     >
                       <Play className="w-4 h-4" />
                       Resume Draft
@@ -161,7 +161,7 @@ export default function ProjectsPage() {
             </p>
             <button
               onClick={() => router.push('/agent')}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
             >
               Create New Ad
             </button>

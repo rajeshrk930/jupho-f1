@@ -27,17 +27,17 @@ export default function ProfilePage() {
   const proExpiryDate = user?.proExpiresAt ? new Date(user.proExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 pb-20 lg:pb-0">
+    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
       <MobileTopBar title="Profile" />
       
       <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-6">
         {/* User Info Card - Clean SaaS Design */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="bg-gradient-to-r from-coral-500 to-purple-600 h-24 sm:h-32" />
+          <div className="bg-coral-500 h-24 sm:h-32" />
           <div className="px-6 pb-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-12 sm:-mt-16 gap-4">
               <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white border-4 border-white shadow-lg flex items-center justify-center flex-shrink-0">
-                <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-coral-500 to-purple-600 flex items-center justify-center">
+                <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-coral-500 flex items-center justify-center">
                   <User size={48} className="text-white" />
                 </div>
               </div>
@@ -47,7 +47,7 @@ export default function ProfilePage() {
                 <div className="mt-3">
                   {isPro ? (
                     <div className="inline-flex flex-col items-center sm:items-start">
-                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-coral-500 to-purple-600 text-white font-semibold shadow-lg">
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-coral-500 text-white font-semibold shadow-sm">
                         <Sparkles size={16} />
                         <span>Pro Member</span>
                       </span>
@@ -78,7 +78,7 @@ export default function ProfilePage() {
           >
             <div className="flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                isPro ? 'bg-gradient-to-br from-coral-500 to-purple-600' : 'bg-gray-100'
+                isPro ? 'bg-coral-500' : 'bg-gray-100'
               }`}>
                 <CreditCard size={22} className={isPro ? 'text-white' : 'text-gray-600'} />
               </div>

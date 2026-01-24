@@ -82,7 +82,7 @@ Gym Membership,Fitness,Get New Members,Ready to transform? Join today and get yo
   };
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-6 shadow-lg">
+    <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-6 shadow-lg">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">

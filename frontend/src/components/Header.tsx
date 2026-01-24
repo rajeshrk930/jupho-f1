@@ -37,7 +37,7 @@ export default function Header() {
               onClick={handleCreateAd}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
                 isActive('/agent')
-                  ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
+                  ? 'bg-coral-500 text-white shadow-sm'
                   : 'text-gray-700 hover:bg-coral-50'
               }`}
             >
@@ -48,7 +48,7 @@ export default function Header() {
               href="/projects"
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
                 isActive('/projects')
-                  ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
+                  ? 'bg-coral-500 text-white shadow-sm'
                   : 'text-gray-700 hover:bg-coral-50'
               }`}
             >
@@ -59,7 +59,7 @@ export default function Header() {
               href="/dashboard"
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
                 isActive('/dashboard')
-                  ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
+                  ? 'bg-coral-500 text-white shadow-sm'
                   : 'text-gray-700 hover:bg-coral-50'
               }`}
             >
@@ -79,7 +79,7 @@ export default function Header() {
           onClick={handleCreateAd}
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all ${
             isActive('/agent')
-              ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
+              ? 'bg-coral-500 text-white shadow-sm'
               : 'text-gray-700 bg-coral-50'
           }`}
         >
@@ -90,7 +90,7 @@ export default function Header() {
           href="/projects"
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all ${
             isActive('/projects')
-              ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
+              ? 'bg-coral-500 text-white shadow-sm'
               : 'text-gray-700 bg-coral-50'
           }`}
         >
@@ -101,7 +101,7 @@ export default function Header() {
           href="/dashboard"
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all ${
             isActive('/dashboard')
-              ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-lg'
+              ? 'bg-coral-500 text-white shadow-sm'
               : 'text-gray-700 bg-coral-50'
           }`}
         >

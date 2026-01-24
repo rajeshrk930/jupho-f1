@@ -129,7 +129,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
           ) : (
             <div className="space-y-6">
               {/* Facebook Account Info */}
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+              <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
                 <div className="flex items-start gap-3">
                   <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
                     <Facebook className="w-6 h-6 text-white" />

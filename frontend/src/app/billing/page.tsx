@@ -477,7 +477,7 @@ export default function BillingPage() {
 
         {/* Upgrade CTA for Free/Basic Users */}
         {!isGrowth && (
-          <div className="bg-gradient-to-br from-coral-50 to-blue-50 border-2 border-coral-200 rounded-lg p-8">
+          <div className="bg-coral-50 border-2 border-coral-200 rounded-lg p-8">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-charcoal-900 mb-2">
                 {isFree ? 'Ready to scale your Meta ads?' : 'Unlock AI-Powered Creation'}

@@ -102,7 +102,7 @@ function SelectAccountPageInner() {
 
   if (error || adAccounts.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-coral-50/30 via-mint-50/20 to-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border-2 border-red-200 p-8 text-center">
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="w-8 h-8 text-red-600" />
@@ -113,7 +113,7 @@ function SelectAccountPageInner() {
           </p>
           <button
             onClick={() => router.push('/settings')}
-            className="px-6 py-3 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+            className="px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
           >
             Back to Settings
           </button>
@@ -123,11 +123,11 @@ function SelectAccountPageInner() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-coral-50/30 via-mint-50/20 to-white py-12 px-4">
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <div className="w-16 h-16 rounded-full bg-coral-500 flex items-center justify-center mx-auto mb-4 shadow-sm">
             <Building2 className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-charcoal-900 mb-2">Select Ad Account</h1>
@@ -202,7 +202,7 @@ function SelectAccountPageInner() {
           <button
             onClick={handleSaveSelection}
             disabled={!selectedAccount || saving}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-coral-500 to-coral-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <>
@@ -223,7 +223,7 @@ export default function SelectAccountPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-coral-50/30 via-mint-50/20 to-white">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500 mx-auto mb-4"></div>
             <p className="text-charcoal-600">Loading...</p>

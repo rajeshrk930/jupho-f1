@@ -258,9 +258,9 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-white to-coral-50/30 rounded-3xl shadow-xl border border-coral-100 p-12 text-center relative overflow-hidden">
-        {/* Animated background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-coral-500/5 via-mint-500/5 to-coral-400/5 animate-pulse" />
+      <div className="bg-white rounded-3xl shadow-xl border border-coral-100 p-12 text-center relative overflow-hidden">
+        {/* Animated background */}
+        <div className="absolute inset-0 bg-coral-50/30 animate-pulse" />
         
         <div className="relative z-10">
           {/* Animated brain icon with glow effect */}
@@ -349,7 +349,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="bg-gradient-to-r from-coral-500 via-mint-500 to-coral-600 rounded-2xl shadow-lg p-8 text-white relative overflow-hidden">
+      <div className="bg-coral-500 rounded-2xl shadow-lg p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
