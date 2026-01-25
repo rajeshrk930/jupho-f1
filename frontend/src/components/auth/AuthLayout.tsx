@@ -28,10 +28,11 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
               {/* Headline */}
               <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight leading-tight">
-                  AI-Powered Meta Ads in Minutes
+                  Launch High-Converting Meta Ads — Without an Agency
                 </h1>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Stop struggling with ad creation. Let AI build high-performing Meta ads automatically.
+                  Create, launch, and manage Meta lead ads using proven templates or AI-powered workflows.
+                  Built for founders, marketers, and local businesses.
                 </p>
               </div>
 
@@ -41,35 +42,35 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                   <div className="w-5 h-5 bg-mint-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <p className="text-gray-700 text-sm">Easy Integration With all Platform such as Zoho, Shopify & etc.</p>
+                  <p className="text-gray-700 text-sm">Ready-made Meta ad templates tested across industries</p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <div className="w-5 h-5 bg-mint-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <p className="text-gray-700 text-sm">Targeted Campaigns to Deliver Personalized Offers.</p>
+                  <p className="text-gray-700 text-sm">Launch lead ads in minutes — no technical setup</p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <div className="w-5 h-5 bg-mint-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <p className="text-gray-700 text-sm">No Setup Cost for WhatsApp Business API.</p>
+                  <p className="text-gray-700 text-sm">AI-assisted campaign creation (Growth plan)</p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <div className="w-5 h-5 bg-mint-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <p className="text-gray-700 text-sm">Get Assistance for Applying Green Tick on WhatsApp.</p>
+                  <p className="text-gray-700 text-sm">Works with Meta Instant Forms & WhatsApp leads</p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <div className="w-5 h-5 bg-mint-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <p className="text-gray-700 text-sm">24*7 Tech Support in a Click.</p>
+                  <p className="text-gray-700 text-sm">Clear limits. No hidden costs. No agency lock-in.</p>
                 </div>
               </div>
             </div>
@@ -79,18 +80,18 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
               {/* Trust Badges */}
               <div className="flex flex-wrap gap-2 mb-4">
                 <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm">
-                  <span className="text-coral-500">★</span> High Performer
+                  <span className="text-coral-500">⭐</span> Faster than agencies
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm">
-                  <span className="text-coral-500">★</span> Best Support
+                  <span className="text-coral-500">⭐</span> Lower cost than freelancers
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm">
-                  <span className="text-coral-500">★</span> Best ROI
+                  <span className="text-coral-500">⭐</span> Built for performance
                 </div>
               </div>
               
-              <p className="text-gray-900 text-sm font-semibold">
-                Trusted by 5000+ Companiess
+              <p className="text-gray-600 text-sm">
+                Used by early founders & marketers across India
               </p>
             </div>
           </div>
