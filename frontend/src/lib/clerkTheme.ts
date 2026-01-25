@@ -35,8 +35,8 @@ export const clerkTheme: Appearance = {
     // Root container
     rootBox: 'mx-auto w-full',
     
-    // Card/form container
-    card: 'shadow-xl border border-gray-100 rounded-2xl bg-white p-8',
+    // Card/form container (no extra styling - already in unified card)
+    card: 'shadow-none border-0 bg-transparent p-0',
     
     // Header
     headerTitle: 'text-2xl font-bold text-gray-900',
@@ -86,8 +86,14 @@ export const clerkTheme: Appearance = {
     // Badges
     badge: 'bg-mint-100 text-mint-700 font-medium',
     
-    // Footer
-    footer: 'hidden', // Hide "Secured by Clerk" footer
+    // Footer - show navigation links
+    footer: 'text-center mt-6',
+    footerAction: 'mt-4',
+    footerActionText: 'text-gray-600 text-sm',
+    footerActionLink: 'text-coral-500 hover:text-coral-600 font-semibold transition-colors ml-1',
+    
+    // Hide "Secured by Clerk" branding
+    footerPages: 'hidden',
   },
   layout: {
     socialButtonsPlacement: 'top',
