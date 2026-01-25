@@ -96,24 +96,26 @@ const agentLimiter = rateLimit({
 // Apply general rate limiting to all API routes
 app.use('/api', generalLimiter);
 
-// Middleware
+// Middleware - Allow both production and development origins
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? [
-        process.env.FRONTEND_URL || 'https://jupho.io',
-        'https://app.jupho.io',
-        'https://jupho.io',
-        'https://www.jupho.io',
-        'https://jupho-f1.vercel.app',
-        'https://jupho-f1-v2.vercel.app'
-      ]
-    : [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:3002',
-        'http://localhost:3003'
-      ],
-  credentials: true
+  origin: [
+    // Production domains - ALWAYS allowed
+    'https://app.jupho.io',
+    'https://jupho.io',
+    'https://www.jupho.io',
+    'https://jupho-f1.vercel.app',
+    'https://jupho-f1-v2.vercel.app',
+    // Development - localhost
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:3003'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 600 // Cache preflight for 10 minutes
 }));
 
 // 🚨 CRITICAL: Clerk webhook MUST come BEFORE express.json()
