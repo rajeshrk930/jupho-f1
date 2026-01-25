@@ -8,12 +8,17 @@ interface AuthLayoutProps {
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-mint-50 via-white to-coral-50">
-      {/* Single Unified Card */}
-      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div className="flex flex-col md:flex-row min-h-[650px]">
+      {/* Mobile: Just centered form without card wrapper */}
+      <div className="md:hidden w-full max-w-md">
+        {children}
+      </div>
+
+      {/* Desktop: Unified Card with left content + right form */}
+      <div className="hidden md:block w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div className="flex flex-row min-h-[650px]">
           
-          {/* Left Side - Product Showcase (Hidden on mobile) */}
-          <div className="hidden md:flex md:w-[45%] bg-gradient-to-br from-gray-50 to-white p-10 flex-col justify-between border-r border-gray-100">
+          {/* Left Side - Product Showcase */}
+          <div className="w-[45%] bg-gradient-to-br from-gray-50 to-white p-10 flex flex-col justify-between border-r border-gray-100">
             {/* Logo */}
             <div>
               <Link href="/" className="inline-block mb-8">
@@ -97,7 +102,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
           </div>
 
           {/* Right Side - Auth Form */}
-          <div className="flex-1 flex items-center justify-center p-8 md:p-12 bg-white">
+          <div className="flex-1 flex items-center justify-center p-12 bg-white">
             <div className="w-full max-w-md">
               {children}
             </div>
