@@ -1,0 +1,97 @@
+import { Appearance } from '@clerk/types';
+
+export const clerkTheme: Appearance = {
+  variables: {
+    // Brand colors - Coral & Mint
+    colorPrimary: '#FF6B47',           // Coral 500
+    colorSuccess: '#14B89C',           // Mint 500
+    colorDanger: '#F04E2A',            // Coral 600
+    colorWarning: '#FF9478',           // Coral 400
+    
+    // Text colors
+    colorText: '#1F2937',              // Dark text
+    colorTextSecondary: '#6B7280',     // Gray text
+    
+    // Background colors
+    colorBackground: '#FFFFFF',        // White background
+    colorInputBackground: '#FFFFFF',   // White inputs
+    colorInputText: '#1F2937',         // Dark input text
+    
+    // Border and spacing
+    borderRadius: '0.75rem',           // rounded-xl
+    spacingUnit: '1rem',
+    
+    // Typography
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif',
+    fontSize: '0.9375rem',
+    fontWeight: {
+      normal: 400,
+      medium: 500,
+      semibold: 600,
+      bold: 700,
+    },
+  },
+  elements: {
+    // Root container
+    rootBox: 'mx-auto w-full',
+    
+    // Card/form container
+    card: 'shadow-xl border border-gray-100 rounded-2xl bg-white p-8',
+    
+    // Header
+    headerTitle: 'text-2xl font-bold text-gray-900',
+    headerSubtitle: 'text-sm text-gray-600 mt-2',
+    
+    // Social buttons (Google OAuth)
+    socialButtonsBlockButton: 
+      'border-2 border-gray-200 hover:border-coral-400 hover:bg-coral-50 transition-all duration-200 rounded-xl py-3 px-4 font-medium text-gray-700',
+    socialButtonsBlockButtonText: 'font-medium text-gray-700',
+    
+    // Divider
+    dividerLine: 'bg-gray-200',
+    dividerText: 'text-gray-500 text-sm',
+    
+    // Form fields
+    formFieldLabel: 'text-sm font-medium text-gray-700 mb-1.5',
+    formFieldInput: 
+      'border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-100 transition-all',
+    formFieldInputShowPasswordButton: 'text-gray-500 hover:text-coral-500',
+    
+    // Primary button
+    formButtonPrimary: 
+      'bg-coral-500 hover:bg-coral-600 text-white font-semibold rounded-xl py-3 px-6 transition-all duration-200 shadow-md hover:shadow-lg',
+    
+    // Footer links
+    footerActionLink: 'text-coral-500 hover:text-coral-600 font-semibold transition-colors',
+    footerActionText: 'text-gray-600 text-sm',
+    
+    // Identity preview (user info)
+    identityPreviewEditButton: 'text-coral-500 hover:text-coral-600',
+    
+    // Form error messages
+    formFieldErrorText: 'text-coral-600 text-sm',
+    
+    // Alternative methods
+    alternativeMethodsBlockButton: 
+      'border border-gray-300 hover:border-coral-400 hover:bg-coral-50 rounded-xl transition-all',
+    
+    // OTP/Code input
+    otpCodeFieldInput: 
+      'border-2 border-gray-300 rounded-lg focus:border-coral-500 focus:ring-2 focus:ring-coral-100',
+    
+    // Profile/User button
+    userButtonTrigger: 'focus:shadow-coral-200',
+    userButtonPopoverCard: 'shadow-xl border border-gray-100',
+    
+    // Badges
+    badge: 'bg-mint-100 text-mint-700 font-medium',
+    
+    // Footer
+    footer: 'hidden', // Hide "Secured by Clerk" footer
+  },
+  layout: {
+    socialButtonsPlacement: 'top',
+    socialButtonsVariant: 'blockButton',
+    showOptionalFields: true,
+  },
+};
