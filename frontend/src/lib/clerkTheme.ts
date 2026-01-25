@@ -61,10 +61,6 @@ export const clerkTheme: Appearance = {
     formButtonPrimary: 
       'bg-coral-500 hover:bg-coral-600 text-white font-semibold rounded-xl py-3 px-6 transition-all duration-200 shadow-md hover:shadow-lg',
     
-    // Footer links
-    footerActionLink: 'text-coral-500 hover:text-coral-600 font-semibold transition-colors',
-    footerActionText: 'text-gray-600 text-sm',
-    
     // Identity preview (user info)
     identityPreviewEditButton: 'text-coral-500 hover:text-coral-600',
     
