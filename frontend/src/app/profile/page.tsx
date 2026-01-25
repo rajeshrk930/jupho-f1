@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
+import { useClerk } from '@clerk/nextjs';
 import { 
   User, 
   CreditCard, 
@@ -16,8 +17,13 @@ import MobileTopBar from '@/components/MobileTopBar';
 export default function ProfilePage() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const { signOut } = useClerk();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      // Sign out from Clerk to avoid auth-loop when visiting /sign-in
+      await signOut();
+    } catch {}
     logout();
     router.push('/sign-in');
   };
