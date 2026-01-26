@@ -1,17 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, FileText, History, BookTemplate, User, Shield, Sparkles, Folder } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 
 export function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user } = useAuthStore();
 
-  const handleCreateAd = () => {
+  const handleCreateAd = (e: React.MouseEvent) => {
+    e.preventDefault();
     localStorage.removeItem('agent_flow_state');
-    window.location.href = '/agent';
+    router.push('/agent');
   };
 
   // Hide bottom nav on public pages (unauthenticated)
