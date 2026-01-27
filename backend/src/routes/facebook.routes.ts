@@ -354,12 +354,12 @@ router.delete('/disconnect', ...clerkAuth, async (req: AuthRequest, res: Respons
       return res.status(404).json({ error: 'No Facebook account connected' });
     }
     
-    await prisma.facebookAccount.update({
-      where: { userId: req.user!.id },
-      data: { isActive: false }
+    // Completely delete Facebook data (Meta compliance requirement)
+    await prisma.facebookAccount.delete({
+      where: { userId: req.user!.id }
     });
     
-    res.json({ success: true, message: 'Facebook account disconnected successfully' });
+    res.json({ success: true, message: 'Facebook account disconnected and all data deleted successfully' });
   } catch (error: any) {
     console.error('Facebook disconnect error:', error);
     res.status(500).json({ error: 'Failed to disconnect Facebook account' });
