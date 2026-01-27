@@ -6,12 +6,12 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { agentApi } from '@/lib/api';
+import { agentApi, facebookApi } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import { StatCard } from '@/components/StatCard';
 import MobileTopBar from '@/components/MobileTopBar';
 import PerformanceCard from '@/components/PerformanceCard';
-import { Sparkles, Target, Clock, CheckCircle2, XCircle, Loader2, TrendingUp, RefreshCw } from 'lucide-react';
+import { Sparkles, Target, Clock, CheckCircle2, XCircle, Loader2, TrendingUp, RefreshCw, Users, BarChart3 } from 'lucide-react';
 import { useState, useEffect, Suspense } from 'react';
 import toast from 'react-hot-toast';
 
@@ -46,6 +46,14 @@ function DashboardPageInner() {
     enabled: isAuthenticated, // Only run query if authenticated
   });
 
+  // Fetch Facebook forms to get total leads
+  const { data: formsData, isLoading: formsLoading } = useQuery({
+    queryKey: ['facebook-forms'],
+    queryFn: () => facebookApi.getForms(),
+    enabled: isAuthenticated,
+    retry: false, // Don't retry if Facebook not connected
+  });
+
   // Show loading while checking auth
   if (!isAuthenticated) {
     return (
@@ -76,6 +84,10 @@ function DashboardPageInner() {
   }
 
   const tasks = tasksData?.tasks || [];
+  const totalCampaigns = tasks.length;
+  
+  // Calculate total leads from all Facebook forms
+  const totalLeads = formsData?.forms?.reduce((sum: number, form: any) => sum + (form.leadsCount || 0), 0) || 0;
   
   const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED').length;
   const failedTasks = tasks.filter((t: any) => t.status === 'FAILED').length;
@@ -137,48 +149,19 @@ function DashboardPageInner() {
           </div>
         </div>
 
-        {/* Dual-Path: AI Agent vs Templates */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link href="/agent" className="bg-coral-500 hover:bg-coral-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
-            <div className="flex items-start justify-between mb-4">
-              <div className="bg-white/20 p-3 rounded-lg">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <span className="text-xs bg-purple-500/90 px-3 py-1 rounded-full font-semibold">✨ AI Powered</span>
-            </div>
-            <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">AI Agent</h3>
-            <p className="text-coral-50 text-sm mb-3">Let AI create custom ads tailored to your business. Full strategy and creative generation.</p>
-            <div className="flex items-center text-sm font-medium">
-              <span>Create with AI</span>
-              <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-            <p className="text-xs text-coral-100 mt-3">⏱️ 5-10 minutes</p>
-          </Link>
-
-          <Link href="/templates" className="bg-mint-500 hover:bg-mint-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
-            <div className="flex items-start justify-between mb-4">
-              <div className="bg-white/20 p-3 rounded-lg">
-                <Target className="w-6 h-6" />
-              </div>
-              <span className="text-xs bg-white/20 px-3 py-1 rounded-full font-semibold">⚡ Fast</span>
-            </div>
-            <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">Templates</h3>
-            <p className="text-mint-50 text-sm mb-3">Choose from proven winning ad templates. Quick edits and instant launch.</p>
-            <div className="flex items-center text-sm font-medium text-white">
-              <span>Browse Templates</span>
-              <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-            <p className="text-xs text-mint-100 mt-3">⚡ 2-3 minutes</p>
-          </Link>
-        </div>
-
-        {/* Quick Stats */}
+        {/* Key Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard
-            title="Completed Ads"
-            value={completedTasks}
-            icon={CheckCircle2}
-            trend={completedTasks > 0 ? `${completedTasks} successful` : undefined}
+            title="Total Campaigns"
+            value={totalCampaigns}
+            icon={BarChart3}
+            trend={totalCampaigns > 0 ? `${completedTasks} completed` : 'No campaigns yet'}
+          />
+          <StatCard
+            title="Leads Generated"
+            value={formsLoading ? '...' : totalLeads}
+            icon={Users}
+            trend={totalLeads > 0 ? `From ${formsData?.forms?.length || 0} forms` : 'Connect Meta to track leads'}
           />
           <StatCard
             title="Active Tasks"
@@ -186,12 +169,25 @@ function DashboardPageInner() {
             icon={Loader2}
             trend={pendingTasks > 0 ? 'In progress' : 'No active tasks'}
           />
-          <StatCard
-            title="Failed Tasks"
-            value={failedTasks}
-            icon={XCircle}
-            trend={failedTasks > 0 ? 'Review errors' : 'All good'}
-          />
+        </div>
+
+        {/* AI Agent Ready Banner */}
+        <div className="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-2xl p-6">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
+                AI POWERED
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">AI Agent Ready</h2>
+              <p className="text-gray-700">Let Jupho analyze, create & launch high-performing Meta ads automatically.</p>
+            </div>
+            <Link
+              href="/agent"
+              className="px-6 py-3 bg-white border-2 border-purple-500 text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-colors whitespace-nowrap"
+            >
+              Start AI Campaign
+            </Link>
+          </div>
         </div>
 
         {/* Performance Overview */}

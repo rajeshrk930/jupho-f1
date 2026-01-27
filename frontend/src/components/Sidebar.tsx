@@ -21,7 +21,8 @@ import {
   HelpCircle,
   ChevronLeft,
   ChevronRight,
-  FileText
+  FileText,
+  Target
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
@@ -140,9 +141,11 @@ export function Sidebar() {
     .includes(user.email.toLowerCase());
 
   const navItems = [
-    { href: '/agent', label: 'Create Ad', icon: Plus, onClick: handleCreateAd },
-    { href: '/projects', label: 'Projects', icon: Folder },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/agent', label: 'AI Agent', icon: Sparkles, onClick: handleCreateAd },
+    { href: '/templates', label: 'Templates', icon: BookMarked },
+    { href: '/agent/tasks', label: 'Campaigns', icon: Target },
+    { href: '/projects', label: 'Projects', icon: Folder },
   ];
 
   // Add admin link for admin users

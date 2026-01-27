@@ -437,3 +437,19 @@ export const adminIntegrationApi = {
   },
 };
 
+// Facebook API
+export const facebookApi = {
+  getForms: async () => {
+    const response = await api.get('/facebook/forms');
+    return response.data;
+  },
+  getLeads: async (formId: string) => {
+    const response = await api.get(`/facebook/leads/${formId}`);
+    return response.data;
+  },
+  getStatus: async () => {
+    const response = await api.get('/facebook/status');
+    return response.data;
+  },
+};
+
