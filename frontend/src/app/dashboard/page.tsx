@@ -195,7 +195,7 @@ function DashboardPageInner() {
                 <Sparkles size={24} />
               </div>
               <div className="flex-1">
-                <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">AI Agent</h3>
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:translate-x-1 transition-transform">AI Agent</h3>
                 <p className="text-white/90 text-sm">Full strategy, copy & campaign creation in minutes.</p>
               </div>
             </div>
@@ -210,7 +210,7 @@ function DashboardPageInner() {
                 <Target size={24} />
               </div>
               <div className="flex-1">
-                <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">Templates</h3>
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:translate-x-1 transition-transform">Templates</h3>
                 <p className="text-white/90 text-sm">Proven winning templates with instant launch.</p>
               </div>
             </div>
