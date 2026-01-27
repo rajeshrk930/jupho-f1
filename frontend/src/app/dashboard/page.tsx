@@ -139,14 +139,9 @@ function DashboardPageInner() {
       <MobileTopBar title="Dashboard" />
       <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-6 pb-20 lg:pb-6">
         {/* Header */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hidden lg:block">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-1">
-              <p className="text-xs text-coral-500 font-medium uppercase tracking-wider">Dashboard</p>
-              <h1 className="text-2xl font-semibold text-charcoal-900">Welcome back{user?.name ? `, ${user.name}` : ''}!</h1>
-              <p className="text-sm text-charcoal-600">Create high-performing Meta ads with AI</p>
-            </div>
-          </div>
+        <div className="hidden lg:block">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Ads Overview</h1>
+          <p className="text-gray-600">Create high-performing Meta ads with AI</p>
         </div>
 
         {/* Key Stats */}
@@ -172,22 +167,54 @@ function DashboardPageInner() {
         </div>
 
         {/* AI Agent Ready Banner */}
-        <div className="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-2xl p-6">
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-8 shadow-lg">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex-1">
-              <div className="inline-flex items-center gap-2 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
-                AI POWERED
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">AI Agent Ready</h2>
-              <p className="text-gray-700">Let Jupho analyze, create & launch high-performing Meta ads automatically.</p>
+              <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                <span>🤖</span> AI Agent Ready
+              </h2>
+              <p className="text-white/90">Let Jupho analyze, create & launch Meta ads automatically.</p>
             </div>
             <Link
               href="/agent"
-              className="px-6 py-3 bg-white border-2 border-purple-500 text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-colors whitespace-nowrap"
+              className="px-6 py-3 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-50 transition-all whitespace-nowrap shadow-md"
             >
               Start AI Campaign
             </Link>
           </div>
+        </div>
+
+        {/* CTA Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link
+            href="/agent"
+            className="bg-orange-500 hover:bg-orange-600 rounded-2xl p-6 text-white transition-all hover:shadow-lg group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Sparkles size={24} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">AI Agent</h3>
+                <p className="text-white/90 text-sm">Full strategy, copy & campaign creation in minutes.</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/templates"
+            className="bg-teal-500 hover:bg-teal-600 rounded-2xl p-6 text-white transition-all hover:shadow-lg group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Target size={24} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform">Templates</h3>
+                <p className="text-white/90 text-sm">Proven winning templates with instant launch.</p>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Performance Overview */}
@@ -272,22 +299,6 @@ function DashboardPageInner() {
             )}
           </div>
         )}
-
-        {/* Quick Action */}
-        <Link
-          href="/agent"
-          className="block bg-coral-500 hover:bg-coral-600 rounded-2xl p-8 text-white hover:shadow-xl transition-all"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-              <Sparkles size={32} />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Start Creating Ads with AI</h2>
-              <p className="text-white/90">Let our AI agent guide you through creating high-performing Meta ads in minutes</p>
-            </div>
-          </div>
-        </Link>
 
         {/* Recent Tasks */}
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
