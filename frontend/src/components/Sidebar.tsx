@@ -252,13 +252,6 @@ export function Sidebar() {
           </Link>
         )}
 
-        {/* User Info */}
-        <div className={`px-3 py-3 rounded-xl bg-coral-50 flex justify-center`}>
-          <div className="w-10 h-10 rounded-full bg-coral-500 flex items-center justify-center text-white font-bold shadow-sm">
-            {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
-          </div>
-        </div>
-
         {/* Meta Connection Status */}
         {!isCollapsed && (
           <div className="px-3 py-3 rounded-xl bg-white border border-gray-200 space-y-2">
