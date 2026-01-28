@@ -85,8 +85,8 @@ export const checkCampaignUsageLimit = (createdVia: 'AI_AGENT' | 'TEMPLATE') => 
         });
       }
 
-      // Check if subscription is active
-      if (!isSubscriptionActive(user)) {
+      // Check if subscription is active (paid plans only)
+      if (user.plan !== 'FREE' && !isSubscriptionActive(user)) {
         return res.status(403).json({
           success: false,
           error: 'SUBSCRIPTION_EXPIRED',
