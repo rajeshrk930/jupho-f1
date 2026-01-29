@@ -29,7 +29,7 @@ export default function LeadFormsPage() {
 
   const checkFacebookConnection = async () => {
     try {
-      const response = await api.get('/facebook/connection');
+      const response = await api.get('/facebook/status');
       setFbConnected(response.data.connected);
       if (response.data.connected) {
         fetchForms();
