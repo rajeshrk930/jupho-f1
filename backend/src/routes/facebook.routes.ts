@@ -30,6 +30,8 @@ router.get('/debug-env', async (req, res: Response) => {
  */
 router.get('/auth-url', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
+    console.log('🔵 [STEP 1] Generating Facebook OAuth URL for user:', req.user!.email);
+    
     // Generate CSRF token for OAuth security
     const csrfToken = crypto.randomBytes(32).toString('hex');
     
@@ -39,11 +41,13 @@ router.get('/auth-url', ...clerkAuth, async (req: AuthRequest, res: Response) =>
     });
     
     if (existingAccount) {
+      console.log('🔵 [STEP 1] Updating existing account with new CSRF token');
       await prisma.facebookAccount.update({
         where: { userId: req.user!.id },
         data: { csrfToken }
       });
     } else {
+      console.log('🔵 [STEP 1] Creating new FacebookAccount with CSRF token');
       // Create placeholder record with CSRF token
       await prisma.facebookAccount.create({
         data: {
@@ -65,6 +69,7 @@ router.get('/auth-url', ...clerkAuth, async (req: AuthRequest, res: Response) =>
       `&auth_type=rerequest` +
       `&state=${csrfToken}`;
     
+    console.log('✅ [STEP 1] OAuth URL generated successfully');
     res.json({ url });
   } catch (error: any) {
     console.error('[Facebook OAuth] Error:', error);
@@ -81,18 +86,21 @@ router.get('/auth-url', ...clerkAuth, async (req: AuthRequest, res: Response) =>
  */
 router.get('/callback', async (req, res: Response) => {
   try {
+    console.log('🟢 [STEP 2] Facebook OAuth callback received');
     const { code, state, error } = req.query;
     
     // Check for Facebook OAuth error
     if (error) {
-      console.error('[Facebook OAuth] User denied:', error);
+      console.error('❌ [STEP 2 ERROR] User denied:', error);
       return res.redirect(`${process.env.FRONTEND_URL}/settings?error=access_denied`);
     }
     
     if (!code || !state || typeof code !== 'string' || typeof state !== 'string') {
+      console.error('❌ [STEP 2 ERROR] Missing code or state');
       return res.redirect(`${process.env.FRONTEND_URL}/settings?error=missing_code`);
     }
     
+    console.log('🟢 [STEP 2] Validating CSRF token');
     // Validate CSRF token - state parameter contains csrfToken
     const csrfToken = state;
     const fbAccount = await prisma.facebookAccount.findFirst({
@@ -100,25 +108,35 @@ router.get('/callback', async (req, res: Response) => {
     });
     
     if (!fbAccount) {
-      console.error('[Facebook OAuth] Invalid CSRF token:', csrfToken);
+      console.error('❌ [STEP 2 ERROR] Invalid CSRF token:', csrfToken);
       return res.redirect(`${process.env.FRONTEND_URL}/settings?error=invalid_state`);
     }
     
     const userId = fbAccount.userId;
+    console.log('🟢 [STEP 2] CSRF validated, userId:', userId);
       
       // Exchange code for access token
+      console.log('🟢 [STEP 2] Exchanging code for access token');
       const accessToken = await FacebookService.exchangeCodeForToken(code);
+      console.log('✅ [STEP 2] Access token received');
       
       // Get user info and pages
+      console.log('🟢 [STEP 2] Fetching user info and pages');
       const [userInfo, pages] = await Promise.all([
         FacebookService.getUserInfo(accessToken),
         FacebookService.getPages(accessToken)
       ]);
+      console.log('✅ [STEP 2] Got user info and pages:', {
+        userName: userInfo.name,
+        pagesCount: pages.length,
+        pageIds: pages.map(p => p.id)
+      });
       
       // Store encrypted token and user info temporarily (without ad account yet)
       const encryptedToken = FacebookService.encryptToken(accessToken);
       
       // Update account with new token and clear CSRF token
+      console.log('🟢 [STEP 2] Updating FacebookAccount in database');
       await prisma.facebookAccount.update({
         where: { userId },
         data: {
@@ -130,9 +148,12 @@ router.get('/callback', async (req, res: Response) => {
           pageIds: pages.map(p => p.id).join(','),
           pageNames: pages.map(p => p.name).join(','),
           csrfToken: null, // Clear CSRF token after successful OAuth
-          lastSyncAt: new Date()
+          lastSyncAt: new Date(),
+          isActive: false, // Will be set to true after ad account selection
+          adAccountId: 'PENDING' // Will be updated in select-account
         }
       });
+      console.log('✅ [STEP 2] Database updated, redirecting to ad account selection');
     
     // Redirect to ad account selection page with userId in query
     return res.redirect(`${process.env.FRONTEND_URL}/facebook/select-account?userId=${userId}`);
@@ -148,24 +169,28 @@ router.get('/callback', async (req, res: Response) => {
  */
 router.get('/ad-accounts', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
+    console.log('🟡 [STEP 3] Fetching ad accounts for user:', req.user!.email);
+    
     const fbAccount = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }
     });
     
     if (!fbAccount) {
+      console.error('❌ [STEP 3 ERROR] No Facebook account found');
       return res.status(400).json({ 
         error: 'No Facebook account connected. Please connect your Facebook account first.' 
       });
     }
     
-    console.log('📊 Fetching ad accounts for user:', req.user!.email);
+    console.log('🟡 [STEP 3] Facebook account found, decrypting token');
     const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
     const adAccounts = await FacebookService.getAdAccounts(accessToken);
     
-    console.log(`✅ Found ${adAccounts.length} ad accounts`);
+    console.log(`✅ [STEP 3] Found ${adAccounts.length} ad accounts`);
     
     // Handle case where user has no ad accounts
     if (adAccounts.length === 0) {
+      console.warn('⚠️ [STEP 3] No ad accounts found');
       return res.json({
         adAccounts: [],
         message: 'No ad accounts found. You need to create an ad account in Facebook Business Manager first.'
@@ -213,14 +238,18 @@ router.post('/select-account',
 
     try {
       const { adAccountId, adAccountName } = req.body;
-      console.log('📥 select-account request', { adAccountId, adAccountName, userId: req.user?.id });
+      console.log('� [STEP 4] Saving ad account selection:', { 
+        userId: req.user!.email,
+        adAccountId, 
+        adAccountName 
+      });
       
       const fbAccount = await prisma.facebookAccount.findUnique({
         where: { userId: req.user!.id }
       });
       
       if (!fbAccount) {
-        console.warn('⚠️ select-account: facebook account not found for user', req.user?.id);
+        console.warn('❌ [STEP 4 ERROR] Facebook account not found for user:', req.user!.id);
         return res.status(400).json({ error: 'No Facebook account connected' });
       }
       
@@ -233,11 +262,11 @@ router.post('/select-account',
           isActive: true
         }
       });
-      console.log('✅ select-account saved - CONFIRMED:', { 
-        userId: req.user?.id, 
-        newAdAccountId: updated.adAccountId,
+      console.log('✅ [STEP 4] Ad account saved successfully:', { 
+        userId: req.user!.email,
+        adAccountId: updated.adAccountId,
         adAccountName: updated.adAccountName,
-        wasUpdated: updated.adAccountId !== 'PENDING'
+        isActive: updated.isActive
       });
       res.json({ 
         success: true, 
@@ -256,24 +285,22 @@ router.post('/select-account',
  */
 router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
-    console.log('📡 Facebook status check for user:', {
-      userId: req.user?.id,
-      email: req.user?.email,
-    });
+    console.log('📡 [STATUS CHECK] Checking Facebook status for user:', req.user?.email);
 
     let account = await prisma.facebookAccount.findUnique({
       where: { userId: req.user!.id }
     });
     
-    if (!account || !account.isActive || account.adAccountId === 'PENDING') {
-      console.log('ℹ️ No active Facebook account or pending ad account selection', {
+    if (!account || account.adAccountId === 'PENDING') {
+      console.log('ℹ️ [STATUS CHECK] No active account or pending ad account selection:', {
         hasAccount: !!account,
         isActive: account?.isActive,
         adAccountId: account?.adAccountId,
       });
 
-      // Auto-select an ad account to unblock users
-      if (account && account.isActive && account.adAccountId === 'PENDING') {
+      // AUTO-SELECT: Try to automatically pick an ad account if still pending (FIXED: removed isActive check)
+      if (account && account.adAccountId === 'PENDING') {
+        console.log('🔄 [STATUS CHECK] Attempting auto-selection of ad account...');
         try {
           const accessToken = FacebookService.decryptToken(account.accessToken);
           const adAccounts = await FacebookService.getAdAccounts(accessToken);
@@ -287,23 +314,31 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
                 isActive: true,
               },
             });
-            console.log('✅ Auto-selected ad account', { userId: req.user!.id, adAccountId: pick.id, name: pick.name });
+            console.log('✅ [STATUS CHECK] Auto-selected ad account:', { 
+              adAccountId: pick.id, 
+              name: pick.name 
+            });
+            
+            // Reload account after update
+            account = await prisma.facebookAccount.findUnique({ 
+              where: { userId: req.user!.id } 
+            });
+          } else {
+            console.warn('⚠️ [STATUS CHECK] No ad accounts available for auto-selection');
           }
         } catch (autoErr) {
-          const autoMsg = (autoErr as any)?.message || autoErr;
-          console.warn('⚠️ Auto-select ad account failed', autoMsg);
+          console.error('❌ [STATUS CHECK] Auto-select failed:', autoErr);
         }
       }
 
       // Re-check after potential auto-selection
-      const refreshed = await prisma.facebookAccount.findUnique({ where: { userId: req.user!.id } });
-      if (!refreshed || !refreshed.isActive || refreshed.adAccountId === 'PENDING') {
+      if (!account || !account.isActive || account.adAccountId === 'PENDING') {
+        console.log('❌ [STATUS CHECK] Connection not complete, returning disconnected');
         return res.json({
           connected: false,
           account: null
         });
       }
-      account = refreshed;
     }
     
     console.log('📦 Facebook account record', {
@@ -327,6 +362,8 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
     
     // Account is connected if it's active AND has a valid token
     const isConnected = account.isActive && isTokenValid;
+    
+    console.log(isConnected ? '✅ [STATUS CHECK] Connected' : '❌ [STATUS CHECK] Not connected');
     
     res.json({
       connected: isConnected,
