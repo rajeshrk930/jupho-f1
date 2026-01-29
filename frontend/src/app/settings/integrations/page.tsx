@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Sheet, CheckCircle, XCircle, Loader2, Settings as SettingsIcon, ExternalLink, Trash2 } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -25,7 +25,7 @@ interface SpreadsheetOption {
   createdTime: string;
 }
 
-export default function IntegrationsPage() {
+function IntegrationsContent() {
   const searchParams = useSearchParams();
   const [sheetsStatus, setSheetsStatus] = useState<SheetsStatus>({ connected: false });
   const [loading, setLoading] = useState(true);
@@ -469,5 +469,17 @@ export default function IntegrationsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function IntegrationsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-coral-500 animate-spin" />
+      </div>
+    }>
+      <IntegrationsContent />
+    </Suspense>
   );
 }
