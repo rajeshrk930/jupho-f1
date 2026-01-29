@@ -39,6 +39,7 @@ interface Props {
   taskId: string;
   strategy: CampaignStrategy;
   businessData: BusinessData;
+  preselectedFormId?: string;
   onComplete: () => void;
   onBack: () => void;
 }
@@ -51,7 +52,7 @@ interface LaunchError {
   retryable?: boolean;
 }
 
-export default function LaunchStep({ taskId, strategy, businessData, onComplete, onBack }: Props) {
+export default function LaunchStep({ taskId, strategy, businessData, preselectedFormId, onComplete, onBack }: Props) {
   const [selectedImage, setSelectedImage] = useState<string | null>(
     businessData.visualStyle?.imageUrls?.[0] || null
   );
@@ -79,7 +80,21 @@ export default function LaunchStep({ taskId, strategy, businessData, onComplete,
     try {
       const response = await api.get('/facebook/forms');
       setLeadForms(response.data.forms || []);
-      // Auto-select first active form if available
+      
+      // Priority 1: If formId passed from URL, use that
+      if (preselectedFormId) {
+        const formExists = response.data.forms.find((f: LeadForm) => f.id === preselectedFormId);
+        if (formExists) {
+          console.log('✅ Pre-selecting form from URL:', preselectedFormId);
+          setSelectedFormId(preselectedFormId);
+          setUseCustomForm(true);
+          return;
+        } else {
+          console.warn('⚠️ Form ID from URL not found:', preselectedFormId);
+        }
+      }
+      
+      // Priority 2: Auto-select first active form if available
       const activeForm = response.data.forms.find((f: LeadForm) => f.status === 'ACTIVE');
       if (activeForm) {
         setSelectedFormId(activeForm.id);

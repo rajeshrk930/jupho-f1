@@ -199,7 +199,7 @@ export default function LeadFormsPage() {
 
                   <div className="flex flex-col gap-2 ml-4">
                     <button
-                      onClick={() => window.open(`https://business.facebook.com/latest/lead_access/forms/${form.id}`, '_blank')}
+                      onClick={() => window.open(`https://business.facebook.com/latest/lead_access/leads?form_id=${form.id}`, '_blank')}
                       className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
                     >
                       <Eye className="w-4 h-4" />

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
 import BusinessScanStep from '@/components/agent/BusinessScanStep';
 import AIConsultantStep from '@/components/agent/AIConsultantStep';
@@ -60,6 +60,8 @@ const STATE_EXPIRY_HOURS = 6; // Expire after 6 hours
 
 export default function AgentPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const preselectedFormId = searchParams.get('formId');
   const { isAuthenticated } = useAuthStore();
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [taskId, setTaskId] = useState<string | null>(null);
