@@ -588,24 +588,56 @@ router.get('/leads/:formId', ...clerkAuth, async (req: AuthRequest, res: Respons
     
     const leads = response.data.data || [];
     
-    // Transform lead data to more readable format
-    const formattedLeads = leads.map((lead: any) => {
+    // Transform lead data to more readable format and save to database
+    const formattedLeads = [];
+    const newLeads = [];
+    
+    for (const lead of leads) {
       const fields: Record<string, string> = {};
       lead.field_data?.forEach((field: any) => {
         fields[field.name] = field.values.join(', ');
       });
       
-      return {
+      const formattedLead = {
         id: lead.id,
         createdAt: lead.created_time,
         fields
       };
-    });
+      
+      formattedLeads.push(formattedLead);
+      
+      // Save to database (upsert to avoid duplicates)
+      try {
+        const existingLead = await prisma.leadSubmission.findUnique({
+          where: { leadId: lead.id }
+        });
+        
+        if (!existingLead) {
+          await prisma.leadSubmission.create({
+            data: {
+              userId: req.user!.id,
+              formId,
+              leadId: lead.id,
+              data: JSON.stringify(fields),
+              submittedAt: new Date(lead.created_time),
+              syncedToSheets: false,
+            }
+          });
+          newLeads.push(lead.id);
+        }
+      } catch (dbError: any) {
+        console.error(`Failed to save lead ${lead.id}:`, dbError.message);
+        // Continue processing other leads
+      }
+    }
+    
+    console.log(`✅ Saved ${newLeads.length} new leads to database (${formattedLeads.length} total fetched)`);
     
     res.json({ 
       success: true,
       leads: formattedLeads,
-      totalCount: formattedLeads.length
+      totalCount: formattedLeads.length,
+      newLeadsCount: newLeads.length,
     });
   } catch (error: any) {
     console.error('Facebook fetch leads error:', error.response?.data || error.message);

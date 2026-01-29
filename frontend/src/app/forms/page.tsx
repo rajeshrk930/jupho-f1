@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, RefreshCw, Eye, Rocket, AlertCircle, Loader2 } from 'lucide-react';
+import { FileText, RefreshCw, Eye, Rocket, AlertCircle, Loader2, Sheet, ExternalLink, Download } from 'lucide-react';
 import { api } from '@/lib/api';
 
 interface LeadForm {
@@ -15,6 +15,17 @@ interface LeadForm {
   introText: string;
 }
 
+interface SheetsStatus {
+  connected: boolean;
+  spreadsheetId?: string;
+  spreadsheetName?: string;
+  spreadsheetUrl?: string;
+  syncEnabled?: boolean;
+  lastSyncAt?: string;
+  syncedLeads?: number;
+  unsyncedLeads?: number;
+}
+
 export default function LeadFormsPage() {
   const router = useRouter();
   const [forms, setForms] = useState<LeadForm[]>([]);
@@ -22,9 +33,12 @@ export default function LeadFormsPage() {
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fbConnected, setFbConnected] = useState(false);
+  const [sheetsStatus, setSheetsStatus] = useState<SheetsStatus>({ connected: false });
+  const [syncingSheetsLeads, setSyncingSheetsLeads] = useState(false);
 
   useEffect(() => {
     checkFacebookConnection();
+    checkSheetsConnection();
   }, []);
 
   const checkFacebookConnection = async () => {
@@ -40,6 +54,40 @@ export default function LeadFormsPage() {
       console.error('Error checking Facebook connection:', err);
       setFbConnected(false);
       setLoading(false);
+    }
+  };
+
+  const checkSheetsConnection = async () => {
+    try {
+      const response = await api.get('/sheets/status');
+      setSheetsStatus(response.data);
+    } catch (err: any) {
+      console.error('Error checking Sheets connection:', err);
+      setSheetsStatus({ connected: false });
+    }
+  };
+
+  const handleConnectSheets = async () => {
+    try {
+      const response = await api.get('/sheets/auth-url');
+      window.location.href = response.data.authUrl;
+    } catch (err: any) {
+      console.error('Error getting Sheets auth URL:', err);
+      alert('Failed to connect Google Sheets. Please try again.');
+    }
+  };
+
+  const handleSyncToSheets = async () => {
+    try {
+      setSyncingSheetsLeads(true);
+      const response = await api.post('/sheets/sync');
+      alert(response.data.message);
+      await checkSheetsConnection();
+    } catch (err: any) {
+      console.error('Error syncing to Sheets:', err);
+      alert(err.response?.data?.error || 'Failed to sync leads to Google Sheets');
+    } finally {
+      setSyncingSheetsLeads(false);
     }
   };
 
@@ -151,6 +199,76 @@ export default function LeadFormsPage() {
             </div>
           </div>
         )}
+
+        {/* Google Sheets Integration Status */}
+        <div className="mb-6 bg-white rounded-xl border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <Sheet className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Google Sheets Integration</h3>
+                <p className="text-sm text-gray-600">
+                  {sheetsStatus.connected 
+                    ? `Auto-sync leads to: ${sheetsStatus.spreadsheetName || 'Spreadsheet'}` 
+                    : 'Connect to automatically backup your leads'}
+                </p>
+              </div>
+            </div>
+            
+            {sheetsStatus.connected ? (
+              <div className="flex items-center gap-2">
+                <div className="text-right mr-4">
+                  <div className="text-sm text-gray-600">
+                    {sheetsStatus.syncedLeads || 0} synced
+                    {sheetsStatus.unsyncedLeads ? ` • ${sheetsStatus.unsyncedLeads} pending` : ''}
+                  </div>
+                  {sheetsStatus.lastSyncAt && (
+                    <div className="text-xs text-gray-500">
+                      Last sync: {new Date(sheetsStatus.lastSyncAt).toLocaleString()}
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={handleSyncToSheets}
+                  disabled={syncingSheetsLeads}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {syncingSheetsLeads ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
+                  {syncingSheetsLeads ? 'Syncing...' : 'Sync Now'}
+                </button>
+                {sheetsStatus.spreadsheetUrl && (
+                  <button
+                    onClick={() => window.open(sheetsStatus.spreadsheetUrl, '_blank')}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Open Sheet
+                  </button>
+                )}
+                <button
+                  onClick={() => router.push('/settings/integrations')}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                >
+                  Settings
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleConnectSheets}
+                className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+              >
+                <Sheet className="w-4 h-4" />
+                Connect Google Sheets
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* Forms List */}
         {forms.length > 0 ? (

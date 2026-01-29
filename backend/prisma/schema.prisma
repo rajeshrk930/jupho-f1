@@ -8,24 +8,26 @@ datasource db {
 }
 
 model User {
-  id                 String           @id @default(uuid())
-  clerkId            String           @unique
-  email              String           @unique
+  id                 String                   @id @default(uuid())
+  clerkId            String                   @unique
+  email              String                   @unique
   name               String?
-  plan               String           @default("FREE")
-  isAdmin            Boolean          @default(false)
-  apiUsageCount      Int              @default(0)
-  lastResetDate      DateTime         @default(now())
-  agentTasksCreated  Int              @default(0)
-  agentLastResetDate DateTime         @default(now())
+  plan               String                   @default("FREE")
+  isAdmin            Boolean                  @default(false)
+  apiUsageCount      Int                      @default(0)
+  lastResetDate      DateTime                 @default(now())
+  agentTasksCreated  Int                      @default(0)
+  agentLastResetDate DateTime                 @default(now())
   planExpiresAt      DateTime?
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
   adTemplates        AdTemplate[]
   conversations      Conversation[]
   facebookAccount    FacebookAccount?
   messages           Message[]
   payments           Payment[]
+  googleSheets       GoogleSheetsConnection?
+  leadSubmissions    LeadSubmission[]
 }
 
 model Payment {
@@ -172,4 +174,41 @@ model AdTemplate {
   @@index([userId])
   @@index([category])
   @@index([isPublic])
+}
+
+model GoogleSheetsConnection {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  accessToken     String    // Encrypted with AES-256
+  refreshToken    String    // Encrypted with AES-256
+  tokenExpiresAt  DateTime
+  spreadsheetId   String?
+  spreadsheetName String?
+  sheetName       String    @default("Leads")
+  syncEnabled     Boolean   @default(true)
+  lastSyncAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model LeadSubmission {
+  id              String   @id @default(uuid())
+  userId          String
+  formId          String   // Facebook lead form ID
+  leadId          String   @unique // Facebook lead ID (prevents duplicates)
+  data            String   // JSON stringified lead data
+  submittedAt     DateTime // When lead was submitted on Facebook
+  syncedToSheets  Boolean  @default(false)
+  sheetsSyncedAt  DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([formId])
+  @@index([syncedToSheets])
+  @@index([submittedAt])
 }

@@ -12,11 +12,13 @@ import facebookRoutes from './routes/facebook.routes';
 import agentRoutes from './routes/agent.routes';
 import templateRoutes from './routes/template.routes';
 import clerkRoutes from './routes/clerk.routes';
+import sheetsRoutes from './routes/sheets.routes';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/logger.middleware';
 import path from 'path';
 import * as Sentry from '@sentry/node';
 import { initializeSentry } from './config/sentry.config';
+import { SyncScheduler } from './services/syncScheduler.service';
 
 dotenv.config();
 
@@ -141,6 +143,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/facebook', facebookRoutes);
 app.use('/api/agent', agentLimiter, agentRoutes); // Stricter limit for AI endpoints
 app.use('/api/templates', templateRoutes);
+app.use('/api/sheets', sheetsRoutes); // Google Sheets integration
 
 // Health check with deployment tracking
 app.get('/api/health', (req, res) => {
@@ -168,6 +171,9 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+  
+  // Start Google Sheets auto-sync scheduler
+  SyncScheduler.start();
 });
 
 export default app;
