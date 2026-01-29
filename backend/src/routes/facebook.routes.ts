@@ -602,7 +602,8 @@ router.get('/forms', ...clerkAuth, async (req: AuthRequest, res: Response) => {
     }
     
     const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
-    const pageId = fbAccount.pageId || process.env.FACEBOOK_PAGE_ID;
+    // Get first page ID from comma-separated list
+    const pageId = fbAccount.pageIds?.split(',')[0] || process.env.FACEBOOK_PAGE_ID;
     
     if (!pageId) {
       return res.status(400).json({ 
