@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
 import BusinessScanStep from '@/components/agent/BusinessScanStep';
 import AIConsultantStep from '@/components/agent/AIConsultantStep';
 import LaunchStep from '@/components/agent/LaunchStep';
+
+// Force dynamic rendering for useSearchParams
+export const dynamic = 'force-dynamic';
 
 type Step = 1 | 2 | 3;
 
@@ -58,7 +61,7 @@ interface SavedFlowState {
 const FLOW_STATE_KEY = 'agent_flow_state';
 const STATE_EXPIRY_HOURS = 6; // Expire after 6 hours
 
-export default function AgentPage() {
+function AgentPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedFormId = searchParams.get('formId');
@@ -182,11 +185,24 @@ export default function AgentPage() {
             taskId={taskId}
             businessData={businessData}
             strategy={strategy}
+            preselectedFormId={preselectedFormId || undefined}
             onComplete={handleLaunchComplete}
             onBack={handleBack}
           />
         )}
       </div>
     </div>
+  );
+}
+
+export default function AgentPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+      </div>
+    }>
+      <AgentPageInner />
+    </Suspense>
   );
 }
