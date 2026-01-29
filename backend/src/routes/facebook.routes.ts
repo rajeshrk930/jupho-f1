@@ -317,8 +317,19 @@ router.get('/status', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       ? account.tokenExpiresAt > new Date()
       : false;
     
+    console.log('🔍 Token validation check:', {
+      tokenExpiresAt: account.tokenExpiresAt,
+      now: new Date(),
+      isExpired: account.tokenExpiresAt ? account.tokenExpiresAt <= new Date() : 'null',
+      isActive: account.isActive,
+      isTokenValid
+    });
+    
+    // Account is connected if it's active AND has a valid token
+    const isConnected = account.isActive && isTokenValid;
+    
     res.json({
-      connected: isTokenValid,
+      connected: isConnected,
       account: {
         facebookUserName: account.facebookUserName,
         facebookUserEmail: account.facebookUserEmail,

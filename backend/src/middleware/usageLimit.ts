@@ -43,11 +43,17 @@ const isNewDay = (lastReset: Date): boolean => {
 
 // Helper to check if subscription is active
 const isSubscriptionActive = (user: { plan: string; planExpiresAt?: Date | null }): boolean => {
+  // FREE plan never expires
+  if (user.plan === 'FREE') return true;
+  
+  // BASIC/GROWTH need active subscription
   if (user.plan === 'BASIC' || user.plan === 'GROWTH') {
     if (!user.planExpiresAt) return true; // No expiry = lifetime access
     return new Date(user.planExpiresAt) > new Date();
   }
-  return false;
+  
+  // Unknown/legacy plans (STARTER, PRO) → treat as FREE to avoid blocking users
+  return true;
 };
 
 // Helper to calculate next reset time (30 days from last reset)

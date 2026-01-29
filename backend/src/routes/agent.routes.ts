@@ -317,15 +317,20 @@ router.get('/usage', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const isPro = user.plan === 'GROWTH' && (!user.planExpiresAt || new Date(user.planExpiresAt) > new Date());
-    const limit = isPro ? 50 : user.plan === 'BASIC' ? 10 : 2;
+    // Calculate correct limits: FREE=2, BASIC=10, GROWTH=25
+    const limit = user.plan === 'GROWTH' ? 25 : user.plan === 'BASIC' ? 10 : 2;
+    
+    // Calculate next reset date (30 days from last reset)
+    const nextReset = new Date(user.agentLastResetDate);
+    nextReset.setDate(nextReset.getDate() + 30);
 
     res.json({
       used: user.agentTasksCreated,
       limit,
       remaining: Math.max(0, limit - user.agentTasksCreated),
       plan: user.plan, // Return actual plan: FREE, BASIC, or GROWTH
-      resetDate: user.agentLastResetDate
+      resetsAt: nextReset.toISOString(),
+      proExpiresAt: user.planExpiresAt ? user.planExpiresAt.toISOString() : null
     });
   } catch (error) {
     console.error('Get usage error:', error);

@@ -27,7 +27,8 @@ interface Stats {
   users: {
     total: number;
     free: number;
-    pro: number;
+    basic: number;
+    growth: number;
   };
   analytics: {
     totalAnalyses: number;
@@ -36,7 +37,7 @@ interface Stats {
   };
   revenue: {
     estimated: number;
-    proSubscriptions: number;
+    paidSubscriptions: number;
   };
 }
 
@@ -229,7 +230,7 @@ export default function AdminPage() {
                 {stats.users.total}
               </div>
               <div className="text-sm text-gray-600">
-                {stats.users.free} FREE · {stats.users.pro} PRO
+                {stats.users.free} FREE · {stats.users.basic} BASIC · {stats.users.growth} GROWTH
               </div>
             </div>
 
@@ -277,7 +278,7 @@ export default function AdminPage() {
                 ₹{stats.revenue.estimated.toLocaleString()}
               </div>
               <div className="text-sm text-gray-600">
-                {stats.revenue.proSubscriptions} subscriptions
+                {stats.revenue.paidSubscriptions} paid ({stats.users.basic} BASIC + {stats.users.growth} GROWTH)
               </div>
             </div>
           </div>
