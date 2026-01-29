@@ -640,8 +640,12 @@ router.get('/forms', ...clerkAuth, async (req: AuthRequest, res: Response) => {
     
     const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
     
+    console.log('📝 Fetching lead forms - User ID:', req.user.userId);
+    
     // Get pages with their access tokens
     const pages = await FacebookService.getPages(accessToken);
+    console.log('📄 Pages found:', pages.length);
+    
     if (!pages || pages.length === 0) {
       return res.status(400).json({ 
         error: 'No Facebook Pages found. Please ensure you have a Facebook Page.' 
@@ -651,8 +655,11 @@ router.get('/forms', ...clerkAuth, async (req: AuthRequest, res: Response) => {
     // Use the first page
     const page = pages[0];
     const pageAccessToken = page.access_token || accessToken;
+    console.log('📄 Using page:', page.name, '(ID:', page.id + ')');
+    console.log('🔑 Has page access token:', !!page.access_token);
     
     // Fetch lead forms from Facebook Graph API using PAGE access token
+    console.log('📡 Fetching forms from Facebook API...');
     const response = await axios.get(
       `https://graph.facebook.com/v19.0/${page.id}/leadgen_forms`,
       {
@@ -663,7 +670,13 @@ router.get('/forms', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       }
     );
     
+    console.log('✅ Forms API response - Count:', response.data.data?.length || 0);
+    
+    console.log('✅ Forms API response - Count:', response.data.data?.length || 0);
+    
     const forms = response.data.data || [];
+    
+    console.log('📋 Raw forms data:', JSON.stringify(forms, null, 2));
     
     // Transform form data
     const formattedForms = forms.map((form: any) => ({
@@ -675,6 +688,9 @@ router.get('/forms', ...clerkAuth, async (req: AuthRequest, res: Response) => {
       leadsCount: form.leads_count || 0,
       introText: form.context_card?.content?.[0] || ''
     }));
+    
+    console.log('🎯 Returning', formattedForms.length, 'forms to frontend');
+    console.log('📤 Formatted forms:', JSON.stringify(formattedForms, null, 2));
     
     res.json({ 
       success: true,
