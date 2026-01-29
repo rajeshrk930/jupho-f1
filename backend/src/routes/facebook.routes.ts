@@ -640,7 +640,7 @@ router.get('/forms', ...clerkAuth, async (req: AuthRequest, res: Response) => {
     
     const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
     
-    console.log('📝 Fetching lead forms - User ID:', req.user.userId);
+    console.log('📝 Fetching lead forms - User ID:', req.user!.id);
     
     // Get pages with their access tokens
     const pages = await FacebookService.getPages(accessToken);
