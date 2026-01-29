@@ -639,21 +639,25 @@ router.get('/forms', ...clerkAuth, async (req: AuthRequest, res: Response) => {
     }
     
     const accessToken = FacebookService.decryptToken(fbAccount.accessToken);
-    // Get first page ID from comma-separated list
-    const pageId = fbAccount.pageIds?.split(',')[0] || process.env.FACEBOOK_PAGE_ID;
     
-    if (!pageId) {
+    // Get pages with their access tokens
+    const pages = await FacebookService.getPages(accessToken);
+    if (!pages || pages.length === 0) {
       return res.status(400).json({ 
-        error: 'No Facebook Page ID found. Please reconnect your account.' 
+        error: 'No Facebook Pages found. Please ensure you have a Facebook Page.' 
       });
     }
     
-    // Fetch lead forms from Facebook Graph API
+    // Use the first page
+    const page = pages[0];
+    const pageAccessToken = page.access_token || accessToken;
+    
+    // Fetch lead forms from Facebook Graph API using PAGE access token
     const response = await axios.get(
-      `https://graph.facebook.com/v19.0/${pageId}/leadgen_forms`,
+      `https://graph.facebook.com/v19.0/${page.id}/leadgen_forms`,
       {
         params: {
-          access_token: accessToken,
+          access_token: pageAccessToken,
           fields: 'id,name,status,created_time,questions,leads_count,context_card'
         }
       }
