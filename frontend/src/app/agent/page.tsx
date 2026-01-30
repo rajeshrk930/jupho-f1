@@ -6,6 +6,8 @@ import { useAuthStore } from '@/lib/store';
 import BusinessScanStep from '@/components/agent/BusinessScanStep';
 import AIConsultantStep from '@/components/agent/AIConsultantStep';
 import LaunchStep from '@/components/agent/LaunchStep';
+import { Lock, Crown, Sparkles, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 // Force dynamic rendering for useSearchParams
 export const dynamic = 'force-dynamic';
@@ -65,11 +67,15 @@ function AgentPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedFormId = searchParams.get('formId');
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [businessData, setBusinessData] = useState<BusinessData | null>(null);
   const [strategy, setStrategy] = useState<CampaignStrategy | null>(null);
+
+  // Check if user has GROWTH plan
+  const plan = user?.plan || 'FREE';
+  const hasAccess = plan === 'GROWTH';
 
   // Auth guard
   useEffect(() => {
@@ -77,6 +83,96 @@ function AgentPageInner() {
       router.replace('/sign-in?redirect=/agent');
     }
   }, [isAuthenticated, router]);
+
+  // Show locked state if user doesn't have GROWTH plan
+  if (isAuthenticated && !hasAccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 md:p-12 text-center border-2 border-purple-100">
+          {/* Lock Icon */}
+          <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-10 h-10 text-purple-600" />
+          </div>
+
+          {/* Title */}
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            AI Agent is a GROWTH Feature
+          </h1>
+
+          {/* Description */}
+          <p className="text-lg text-gray-600 mb-8">
+            Unlock AI-powered ad creation that automatically generates high-performing campaigns based on your business data.
+          </p>
+
+          {/* Features List */}
+          <div className="bg-purple-50 rounded-xl p-6 mb-8 text-left">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-600" />
+              What you get with GROWTH:
+            </h3>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <Zap className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-gray-900">AI-Powered Campaign Creation</p>
+                  <p className="text-sm text-gray-600">Let AI analyze your business and create optimized ad strategies</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <Zap className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-gray-900">25 Campaigns per Month</p>
+                  <p className="text-sm text-gray-600">10x more campaigns than FREE plan</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <Zap className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-gray-900">Smart Ad Copy Generation</p>
+                  <p className="text-sm text-gray-600">Get 3 variants of headlines, texts, and CTAs</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <Zap className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-gray-900">Advanced Targeting</p>
+                  <p className="text-sm text-gray-600">AI recommends best audiences for your ads</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Current Plan Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full mb-6">
+            <span className="text-sm text-gray-600">Your plan:</span>
+            <span className="font-bold text-gray-900">{plan}</span>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/billing"
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+            >
+              <Crown className="w-5 h-5" />
+              Upgrade to GROWTH
+            </Link>
+            <Link
+              href="/templates"
+              className="px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+            >
+              Use Templates Instead
+            </Link>
+          </div>
+
+          {/* Help Text */}
+          <p className="text-sm text-gray-500 mt-6">
+            Or continue with manual template-based ad creation available on your {plan} plan
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Auto-restore state from localStorage on mount (Projects page now handles draft choice)
   useEffect(() => {

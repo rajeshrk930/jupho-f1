@@ -22,7 +22,8 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
-  Target
+  Target,
+  Lock
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
@@ -98,6 +99,13 @@ export function Sidebar() {
   };
 
   const handleCreateAd = () => {
+    // Check if user has GROWTH plan
+    const plan = user?.plan || 'FREE';
+    if (plan !== 'GROWTH') {
+      // Show upgrade modal or alert for locked feature
+      alert('🔒 AI Agent is available only on GROWTH plan. Upgrade to unlock AI-powered ad creation!');
+      return;
+    }
     localStorage.removeItem('agent_flow_state');
     window.location.href = '/agent';
   };
@@ -200,6 +208,8 @@ export function Sidebar() {
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
+          const plan = user?.plan || 'FREE';
+          const isAiAgentLocked = item.href === '/agent' && plan !== 'GROWTH';
           
           if (item.onClick) {
             return (
@@ -209,18 +219,26 @@ export function Sidebar() {
                 className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-md transition-all ${
                   active
                     ? 'bg-purple-50 text-purple-600 font-medium'
+                    : isAiAgentLocked
+                    ? 'text-gray-400 hover:bg-gray-50 cursor-pointer'
                     : 'text-charcoal-600 hover:bg-gray-50'
                 }`}
-                title={isCollapsed ? item.label : undefined}
+                title={isCollapsed ? (isAiAgentLocked ? `${item.label} (GROWTH only)` : item.label) : undefined}
               >
-                <Icon size={20} className={active ? 'text-purple-600' : 'text-charcoal-400'} />
+                <Icon size={20} className={active ? 'text-purple-600' : isAiAgentLocked ? 'text-gray-400' : 'text-charcoal-400'} />
                 {!isCollapsed && (
                   <div className="flex items-center gap-2 flex-1">
                     <span className="text-sm">{item.label}</span>
-                    {item.href === '/agent' && (
+                    {item.href === '/agent' && !isAiAgentLocked && (
                       <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-md bg-purple-100 text-purple-700 border border-purple-200">
                         AI
                       </span>
+                    )}
+                    {isAiAgentLocked && (
+                      <div className="flex items-center gap-1 ml-auto">
+                        <Lock size={14} className="text-gray-400" />
+                        <span className="text-[10px] font-medium text-gray-500">GROWTH</span>
+                      </div>
                     )}
                   </div>
                 )}

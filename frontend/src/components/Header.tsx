@@ -2,11 +2,21 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sparkles, Plus, History, Folder } from 'lucide-react';
+import { Sparkles, Plus, History, Folder, Crown, Zap } from 'lucide-react';
 import ProfileDropdown from './ProfileDropdown';
+import { useAuthStore } from '@/lib/store';
+import { useState } from 'react';
+import UpgradeModal from './UpgradeModal';
 
 export default function Header() {
   const pathname = usePathname();
+  const { user } = useAuthStore();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  const plan = user?.plan || 'FREE';
+  const isFree = plan === 'FREE';
+  const isBasic = plan === 'BASIC';
+  const isGrowth = plan === 'GROWTH';
 
   const isActive = (path: string) => {
     return pathname === path || pathname.startsWith(path);
@@ -69,10 +79,47 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* Profile Dropdown */}
-          <ProfileDropdown />
+          {/* Plan Badge & Profile */}
+          <div className="flex items-center gap-3">
+            {/* Plan Badge */}
+            <div className="hidden md:flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200">
+                <span className="text-xs text-gray-600">Plan:</span>
+                <span className={`text-sm font-bold ${
+                  isGrowth ? 'text-purple-600' : 
+                  isBasic ? 'text-blue-600' : 
+                  'text-gray-600'
+                }`}>
+                  {plan}
+                </span>
+              </div>
+              
+              {/* Upgrade Button for FREE users */}
+              {isFree && (
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500 text-white text-sm font-semibold hover:bg-purple-600 transition-colors shadow-sm"
+                >
+                  <Crown className="w-4 h-4" />
+                  Upgrade
+                </button>
+              )}
+            </div>
+            
+            <ProfileDropdown />
+          </div>
         </div>
       </div>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal 
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onUpgradeComplete={() => {
+          setShowUpgradeModal(false);
+          window.location.reload();
+        }}
+      />
 
       {/* Mobile Navigation */}
       <div className="md:hidden border-t border-purple-100 px-4 py-2 flex gap-2">

@@ -11,6 +11,7 @@ import { useAuthStore } from '@/lib/store';
 import { StatCard } from '@/components/StatCard';
 import MobileTopBar from '@/components/MobileTopBar';
 import PerformanceCard from '@/components/PerformanceCard';
+import OnboardingModal from '@/components/OnboardingModal';
 import { Sparkles, Target, Clock, CheckCircle2, XCircle, Loader2, TrendingUp, RefreshCw, Users, BarChart3 } from 'lucide-react';
 import { useState, useEffect, Suspense } from 'react';
 import toast from 'react-hot-toast';
@@ -20,6 +21,19 @@ function DashboardPageInner() {
   const searchParams = useSearchParams();
   const { user, isAuthenticated } = useAuthStore();
   const [isSyncing, setIsSyncing] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Check if this is user's first visit
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('onboarding-seen');
+    const plan = user?.plan || 'FREE';
+    
+    // Show onboarding only for FREE users who haven't seen it
+    if (!hasSeenOnboarding && plan === 'FREE' && isAuthenticated) {
+      setShowOnboarding(true);
+      localStorage.setItem('onboarding-seen', 'true');
+    }
+  }, [user, isAuthenticated]);
 
   // Auth guard
   useEffect(() => {
@@ -95,6 +109,16 @@ function DashboardPageInner() {
   const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED').length;
   const failedTasks = tasks.filter((t: any) => t.status === 'FAILED').length;
   const pendingTasks = tasks.filter((t: any) => ['PENDING', 'GENERATING', 'CREATING'].includes(t.status)).length;
+
+  // Plan limits and usage calculation
+  const plan = user?.plan || 'FREE';
+  const planLimits: Record<string, number> = {
+    'FREE': 2,
+    'BASIC': 10,
+    'GROWTH': 25
+  };
+  const campaignLimit = planLimits[plan] || 2;
+  const usagePercentage = (totalCampaigns / campaignLimit) * 100;
 
   // Calculate aggregate metrics
   const tasksWithMetrics = tasks.filter((t: any) => 
@@ -172,7 +196,42 @@ function DashboardPageInner() {
       <div className="px-4 lg:px-6 py-6 lg:py-8 space-y-6 pb-20 lg:pb-6">
 
         {/* Key Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Campaign Usage Card */}
+          <div className="bg-white rounded-xl border-2 border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-gray-600">Campaign Usage</span>
+              <Target className="w-5 h-5 text-purple-500" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-3xl font-bold text-gray-900">
+                {totalCampaigns}/{campaignLimit}
+              </p>
+              {/* Progress Bar */}
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all ${
+                    usagePercentage >= 100 ? 'bg-red-500' :
+                    usagePercentage >= 80 ? 'bg-orange-500' :
+                    'bg-purple-500'
+                  }`}
+                  style={{ width: `${Math.min(usagePercentage, 100)}%` }}
+                />
+              </div>
+              {/* Upgrade hint for high usage */}
+              {plan === 'FREE' && usagePercentage >= 50 && (
+                <p className="text-xs text-orange-600 font-medium">
+                  💡 Running low? Upgrade to GROWTH for 25 campaigns
+                </p>
+              )}
+              {plan === 'BASIC' && usagePercentage >= 80 && (
+                <p className="text-xs text-orange-600 font-medium">
+                  💡 Upgrade to GROWTH for 25 campaigns/month
+                </p>
+              )}
+            </div>
+          </div>
+
           <StatCard
             title="Total Campaigns"
             value={totalCampaigns}
@@ -405,6 +464,13 @@ function DashboardPageInner() {
           </div>
         </div>
       </div>
+
+      {/* Onboarding Modal */}
+      <OnboardingModal 
+        isOpen={showOnboarding} 
+        onClose={() => setShowOnboarding(false)}
+        plan={user?.plan || 'FREE'}
+      />
     </div>
   );
 }
