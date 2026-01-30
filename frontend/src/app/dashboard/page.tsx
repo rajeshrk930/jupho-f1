@@ -47,12 +47,15 @@ function DashboardPageInner() {
   });
 
   // Fetch Facebook forms to get total leads
-  const { data: formsData, isLoading: formsLoading } = useQuery({
+  const { data: formsData, isLoading: formsLoading, isError: formsError } = useQuery({
     queryKey: ['facebook-forms'],
     queryFn: () => facebookApi.getForms(),
     enabled: isAuthenticated,
     retry: false, // Don't retry if Facebook not connected
   });
+
+  // Check if Facebook is connected based on forms data
+  const facebookConnected = !formsError && formsData !== undefined;
 
   // Show loading while checking auth
   if (!isAuthenticated) {
