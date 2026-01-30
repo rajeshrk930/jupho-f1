@@ -73,7 +73,7 @@ export default function ProjectsPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-coral-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
       </div>
     );
   }
@@ -90,7 +90,7 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20 lg:pb-8">
       {/* Mobile Top Bar */}
-      <div className="lg:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-coral-100 px-4 py-4">
+      <div className="lg:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-purple-100 px-4 py-4">
         <h1 className="text-xl font-bold text-charcoal-900">Projects</h1>
       </div>
 
@@ -103,10 +103,10 @@ export default function ProjectsPage() {
 
         {/* Draft Card */}
         {draft ? (
-          <div className="bg-white rounded-2xl shadow-lg border-2 border-coral-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-lg border-2 border-purple-100 overflow-hidden">
             <div className="p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-coral-500 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center flex-shrink-0">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -133,7 +133,7 @@ export default function ProjectsPage() {
                   <div className="flex gap-3">
                     <button
                       onClick={handleResumeDraft}
-                      className="flex items-center gap-2 px-4 py-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
                     >
                       <Play className="w-4 h-4" />
                       Resume Draft
@@ -161,7 +161,7 @@ export default function ProjectsPage() {
             </p>
             <button
               onClick={() => router.push('/agent')}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
             >
               Create New Ad
             </button>

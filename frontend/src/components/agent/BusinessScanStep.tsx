@@ -151,10 +151,10 @@ export default function BusinessScanStep({ onComplete }: Props) {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="bg-white rounded-3xl shadow-xl border border-coral-100 p-8">
+      <div className="bg-white rounded-3xl shadow-xl border border-purple-100 p-8">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-coral-500 rounded-2xl shadow-sm mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-500 rounded-2xl shadow-sm mb-4">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -169,7 +169,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
           {/* Field 1: Description (Mandatory) */}
           <div>
             <label className="block font-semibold text-gray-900 mb-2">
-              1️⃣ What do you sell? <span className="text-coral-600">*</span>
+              1️⃣ What do you sell? <span className="text-purple-600">*</span>
             </label>
             <textarea
               value={description}
@@ -177,7 +177,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
               placeholder="e.g., I run Rajesh Gym in Hyderabad. I want to get more students for my 6am batch with a 50% discount offer."
               className={`w-full p-4 border-2 rounded-xl h-32 focus:outline-none focus:ring-2 transition-all resize-none ${
                 charCount < charMin 
-                  ? 'border-gray-300 focus:border-coral-500 focus:ring-coral-200' 
+                  ? 'border-gray-300 focus:border-purple-500 focus:ring-purple-200' 
                   : 'border-green-300 focus:border-green-500 focus:ring-green-200'
               }`}
               disabled={loading}
@@ -186,7 +186,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
               <button
                 type="button"
                 onClick={() => setShowExamples(!showExamples)}
-                className="text-sm text-coral-600 hover:text-coral-700 font-medium flex items-center gap-1"
+                className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
               >
                 <Lightbulb className="w-4 h-4" />
                 {showExamples ? 'Hide Examples' : 'See Examples'}
@@ -200,7 +200,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
 
             {/* Examples Dropdown */}
             {showExamples && (
-              <div className="mt-4 p-4 bg-white rounded-xl border border-coral-200 space-y-3">
+              <div className="mt-4 p-4 bg-white rounded-xl border border-purple-200 space-y-3">
                 <p className="text-sm font-semibold text-gray-700 mb-2">
                   Click any example to use it:
                 </p>
@@ -212,7 +212,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                       setDescription(example.text);
                       setShowExamples(false);
                     }}
-                    className="w-full text-left p-3 bg-gray-50 hover:bg-coral-50 rounded-lg border border-gray-200 hover:border-coral-300 transition-all"
+                    className="w-full text-left p-3 bg-gray-50 hover:bg-purple-50 rounded-lg border border-gray-200 hover:border-purple-300 transition-all"
                   >
                     <p className="text-sm font-semibold text-gray-900 mb-1">
                       {example.title}
@@ -251,7 +251,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                 className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all ${
                   locationRequired
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
-                    : 'border-gray-300 focus:border-coral-500 focus:ring-coral-200'
+                    : 'border-gray-300 focus:border-purple-500 focus:ring-purple-200'
                 }`}
                 disabled={loading}
               />
@@ -286,7 +286,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
                 className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none transition-all ${
                   websiteError 
                     ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200' 
-                    : 'border-gray-300 focus:border-coral-500 focus:ring-2 focus:ring-coral-200'
+                    : 'border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                 }`}
                 disabled={loading}
               />
@@ -317,7 +317,7 @@ export default function BusinessScanStep({ onComplete }: Props) {
           <button
             type="submit"
             disabled={!isValid || loading}
-            className="w-full py-5 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-bold rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="w-full py-5 bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white font-bold rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center justify-center text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             {loading ? (
               <>

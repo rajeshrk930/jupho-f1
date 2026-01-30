@@ -73,7 +73,7 @@ export default function TaskDetailsPage() {
           <p className="text-red-600 mb-4">Task not found</p>
           <button
             onClick={() => router.push('/agent/tasks')}
-            className="px-6 py-3 bg-coral-600 text-white rounded-lg hover:bg-coral-700"
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
           >
             Back to Tasks
           </button>
@@ -129,7 +129,7 @@ export default function TaskDetailsPage() {
                 href={`https://facebook.com/ads/manager/ad/${task.fbAdId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center px-4 py-2 bg-coral-600 text-white rounded-lg hover:bg-coral-700 transition-colors"
+                className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 View in Ads Manager
                 <ExternalLink className="w-4 h-4 ml-2" />
@@ -246,14 +246,14 @@ export default function TaskDetailsPage() {
                       key={creative.id}
                       className={`p-3 rounded-lg border ${
                         creative.isSelected
-                          ? 'border-coral-300 bg-coral-50'
+                          ? 'border-purple-300 bg-purple-50'
                           : 'border-gray-200 bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
                         <p className="text-gray-900">{creative.content}</p>
                         {creative.isSelected && (
-                          <span className="ml-2 px-2 py-1 bg-coral-600 text-white text-xs rounded">
+                          <span className="ml-2 px-2 py-1 bg-purple-600 text-white text-xs rounded">
                             Selected
                           </span>
                         )}
@@ -274,14 +274,14 @@ export default function TaskDetailsPage() {
                       key={creative.id}
                       className={`p-3 rounded-lg border ${
                         creative.isSelected
-                          ? 'border-coral-300 bg-coral-50'
+                          ? 'border-purple-300 bg-purple-50'
                           : 'border-gray-200 bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
                         <p className="text-gray-900">{creative.content}</p>
                         {creative.isSelected && (
-                          <span className="ml-2 px-2 py-1 bg-coral-600 text-white text-xs rounded flex-shrink-0">
+                          <span className="ml-2 px-2 py-1 bg-purple-600 text-white text-xs rounded flex-shrink-0">
                             Selected
                           </span>
                         )}
@@ -302,14 +302,14 @@ export default function TaskDetailsPage() {
                       key={creative.id}
                       className={`p-3 rounded-lg border ${
                         creative.isSelected
-                          ? 'border-coral-300 bg-coral-50'
+                          ? 'border-purple-300 bg-purple-50'
                           : 'border-gray-200 bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
                         <p className="text-gray-900">{creative.content}</p>
                         {creative.isSelected && (
-                          <span className="ml-2 px-2 py-1 bg-coral-600 text-white text-xs rounded flex-shrink-0">
+                          <span className="ml-2 px-2 py-1 bg-purple-600 text-white text-xs rounded flex-shrink-0">
                             Selected
                           </span>
                         )}
@@ -357,7 +357,7 @@ export default function TaskDetailsPage() {
                   <h3 className="text-sm font-medium text-gray-700 mb-2">Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {recommendations.targeting.interests.slice(0, 10).map((interest: string, idx: number) => (
-                      <span key={idx} className="px-3 py-1 bg-coral-100 text-coral-700 text-sm rounded-full">
+                      <span key={idx} className="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-full">
                         {interest}
                       </span>
                     ))}

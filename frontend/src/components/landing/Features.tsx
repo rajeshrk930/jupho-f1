@@ -15,8 +15,8 @@ export default function Features() {
       <div className="grid md:grid-cols-3 gap-8">
         {/* Feature 1 */}
         <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow">
-          <div className="w-14 h-14 bg-coral-100 rounded-xl flex items-center justify-center mb-6">
-            <Sparkles className="w-7 h-7 text-coral-600" />
+          <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+            <Sparkles className="w-7 h-7 text-purple-600" />
           </div>
           <h3 className="text-2xl font-bold text-charcoal-900 mb-3">
             AI-Powered Creation

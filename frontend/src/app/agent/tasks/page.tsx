@@ -129,7 +129,7 @@ export default function TasksPage() {
               Dashboard
             </button>
             <div className="flex items-center">
-              <Sparkles className="w-6 h-6 text-coral-600 mr-2" />
+              <Sparkles className="w-6 h-6 text-purple-600 mr-2" />
               <h1 className="text-xl font-bold text-gray-900">Campaign History</h1>
             </div>
             <button
@@ -155,13 +155,13 @@ export default function TasksPage() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-coral-600">{usage.used}/{usage.limit}</p>
+                <p className="text-3xl font-bold text-purple-600">{usage.used}/{usage.limit}</p>
                 <p className="text-sm text-gray-500">Campaigns</p>
               </div>
             </div>
             <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
               <div
-                className="bg-coral-600 h-2 rounded-full transition-all"
+                className="bg-purple-600 h-2 rounded-full transition-all"
                 style={{ width: `${(usage.used / usage.limit) * 100}%` }}
               />
             </div>
@@ -180,7 +180,7 @@ export default function TasksPage() {
               <p className="text-gray-600 mb-4">No campaigns yet</p>
               <button
                 onClick={() => router.push('/agent')}
-                className="px-6 py-3 bg-coral-600 text-white rounded-lg hover:bg-coral-700 transition-colors"
+                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 Create Your First Campaign
               </button>
@@ -252,7 +252,7 @@ export default function TasksPage() {
                           <button
                             onClick={() => handleSyncTask(task.id)}
                             disabled={syncingTaskId === task.id}
-                            className="inline-flex items-center text-sm text-coral-600 hover:text-coral-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                            className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
                           >
                             <RefreshCw className={`w-4 h-4 mr-1 ${syncingTaskId === task.id ? 'animate-spin' : ''}`} />
                             {syncingTaskId === task.id ? 'Syncing...' : 'Sync Now'}
@@ -262,7 +262,7 @@ export default function TasksPage() {
                             href={`https://facebook.com/ads/manager/ad/${task.fbAdId}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center text-sm text-coral-600 hover:text-coral-700 font-medium"
+                            className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium"
                           >
                             View in Ads Manager
                             <ExternalLink className="w-4 h-4 ml-1" />
@@ -270,7 +270,7 @@ export default function TasksPage() {
                           <span className="text-gray-300">|</span>
                           <button
                             onClick={() => router.push(`/agent/tasks/${task.id}`)}
-                            className="inline-flex items-center text-sm text-coral-600 hover:text-coral-700 font-medium"
+                            className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium"
                           >
                             <TrendingUp className="w-4 h-4 mr-1" />
                             View Details

@@ -58,7 +58,7 @@ function DashboardPageInner() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
       </div>
     );
   }
@@ -330,12 +330,12 @@ function DashboardPageInner() {
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-charcoal-900">Recent Tasks</h2>
-            <Link href="/agent" className="text-sm text-coral-500 hover:text-coral-600 hover:underline">View all →</Link>
+            <Link href="/agent" className="text-sm text-purple-500 hover:text-purple-600 hover:underline">View all →</Link>
           </div>
 
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-coral-500" />
+              <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
             </div>
           ) : tasks.length === 0 ? (
             <div className="text-center py-8">
@@ -354,7 +354,7 @@ function DashboardPageInner() {
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                       task.status === 'COMPLETED' ? 'bg-mint-100 text-mint-600' :
                       task.status === 'FAILED' ? 'bg-red-100 text-red-600' :
-                      'bg-coral-100 text-coral-600'
+                      'bg-purple-100 text-purple-600'
                     }`}>
                       {task.status === 'COMPLETED' ? <CheckCircle2 size={20} /> :
                        task.status === 'FAILED' ? <XCircle size={20} /> :
@@ -373,7 +373,7 @@ function DashboardPageInner() {
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                     task.status === 'COMPLETED' ? 'bg-mint-100 text-mint-700' :
                     task.status === 'FAILED' ? 'bg-red-100 text-red-700' :
-                    'bg-coral-100 text-coral-700'
+                    'bg-purple-100 text-purple-700'
                   }`}>
                     {task.status}
                   </span>
@@ -384,7 +384,7 @@ function DashboardPageInner() {
         </div>
 
         {/* Help Section */}
-        <div className="bg-coral-50 rounded-2xl border border-coral-100 p-6">
+        <div className="bg-purple-50 rounded-2xl border border-purple-100 p-6">
           <h2 className="text-lg font-semibold text-charcoal-900 mb-2">How it works</h2>
           <div className="grid md:grid-cols-3 gap-4 text-sm text-charcoal-700">
             <div>
@@ -410,7 +410,7 @@ export default function DashboardPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-coral-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
       </div>
     }>
       <DashboardPageInner />

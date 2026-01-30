@@ -29,8 +29,8 @@ export default function GoalCard({
       onClick={onClick}
       className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-200 group ${
         isSelected
-          ? 'border-coral-500 bg-coral-50 shadow-lg scale-[1.02]'
-          : 'border-gray-200 bg-white hover:border-coral-200 hover:shadow-md hover:scale-[1.01]'
+          ? 'border-purple-500 bg-purple-50 shadow-lg scale-[1.02]'
+          : 'border-gray-200 bg-white hover:border-purple-200 hover:shadow-md hover:scale-[1.01]'
       }`}
     >
       <div className="flex items-start gap-4">
@@ -38,8 +38,8 @@ export default function GoalCard({
         <div
           className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
             isSelected
-              ? 'bg-coral-500 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-500 group-hover:bg-coral-50 group-hover:text-coral-500'
+              ? 'bg-purple-500 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-500 group-hover:bg-purple-50 group-hover:text-purple-500'
           }`}
         >
           {icon}
@@ -72,7 +72,7 @@ export default function GoalCard({
                 key={index}
                 className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   isSelected
-                    ? 'bg-white text-gray-700 border border-coral-200'
+                    ? 'bg-white text-gray-700 border border-purple-200'
                     : 'bg-gray-50 text-gray-700 border border-gray-200 group-hover:bg-white'
                 }`}
               >
@@ -92,7 +92,7 @@ export default function GoalCard({
         {/* Selection Checkmark */}
         {isSelected && (
           <div className="flex-shrink-0">
-            <div className="w-6 h-6 rounded-full bg-coral-500 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
               <Check className="w-4 h-4 text-white" strokeWidth={3} />
             </div>
           </div>

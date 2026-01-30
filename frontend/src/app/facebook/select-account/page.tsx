@@ -93,7 +93,7 @@ function SelectAccountPageInner() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
           <p className="text-charcoal-600">Loading ad accounts...</p>
         </div>
       </div>
@@ -113,7 +113,7 @@ function SelectAccountPageInner() {
           </p>
           <button
             onClick={() => router.push('/settings')}
-            className="px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+            className="px-6 py-3 bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
           >
             Back to Settings
           </button>
@@ -127,7 +127,7 @@ function SelectAccountPageInner() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-coral-500 flex items-center justify-center mx-auto mb-4 shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-purple-500 flex items-center justify-center mx-auto mb-4 shadow-sm">
             <Building2 className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-charcoal-900 mb-2">Select Ad Account</h1>
@@ -135,7 +135,7 @@ function SelectAccountPageInner() {
         </div>
 
         {/* Ad Accounts List */}
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-coral-100 p-6 mb-6">
+        <div className="bg-white rounded-2xl shadow-lg border-2 border-purple-100 p-6 mb-6">
           <div className="space-y-3">
             {adAccounts.map((account) => (
               <button
@@ -143,14 +143,14 @@ function SelectAccountPageInner() {
                 onClick={() => setSelectedAccount(account.id)}
                 className={`w-full flex items-start gap-4 p-4 rounded-xl border-2 transition-all text-left ${
                   selectedAccount === account.id
-                    ? 'border-coral-500 bg-coral-50 shadow-md'
-                    : 'border-gray-200 hover:border-coral-300 hover:bg-gray-50'
+                    ? 'border-purple-500 bg-purple-50 shadow-md'
+                    : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
                 }`}
               >
                 <div
                   className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                     selectedAccount === account.id
-                      ? 'border-coral-500 bg-coral-500'
+                      ? 'border-purple-500 bg-purple-500'
                       : 'border-gray-300'
                   }`}
                 >
@@ -202,7 +202,7 @@ function SelectAccountPageInner() {
           <button
             onClick={handleSaveSelection}
             disabled={!selectedAccount || saving}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <>
@@ -225,7 +225,7 @@ export default function SelectAccountPage() {
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
             <p className="text-charcoal-600">Loading...</p>
           </div>
         </div>

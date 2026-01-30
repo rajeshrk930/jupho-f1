@@ -90,18 +90,18 @@ export default function ProfileDropdown() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/70 backdrop-blur-sm border-2 border-white shadow-md hover:shadow-lg transition-all hover:scale-105 active:scale-95"
       >
-        <div className="w-9 h-9 rounded-full bg-coral-500 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+        <div className="w-9 h-9 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-sm">
           {user?.email ? getInitials(user.email) : 'U'}
         </div>
         <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border-2 border-coral-100 overflow-hidden z-50 animate-fade-in">
+        <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border-2 border-purple-100 overflow-hidden z-50 animate-fade-in">
           {/* User Info */}
-          <div className="px-5 py-4 bg-coral-50 border-b-2 border-coral-200">
+          <div className="px-5 py-4 bg-purple-50 border-b-2 border-purple-200">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-coral-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+              <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">
                 {user?.email ? getInitials(user.email) : 'U'}
               </div>
               <div className="flex-1 min-w-0">
@@ -114,7 +114,7 @@ export default function ProfileDropdown() {
           {/* Menu Items */}
           <div className="py-2">
             {/* Meta Connection Status */}
-            <div className="px-5 py-3 space-y-3 hover:bg-coral-50 transition-colors">
+            <div className="px-5 py-3 space-y-3 hover:bg-purple-50 transition-colors">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                   facebookConnected 
@@ -135,7 +135,7 @@ export default function ProfileDropdown() {
                 <button
                   onClick={handleConnectMeta}
                   disabled={connecting}
-                  className="w-full px-4 py-2 text-sm font-semibold rounded-lg bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white shadow-md hover:shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+                  className="w-full px-4 py-2 text-sm font-semibold rounded-lg bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white shadow-md hover:shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
                 >
                   {connecting ? 'Connecting…' : 'Connect Meta Ads'}
                 </button>
@@ -156,10 +156,10 @@ export default function ProfileDropdown() {
                 router.push('/billing');
                 setIsOpen(false);
               }}
-              className="w-full px-5 py-3 hover:bg-coral-50 transition-colors flex items-center gap-3"
+              className="w-full px-5 py-3 hover:bg-purple-50 transition-colors flex items-center gap-3"
             >
-              <div className="w-10 h-10 rounded-xl bg-coral-100 flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-coral-600" />
+              <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-purple-600" />
               </div>
               <div className="flex-1 text-left">
                 <p className="text-sm font-semibold text-gray-900">Billing</p>

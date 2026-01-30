@@ -1,7 +1,7 @@
 export function Skeleton({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`animate-coralShimmer rounded ${className}`}
+      className={`animate-purpleShimmer rounded ${className}`}
       aria-hidden="true"
     />
   );

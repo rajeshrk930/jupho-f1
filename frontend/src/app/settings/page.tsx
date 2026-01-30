@@ -148,7 +148,7 @@ export default function SettingsPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
       </div>
     );
   }
@@ -165,8 +165,8 @@ export default function SettingsPage() {
         {/* Profile Section */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-coral-50 flex items-center justify-center">
-              <User size={20} className="text-coral-600" />
+            <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+              <User size={20} className="text-purple-600" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-charcoal-900">Profile Information</h2>
@@ -181,7 +181,7 @@ export default function SettingsPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="Your name"
               />
             </div>
@@ -192,7 +192,7 @@ export default function SettingsPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="your@email.com"
               />
             </div>
@@ -200,7 +200,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-coral-500 hover:bg-coral-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
               <Save size={16} />
               Save Changes
@@ -211,8 +211,8 @@ export default function SettingsPage() {
         {/* Password Section */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-coral-50 flex items-center justify-center">
-              <Lock size={20} className="text-coral-600" />
+            <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+              <Lock size={20} className="text-purple-600" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-charcoal-900">Change Password</h2>
@@ -227,7 +227,7 @@ export default function SettingsPage() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="••••••••"
               />
             </div>
@@ -238,7 +238,7 @@ export default function SettingsPage() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="••••••••"
                 minLength={6}
               />
@@ -250,7 +250,7 @@ export default function SettingsPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-transparent bg-white text-charcoal-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-charcoal-900"
                 placeholder="••••••••"
                 minLength={6}
               />
@@ -259,7 +259,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-coral-500 hover:bg-coral-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
               <Lock size={16} />
               Update Password
@@ -283,7 +283,7 @@ export default function SettingsPage() {
 
           {fbStatus === null ? (
             <div className="flex items-center justify-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-coral-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
             </div>
           ) : fbStatus?.connected ? (
             <div className="space-y-4">
@@ -307,7 +307,7 @@ export default function SettingsPage() {
               
               <button
                 onClick={() => setShowMetaModal(true)}
-                className="px-4 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition-colors font-medium"
+                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors font-medium"
               >
                 View Connection Details
               </button>

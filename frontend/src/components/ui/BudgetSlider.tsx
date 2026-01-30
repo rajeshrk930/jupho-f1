@@ -51,7 +51,7 @@ export default function BudgetSlider({
             <Info className="w-4 h-4" />
           </button>
         </div>
-        <div className="text-2xl font-bold text-coral-600">
+        <div className="text-2xl font-bold text-purple-600">
           {currency}
           {value.toLocaleString()}
         </div>
@@ -70,7 +70,7 @@ export default function BudgetSlider({
         <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
           {/* Progress */}
           <div
-            className="absolute h-full bg-coral-500 rounded-full transition-all duration-200"
+            className="absolute h-full bg-purple-500 rounded-full transition-all duration-200"
             style={{ width: `${percentage}%` }}
           />
         </div>
@@ -88,7 +88,7 @@ export default function BudgetSlider({
 
         {/* Custom Thumb */}
         <div
-          className="absolute top-0 w-6 h-6 bg-white border-4 border-coral-500 rounded-full shadow-lg transform -translate-x-1/2 -translate-y-1.5 transition-all duration-200 hover:scale-110"
+          className="absolute top-0 w-6 h-6 bg-white border-4 border-purple-500 rounded-full shadow-lg transform -translate-x-1/2 -translate-y-1.5 transition-all duration-200 hover:scale-110"
           style={{ left: `${percentage}%` }}
         />
 
@@ -96,14 +96,14 @@ export default function BudgetSlider({
         <div className="flex justify-between text-xs text-gray-600 mt-3 px-1">
           <span>Limited</span>
           <span>Basic Reach</span>
-          <span className="font-semibold text-coral-600">{getLabel(value)}</span>
+          <span className="font-semibold text-purple-600">{getLabel(value)}</span>
           <span>2x+ Results</span>
         </div>
       </div>
 
       {/* Estimates */}
       {showEstimates && (
-        <div className="bg-coral-50 rounded-xl p-4 border border-coral-100">
+        <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-gray-600 mb-1">Estimated Reach</p>

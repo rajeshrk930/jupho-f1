@@ -212,7 +212,7 @@ export default function LaunchStep({ taskId, strategy, businessData, preselected
               href={adLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 bg-coral-600 text-white rounded-lg hover:bg-coral-700 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               View in Ads Manager
               <ExternalLink className="w-5 h-5 ml-2" />
@@ -269,8 +269,8 @@ export default function LaunchStep({ taskId, strategy, businessData, preselected
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-5 mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="inline-flex items-center justify-center w-10 h-10 bg-coral-50 rounded-full mr-3">
-              <Rocket className="w-5 h-5 text-coral-600" />
+            <div className="inline-flex items-center justify-center w-10 h-10 bg-purple-50 rounded-full mr-3">
+              <Rocket className="w-5 h-5 text-purple-600" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900">Launch Campaign</h2>
@@ -292,7 +292,7 @@ export default function LaunchStep({ taskId, strategy, businessData, preselected
           {/* Lead Form Selection */}
           <div className="bg-white rounded-xl shadow border border-gray-200 p-4">
             <h3 className="font-semibold text-gray-900 mb-3 text-sm flex items-center gap-2">
-              <FileText className="w-4 h-4 text-coral-600" />
+              <FileText className="w-4 h-4 text-purple-600" />
               Lead Form Selection
             </h3>
             
@@ -321,7 +321,7 @@ export default function LaunchStep({ taskId, strategy, businessData, preselected
                       <select
                         value={selectedFormId || ''}
                         onChange={(e) => setSelectedFormId(e.target.value)}
-                        className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-coral-500 focus:border-coral-500"
+                        className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       >
                         <option value="">Select a form...</option>
                         {leadForms.map((form) => (
@@ -397,7 +397,7 @@ export default function LaunchStep({ taskId, strategy, businessData, preselected
               />
               <label
                 htmlFor="ad-image"
-                className="w-full inline-block text-center py-2 px-3 border border-coral-500 text-coral-600 rounded-lg text-sm font-medium hover:bg-coral-50 cursor-pointer active:scale-98 transition-all"
+                className="w-full inline-block text-center py-2 px-3 border border-purple-500 text-purple-600 rounded-lg text-sm font-medium hover:bg-purple-50 cursor-pointer active:scale-98 transition-all"
               >
                 {uploadedFile ? 'Change' : 'Upload'}
               </label>
@@ -415,7 +415,7 @@ export default function LaunchStep({ taskId, strategy, businessData, preselected
                         }}
                         className={`aspect-square rounded overflow-hidden border-2 transition-all ${
                           selectedImage === url
-                            ? 'border-coral-500'
+                            ? 'border-purple-500'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >

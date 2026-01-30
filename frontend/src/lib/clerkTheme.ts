@@ -74,7 +74,7 @@ export const clerkTheme: Appearance = {
       'border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-100',
     
     // Profile/User button
-    userButtonTrigger: 'focus:shadow-coral-200',
+    userButtonTrigger: 'focus:shadow-purple-200',
     userButtonPopoverCard: 'shadow-xl border border-gray-100',
     
     // Badges

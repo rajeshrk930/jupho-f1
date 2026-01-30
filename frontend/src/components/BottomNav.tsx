@@ -55,7 +55,7 @@ export function BottomNav() {
                 onClick={tab.onClick}
                 className={`flex flex-col items-center justify-center gap-1 transition-colors ${
                   isActive
-                    ? 'text-coral-600'
+                    ? 'text-purple-600'
                     : 'text-charcoal-500 hover:text-charcoal-900'
                 }`}
               >
@@ -73,7 +73,7 @@ export function BottomNav() {
               href={tab.href}
               className={`flex flex-col items-center justify-center gap-1 transition-colors ${
                 isActive
-                  ? 'text-coral-600'
+                  ? 'text-purple-600'
                   : 'text-charcoal-500 hover:text-charcoal-900'
               }`}
             >

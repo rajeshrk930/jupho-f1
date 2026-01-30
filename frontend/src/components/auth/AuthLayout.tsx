@@ -7,7 +7,7 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-mint-50 via-white to-coral-50">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-mint-50 via-white to-purple-50">
       {/* Mobile: Just centered form without card wrapper */}
       <div className="md:hidden w-full max-w-md">
         {children}

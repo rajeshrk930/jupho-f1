@@ -201,8 +201,8 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
     return (
       <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 sm:p-12 max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-coral-50 rounded-full mb-4">
-            <Target className="w-8 h-8 text-coral-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-50 rounded-full mb-4">
+            <Target className="w-8 h-8 text-purple-600" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">AI Campaign Setup (Auto-Configured)</h2>
           <p className="text-gray-600">Chosen because Instant Forms convert better for service businesses.</p>
@@ -258,15 +258,15 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
 
   if (loading) {
     return (
-      <div className="bg-white rounded-3xl shadow-xl border border-coral-100 p-12 text-center relative overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-xl border border-purple-100 p-12 text-center relative overflow-hidden">
         {/* Animated background */}
-        <div className="absolute inset-0 bg-coral-50/30 animate-pulse" />
+        <div className="absolute inset-0 bg-purple-50/30 animate-pulse" />
         
         <div className="relative z-10">
           {/* Animated brain icon with glow effect */}
           <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 bg-coral-500/20 rounded-full blur-xl animate-pulse" />
-            <div className="relative inline-flex items-center justify-center w-20 h-20 bg-coral-500 rounded-full shadow-sm">
+            <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-xl animate-pulse" />
+            <div className="relative inline-flex items-center justify-center w-20 h-20 bg-purple-500 rounded-full shadow-sm">
               <Sparkles className="w-10 h-10 text-white animate-pulse" />
             </div>
           </div>
@@ -277,22 +277,22 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           {/* Animated progress bar */}
           <div className="max-w-md mx-auto mb-8">
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-coral-500 rounded-full animate-loading" 
+              <div className="h-full bg-purple-500 rounded-full animate-loading" 
                    style={{ width: '70%' }} />
             </div>
           </div>
 
           {/* Status steps with checkmarks */}
           <div className="max-w-md mx-auto space-y-3">
-            <div className="flex items-center text-sm bg-white/80 backdrop-blur rounded-lg px-4 py-3 shadow-sm border border-coral-100 transform transition-all hover:scale-105">
+            <div className="flex items-center text-sm bg-white/80 backdrop-blur rounded-lg px-4 py-3 shadow-sm border border-purple-100 transform transition-all hover:scale-105">
               <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
                 <Check className="w-5 h-5 text-white" />
               </div>
               <span className="text-gray-700 font-medium">Campaign objective selected</span>
             </div>
             
-            <div className="flex items-center text-sm bg-white/80 backdrop-blur rounded-lg px-4 py-3 shadow-sm border border-coral-100 transform transition-all hover:scale-105">
-              <div className="flex-shrink-0 w-8 h-8 bg-coral-500 rounded-full flex items-center justify-center mr-3 animate-pulse">
+            <div className="flex items-center text-sm bg-white/80 backdrop-blur rounded-lg px-4 py-3 shadow-sm border border-purple-100 transform transition-all hover:scale-105">
+              <div className="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3 animate-pulse">
                 <Loader2 className="w-5 h-5 text-white animate-spin" />
               </div>
               <span className="text-gray-700 font-medium">Finding target audience interests...</span>
@@ -335,7 +335,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
           </button>
           <button
             onClick={generateStrategy}
-            className="flex-1 py-3 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition-colors"
+            className="flex-1 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
           >
             Try Again
           </button>
@@ -349,7 +349,7 @@ export default function AIConsultantStep({ taskId, businessData, onComplete, onB
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="bg-coral-500 rounded-2xl shadow-lg p-8 text-white relative overflow-hidden">
+      <div className="bg-purple-500 rounded-2xl shadow-lg p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">

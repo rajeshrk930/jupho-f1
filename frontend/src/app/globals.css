@@ -85,8 +85,8 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Coral shimmer effect for skeletons */
-@keyframes coralShimmer {
+/* Purple shimmer effect for skeletons */
+@keyframes purpleShimmer {
   0% {
     background-position: -1000px 0;
   }
@@ -192,8 +192,8 @@ h1, h2, h3, h4, h5, h6 {
   animation: loadingDots 1.4s ease-in-out infinite;
 }
 
-.animate-coralShimmer {
-  animation: coralShimmer 2s ease-in-out infinite;
+.animate-purpleShimmer {
+  animation: purpleShimmer 2s ease-in-out infinite;
   background: linear-gradient(90deg, #f3f4f6 0%, #f3e8ff 50%, #f3f4f6 100%);
   background-size: 1000px 100%;
 }
@@ -352,13 +352,13 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--bg-primary);
   }
 
-  /* Stat card - coral accent for metrics */
+  /* Stat card - purple accent for metrics */
   .stat-card {
     @apply bg-white rounded-lg p-5 border-l-2 shadow-sm;
   }
   
   .stat-card-signal {
-    @apply stat-card border-l-coral-500;
+    @apply stat-card border-l-purple-500;
   }
   
   .stat-card-neutral {

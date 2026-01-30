@@ -18,7 +18,7 @@ export default function TermsOfServicePage() {
             </div>
             <Link
               href="/sign-up"
-              className="px-6 py-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+              className="px-6 py-2 bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white rounded-lg font-medium hover:shadow-lg transition-all"
             >
               Get Started
             </Link>

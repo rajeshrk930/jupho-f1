@@ -9,12 +9,12 @@ export default function PrivacyPolicyPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <ArrowLeft className="w-5 h-5 text-charcoal-600" />
-            <Sparkles className="w-6 h-6 text-coral-600" />
+            <Sparkles className="w-6 h-6 text-purple-600" />
             <span className="text-2xl font-bold text-charcoal-900">Jupho</span>
           </Link>
           <Link
             href="/sign-up"
-            className="bg-coral-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-coral-700 transition-colors"
+            className="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
           >
             Get Started
           </Link>
@@ -198,7 +198,7 @@ export default function PrivacyPolicyPage() {
             </p>
           </section>
 
-          <section className="bg-coral-50 border border-coral-200 rounded-lg p-6">
+          <section className="bg-purple-50 border border-purple-200 rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-charcoal-900 mb-4">9A. Facebook Data Deletion Instructions</h2>
             <p className="text-charcoal-700 leading-relaxed mb-3">
               Jupho complies with Facebook's data deletion requirements.
@@ -206,7 +206,7 @@ export default function PrivacyPolicyPage() {
             <p className="text-charcoal-700 leading-relaxed mb-2">
               To request deletion of data accessed via Facebook / Meta APIs, please email us at:
             </p>
-            <div className="bg-white p-4 rounded-lg border border-coral-300 my-4">
+            <div className="bg-white p-4 rounded-lg border border-purple-300 my-4">
               <p className="text-charcoal-900 font-semibold">Email: privacy@jupho.io</p>
               <p className="text-charcoal-700 mt-2"><strong>Subject:</strong> Facebook Data Deletion Request</p>
             </div>
@@ -272,14 +272,14 @@ export default function PrivacyPolicyPage() {
         <div className="mt-12 pt-8 border-t border-charcoal-200 text-center">
           <Link 
             href="/sign-in"
-            className="text-sm text-coral-600 hover:text-coral-700 font-medium"
+            className="text-sm text-purple-600 hover:text-purple-700 font-medium"
           >
             Back to Login
           </Link>
           <span className="mx-3 text-charcoal-300">|</span>
           <Link 
             href="/terms"
-            className="text-sm text-coral-600 hover:text-coral-700 font-medium"
+            className="text-sm text-purple-600 hover:text-purple-700 font-medium"
           >
             Terms of Service
           </Link>

@@ -34,27 +34,27 @@ export default function PrimaryButton({
 
   const variantClasses = {
     primary: `
-      bg-coral-500
-      hover:bg-coral-600
-      active:bg-coral-700
+      bg-purple-500
+      hover:bg-purple-600
+      active:bg-purple-700
       text-white font-bold shadow-sm
       hover:shadow-lg active:shadow-sm
       disabled:bg-gray-300
       disabled:cursor-not-allowed disabled:shadow-none
     `,
     secondary: `
-      bg-white border-2 border-coral-500
-      hover:bg-coral-50 active:bg-coral-100
-      text-coral-600 font-bold shadow-md
+      bg-white border-2 border-purple-500
+      hover:bg-purple-50 active:bg-purple-100
+      text-purple-600 font-bold shadow-md
       hover:shadow-lg active:shadow-sm
       disabled:border-gray-300 disabled:text-gray-400
       disabled:cursor-not-allowed disabled:shadow-none
     `,
     outline: `
       bg-transparent border-2 border-gray-300
-      hover:border-coral-500 hover:bg-coral-50
-      active:bg-coral-100
-      text-gray-700 hover:text-coral-600 font-semibold
+      hover:border-purple-500 hover:bg-purple-50
+      active:bg-purple-100
+      text-gray-700 hover:text-purple-600 font-semibold
       disabled:border-gray-200 disabled:text-gray-400
       disabled:cursor-not-allowed
     `,
@@ -72,7 +72,7 @@ export default function PrimaryButton({
         inline-flex items-center justify-center gap-2
         transform hover:scale-[1.02] active:scale-[0.98]
         disabled:transform-none
-        focus:outline-none focus:ring-4 focus:ring-coral-200
+        focus:outline-none focus:ring-4 focus:ring-purple-200
         ${className}
       `}
     >
