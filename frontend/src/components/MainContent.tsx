@@ -5,17 +5,21 @@ import { ReactNode, useEffect, useState } from 'react';
 
 export function MainContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Read collapsed state immediately to prevent layout shift
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebar-collapsed') === 'true';
+    }
+    return false;
+  });
   
-  // Sync with sidebar collapse state from localStorage
+  // Sync with sidebar collapse state changes
   useEffect(() => {
-    const collapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-    setIsCollapsed(collapsed);
-    
-    // Listen for storage changes
     const handleStorage = () => {
-      const collapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-      setIsCollapsed(collapsed);
+      if (typeof window !== 'undefined') {
+        const collapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+        setIsCollapsed(collapsed);
+      }
     };
     
     window.addEventListener('storage', handleStorage);

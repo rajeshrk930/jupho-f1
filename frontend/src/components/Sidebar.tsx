@@ -37,18 +37,18 @@ export function Sidebar() {
   const [facebookConnected, setFacebookConnected] = useState(false);
   const [adAccountName, setAdAccountName] = useState<string>('');
   const [connecting, setConnecting] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Read collapsed state immediately from localStorage to prevent flash
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebar-collapsed') === 'true';
+    }
+    return false;
+  });
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const [metaBoxExpanded, setMetaBoxExpanded] = useState(false);
   const [loadingMetaStatus, setLoadingMetaStatus] = useState(true);
 
-  // Initialize collapse state from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('sidebar-collapsed');
-    if (saved) {
-      setIsCollapsed(saved === 'true');
-    }
-  }, []);
+  // No longer need useEffect for initial collapsed state since we read it immediately
 
   // Check Facebook connection status
   useEffect(() => {
@@ -263,8 +263,20 @@ export function Sidebar() {
         )}
 
         {/* Meta Connection Status - Collapsible */}
-        {!isCollapsed && !loadingMetaStatus && (
-          <div className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
+        {!isCollapsed && (
+          loadingMetaStatus ? (
+            // Skeleton placeholder to prevent layout shift
+            <div className="px-3 py-2 rounded-lg bg-gray-100 border border-gray-200 animate-pulse">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md bg-gray-300"></div>
+                <div className="flex-1">
+                  <div className="h-3 w-16 bg-gray-300 rounded mb-1"></div>
+                  <div className="h-2 w-20 bg-gray-300 rounded"></div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
             {/* Compact Header */}
             <button
               onClick={() => setMetaBoxExpanded(!metaBoxExpanded)}
@@ -322,6 +334,7 @@ export function Sidebar() {
               </div>
             )}
           </div>
+          )
         )}
 
         {/* Action Buttons */}
