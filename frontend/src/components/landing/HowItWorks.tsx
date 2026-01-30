@@ -15,7 +15,7 @@ export default function HowItWorks() {
       <div className="grid md:grid-cols-3 gap-8">
         {/* Step 1 */}
         <div className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-shadow relative">
-          <div className="absolute -top-4 left-8 w-10 h-10 bg-coral-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+          <div className="absolute -top-4 left-8 w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
             1
           </div>
           <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 mt-4">
@@ -31,7 +31,7 @@ export default function HowItWorks() {
 
         {/* Step 2 */}
         <div className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-shadow relative">
-          <div className="absolute -top-4 left-8 w-10 h-10 bg-coral-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+          <div className="absolute -top-4 left-8 w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
             2
           </div>
           <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-6 mt-4">
@@ -47,7 +47,7 @@ export default function HowItWorks() {
 
         {/* Step 3 */}
         <div className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-shadow relative">
-          <div className="absolute -top-4 left-8 w-10 h-10 bg-coral-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+          <div className="absolute -top-4 left-8 w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
             3
           </div>
           <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6 mt-4">

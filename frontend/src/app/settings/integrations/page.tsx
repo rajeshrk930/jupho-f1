@@ -192,7 +192,7 @@ function IntegrationsContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-coral-500 animate-spin" />
+        <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
       </div>
     );
   }
@@ -490,7 +490,7 @@ export default function IntegrationsPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-coral-500 animate-spin" />
+        <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
       </div>
     }>
       <IntegrationsContent />

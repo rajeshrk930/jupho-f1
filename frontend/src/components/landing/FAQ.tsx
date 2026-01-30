@@ -76,7 +76,7 @@ export default function FAQ() {
         <p className="text-charcoal-600 mb-4">Still have questions?</p>
         <a
           href="https://app.jupho.io/help"
-          className="inline-flex items-center text-coral-600 hover:text-coral-700 font-semibold"
+          className="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold"
         >
           Visit our Help Center →
         </a>

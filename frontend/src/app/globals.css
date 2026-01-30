@@ -301,9 +301,9 @@ h1, h2, h3, h4, h5, h6 {
     @apply card hover:shadow-md hover:-translate-y-0.5;
   }
   
-  /* Card with coral border for active/important state */
+  /* Card with purple border for active/important state */
   .card-signal {
-    @apply card border-coral-500;
+    @apply card border-purple-500;
   }
 
   .skeleton {
@@ -316,7 +316,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .nav-link-active {
-    @apply bg-coral-50 text-coral-600 border-l-2 border-coral-600 font-semibold;
+    @apply bg-purple-50 text-purple-600 border-l-2 border-purple-600 font-semibold;
   }
 
   /* Ghost button */
@@ -326,7 +326,7 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Profile trigger */
   .profile-trigger {
-    @apply inline-flex items-center gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm hover:border-coral-500 transition-colors;
+    @apply inline-flex items-center gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm hover:border-purple-500 transition-colors;
   }
 
   /* Dropdown */
@@ -371,7 +371,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .badge-signal {
-    @apply badge bg-coral-50 text-coral-600 border border-coral-200;
+    @apply badge bg-purple-50 text-purple-600 border border-purple-200;
   }
   
   .badge-danger {

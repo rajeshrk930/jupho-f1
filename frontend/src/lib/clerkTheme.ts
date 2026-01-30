@@ -43,8 +43,8 @@ export const clerkTheme: Appearance = {
     headerSubtitle: 'text-sm text-gray-600 mt-2',
     
     // Social buttons (Google OAuth)
-    socialButtonsBlockButton: 
-      'border-2 border-gray-200 hover:border-coral-400 hover:bg-coral-50 transition-all duration-200 rounded-xl py-3 px-4 font-medium text-gray-700',
+    socialButtonsBlockButton:
+      'border-2 border-gray-200 hover:border-purple-400 hover:bg-purple-50 transition-all duration-200 rounded-xl py-3 px-4 font-medium text-gray-700',
     socialButtonsBlockButtonText: 'font-medium text-gray-700',
     
     // Divider
@@ -54,26 +54,24 @@ export const clerkTheme: Appearance = {
     // Form fields
     formFieldLabel: 'text-sm font-medium text-gray-700 mb-1.5',
     formFieldInput: 
-      'border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-100 transition-all',
-    formFieldInputShowPasswordButton: 'text-gray-500 hover:text-coral-500',
-    
+      'border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all',
+    formFieldInputShowPasswordButton: 'text-gray-500 hover:text-purple-500',
     // Primary button
     formButtonPrimary: 
-      'bg-coral-500 hover:bg-coral-600 text-white font-semibold rounded-xl py-3 px-6 transition-all duration-200 shadow-md hover:shadow-lg',
-    
+      'bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-xl py-3 px-6 transition-all duration-200 shadow-md hover:shadow-lg',
     // Identity preview (user info)
-    identityPreviewEditButton: 'text-coral-500 hover:text-coral-600',
+    identityPreviewEditButton: 'text-purple-500 hover:text-purple-600',
     
     // Form error messages
-    formFieldErrorText: 'text-coral-600 text-sm',
+    formFieldErrorText: 'text-purple-600 text-sm',
     
     // Alternative methods
     alternativeMethodsBlockButton: 
-      'border border-gray-300 hover:border-coral-400 hover:bg-coral-50 rounded-xl transition-all',
+      'border border-gray-300 hover:border-purple-400 hover:bg-purple-50 rounded-xl transition-all',
     
     // OTP/Code input
     otpCodeFieldInput: 
-      'border-2 border-gray-300 rounded-lg focus:border-coral-500 focus:ring-2 focus:ring-coral-100',
+      'border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-100',
     
     // Profile/User button
     userButtonTrigger: 'focus:shadow-coral-200',
@@ -86,7 +84,7 @@ export const clerkTheme: Appearance = {
     footer: 'text-center mt-6',
     footerAction: 'mt-4',
     footerActionText: 'text-gray-600 text-sm',
-    footerActionLink: 'text-coral-500 hover:text-coral-600 font-semibold transition-colors ml-1',
+    footerActionLink: 'text-purple-500 hover:text-purple-600 font-semibold transition-colors ml-1',
     
     // Hide "Secured by Clerk" branding
     footerPages: 'hidden',

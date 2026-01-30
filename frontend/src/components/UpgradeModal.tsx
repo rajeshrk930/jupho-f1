@@ -150,21 +150,21 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
             onClick={() => setSelectedPlan('GROWTH')}
             className={`border-2 rounded-xl p-6 cursor-pointer transition-all relative ${
               selectedPlan === 'GROWTH' 
-                ? 'border-coral-500 bg-coral-50' 
-                : 'border-gray-200 hover:border-coral-300'
+                ? 'border-purple-500 bg-purple-50' 
+                : 'border-gray-200 hover:border-purple-300'
             }`}
           >
-            <div className="absolute -top-3 right-6 bg-coral-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+            <div className="absolute -top-3 right-6 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">
               RECOMMENDED
             </div>
             
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <h3 className="text-xl font-bold text-charcoal-900">GROWTH</h3>
-                <Sparkles className="w-5 h-5 text-coral-500" />
+                <Sparkles className="w-5 h-5 text-purple-500" />
               </div>
               {selectedPlan === 'GROWTH' && (
-                <div className="w-6 h-6 bg-coral-500 rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
                   <Check className="w-4 h-4 text-white" />
                 </div>
               )}
@@ -175,32 +175,32 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
                 <span className="text-4xl font-bold text-charcoal-900">₹1,999</span>
                 <span className="text-charcoal-600 ml-2">/month</span>
               </div>
-              <p className="text-sm text-coral-600 font-medium mt-1">Best value for scaling</p>
+              <p className="text-sm text-purple-600 font-medium mt-1">Best value for scaling</p>
             </div>
 
             <ul className="space-y-3">
               <li className="flex items-start">
-                <Check className="w-5 h-5 text-coral-500 mr-3 flex-shrink-0 mt-0.5" />
+                <Check className="w-5 h-5 text-purple-500 mr-3 flex-shrink-0 mt-0.5" />
                 <span className="text-charcoal-700"><strong>25 campaigns/month</strong></span>
               </li>
               <li className="flex items-start">
-                <Check className="w-5 h-5 text-coral-500 mr-3 flex-shrink-0 mt-0.5" />
+                <Check className="w-5 h-5 text-purple-500 mr-3 flex-shrink-0 mt-0.5" />
                 <span className="text-charcoal-700"><strong>AI Agent (smart creation)</strong></span>
               </li>
               <li className="flex items-start">
-                <Check className="w-5 h-5 text-coral-500 mr-3 flex-shrink-0 mt-0.5" />
+                <Check className="w-5 h-5 text-purple-500 mr-3 flex-shrink-0 mt-0.5" />
                 <span className="text-charcoal-700">AI-generated copy + strategy</span>
               </li>
               <li className="flex items-start">
-                <Check className="w-5 h-5 text-coral-500 mr-3 flex-shrink-0 mt-0.5" />
+                <Check className="w-5 h-5 text-purple-500 mr-3 flex-shrink-0 mt-0.5" />
                 <span className="text-charcoal-700">Everything in BASIC</span>
               </li>
               <li className="flex items-start">
-                <Check className="w-5 h-5 text-coral-500 mr-3 flex-shrink-0 mt-0.5" />
+                <Check className="w-5 h-5 text-purple-500 mr-3 flex-shrink-0 mt-0.5" />
                 <span className="text-charcoal-700">Priority support</span>
               </li>
               <li className="flex items-start">
-                <Check className="w-5 h-5 text-coral-500 mr-3 flex-shrink-0 mt-0.5" />
+                <Check className="w-5 h-5 text-purple-500 mr-3 flex-shrink-0 mt-0.5" />
                 <span className="text-charcoal-700">Future optimizer access</span>
               </li>
             </ul>
@@ -218,7 +218,7 @@ export default function UpgradeModal({ isOpen, onClose, onUpgradeComplete }: Upg
           disabled={loading}
           className={`w-full font-semibold py-4 px-6 rounded-lg shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
             selectedPlan === 'GROWTH'
-              ? 'bg-coral-500 hover:bg-coral-600 text-white'
+              ? 'bg-purple-500 hover:bg-purple-600 text-white'
               : 'bg-blue-500 hover:bg-blue-600 text-white'
           }`}
         >

@@ -91,7 +91,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl border-2 border-coral-100 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl border-2 border-purple-100 max-w-lg w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
           <h2 className="text-xl font-bold text-charcoal-900">Meta Connection</h2>
@@ -108,7 +108,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
-                <Loader2 className="w-8 h-8 animate-spin text-coral-500 mx-auto mb-3" />
+                <Loader2 className="w-8 h-8 animate-spin text-purple-500 mx-auto mb-3" />
                 <p className="text-charcoal-600">Loading connection details...</p>
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
               <p className="text-charcoal-600 mb-6">Connect your Meta account to start creating Facebook ads</p>
               <button
                 onClick={handleChangeConnection}
-                className="px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+                className="px-6 py-3 bg-purple-500 hover:bg-purple-600 active:bg-purple-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
               >
                 Connect Meta Account
               </button>
@@ -153,7 +153,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
               {/* Ad Account Info */}
               <div>
                 <h4 className="font-semibold text-charcoal-900 mb-3 flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-coral-500" />
+                  <Building2 className="w-4 h-4 text-purple-500" />
                   Ad Account
                 </h4>
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
@@ -170,7 +170,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
               {pages.length > 0 && (
                 <div>
                   <h4 className="font-semibold text-charcoal-900 mb-3 flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-coral-500" />
+                    <Globe className="w-4 h-4 text-purple-500" />
                     Connected Pages ({pages.length})
                   </h4>
                   <div className="space-y-2">
@@ -206,7 +206,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={handleChangeConnection}
-                  className="flex-1 px-4 py-3 bg-white border-2 border-coral-500 text-coral-600 font-semibold rounded-xl hover:bg-coral-50 transition-all"
+                  className="flex-1 px-4 py-3 bg-white border-2 border-purple-500 text-purple-600 font-semibold rounded-xl hover:bg-purple-50 transition-all"
                 >
                   Change Connection
                 </button>

@@ -16,9 +16,9 @@ export default function LoadingSpinner({ size = 'md', message, className = '' }:
   return (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <div className="relative">
-        <Loader2 className={`${sizeClasses[size]} animate-spin text-coral-500`} />
+        <Loader2 className={`${sizeClasses[size]} animate-spin text-purple-500`} />
         <div className={`${sizeClasses[size]} absolute inset-0 animate-ping opacity-20`}>
-          <div className="w-full h-full rounded-full bg-coral-500"></div>
+          <div className="w-full h-full rounded-full bg-purple-500"></div>
         </div>
       </div>
       {message && (

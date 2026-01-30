@@ -23,7 +23,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             <div>
               <Link href="/" className="inline-block mb-8">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-coral-500 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   <span className="text-2xl font-bold text-gray-900 tracking-tight">Jupho</span>
@@ -85,13 +85,13 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
               {/* Trust Badges */}
               <div className="flex flex-wrap gap-2 mb-4">
                 <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm">
-                  <span className="text-coral-500">⭐</span> Faster than agencies
+                  <span className="text-purple-500">⭐</span> Faster than agencies
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm">
-                  <span className="text-coral-500">⭐</span> Lower cost than freelancers
+                  <span className="text-purple-500">⭐</span> Lower cost than freelancers
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm">
-                  <span className="text-coral-500">⭐</span> Built for performance
+                  <span className="text-purple-500">⭐</span> Built for performance
                 </div>
               </div>
               

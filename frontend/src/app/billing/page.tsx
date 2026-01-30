@@ -76,7 +76,7 @@ export default function BillingPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
       </div>
     );
   }
@@ -127,26 +127,26 @@ export default function BillingPage() {
         <div className="grid gap-6 md:grid-cols-2">
           {/* Plan Status */}
           <div className={`rounded-md p-6 border-2 ${
-            isGrowth ? 'bg-coral-50 border-coral-500' : 
+            isGrowth ? 'bg-purple-50 border-purple-500' : 
             isBasic ? 'bg-blue-50 border-blue-500' : 
             'bg-base-elevated border-border-default'
           }`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className={`w-12 h-12 rounded-md flex items-center justify-center ${
-                  isGrowth ? 'bg-coral-100' : 
+                  isGrowth ? 'bg-purple-100' : 
                   isBasic ? 'bg-blue-100' : 
                   'bg-base-surface'
                 }`}>
                   <Zap className={`w-6 h-6 ${
-                    isGrowth ? 'text-coral-600' : 
+                    isGrowth ? 'text-purple-600' : 
                     isBasic ? 'text-blue-600' : 
                     'text-text-secondary'
                   }`} />
                 </div>
                 <div>
                   <h2 className={`text-2xl font-bold tracking-tight ${
-                    isGrowth ? 'text-coral-600' : 
+                    isGrowth ? 'text-purple-600' : 
                     isBasic ? 'text-blue-600' : 
                     'text-text-primary'
                   }`}>
@@ -159,7 +159,7 @@ export default function BillingPage() {
               </div>
               {isPaid && (
                 <div className={`px-3 py-1 rounded-sm ${
-                  isGrowth ? 'bg-coral-100 text-coral-700' : 'bg-blue-100 text-blue-700'
+                  isGrowth ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
                 }`}>
                   <span className="text-sm font-medium">Active</span>
                 </div>
@@ -234,11 +234,11 @@ export default function BillingPage() {
             <div className="space-y-3">
               {isPaid ? (
                 <div className={`rounded-md p-4 border ${
-                  isGrowth ? 'bg-coral-50 border-coral-200' : 'bg-blue-50 border-blue-200'
+                  isGrowth ? 'bg-purple-50 border-purple-200' : 'bg-blue-50 border-blue-200'
                 }`}>
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className={`w-4 h-4 ${
-                      isGrowth ? 'text-coral-600' : 'text-blue-600'
+                      isGrowth ? 'text-purple-600' : 'text-blue-600'
                     }`} />
                     <span className="text-text-primary text-sm font-medium">Subscription Details</span>
                   </div>
@@ -269,7 +269,7 @@ export default function BillingPage() {
               {isBasic && (
                 <button
                   onClick={() => setShowUpgradeModal(true)}
-                  className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <Zap className="w-4 h-4" />
                   Upgrade to Growth (AI Agent)
@@ -299,7 +299,7 @@ export default function BillingPage() {
               <div className="w-full bg-base-surface rounded-sm h-3">
                 <div
                   className={`h-3 rounded-sm transition-all ${
-                    isGrowth ? 'bg-coral-500' : isBasic ? 'bg-blue-500' : 'bg-gray-500'
+                    isGrowth ? 'bg-purple-500' : isBasic ? 'bg-blue-500' : 'bg-gray-500'
                   }`}
                   style={{ 
                     width: `${Math.min(((usageStats?.used || 0) / planLimit) * 100, 100)}%` 
@@ -359,7 +359,7 @@ export default function BillingPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-text-secondary">Current Plan</span>
                   <span className={`font-bold ${
-                    isGrowth ? 'text-coral-600' : isBasic ? 'text-blue-600' : 'text-gray-600'
+                    isGrowth ? 'text-purple-600' : isBasic ? 'text-blue-600' : 'text-gray-600'
                   }`}>
                     {planName.toUpperCase()}
                   </span>
@@ -477,7 +477,7 @@ export default function BillingPage() {
 
         {/* Upgrade CTA for Free/Basic Users */}
         {!isGrowth && (
-          <div className="bg-coral-50 border-2 border-coral-200 rounded-lg p-8">
+          <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-8">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-charcoal-900 mb-2">
                 {isFree ? 'Ready to scale your Meta ads?' : 'Unlock AI-Powered Creation'}
@@ -521,12 +521,12 @@ export default function BillingPage() {
                 </div>
                 
                 {/* GROWTH Plan Card */}
-                <div className="bg-white border-2 border-coral-400 rounded-lg p-6 relative hover:border-coral-500 transition-all shadow-lg">
-                  <div className="absolute -top-3 right-4 bg-coral-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                <div className="bg-white border-2 border-purple-400 rounded-lg p-6 relative hover:border-purple-500 transition-all shadow-lg">
+                  <div className="absolute -top-3 right-4 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                     RECOMMENDED
                   </div>
                   <div className="text-center mb-4">
-                    <h3 className="text-xl font-bold text-coral-600 mb-1 flex items-center justify-center gap-2">
+                    <h3 className="text-xl font-bold text-purple-600 mb-1 flex items-center justify-center gap-2">
                       GROWTH
                       <Zap className="w-5 h-5" />
                     </h3>
@@ -535,56 +535,56 @@ export default function BillingPage() {
                   </div>
                   <ul className="space-y-2 mb-6">
                     <li className="flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-coral-500" />
+                      <Check className="w-4 h-4 text-purple-500" />
                       <span className="font-semibold">25 campaigns/month</span>
                     </li>
                     <li className="flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-coral-500" />
+                      <Check className="w-4 h-4 text-purple-500" />
                       <span className="font-semibold">AI Agent (smart creation)</span>
                     </li>
                     <li className="flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-coral-500" />
+                      <Check className="w-4 h-4 text-purple-500" />
                       <span>AI-generated copy</span>
                     </li>
                     <li className="flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-coral-500" />
+                      <Check className="w-4 h-4 text-purple-500" />
                       <span>Everything in BASIC</span>
                     </li>
                   </ul>
                   <button
                     onClick={() => setShowUpgradeModal(true)}
-                    className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 rounded-lg transition-colors"
+                    className="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition-colors"
                   >
                     Get Growth
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="max-w-md mx-auto bg-white border-2 border-coral-400 rounded-lg p-6 text-center">
-                <Zap className="w-12 h-12 text-coral-500 mx-auto mb-4" />
+              <div className="max-w-md mx-auto bg-white border-2 border-purple-400 rounded-lg p-6 text-center">
+                <Zap className="w-12 h-12 text-purple-500 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-charcoal-900 mb-2">Upgrade to Growth</h3>
-                <div className="text-3xl font-bold text-coral-600 mb-4">₹1,999/month</div>
+                <div className="text-3xl font-bold text-purple-600 mb-4">₹1,999/month</div>
                 <ul className="text-left space-y-2 mb-6">
                   <li className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 text-coral-500" />
+                    <Check className="w-4 h-4 text-purple-500" />
                     <span>25 campaigns (vs 10 in Basic)</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 text-coral-500" />
+                    <Check className="w-4 h-4 text-purple-500" />
                     <span className="font-semibold">AI Agent - Smart campaign creation</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 text-coral-500" />
+                    <Check className="w-4 h-4 text-purple-500" />
                     <span>AI-generated copy + strategy</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 text-coral-500" />
+                    <Check className="w-4 h-4 text-purple-500" />
                     <span>Priority support</span>
                   </li>
                 </ul>
                 <button
                   onClick={() => setShowUpgradeModal(true)}
-                  className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <Zap className="w-5 h-5" />
                   Upgrade to Growth

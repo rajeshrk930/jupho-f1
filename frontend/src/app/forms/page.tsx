@@ -183,8 +183,8 @@ export default function LeadFormsPage() {
 
           {/* Not Connected State */}
           <div className="bg-white rounded-2xl border-2 border-gray-200 p-12 text-center">
-            <div className="w-20 h-20 bg-coral-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <FileText className="w-10 h-10 text-coral-600" />
+            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <FileText className="w-10 h-10 text-purple-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Connect Facebook First</h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
@@ -330,8 +330,8 @@ export default function LeadFormsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 bg-coral-100 rounded-lg flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-coral-600" />
+                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-purple-600" />
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-gray-900">{form.name}</h3>
