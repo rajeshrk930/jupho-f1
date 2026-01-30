@@ -185,11 +185,11 @@ export default function TasksPage() {
         {/* Tasks List */}
         <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Campaign History</h2>
-            <p className="text-sm text-gray-500 mt-1">Manage all your campaigns in one place</p>
+            <h2 className="text-lg font-semibold text-gray-900">Live Campaigns</h2>
+            <p className="text-sm text-gray-500 mt-1">Track performance of your active campaigns</p>
           </div>
           
-          {tasks.length === 0 ? (
+          {tasks.filter(task => task.status === 'COMPLETED').length === 0 ? (
             <div className="p-12 text-center">
               <Sparkles className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600 mb-4">No campaigns yet</p>
@@ -202,7 +202,7 @@ export default function TasksPage() {
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {tasks.map((task) => {
+              {tasks.filter(task => task.status === 'COMPLETED').map((task) => {
                 let businessName = 'Unknown Business';
                 let objective = 'Lead Generation';
                 let campaignName = '';

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Sparkles, Eye, ExternalLink, Calendar, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Sparkles, Eye, ExternalLink, Calendar, TrendingUp, Edit3, AlertCircle, Clock, Trash2 } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 import CampaignStatusBadge from '@/components/CampaignStatusBadge';
 import { ListSkeleton } from '@/components/Skeleton';
@@ -25,8 +25,9 @@ interface Ad {
 
 export default function RecentAdsPage() {
   const router = useRouter();
-  const [ads, setAds] = useState<Ad[]>([]);
+  const [allAds, setAllAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'gallery' | 'failed' | 'drafts'>('gallery');
 
   useEffect(() => {
     loadAds();
@@ -35,15 +36,20 @@ export default function RecentAdsPage() {
   const loadAds = async () => {
     try {
       const response = await agentApi.getTasks(50);
-      // Show only completed ads (successfully created ads)
-      const completedAds = response.tasks?.filter((task: Ad) => task.status === 'COMPLETED') || [];
-      setAds(completedAds);
+      setAllAds(response.tasks || []);
     } catch (error) {
       console.error('Failed to load ads:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  // Filter ads based on active tab
+  const galleryAds = allAds.filter(ad => ad.status === 'COMPLETED');
+  const failedAds = allAds.filter(ad => ad.status === 'FAILED');
+  const draftAds = allAds.filter(ad => ['DRAFT', 'PENDING', 'GENERATING', 'CREATING'].includes(ad.status));
+
+  const currentAds = activeTab === 'gallery' ? galleryAds : activeTab === 'failed' ? failedAds : draftAds;
 
   if (loading) {
     return (
@@ -84,22 +90,62 @@ export default function RecentAdsPage() {
           </div>
         </div>
 
-        {/* Ads Gallery */}
+        {/* Tabs */}
+        <div className="flex items-center gap-2 bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
+          <button
+            onClick={() => setActiveTab('gallery')}
+            className={`flex-1 px-6 py-3 rounded-md font-medium transition-all ${
+              activeTab === 'gallery'
+                ? 'bg-purple-600 text-white shadow-sm'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Gallery ({galleryAds.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('failed')}
+            className={`flex-1 px-6 py-3 rounded-md font-medium transition-all ${
+              activeTab === 'failed'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Failed ({failedAds.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('drafts')}
+            className={`flex-1 px-6 py-3 rounded-md font-medium transition-all ${
+              activeTab === 'drafts'
+                ? 'bg-yellow-600 text-white shadow-sm'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Drafts ({draftAds.length})
+          </button>
+        </div>
+
+        {/* Ads Content */}
         <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
-          {ads.length === 0 ? (
+          {currentAds.length === 0 ? (
             <div className="p-12 text-center">
               <Sparkles className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4">No ads created yet</p>
-              <button
-                onClick={() => router.push('/agent')}
-                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                Create Your First Ad
-              </button>
+              <p className="text-gray-600 mb-4">
+                {activeTab === 'gallery' && 'No successful ads yet'}
+                {activeTab === 'failed' && 'No failed campaigns'}
+                {activeTab === 'drafts' && 'No draft campaigns'}
+              </p>
+              {activeTab === 'gallery' && (
+                <button
+                  onClick={() => router.push('/agent')}
+                  className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Create Your First Ad
+                </button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-              {ads.map((ad) => {
+              {currentAds.map((ad) => {
                 let businessName = 'Unknown Business';
                 let headline = '';
                 let primaryText = '';
@@ -198,28 +244,87 @@ export default function RecentAdsPage() {
                         </div>
                       )}
 
-                      {/* Actions */}
+                      {/* Actions based on tab */}
                       <div className="flex items-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/agent/tasks/${ad.id}`);
-                          }}
-                          className="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium transition-colors"
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </button>
-                        {ad.fbAdId && (
-                          <a
-                            href={`https://facebook.com/ads/manager/ad/${ad.fbAdId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center justify-center px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
+                        {/* Gallery Tab Actions */}
+                        {activeTab === 'gallery' && (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/agent/tasks/${ad.id}`);
+                              }}
+                              className="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium transition-colors"
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              View Details
+                            </button>
+                            {ad.fbAdId && (
+                              <a
+                                href={`https://facebook.com/ads/manager/ad/${ad.fbAdId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center justify-center px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
+                            )}
+                          </>
+                        )}
+
+                        {/* Failed Tab Actions */}
+                        {activeTab === 'failed' && (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                localStorage.setItem('edit_campaign_id', ad.id);
+                                localStorage.setItem('edit_campaign_data', ad.businessProfile || '');
+                                router.push('/agent');
+                              }}
+                              className="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium transition-colors"
+                            >
+                              <Edit3 className="w-4 h-4 mr-2" />
+                              Edit & Retry
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/agent/tasks/${ad.id}`);
+                              }}
+                              className="inline-flex items-center justify-center px-3 py-2 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors"
+                            >
+                              <AlertCircle className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+
+                        {/* Drafts Tab Actions */}
+                        {activeTab === 'drafts' && (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                localStorage.setItem('edit_campaign_id', ad.id);
+                                localStorage.setItem('edit_campaign_data', ad.businessProfile || '');
+                                router.push('/agent');
+                              }}
+                              className="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium transition-colors"
+                            >
+                              {['PENDING', 'GENERATING', 'CREATING'].includes(ad.status) ? (
+                                <>
+                                  <Clock className="w-4 h-4 mr-2" />
+                                  View Progress
+                                </>
+                              ) : (
+                                <>
+                                  <Edit3 className="w-4 h-4 mr-2" />
+                                  Continue
+                                </>
+                              )}
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
