@@ -38,10 +38,20 @@ export default function TasksPage() {
   useEffect(() => {
     loadData();
     
-    // Refetch when component mounts or window regains focus
+    // Refetch when window regains focus (with throttling to prevent rate limiting)
+    let lastFetchTime = Date.now();
+    const MIN_FETCH_INTERVAL = 30000; // 30 seconds minimum between fetches
+    
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        loadData();
+        const now = Date.now();
+        const timeSinceLastFetch = now - lastFetchTime;
+        
+        // Only fetch if at least 30 seconds have passed
+        if (timeSinceLastFetch >= MIN_FETCH_INTERVAL) {
+          loadData();
+          lastFetchTime = now;
+        }
       }
     };
     
