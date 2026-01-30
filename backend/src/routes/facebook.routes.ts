@@ -10,28 +10,11 @@ import axios from 'axios';
 const router = Router();
 
 /**
- * GET /api/facebook/debug-env
- * Debug endpoint to check if ENCRYPTION_KEY is loaded (REMOVE IN PRODUCTION)
- */
-router.get('/debug-env', async (req, res: Response) => {
-  res.json({
-    hasEncryptionKey: !!process.env.ENCRYPTION_KEY,
-    encryptionKeyLength: process.env.ENCRYPTION_KEY?.length || 0,
-    hasFacebookAppId: !!process.env.FACEBOOK_APP_ID,
-    hasFacebookAppSecret: !!process.env.FACEBOOK_APP_SECRET,
-    frontendUrl: process.env.FRONTEND_URL,
-    nodeEnv: process.env.NODE_ENV
-  });
-});
-
-/**
  * GET /api/facebook/auth-url
  * Generate Facebook OAuth URL for user to connect their account
  */
 router.get('/auth-url', ...clerkAuth, async (req: AuthRequest, res: Response) => {
   try {
-    console.log('🔵 [STEP 1] Generating Facebook OAuth URL for user:', req.user!.email);
-    
     // Generate CSRF token for OAuth security
     const csrfToken = crypto.randomBytes(32).toString('hex');
     
@@ -41,13 +24,11 @@ router.get('/auth-url', ...clerkAuth, async (req: AuthRequest, res: Response) =>
     });
     
     if (existingAccount) {
-      console.log('🔵 [STEP 1] Updating existing account with new CSRF token');
       await prisma.facebookAccount.update({
         where: { userId: req.user!.id },
         data: { csrfToken }
       });
     } else {
-      console.log('🔵 [STEP 1] Creating new FacebookAccount with CSRF token');
       // Create placeholder record with CSRF token
       await prisma.facebookAccount.create({
         data: {

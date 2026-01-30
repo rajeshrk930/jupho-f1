@@ -130,21 +130,27 @@ const agentLimiter = rateLimit({
 // Apply general rate limiting to all API routes
 app.use('/api', generalLimiter);
 
-// Middleware - Allow both production and development origins
-app.use(cors({
-  origin: [
-    // Production domains - ALWAYS allowed
-    'https://app.jupho.io',
-    'https://jupho.io',
-    'https://www.jupho.io',
-    'https://jupho-f1.vercel.app',
-    'https://jupho-f1-v2.vercel.app',
-    // Development - localhost
+// Middleware - Environment-based CORS configuration
+const allowedOrigins = [
+  'https://app.jupho.io',
+  'https://jupho.io',
+  'https://www.jupho.io',
+  'https://jupho-f1.vercel.app',
+  'https://jupho-f1-v2.vercel.app',
+];
+
+// Add localhost origins only in development
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push(
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3002',
     'http://localhost:3003'
-  ],
+  );
+}
+
+app.use(cors({
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

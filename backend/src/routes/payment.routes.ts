@@ -232,7 +232,10 @@ router.get('/history', ...clerkAuth, async (req: AuthRequest, res) => {
  * POST /api/payments/webhook
  * Handle Razorpay webhooks for payment events
  * This ensures payment is recorded even if browser closes before callback
- * SECURITY: Validates webhook signature before processing
+ * SECURITY: 
+ * - Validates webhook signature before processing
+ * - Implements idempotency to prevent replay attacks
+ * - Validates timestamp to reject old webhooks (prevents replay)
  */
 router.post('/webhook', async (req: Request, res: Response) => {
   try {
@@ -261,7 +264,31 @@ router.post('/webhook', async (req: Request, res: Response) => {
     }
 
     const { event, payload } = req.body;
-    console.log('[Payment Webhook] Event received:', event);
+    const webhookId = payload.payment?.entity?.id || `${event}-${Date.now()}`;
+    const webhookTimestamp = payload.payment?.entity?.created_at;
+
+    // SECURITY: Validate webhook timestamp (reject if older than 5 minutes)
+    if (webhookTimestamp) {
+      const webhookAge = Date.now() / 1000 - webhookTimestamp;
+      if (webhookAge > 300) { // 5 minutes
+        console.error('[Payment Webhook] Webhook too old, possible replay attack:', webhookAge);
+        return res.status(400).json({ error: 'Webhook expired' });
+      }
+    }
+
+    // SECURITY: Check idempotency - prevent processing same webhook twice
+    // Use razorpayPaymentId as idempotency key (unique per payment)
+    if (event === 'payment.captured') {
+      const paymentId = payload.payment.entity.id;
+      const existingPayment = await prisma.payment.findFirst({
+        where: { razorpayPaymentId: paymentId }
+      });
+
+      if (existingPayment && existingPayment.status === 'COMPLETED') {
+        console.log('[Payment Webhook] Idempotency: Payment already processed:', paymentId);
+        return res.json({ success: true, message: 'Already processed (idempotent)' });
+      }
+    }
 
     // Handle payment.captured event (successful payment)
     if (event === 'payment.captured') {
@@ -270,25 +297,16 @@ router.post('/webhook', async (req: Request, res: Response) => {
       const paymentId = paymentEntity.id;
       const amount = paymentEntity.amount;
 
-      console.log('[Payment Webhook] Payment captured:', { orderId, paymentId, amount });
-
       // Find payment record
       const payment = await prisma.payment.findUnique({
         where: { razorpayOrderId: orderId }
       });
 
       if (!payment) {
-        console.error('[Payment Webhook] Payment record not found for order:', orderId);
         return res.status(404).json({ error: 'Payment not found' });
       }
 
-      // Skip if already processed
-      if (payment.status === 'COMPLETED') {
-        console.log('[Payment Webhook] Payment already processed:', orderId);
-        return res.json({ success: true, message: 'Already processed' });
-      }
-
-      // Update payment status
+      // Update payment status (atomic operation)
       await prisma.payment.update({
         where: { razorpayOrderId: orderId },
         data: {

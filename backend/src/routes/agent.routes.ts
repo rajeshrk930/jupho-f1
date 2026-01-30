@@ -7,6 +7,7 @@ import { AgentService } from '../services/agent.service';
 import { IntelligentAnalysisService } from '../services/intelligentAnalysis.service';
 import { upload } from '../middleware/upload';
 import { prisma } from '../lib/prisma';
+import { validateAgentScan, validateAgentObjective, validateAgentAudience, validateAgentBudget } from '../middleware/validation';
 
 const router = Router();
 
@@ -16,8 +17,14 @@ const router = Router();
  * LEGACY: Still supports { url } OR { manualInput } for backward compatibility
  * Output: { taskId: "...", businessData: { ... } }
  */
-router.post('/scan', ...clerkAuth, checkCampaignUsageLimit('AI_AGENT'), async (req: AuthRequest, res: Response) => {
+router.post('/scan', ...clerkAuth, validateAgentScan, checkCampaignUsageLimit('AI_AGENT'), async (req: AuthRequest, res: Response) => {
   try {
+    // Check validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+
     const { description, location, website, url, manualInput } = req.body;
     const userId = req.user!.id;
 
