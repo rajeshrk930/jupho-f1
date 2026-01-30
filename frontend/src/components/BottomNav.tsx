@@ -29,7 +29,7 @@ export function BottomNav() {
 
   const tabs = [
     { href: '/agent', label: 'Create Ad', icon: Sparkles, onClick: handleCreateAd },
-    { href: '/agent/tasks', label: 'Recent Ads', icon: History },
+    { href: '/recent-ads', label: 'Recent Ads', icon: History },
     { href: '/dashboard', label: 'History', icon: LayoutDashboard },
     { href: '/profile', label: 'Profile', icon: User },
   ];

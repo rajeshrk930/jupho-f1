@@ -46,9 +46,9 @@ export default function Header() {
               Create Ad
             </Link>
             <Link
-              href="/agent/tasks"
+              href="/recent-ads"
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
-                isActive('/agent/tasks')
+                isActive('/recent-ads')
                   ? 'bg-purple-500 text-white shadow-sm'
                   : 'text-gray-700 hover:bg-purple-50'
               }`}

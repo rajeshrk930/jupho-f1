@@ -148,7 +148,7 @@ export function Sidebar() {
     { href: '/agent', label: 'AI Agent', icon: Sparkles, onClick: handleCreateAd },
     { href: '/templates', label: 'Templates', icon: BookMarked },
     { href: '/agent/tasks', label: 'Campaigns', icon: Target },
-    { href: '/agent/tasks', label: 'Recent Ads', icon: History },
+    { href: '/recent-ads', label: 'Recent Ads', icon: History },
   ];
 
   // Add admin link for admin users
