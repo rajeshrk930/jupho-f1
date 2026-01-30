@@ -37,6 +37,19 @@ export default function TasksPage() {
 
   useEffect(() => {
     loadData();
+    
+    // Refetch when component mounts or window regains focus
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadData();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const loadData = async () => {
