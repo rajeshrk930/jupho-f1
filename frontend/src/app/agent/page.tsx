@@ -8,8 +8,6 @@ import BusinessScanStep from '@/components/agent/BusinessScanStep';
 import AIConsultantStep from '@/components/agent/AIConsultantStep';
 import LaunchStep from '@/components/agent/LaunchStep';
 import { Lock, Sparkles, Zap, Crown } from 'lucide-react';
-import { Lock, Crown, Sparkles, Zap } from 'lucide-react';
-import Link from 'next/link';
 
 // Force dynamic rendering for useSearchParams
 export const dynamic = 'force-dynamic';
