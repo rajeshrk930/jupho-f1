@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/app/providers';
 import { Toaster } from 'react-hot-toast';
@@ -10,6 +10,11 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { ClerkTokenProvider } from '@/components/ClerkTokenProvider';
 
 const inter = Inter({ subsets: ['latin'] });
+const spaceGrotesk = Space_Grotesk({ 
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['400', '500', '600', '700']
+});
 
 export const metadata: Metadata = {
   title: 'Jupho - AI-Powered Meta Ads Creation',
@@ -29,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className={spaceGrotesk.variable}>
         <head>
           <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
         </head>

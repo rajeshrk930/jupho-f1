@@ -33,9 +33,18 @@ html {
     --border-subtle: #E9ECEF;
     --border-focus: #FF6B47;
     
+    /* Standard shadows */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    
+    /* Custom coral glow shadows - unique brand signature */
+    --shadow-coral: 0 8px 24px -4px rgba(255, 107, 71, 0.25);
+    --shadow-coral-lg: 0 20px 60px -15px rgba(255, 107, 71, 0.35);
+    --shadow-coral-hover: 0 30px 90px -20px rgba(255, 107, 71, 0.4);
+    
+    /* Mint accent shadow */
+    --shadow-mint: 0 8px 24px -4px rgba(20, 184, 156, 0.2);
   }
   
   html {
@@ -52,6 +61,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display), 'Inter', -apple-system, sans-serif;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.2;
@@ -61,6 +71,49 @@ h1, h2, h3, h4, h5, h6 {
 /* Metrics and numbers should feel like instrument readouts */
 
 /* Custom Animations */
+
+/* Branded loading dots animation */
+@keyframes loadingDots {
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Coral shimmer effect for skeletons */
+@keyframes coralShimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Bounce animation with spring physics */
+@keyframes bounceSpring {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* 3D tilt effect */
+@keyframes tiltFloat {
+  0%, 100% {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+  }
+  50% {
+    transform: perspective(1000px) rotateY(2deg) rotateX(-2deg);
+  }
+}
+
 @keyframes loading {
   0%, 100% {
     transform: translateX(-100%);
@@ -133,6 +186,24 @@ h1, h2, h3, h4, h5, h6 {
 .animate-scaleIn {
   animation: scaleIn 0.3s ease-out;
 }
+
+.animate-loadingDots {
+  animation: loadingDots 1.4s ease-in-out infinite;
+}
+
+.animate-coralShimmer {
+  animation: coralShimmer 2s ease-in-out infinite;
+  background: linear-gradient(90deg, #f3f4f6 0%, #fef0ed 50%, #f3f4f6 100%);
+  background-size: 1000px 100%;
+}
+
+.animate-bounceSpring {
+  animation: bounceSpring 2s ease-in-out infinite;
+}
+
+.animate-tiltFloat {
+  animation: tiltFloat 6s ease-in-out infinite;
+}
 .metric-value,
 [class*="stat-"] .text-2xl,
 [class*="stat-"] .text-3xl,
@@ -143,9 +214,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @layer components {
-  /* Primary action button - solid coral */
+  /* Primary action button - solid coral with glow */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5;
+    @apply inline-flex items-center justify-center gap-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300;
+    box-shadow: 0 8px 24px -4px rgba(255, 107, 71, 0.25);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 20px 60px -15px rgba(255, 107, 71, 0.35);
+    transform: translateY(-2px);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(0px) scale(0.98);
+    box-shadow: 0 8px 24px -4px rgba(255, 107, 71, 0.25);
   }
   
   .btn-primary:focus-visible {
@@ -153,12 +236,20 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .btn-primary:disabled {
-    @apply bg-gray-300 text-charcoal-400 cursor-not-allowed shadow-none hover:translate-y-0 from-gray-300 to-gray-300;
+    @apply bg-gray-300 text-charcoal-400 cursor-not-allowed;
+    box-shadow: none;
+    transform: none;
   }
   
-  /* Secondary button - outline style */
+  /* Secondary button - outline style with coral glow on hover */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 bg-white hover:bg-coral-50 text-charcoal-900 hover:text-coral-700 font-semibold px-6 py-3 rounded-lg border-2 border-charcoal-300 hover:border-coral-500 transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2 bg-white hover:bg-coral-50 text-charcoal-900 hover:text-coral-700 font-semibold px-6 py-3 rounded-lg border-2 border-charcoal-300 hover:border-coral-500 transition-all duration-300;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .btn-secondary:hover {
+    box-shadow: 0 8px 24px -4px rgba(255, 107, 71, 0.15);
+    transform: translateY(-1px);
   }
   
   .btn-secondary:focus-visible {

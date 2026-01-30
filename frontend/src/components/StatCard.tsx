@@ -11,23 +11,42 @@ interface StatCardProps {
 
 export function StatCard({ title, value, subtext, icon: Icon, trend }: StatCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 transition-all hover:shadow-sm">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-sm font-medium text-gray-500 uppercase">
+    <div 
+      className="bg-white border border-gray-200 rounded-lg p-6 transition-all duration-300 hover:-translate-y-1 group"
+      style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '0 20px 60px -15px rgba(255, 107, 71, 0.3)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+      }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
           {title}
         </p>
         {Icon && (
-          <Icon 
-            size={20} 
-            className="text-gray-400" 
-          />
+          <div className="p-2 bg-coral-50 rounded-lg group-hover:bg-coral-100 transition-colors">
+            <Icon 
+              size={18} 
+              className="text-coral-500" 
+            />
+          </div>
         )}
       </div>
-      <p className="text-3xl font-bold text-gray-900 mb-2">{value}</p>
+      <p 
+        className="text-4xl font-bold text-gray-900 mb-2 tracking-tight"
+        style={{ 
+          fontVariantNumeric: 'tabular-nums',
+          fontFeatureSettings: '"tnum"'
+        }}
+      >
+        {value}
+      </p>
       {trend && (
-        <p className="text-xs text-gray-500">{trend}</p>
+        <p className="text-sm text-coral-600 font-medium">{trend}</p>
       )}
-      {subtext && <p className="text-xs text-gray-500">{subtext}</p>}
+      {subtext && <p className="text-sm text-gray-600">{subtext}</p>}
     </div>
   );
 }

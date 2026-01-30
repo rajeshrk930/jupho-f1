@@ -137,12 +137,36 @@ function DashboardPageInner() {
   return (
     <div className="min-h-screen bg-gray-50">
       <MobileTopBar title="Dashboard" />
-      <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-6 pb-20 lg:pb-6">
-        {/* Header */}
-        <div className="hidden lg:block">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Ads Overview</h1>
-          <p className="text-gray-600">Create high-performing Meta ads with AI</p>
+      
+      {/* Bold Gradient Header Section */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-coral-500 via-coral-600 to-pink-600">
+        <div className="absolute inset-0 bg-grid-white/10" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-mint-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10" />
+        
+        <div className="relative px-4 lg:px-6 py-8 lg:py-12">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2 drop-shadow-lg">
+                  AI Ads Overview
+                </h1>
+                <p className="text-white/90 text-lg drop-shadow-md">
+                  Create high-performing Meta ads with AI
+                </p>
+              </div>
+              <Link
+                href="/agent"
+                className="px-6 py-3 bg-white text-coral-600 font-bold rounded-lg hover:bg-gray-50 transition-all shadow-lg hover:-translate-y-1 inline-flex items-center gap-2"
+              >
+                <Sparkles className="w-5 h-5" />
+                Start AI Campaign
+              </Link>
+            </div>
+          </div>
         </div>
+      </div>
+      
+      <div className="px-4 lg:px-6 py-6 lg:py-8 space-y-6 pb-20 lg:pb-6">
 
         {/* Key Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -167,8 +191,9 @@ function DashboardPageInner() {
         </div>
 
         {/* AI Agent Ready Banner */}
-        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-8 shadow-lg">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div className="relative overflow-hidden bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-8 shadow-lg">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20" />
+          <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
                 <span>🤖</span> AI Agent Ready
@@ -177,7 +202,8 @@ function DashboardPageInner() {
             </div>
             <Link
               href="/agent"
-              className="px-6 py-3 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-50 transition-all whitespace-nowrap shadow-md"
+              className="px-6 py-3 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-50 transition-all whitespace-nowrap hover:-translate-y-1"
+              style={{ boxShadow: '0 8px 24px -4px rgba(0, 0, 0, 0.3)' }}
             >
               Start AI Campaign
             </Link>

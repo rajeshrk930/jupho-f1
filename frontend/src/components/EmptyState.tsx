@@ -18,34 +18,39 @@ export default function EmptyState({
   actionHref,
   onAction
 }: EmptyStateProps) {
-  const defaultIcon = <Sparkles className="w-16 h-16 text-coral-300" />;
+  const defaultIcon = (
+    <div className="relative">
+      <div className="absolute inset-0 bg-coral-400/20 rounded-full blur-2xl" />
+      <Sparkles className="relative w-16 h-16 text-coral-500 animate-bounceSpring" />
+    </div>
+  );
 
   return (
-    <div className="text-center py-12 px-6">
-      <div className="mb-4 flex justify-center">
+    <div className="text-center py-16 px-6">
+      <div className="mb-6 flex justify-center">
         {icon || defaultIcon}
       </div>
-      <h3 className="text-xl font-semibold text-charcoal-900 mb-2 tracking-tight">
+      <h3 className="text-2xl font-bold text-charcoal-900 mb-3 tracking-tight">
         {title}
       </h3>
-      <p className="text-charcoal-600 mb-6 max-w-md mx-auto">
+      <p className="text-base text-charcoal-600 mb-8 max-w-md mx-auto leading-relaxed">
         {description}
       </p>
       {(actionLabel && (actionHref || onAction)) && (
         actionHref ? (
           <Link 
             href={actionHref}
-            className="inline-flex items-center gap-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+            className="btn-primary"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-5 h-5" />
             {actionLabel}
           </Link>
         ) : (
           <button
             onClick={onAction}
-            className="inline-flex items-center gap-2 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+            className="btn-primary"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-5 h-5" />
             {actionLabel}
           </button>
         )
