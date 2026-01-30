@@ -19,6 +19,7 @@ import path from 'path';
 import * as Sentry from '@sentry/node';
 import { initializeSentry } from './config/sentry.config';
 import { SyncScheduler } from './services/syncScheduler.service';
+import { AuthRequest } from './middleware/auth';
 
 dotenv.config();
 
@@ -67,30 +68,61 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
-// Rate limiting - General API protection
+// Helper function to get user plan for rate limiting
+const getUserPlan = (req: any): string => {
+  // If authenticated, use user's plan from auth middleware
+  if (req.user?.plan) {
+    return req.user.plan;
+  }
+  return 'ANONYMOUS'; // Unauthenticated requests
+};
+
+// Rate limiting - Per-user API protection with subscription tiers
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
+  max: async (req) => {
+    const plan = getUserPlan(req);
+    // Subscription tier-based limits
+    if (plan === 'ENTERPRISE') return 50000; // Essentially unlimited
+    if (plan === 'PAID' || plan === 'GROWTH' || plan === 'PROFESSIONAL') return 5000;
+    if (plan === 'FREE' || plan === 'STARTER') return 500;
+    return 100; // Unauthenticated/anonymous users (IP-based fallback)
+  },
+  keyGenerator: (req) => {
+    // Use user ID for authenticated requests, IP for anonymous
+    return (req as AuthRequest).user?.id || req.ip || 'unknown';
+  },
+  message: 'You\'ve reached your API limit. Please upgrade your plan for higher limits.',
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Rate limiting - Strict for auth endpoints
+// Rate limiting - Strict for auth endpoints (IP-based to prevent brute force)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per windowMs
-  message: 'Too many login attempts, please try again later.',
+  max: 5, // 5 attempts per windowMs per IP (prevents brute force)
+  message: 'Too many login attempts from this network, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Don't count successful logins
+  keyGenerator: (req) => req.ip || 'unknown', // Always use IP for auth (security)
 });
 
-// Rate limiting - Stricter for AI/agent endpoints (prevent OpenAI API abuse)
+// Rate limiting - AI/agent endpoints with subscription awareness
 const agentLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 10, // 10 requests per minute per IP
-  message: 'Too many AI requests, please slow down.',
+  max: async (req) => {
+    const plan = getUserPlan(req);
+    // AI endpoints are cost-sensitive, so lower limits
+    if (plan === 'ENTERPRISE') return 100;
+    if (plan === 'PAID' || plan === 'GROWTH' || plan === 'PROFESSIONAL') return 30;
+    if (plan === 'FREE' || plan === 'STARTER') return 10;
+    return 5; // Unauthenticated
+  },
+  keyGenerator: (req) => {
+    return (req as AuthRequest).user?.id || req.ip || 'unknown';
+  },
+  message: 'You\'ve reached your AI request limit. Upgrade to PAID or ENTERPRISE for more capacity.',
   standardHeaders: true,
   legacyHeaders: false,
 });

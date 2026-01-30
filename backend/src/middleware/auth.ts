@@ -8,6 +8,7 @@ export interface AuthRequest extends Request {
     id: string;
     email: string;
     clerkId: string;
+    plan: string;
   };
 }
 
@@ -45,7 +46,7 @@ export const authenticate = async (
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, email: true, clerkId: true }
+      select: { id: true, email: true, clerkId: true, plan: true }
     });
 
     if (!user) {
@@ -58,7 +59,8 @@ export const authenticate = async (
     req.user = {
       id: user.id,
       email: user.email,
-      clerkId: user.clerkId
+      clerkId: user.clerkId,
+      plan: user.plan
     };
 
     // Track user in Sentry for error attribution
