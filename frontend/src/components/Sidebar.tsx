@@ -158,6 +158,8 @@ export function Sidebar() {
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard';
+    if (href === '/agent') return pathname === '/agent'; // Exact match for agent page only
+    if (href === '/agent/tasks') return pathname.startsWith('/agent/tasks');
     return pathname.startsWith(href);
   };
 
