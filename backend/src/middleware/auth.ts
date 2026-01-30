@@ -8,7 +8,7 @@ export interface AuthRequest extends Request {
     id: string;
     email: string;
     clerkId: string;
-    plan: string;
+    plan?: string; // Optional - populated by custom auth, not Clerk middleware
   };
 }
 
