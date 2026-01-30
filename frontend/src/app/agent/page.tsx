@@ -2,10 +2,12 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { useAuthStore } from '@/lib/store';
 import BusinessScanStep from '@/components/agent/BusinessScanStep';
 import AIConsultantStep from '@/components/agent/AIConsultantStep';
 import LaunchStep from '@/components/agent/LaunchStep';
+import { Lock, Sparkles, Zap, Crown } from 'lucide-react';
 import { Lock, Crown, Sparkles, Zap } from 'lucide-react';
 import Link from 'next/link';
 
@@ -84,8 +86,92 @@ function AgentPageInner() {
     }
   }, [isAuthenticated, router]);
 
-  // Show locked state if user doesn't have GROWTH plan
-  if (isAuthenticated && !hasAccess) {
+  // Auto-restore state from localStorage on mount (Projects page now handles draft choice)
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    try {
+      const savedState = localStorage.getItem(FLOW_STATE_KEY);
+      if (savedState) {
+        const parsed: SavedFlowState = JSON.parse(savedState);
+        
+        // Check if state is not expired (6 hours)
+        const hoursElapsed = (Date.now() - parsed.timestamp) / (1000 * 60 * 60);
+        if (hoursElapsed < STATE_EXPIRY_HOURS) {
+          // Restore state automatically (user came from Projects or Create Ad cleared it)
+          setCurrentStep(parsed.currentStep);
+          setTaskId(parsed.taskId);
+          setBusinessData(parsed.businessData);
+          setStrategy(parsed.strategy);
+        } else {
+          // Expired, clear it
+          localStorage.removeItem(FLOW_STATE_KEY);
+        }
+      }
+    } catch (error) {
+      console.error('❌ [Flow] Error restoring state:', error);
+      localStorage.removeItem(FLOW_STATE_KEY);
+    }
+  }, [isAuthenticated]);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    if (currentStep > 1) {
+      const stateToSave: SavedFlowState = {
+        currentStep,
+        taskId,
+        businessData,
+        strategy,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(FLOW_STATE_KEY, JSON.stringify(stateToSave));
+
+    }
+  }, [currentStep, taskId, businessData, strategy, isAuthenticated]);
+
+  const handleBusinessScanComplete = (data: BusinessData, id: string) => {
+    setBusinessData(data);
+    setTaskId(id);
+    setCurrentStep(2);
+  };
+
+  const handleStrategyComplete = (strategyData: CampaignStrategy) => {
+    setStrategy(strategyData);
+    setCurrentStep(3);
+  };
+
+  const handleLaunchComplete = () => {
+    // Clear saved state on successful completion
+    localStorage.removeItem(FLOW_STATE_KEY);
+    console.log('🎉 [Flow] Campaign launched! State cleared');
+    // Show success and redirect to tasks page
+    router.push('/agent/tasks');
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep((currentStep - 1) as Step);
+    } else {
+      // Clear state when going back to dashboard
+      localStorage.removeItem(FLOW_STATE_KEY);
+      console.log('🔙 [Flow] Returned to dashboard - State cleared');
+      router.push('/dashboard');
+    }
+  };
+
+  // Don't render until auth is checked
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
+
+  // Show locked state if user doesn't have GROWTH plan (AFTER all hooks)
+  if (!hasAccess) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 md:p-12 text-center border-2 border-purple-100">
@@ -170,90 +256,6 @@ function AgentPageInner() {
             Or continue with manual template-based ad creation available on your {plan} plan
           </p>
         </div>
-      </div>
-    );
-  }
-
-  // Auto-restore state from localStorage on mount (Projects page now handles draft choice)
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    
-    try {
-      const savedState = localStorage.getItem(FLOW_STATE_KEY);
-      if (savedState) {
-        const parsed: SavedFlowState = JSON.parse(savedState);
-        
-        // Check if state is not expired (6 hours)
-        const hoursElapsed = (Date.now() - parsed.timestamp) / (1000 * 60 * 60);
-        if (hoursElapsed < STATE_EXPIRY_HOURS) {
-          // Restore state automatically (user came from Projects or Create Ad cleared it)
-          setCurrentStep(parsed.currentStep);
-          setTaskId(parsed.taskId);
-          setBusinessData(parsed.businessData);
-          setStrategy(parsed.strategy);
-        } else {
-          // Expired, clear it
-          localStorage.removeItem(FLOW_STATE_KEY);
-        }
-      }
-    } catch (error) {
-      console.error('❌ [Flow] Error restoring state:', error);
-      localStorage.removeItem(FLOW_STATE_KEY);
-    }
-  }, [isAuthenticated]);
-
-  // Save state to localStorage whenever it changes
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    
-    if (currentStep > 1) {
-      const stateToSave: SavedFlowState = {
-        currentStep,
-        taskId,
-        businessData,
-        strategy,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(FLOW_STATE_KEY, JSON.stringify(stateToSave));
-
-    }
-  }, [currentStep, taskId, businessData, strategy, isAuthenticated]);
-
-  const handleBusinessScanComplete = (data: BusinessData, id: string) => {
-    setBusinessData(data);
-    setTaskId(id);
-    setCurrentStep(2);
-  };
-
-  const handleStrategyComplete = (strategyData: CampaignStrategy) => {
-    setStrategy(strategyData);
-    setCurrentStep(3);
-  };
-
-  const handleLaunchComplete = () => {
-    // Clear saved state on successful completion
-    localStorage.removeItem(FLOW_STATE_KEY);
-    console.log('🎉 [Flow] Campaign launched! State cleared');
-    // Show success and redirect to tasks page
-    router.push('/agent/tasks');
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep((currentStep - 1) as Step);
-    } else {
-      // Clear state when going back to dashboard
-      localStorage.removeItem(FLOW_STATE_KEY);
-      console.log('🔙 [Flow] Returned to dashboard - State cleared');
-      router.push('/dashboard');
-    }
-  };
-
-  // Don't render until auth is checked
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
       </div>
     );
   }
