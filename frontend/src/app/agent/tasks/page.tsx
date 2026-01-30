@@ -171,10 +171,10 @@ export default function TasksPage() {
         {/* Tasks List */}
         <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Campaigns</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Successful Campaigns</h2>
           </div>
           
-          {tasks.length === 0 ? (
+          {tasks.filter(task => task.status !== 'FAILED').length === 0 ? (
             <div className="p-12 text-center">
               <Sparkles className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600 mb-4">No campaigns yet</p>
@@ -187,7 +187,7 @@ export default function TasksPage() {
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {tasks.map((task) => {
+              {tasks.filter(task => task.status !== 'FAILED').map((task) => {
                 let businessName = 'Unknown Business';
                 try {
                   if (task.businessProfile) {

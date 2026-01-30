@@ -180,7 +180,7 @@ function DashboardPageInner() {
             title="Leads Generated"
             value={formsLoading ? '...' : totalLeads}
             icon={Users}
-            trend={totalLeads > 0 ? `From ${formsData?.forms?.length || 0} forms` : 'Connect Meta to track leads'}
+            trend={facebookConnected ? (totalLeads > 0 ? `From ${formsData?.forms?.length || 0} forms` : 'No leads yet') : 'Connect Meta to track leads'}
           />
           <StatCard
             title="Active Tasks"
@@ -326,10 +326,10 @@ function DashboardPageInner() {
           </div>
         )}
 
-        {/* Recent Tasks */}
+        {/* Recent Campaigns */}
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-charcoal-900">Recent Tasks</h2>
+            <h2 className="text-lg font-semibold text-charcoal-900">Recent Campaigns</h2>
             <Link href="/agent" className="text-sm text-purple-500 hover:text-purple-600 hover:underline">View all →</Link>
           </div>
 
@@ -348,7 +348,7 @@ function DashboardPageInner() {
             </div>
           ) : (
             <div className="space-y-3">
-              {tasks.slice(0, 5).map((task: any) => (
+              {tasks.filter((task: any) => task.status === 'COMPLETED').slice(0, 5).map((task: any) => (
                 <div key={task.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${

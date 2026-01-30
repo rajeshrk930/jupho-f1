@@ -27,6 +27,7 @@ import {
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import { useClerk } from '@clerk/nextjs';
+import DisconnectConfirmationModal from './DisconnectConfirmationModal';
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -37,6 +38,7 @@ export function Sidebar() {
   const [adAccountName, setAdAccountName] = useState<string>('');
   const [connecting, setConnecting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
 
   // Initialize collapse state from localStorage
   useEffect(() => {
@@ -118,6 +120,7 @@ export function Sidebar() {
       await api.delete('/facebook/disconnect');
       setFacebookConnected(false);
       setAdAccountName('');
+      setShowDisconnectModal(false);
     } catch (error) {
       console.error('Failed to disconnect Meta:', error);
     } finally {
@@ -145,7 +148,7 @@ export function Sidebar() {
     { href: '/agent', label: 'AI Agent', icon: Sparkles, onClick: handleCreateAd },
     { href: '/templates', label: 'Templates', icon: BookMarked },
     { href: '/agent/tasks', label: 'Campaigns', icon: Target },
-    { href: '/projects', label: 'Projects', icon: Folder },
+    { href: '/agent/tasks', label: 'Recent Ads', icon: History },
   ];
 
   // Add admin link for admin users
@@ -290,11 +293,11 @@ export function Sidebar() {
             </button>
           ) : (
             <button
-              onClick={handleDisconnectMeta}
+              onClick={() => setShowDisconnectModal(true)}
               disabled={connecting}
               className="w-full px-3 py-1.5 text-xs font-semibold rounded-lg border border-red-200 text-red-600 hover:bg-red-50 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
             >
-              {connecting ? 'Disconnecting…' : 'Disconnect'}
+              Disconnect
             </button>
           )}
         </div>
@@ -363,6 +366,15 @@ export function Sidebar() {
       <aside className={`hidden lg:flex fixed top-0 left-0 h-full ${isCollapsed ? 'w-20' : 'w-64'} bg-base-surface border-r border-border-default flex-col z-40 transition-all duration-300`}>
         <SidebarContent />
       </aside>
+
+      {/* Disconnect Confirmation Modal */}
+      <DisconnectConfirmationModal
+        isOpen={showDisconnectModal}
+        onClose={() => setShowDisconnectModal(false)}
+        onConfirm={handleDisconnectMeta}
+        accountName={adAccountName}
+        isLoading={connecting}
+      />
     </>
   );
 }

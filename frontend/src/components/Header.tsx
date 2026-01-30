@@ -33,7 +33,8 @@ export default function Header() {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-2">
-            <button
+            <Link
+              href="/agent"
               onClick={handleCreateAd}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
                 isActive('/agent')
@@ -43,17 +44,17 @@ export default function Header() {
             >
               <Plus className="w-5 h-5" />
               Create Ad
-            </button>
+            </Link>
             <Link
-              href="/projects"
+              href="/agent/tasks"
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
-                isActive('/projects')
+                isActive('/agent/tasks')
                   ? 'bg-purple-500 text-white shadow-sm'
                   : 'text-gray-700 hover:bg-purple-50'
               }`}
             >
-              <Folder className="w-5 h-5" />
-              Projects
+              <History className="w-5 h-5" />
+              Recent Ads
             </Link>
             <Link
               href="/dashboard"

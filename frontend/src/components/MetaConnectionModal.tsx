@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { X, Facebook, Building2, CheckCircle2, Globe, LogOut, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import DisconnectConfirmationModal from './DisconnectConfirmationModal';
 
 interface MetaConnectionData {
   connected: boolean;
@@ -29,6 +30,7 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
   const [connectionData, setConnectionData] = useState<MetaConnectionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -50,15 +52,12 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
   };
 
   const handleDisconnect = async () => {
-    if (!confirm('Are you sure you want to disconnect your Meta account? You won\'t be able to create ads until you reconnect.')) {
-      return;
-    }
-
     try {
       setDisconnecting(true);
       await api.delete('/facebook/disconnect');
 
       toast.success('Meta account disconnected successfully');
+      setShowDisconnectModal(false);
       onClose();
       router.refresh();
     } catch (error: any) {
@@ -211,27 +210,27 @@ export default function MetaConnectionModal({ isOpen, onClose }: MetaConnectionM
                   Change Connection
                 </button>
                 <button
-                  onClick={handleDisconnect}
+                  onClick={() => setShowDisconnectModal(true)}
                   disabled={disconnecting}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-50 border-2 border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-100 transition-all disabled:opacity-50"
                 >
-                  {disconnecting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Disconnecting...
-                    </>
-                  ) : (
-                    <>
-                      <LogOut className="w-4 h-4" />
-                      Disconnect
-                    </>
-                  )}
+                  <LogOut className="w-4 h-4" />
+                  Disconnect
                 </button>
               </div>
             </div>
           )}
         </div>
       </div>
+
+      {/* Disconnect Confirmation Modal */}
+      <DisconnectConfirmationModal
+        isOpen={showDisconnectModal}
+        onClose={() => setShowDisconnectModal(false)}
+        onConfirm={handleDisconnect}
+        accountName={connectionData?.account?.facebookUserName || connectionData?.account?.adAccountName}
+        isLoading={disconnecting}
+      />
     </div>
   );
 }
