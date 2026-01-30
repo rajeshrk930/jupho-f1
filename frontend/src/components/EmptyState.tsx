@@ -20,8 +20,8 @@ export default function EmptyState({
 }: EmptyStateProps) {
   const defaultIcon = (
     <div className="relative">
-      <div className="absolute inset-0 bg-coral-400/20 rounded-full blur-2xl" />
-      <Sparkles className="relative w-16 h-16 text-coral-500 animate-bounceSpring" />
+      <div className="absolute inset-0 bg-purple-400/20 rounded-full blur-2xl" />
+      <Sparkles className="relative w-16 h-16 text-purple-500 animate-bounceSpring" />
     </div>
   );
 

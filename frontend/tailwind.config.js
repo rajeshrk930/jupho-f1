@@ -8,30 +8,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Fresh Coral & Mint Theme
-        coral: {
-          50: '#FFF5F3',
-          100: '#FFE8E3',
-          200: '#FFD5CC',
-          300: '#FFB8A8',
-          400: '#FF9478',
-          500: '#FF6B47',  // Primary coral
-          600: '#F04E2A',
-          700: '#D63B1A',
-          800: '#B02F16',
-          900: '#8F2815',
-        },
-        mint: {
-          50: '#F0FDF9',
-          100: '#CCFBEF',
-          200: '#99F6E0',
-          300: '#5FEACE',
-          400: '#2DD4B4',
-          500: '#14B89C',  // Primary mint
-          600: '#0D9488',
-          700: '#0F766E',
-          800: '#115E59',
-          900: '#134E4A',
+        // Deep Authority - Infrastructure Theme
+        slate: {
+          50: '#F8FAFC',
+          100: '#F1F5F9',
+          200: '#E2E8F0',
+          300: '#CBD5E1',
+          400: '#94A3B8',
+          500: '#64748B',
+          600: '#475569',
+          700: '#334155',
+          800: '#1E293B',
+          900: '#0F172A',  // Deep slate - primary authority
         },
         purple: {
           50: '#FAF5FF',
@@ -39,11 +27,35 @@ module.exports = {
           200: '#E9D5FF',
           300: '#D8B4FE',
           400: '#C084FC',
-          500: '#A855F7',  // Primary purple - AI indicators
+          500: '#A855F7',  // Vivid purple - AI intelligence (kept from before)
           600: '#9333EA',
           700: '#7C3AED',
           800: '#6B21A8',
           900: '#581C87',
+        },
+        cyan: {
+          50: '#ECFEFF',
+          100: '#CFFAFE',
+          200: '#A5F3FC',
+          300: '#67E8F9',
+          400: '#22D3EE',
+          500: '#06B6D4',  // Cyan - energy & data
+          600: '#0891B2',
+          700: '#0E7490',
+          800: '#155E75',
+          900: '#164E63',
+        },
+        emerald: {
+          50: '#ECFDF5',
+          100: '#D1FAE5',
+          200: '#A7F3D0',
+          300: '#6EE7B7',
+          400: '#34D399',
+          500: '#10B981',  // Emerald - growth & success
+          600: '#059669',
+          700: '#047857',
+          800: '#065F46',
+          900: '#064E3B',
         },
         charcoal: {
           50: '#F8F9FA',

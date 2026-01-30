@@ -163,11 +163,11 @@ export function Sidebar() {
       {/* Logo */}
       <div className="px-6 py-5 border-b border-gray-200">
         <Link href="/dashboard" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-xl bg-coral-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+          <div className="w-10 h-10 rounded-xl bg-purple-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           {!isCollapsed && (
-            <span className="text-xl font-black text-coral-600">
+            <span className="text-xl font-black text-purple-600">
               Jupho
             </span>
           )}
@@ -178,7 +178,7 @@ export function Sidebar() {
       <div className="px-3 py-2">
         <button
           onClick={toggleCollapse}
-          className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 hover:text-coral-600"
+          className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 hover:text-purple-600"
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -198,12 +198,12 @@ export function Sidebar() {
                 onClick={item.onClick}
                 className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-md transition-all ${
                   active
-                    ? 'bg-coral-50 text-coral-600 font-medium'
+                    ? 'bg-purple-50 text-purple-600 font-medium'
                     : 'text-charcoal-600 hover:bg-gray-50'
                 }`}
                 title={isCollapsed ? item.label : undefined}
               >
-                <Icon size={20} className={active ? 'text-coral-600' : 'text-charcoal-400'} />
+                <Icon size={20} className={active ? 'text-purple-600' : 'text-charcoal-400'} />
                 {!isCollapsed && (
                   <div className="flex items-center gap-2 flex-1">
                     <span className="text-sm">{item.label}</span>
@@ -224,12 +224,12 @@ export function Sidebar() {
               href={item.href}
               className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2.5 rounded-md transition-all ${
                 active
-                  ? 'bg-coral-50 text-coral-600 font-medium'
+                  ? 'bg-purple-50 text-purple-600 font-medium'
                   : 'text-charcoal-600 hover:bg-gray-50'
               }`}
               title={isCollapsed ? item.label : undefined}
             >
-              <Icon size={20} className={active ? 'text-coral-600' : 'text-charcoal-400'} />
+              <Icon size={20} className={active ? 'text-purple-600' : 'text-charcoal-400'} />
               {!isCollapsed && <span className="text-sm">{item.label}</span>}
             </Link>
           );
@@ -284,7 +284,7 @@ export function Sidebar() {
             <button
               onClick={handleConnectMeta}
               disabled={connecting}
-              className="w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-coral-500 hover:bg-coral-600 text-white shadow-sm hover:shadow-md active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+              className="w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-500 hover:bg-purple-600 text-white shadow-sm hover:shadow-md active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
             >
               {connecting ? 'Connecting…' : 'Connect Meta'}
             </button>
@@ -307,12 +307,12 @@ export function Sidebar() {
               href="/forms"
               className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg transition-colors ${
                 pathname === '/forms'
-                  ? 'bg-coral-50 text-coral-600'
+                  ? 'bg-purple-50 text-purple-600'
                   : 'text-charcoal-600 hover:bg-gray-50'
               }`}
               title={isCollapsed ? 'Lead Forms' : undefined}
             >
-              <FileText size={18} className={pathname === '/forms' ? 'text-coral-600' : 'text-charcoal-400'} />
+              <FileText size={18} className={pathname === '/forms' ? 'text-purple-600' : 'text-charcoal-400'} />
               {!isCollapsed && <span className="text-sm font-medium">Lead Forms</span>}
             </Link>
           )}
@@ -328,12 +328,12 @@ export function Sidebar() {
             href="/settings"
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg transition-colors ${
               pathname === '/settings'
-                ? 'bg-coral-50 text-coral-600'
+                ? 'bg-purple-50 text-purple-600'
                 : 'text-charcoal-600 hover:bg-gray-50'
             }`}
             title={isCollapsed ? 'Settings' : undefined}
           >
-            <Settings size={18} className={pathname === '/settings' ? 'text-coral-600' : 'text-charcoal-400'} />
+            <Settings size={18} className={pathname === '/settings' ? 'text-purple-600' : 'text-charcoal-400'} />
             {!isCollapsed && <span className="text-sm font-medium">Settings</span>}
           </Link>
           <a

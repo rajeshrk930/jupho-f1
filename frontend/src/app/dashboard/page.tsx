@@ -139,9 +139,9 @@ function DashboardPageInner() {
       <MobileTopBar title="Dashboard" />
       
       {/* Bold Gradient Header Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-coral-500 via-coral-600 to-pink-600">
+      <div className="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900">
         <div className="absolute inset-0 bg-grid-white/10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-mint-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10" />
         
         <div className="relative px-4 lg:px-6 py-8 lg:py-12">
           <div className="max-w-7xl mx-auto">
@@ -156,7 +156,7 @@ function DashboardPageInner() {
               </div>
               <Link
                 href="/agent"
-                className="px-6 py-3 bg-white text-coral-600 font-bold rounded-lg hover:bg-gray-50 transition-all shadow-lg hover:-translate-y-1 inline-flex items-center gap-2"
+                className="px-6 py-3 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-50 transition-all shadow-lg hover:-translate-y-1 inline-flex items-center gap-2"
               >
                 <Sparkles className="w-5 h-5" />
                 Start AI Campaign

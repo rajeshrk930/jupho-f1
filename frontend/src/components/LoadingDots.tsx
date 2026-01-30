@@ -1,9 +1,9 @@
 interface LoadingDotsProps {
   size?: 'sm' | 'md' | 'lg';
-  color?: 'coral' | 'mint' | 'white';
+  color?: 'purple' | 'cyan' | 'white';
 }
 
-export function LoadingDots({ size = 'md', color = 'coral' }: LoadingDotsProps) {
+export function LoadingDots({ size = 'md', color = 'purple' }: LoadingDotsProps) {
   const sizeClasses = {
     sm: 'w-2 h-2',
     md: 'w-3 h-3',
@@ -11,8 +11,8 @@ export function LoadingDots({ size = 'md', color = 'coral' }: LoadingDotsProps) 
   };
 
   const colorClasses = {
-    coral: 'bg-coral-500',
-    mint: 'bg-mint-500',
+    purple: 'bg-purple-500',
+    cyan: 'bg-cyan-500',
     white: 'bg-white'
   };
 

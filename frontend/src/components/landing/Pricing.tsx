@@ -99,21 +99,21 @@ export default function Pricing() {
 
         {/* GROWTH Plan - RECOMMENDED */}
         <div className="relative rounded-2xl p-8 shadow-xl overflow-hidden group">
-          {/* Solid coral gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-coral-500 via-coral-600 to-pink-600" />
+          {/* Solid purple gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-purple-500 to-purple-700" />
           
           {/* Animated accent blob */}
-          <div className="absolute top-0 right-0 w-40 h-40 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 group-hover:opacity-40 transition-opacity" />
+          <div className="absolute top-0 right-0 w-40 h-40 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 group-hover:opacity-40 transition-opacity" />
           
           {/* Badge */}
-          <div className="absolute -top-3 right-6 bg-yellow-400 text-coral-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+          <div className="absolute -top-3 right-6 bg-emerald-400 text-slate-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             RECOMMENDED
           </div>
           
           <div className="relative mb-6">
             <div className="flex items-center gap-2 mb-2">
               <h3 className="text-2xl font-bold text-white">GROWTH</h3>
-              <Sparkles className="w-6 h-6 text-yellow-300" />
+              <Sparkles className="w-6 h-6 text-cyan-300" />
             </div>
             <div className="flex items-baseline mb-4">
               <span className="text-5xl font-bold text-white">₹1,999</span>
@@ -124,30 +124,30 @@ export default function Pricing() {
 
           <ul className="relative space-y-3 mb-8">
             <li className="flex items-start gap-2">
-              <Check className="w-5 h-5 text-yellow-300 flex-shrink-0 mt-0.5" />
+              <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
               <span className="text-white"><strong>25 campaigns</strong> per month</span>
             </li>
             <li className="flex items-start gap-2">
-              <Zap className="w-5 h-5 text-yellow-300 flex-shrink-0 mt-0.5" />
+              <Zap className="w-5 h-5 text-cyan-300 flex-shrink-0 mt-0.5" />
               <span className="text-white"><strong>AI Agent</strong> (smart creation)</span>
             </li>
             <li className="flex items-start gap-2">
-              <Check className="w-5 h-5 text-yellow-300 flex-shrink-0 mt-0.5" />
+              <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
               <span className="text-white">AI-generated copy + strategy</span>
             </li>
             <li className="flex items-start gap-2">
-              <Check className="w-5 h-5 text-yellow-300 flex-shrink-0 mt-0.5" />
+              <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
               <span className="text-white">Everything in BASIC</span>
             </li>
             <li className="flex items-start gap-2">
-              <Check className="w-5 h-5 text-yellow-300 flex-shrink-0 mt-0.5" />
+              <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
               <span className="text-white">Priority support</span>
             </li>
           </ul>
 
           <a
             href="https://app.jupho.io/sign-up"
-            className="relative block w-full text-center bg-white text-coral-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-all hover:-translate-y-1 shadow-xl"
+            className="relative block w-full text-center bg-white text-purple-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-all hover:-translate-y-1 shadow-xl"
           >
             Start Growth
           </a>
