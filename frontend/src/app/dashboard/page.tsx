@@ -73,7 +73,7 @@ function DashboardPageInner() {
             <p className="text-red-600 mb-4">{(error as any).message || 'Something went wrong'}</p>
             <button 
               onClick={() => refetch()} 
-              className="bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded-lg transition-colors"
+              className="btn-primary px-4 py-2"
             >
               Retry
             </button>
@@ -315,7 +315,7 @@ function DashboardPageInner() {
             <div className="text-center py-8">
               <Target className="w-12 h-12 mx-auto mb-3 text-charcoal-400" />
               <p className="text-charcoal-600 mb-4">No tasks yet</p>
-              <Link href="/agent" className="bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2">
+              <Link href="/agent" className="btn-primary px-4 py-2">
                 <Sparkles size={16} />
                 Create Your First Ad
               </Link>

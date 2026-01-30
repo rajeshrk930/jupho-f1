@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, Sparkles, ExternalLink, Calendar, CheckCircle2, XCircle, Clock, RefreshCw, TrendingUp } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 import PerformanceCard from '@/components/PerformanceCard';
+import Toast from '@/components/Toast';
+import { useToast } from '@/hooks/useToast';
+import { ListSkeleton } from '@/components/Skeleton';
 
 interface Task {
   id: string;
@@ -25,6 +28,7 @@ interface Task {
 
 export default function TasksPage() {
   const router = useRouter();
+  const { toasts, removeToast, error: showError } = useToast();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [usage, setUsage] = useState<{ used: number; limit: number } | null>(null);
@@ -56,7 +60,7 @@ export default function TasksPage() {
       await loadData();
     } catch (error: any) {
       console.error('Sync failed:', error);
-      alert(error.response?.data?.error || 'Failed to sync performance data');
+      showError(error.response?.data?.error || 'Failed to sync performance data');
     } finally {
       setSyncingTaskId(null);
     }
@@ -86,14 +90,33 @@ export default function TasksPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-coral-600 animate-spin" />
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="h-6 w-48 bg-gray-200 animate-pulse rounded"></div>
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <ListSkeleton count={5} />
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
+
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -111,7 +134,7 @@ export default function TasksPage() {
             </div>
             <button
               onClick={() => router.push('/agent')}
-              className="px-4 py-2 bg-coral-600 text-white rounded-lg hover:bg-coral-700 transition-colors"
+              className="btn-primary px-4 py-2"
             >
               New Campaign
             </button>

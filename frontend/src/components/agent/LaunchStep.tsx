@@ -5,6 +5,8 @@ import { Loader2, Rocket, Upload, Check, ExternalLink, AlertCircle, ChevronDown,
 import { agentApi, api } from '@/lib/api';
 import MetaAdPreview from './MetaAdPreview';
 import PrimaryButton from '@/components/ui/PrimaryButton';
+import Toast from '@/components/Toast';
+import { useToast } from '@/hooks/useToast';
 
 interface BusinessData {
   brandName: string;
@@ -53,6 +55,7 @@ interface LaunchError {
 }
 
 export default function LaunchStep({ taskId, strategy, businessData, preselectedFormId, onComplete, onBack }: Props) {
+  const { toasts, removeToast, error: showError } = useToast();
   const [selectedImage, setSelectedImage] = useState<string | null>(
     businessData.visualStyle?.imageUrls?.[0] || null
   );
@@ -187,7 +190,7 @@ export default function LaunchStep({ taskId, strategy, businessData, preselected
       setTimeout(() => setTemplateSaved(false), 3000);
     } catch (err) {
       console.error('Failed to save template:', err);
-      alert('Failed to save template. Please try again.');
+      showError('Failed to save template. Please try again.');
     } finally {
       setSavingTemplate(false);
     }
@@ -250,6 +253,18 @@ export default function LaunchStep({ taskId, strategy, businessData, preselected
 
   return (
     <div className="max-w-6xl mx-auto pb-24">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
+
       {/* Compact Header */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-5 mb-4">
         <div className="flex items-center justify-between">

@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, RefreshCw, Eye, Rocket, AlertCircle, Loader2, Sheet, ExternalLink, Download } from 'lucide-react';
 import { api } from '@/lib/api';
+import Toast from '@/components/Toast';
+import { useToast } from '@/hooks/useToast';
+import { ListSkeleton } from '@/components/Skeleton';
 
 interface LeadForm {
   id: string;
@@ -28,6 +31,7 @@ interface SheetsStatus {
 
 export default function LeadFormsPage() {
   const router = useRouter();
+  const { toasts, removeToast, success, error: showToastError } = useToast();
   const [forms, setForms] = useState<LeadForm[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -73,7 +77,7 @@ export default function LeadFormsPage() {
       window.location.href = response.data.authUrl;
     } catch (err: any) {
       console.error('Error getting Sheets auth URL:', err);
-      alert('Failed to connect Google Sheets. Please try again.');
+      showToastError('Failed to connect Google Sheets. Please try again.');
     }
   };
 
@@ -81,11 +85,11 @@ export default function LeadFormsPage() {
     try {
       setSyncingSheetsLeads(true);
       const response = await api.post('/sheets/sync');
-      alert(response.data.message);
+      success(response.data.message);
       await checkSheetsConnection();
     } catch (err: any) {
       console.error('Error syncing to Sheets:', err);
-      alert(err.response?.data?.error || 'Failed to sync leads to Google Sheets');
+      showToastError(err.response?.data?.error || 'Failed to sync leads to Google Sheets');
     } finally {
       setSyncingSheetsLeads(false);
     }
@@ -128,10 +132,28 @@ export default function LeadFormsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-coral-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading forms...</p>
+      <div className="min-h-screen bg-gray-50">
+        {/* Toast Notifications */}
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {toasts.map((toast) => (
+            <Toast
+              key={toast.id}
+              message={toast.message}
+              type={toast.type}
+              onClose={() => removeToast(toast.id)}
+            />
+          ))}
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-2">
+              <h1 className="text-3xl font-bold text-gray-900">Lead Forms</h1>
+              <div className="h-10 w-32 bg-gray-200 animate-pulse rounded-lg"></div>
+            </div>
+            <p className="text-gray-600">Loading your forms...</p>
+          </div>
+          <ListSkeleton count={3} />
         </div>
       </div>
     );
@@ -140,6 +162,18 @@ export default function LeadFormsPage() {
   if (!fbConnected) {
     return (
       <div className="min-h-screen bg-gray-50">
+        {/* Toast Notifications */}
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {toasts.map((toast) => (
+            <Toast
+              key={toast.id}
+              message={toast.message}
+              type={toast.type}
+              onClose={() => removeToast(toast.id)}
+            />
+          ))}
+        </div>
+
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
           <div className="mb-8">
@@ -158,7 +192,7 @@ export default function LeadFormsPage() {
             </p>
             <button
               onClick={handleConnectFacebook}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl shadow-sm hover:shadow-lg transition-all"
+              className="btn-primary rounded-xl"
             >
               Connect Facebook Account
             </button>
@@ -170,6 +204,18 @@ export default function LeadFormsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -201,15 +247,15 @@ export default function LeadFormsPage() {
         )}
 
         {/* Google Sheets Integration Status */}
-        <div className="mb-6 bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Sheet className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Google Sheets Integration</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Google Sheets Integration</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
                   {sheetsStatus.connected 
                     ? `Auto-sync leads to: ${sheetsStatus.spreadsheetName || 'Spreadsheet'}` 
                     : 'Connect to automatically backup your leads'}
@@ -218,8 +264,8 @@ export default function LeadFormsPage() {
             </div>
             
             {sheetsStatus.connected ? (
-              <div className="flex items-center gap-2">
-                <div className="text-right mr-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="text-left sm:text-right">
                   <div className="text-sm text-gray-600">
                     {sheetsStatus.syncedLeads || 0} synced
                     {sheetsStatus.unsyncedLeads ? ` • ${sheetsStatus.unsyncedLeads} pending` : ''}
@@ -230,38 +276,41 @@ export default function LeadFormsPage() {
                     </div>
                   )}
                 </div>
-                <button
-                  onClick={handleSyncToSheets}
-                  disabled={syncingSheetsLeads}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
-                >
-                  {syncingSheetsLeads ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Download className="w-4 h-4" />
-                  )}
-                  {syncingSheetsLeads ? 'Syncing...' : 'Sync Now'}
-                </button>
-                {sheetsStatus.spreadsheetUrl && (
+                <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={() => window.open(sheetsStatus.spreadsheetUrl, '_blank')}
-                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors"
+                    onClick={handleSyncToSheets}
+                    disabled={syncingSheetsLeads}
+                    className="btn-primary px-4 py-2 flex-1 sm:flex-initial"
                   >
-                    <ExternalLink className="w-4 h-4" />
-                    Open Sheet
+                    {syncingSheetsLeads ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
+                    {syncingSheetsLeads ? 'Syncing...' : 'Sync'}
                   </button>
-                )}
-                <button
-                  onClick={() => router.push('/settings/integrations')}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
-                >
-                  Settings
-                </button>
+                  {sheetsStatus.spreadsheetUrl && (
+                    <button
+                      onClick={() => window.open(sheetsStatus.spreadsheetUrl, '_blank')}
+                      className="btn-secondary px-4 py-2 flex-1 sm:flex-initial"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span className="hidden sm:inline">Open Sheet</span>
+                      <span className="sm:hidden">Open</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => router.push('/settings/integrations')}
+                    className="btn-tertiary px-4 py-2 flex-1 sm:flex-initial"
+                  >
+                    Settings
+                  </button>
+                </div>
               </div>
             ) : (
               <button
                 onClick={handleConnectSheets}
-                className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+                className="btn-primary px-4 py-2 w-full sm:w-auto"
               >
                 <Sheet className="w-4 h-4" />
                 Connect Google Sheets
@@ -325,7 +374,7 @@ export default function LeadFormsPage() {
                     </button>
                     <button
                       onClick={() => router.push(`/agent?formId=${form.id}`)}
-                      className="flex items-center gap-2 px-4 py-2 bg-coral-500 hover:bg-coral-600 text-white font-medium rounded-lg transition-colors"
+                      className="btn-primary px-4 py-2"
                     >
                       <Rocket className="w-4 h-4" />
                       Use in Campaign
@@ -346,7 +395,7 @@ export default function LeadFormsPage() {
             </p>
             <button
               onClick={handleCreateInFacebook}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-semibold rounded-xl shadow-sm hover:shadow-lg transition-all"
+              className="btn-primary rounded-xl"
             >
               <FileText className="w-5 h-5" />
               Create Form in Facebook

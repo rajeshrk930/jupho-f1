@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Sheet, CheckCircle, XCircle, Loader2, Settings as SettingsIcon, ExternalLink, Trash2 } from 'lucide-react';
 import { api } from '@/lib/api';
+import Toast from '@/components/Toast';
+import { useToast } from '@/hooks/useToast';
 
 interface SheetsStatus {
   connected: boolean;
@@ -27,6 +29,7 @@ interface SpreadsheetOption {
 
 function IntegrationsContent() {
   const searchParams = useSearchParams();
+  const { toasts, removeToast, success, error: showError } = useToast();
   const [sheetsStatus, setSheetsStatus] = useState<SheetsStatus>({ connected: false });
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
@@ -43,23 +46,22 @@ function IntegrationsContent() {
     checkStatus();
     
     // Handle OAuth callback
-    const success = searchParams.get('success');
-    const error = searchParams.get('error');
+    const successParam = searchParams.get('success');
+    const errorParam = searchParams.get('error');
     
-    if (success === 'sheets_connected') {
+    if (successParam === 'sheets_connected') {
       setTimeout(() => {
         checkStatus();
-        // Show success message
-        alert('Google Sheets connected successfully!');
+        success('Google Sheets connected successfully!');
       }, 100);
-    } else if (error) {
+    } else if (errorParam) {
       const errorMessages: Record<string, string> = {
         oauth_denied: 'You denied access to Google Sheets.',
         missing_code: 'Authorization code is missing.',
         invalid_state: 'Invalid security token.',
         connection_failed: 'Failed to connect Google Sheets.',
       };
-      alert(errorMessages[error] || 'An error occurred during connection.');
+      showError(errorMessages[errorParam] || 'An error occurred during connection.');
     }
   }, [searchParams]);
 
@@ -82,14 +84,14 @@ function IntegrationsContent() {
       window.location.href = response.data.authUrl;
     } catch (err: any) {
       console.error('Error getting auth URL:', err);
-      alert('Failed to start connection. Please try again.');
+      showError('Failed to start connection. Please try again.');
       setConnecting(false);
     }
   };
 
   const handleCreateSpreadsheet = async () => {
     if (!spreadsheetTitle.trim()) {
-      alert('Please enter a spreadsheet name');
+      showError('Please enter a spreadsheet name');
       return;
     }
 
@@ -99,13 +101,13 @@ function IntegrationsContent() {
         title: spreadsheetTitle,
       });
       
-      alert(`Spreadsheet "${response.data.title}" created successfully!`);
+      success(`Spreadsheet "${response.data.title}" created successfully!`);
       setShowCreateForm(false);
       setSpreadsheetTitle('');
       await checkStatus();
     } catch (err: any) {
       console.error('Error creating spreadsheet:', err);
-      alert(err.response?.data?.error || 'Failed to create spreadsheet');
+      showError(err.response?.data?.error || 'Failed to create spreadsheet');
     } finally {
       setCreating(false);
     }
@@ -118,13 +120,13 @@ function IntegrationsContent() {
       setShowSelectForm(true);
     } catch (err: any) {
       console.error('Error loading spreadsheets:', err);
-      alert(err.response?.data?.error || 'Failed to load spreadsheets');
+      showError(err.response?.data?.error || 'Failed to load spreadsheets');
     }
   };
 
   const handleSelectSpreadsheet = async () => {
     if (!selectedSpreadsheetId) {
-      alert('Please select a spreadsheet');
+      showError('Please select a spreadsheet');
       return;
     }
 
@@ -133,13 +135,13 @@ function IntegrationsContent() {
         spreadsheetId: selectedSpreadsheetId,
       });
       
-      alert('Spreadsheet configured successfully!');
+      success('Spreadsheet configured successfully!');
       setShowSelectForm(false);
       setSelectedSpreadsheetId('');
       await checkStatus();
     } catch (err: any) {
       console.error('Error setting spreadsheet:', err);
-      alert(err.response?.data?.error || 'Failed to configure spreadsheet');
+      showError(err.response?.data?.error || 'Failed to configure spreadsheet');
     }
   };
 
@@ -148,10 +150,10 @@ function IntegrationsContent() {
       const newState = !sheetsStatus.syncEnabled;
       await api.patch('/sheets/toggle-sync', { enabled: newState });
       setSheetsStatus({ ...sheetsStatus, syncEnabled: newState });
-      alert(`Auto-sync ${newState ? 'enabled' : 'disabled'} successfully`);
+      success(`Auto-sync ${newState ? 'enabled' : 'disabled'} successfully`);
     } catch (err: any) {
       console.error('Error toggling sync:', err);
-      alert('Failed to update sync settings');
+      showError('Failed to update sync settings');
     }
   };
 
@@ -159,29 +161,29 @@ function IntegrationsContent() {
     try {
       setSyncing(true);
       const response = await api.post('/sheets/sync');
-      alert(response.data.message);
+      success(response.data.message);
       await checkStatus();
     } catch (err: any) {
       console.error('Error syncing:', err);
-      alert(err.response?.data?.error || 'Failed to sync leads');
+      showError(err.response?.data?.error || 'Failed to sync leads');
     } finally {
       setSyncing(false);
     }
   };
 
   const handleDisconnect = async () => {
-    if (!confirm('Are you sure you want to disconnect Google Sheets? Auto-sync will stop, but your existing spreadsheet data will remain.')) {
+    if (!window.confirm('Are you sure you want to disconnect Google Sheets? Auto-sync will stop, but your existing spreadsheet data will remain.')) {
       return;
     }
 
     try {
       setDisconnecting(true);
       await api.delete('/sheets/disconnect');
-      alert('Google Sheets disconnected successfully');
+      success('Google Sheets disconnected successfully');
       await checkStatus();
     } catch (err: any) {
       console.error('Error disconnecting:', err);
-      alert('Failed to disconnect Google Sheets');
+      showError('Failed to disconnect Google Sheets');
     } finally {
       setDisconnecting(false);
     }
@@ -197,6 +199,18 @@ function IntegrationsContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Integrations</h1>
@@ -303,14 +317,14 @@ function IntegrationsContent() {
                     <>
                       <button
                         onClick={() => setShowCreateForm(!showCreateForm)}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+                        className="btn-primary px-4 py-2"
                       >
                         <Sheet className="w-4 h-4" />
                         Create New Spreadsheet
                       </button>
                       <button
                         onClick={handleLoadSpreadsheets}
-                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors"
+                        className="btn-secondary px-4 py-2"
                       >
                         <SettingsIcon className="w-4 h-4" />
                         Use Existing Spreadsheet
@@ -321,7 +335,7 @@ function IntegrationsContent() {
                     <button
                       onClick={handleManualSync}
                       disabled={syncing}
-                      className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+                      className="btn-primary px-4 py-2"
                     >
                       {syncing ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -360,13 +374,13 @@ function IntegrationsContent() {
                       <button
                         onClick={handleCreateSpreadsheet}
                         disabled={creating}
-                        className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+                        className="btn-primary px-4 py-2"
                       >
                         {creating ? 'Creating...' : 'Create'}
                       </button>
                       <button
                         onClick={() => setShowCreateForm(false)}
-                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors"
+                        className="btn-secondary px-4 py-2"
                       >
                         Cancel
                       </button>
@@ -400,13 +414,13 @@ function IntegrationsContent() {
                       <button
                         onClick={handleSelectSpreadsheet}
                         disabled={!selectedSpreadsheetId}
-                        className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+                        className="btn-primary px-4 py-2"
                       >
                         Select
                       </button>
                       <button
                         onClick={() => setShowSelectForm(false)}
-                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors"
+                        className="btn-secondary px-4 py-2"
                       >
                         Cancel
                       </button>
@@ -422,7 +436,7 @@ function IntegrationsContent() {
                 <button
                   onClick={handleConnect}
                   disabled={connecting}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-sm hover:shadow-lg transition-all disabled:opacity-50"
+                  className="btn-primary rounded-xl"
                 >
                   {connecting ? (
                     <>

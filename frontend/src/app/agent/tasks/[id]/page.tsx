@@ -5,11 +5,15 @@ import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2, ExternalLink, Calendar, TrendingUp, Target, DollarSign, MousePointerClick, Eye } from 'lucide-react';
 import { agentApi } from '@/lib/api';
 import PerformanceCard from '@/components/PerformanceCard';
+import Toast from '@/components/Toast';
+import { useToast } from '@/hooks/useToast';
+import { FormSkeleton } from '@/components/Skeleton';
 
 export default function TaskDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const taskId = params?.id as string;
+  const { toasts, removeToast, error: showError } = useToast();
 
   const [task, setTask] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +43,7 @@ export default function TaskDetailsPage() {
       await loadTaskDetails();
     } catch (error: any) {
       console.error('Sync failed:', error);
-      alert(error.response?.data?.error || 'Failed to sync performance data');
+      showError(error.response?.data?.error || 'Failed to sync performance data');
     } finally {
       setSyncing(false);
     }
@@ -47,8 +51,17 @@ export default function TaskDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-coral-600 animate-spin" />
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="h-6 w-32 bg-gray-200 animate-pulse rounded"></div>
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-xl border border-gray-200 p-8">
+            <FormSkeleton />
+          </div>
+        </div>
       </div>
     );
   }
@@ -88,6 +101,18 @@ export default function TaskDetailsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
+
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
