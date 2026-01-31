@@ -2,6 +2,7 @@ import Header from '@/components/landing/Header';
 import Hero from '@/components/landing/Hero';
 import HowItWorks from '@/components/landing/HowItWorks';
 import Features from '@/components/landing/Features';
+import Integrations from '@/components/landing/Integrations';
 import Pricing from '@/components/landing/Pricing';
 import Testimonials from '@/components/landing/Testimonials';
 import FAQ from '@/components/landing/FAQ';
@@ -15,6 +16,7 @@ export default function LandingPage() {
       <Hero />
       <HowItWorks />
       <Features />
+      <Integrations />
       <Pricing />
       <Testimonials />
       <FAQ />

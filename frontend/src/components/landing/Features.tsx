@@ -1,4 +1,4 @@
-import { Sparkles, Target, Zap } from 'lucide-react';
+import { Sparkles, Target, Zap, Sheet, Webhook, BarChart3 } from 'lucide-react';
 
 export default function Features() {
   return (
@@ -52,6 +52,48 @@ export default function Features() {
           <p className="text-charcoal-600 leading-relaxed">
             No design skills required. No copywriting experience needed. 
             Just answer a few questions and get ads ready to launch.
+          </p>
+        </div>
+
+        {/* Feature 4 - Google Sheets */}
+        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow">
+          <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6">
+            <Sheet className="w-7 h-7 text-green-600" />
+          </div>
+          <h3 className="text-2xl font-bold text-charcoal-900 mb-3">
+            Google Sheets Auto-Sync
+          </h3>
+          <p className="text-charcoal-600 leading-relaxed">
+            Never lose a lead. Auto-backup all Meta leads to Google Sheets every 15 minutes. 
+            Facebook deletes after 90 days—we don't.
+          </p>
+        </div>
+
+        {/* Feature 5 - Webhooks */}
+        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow">
+          <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+            <Webhook className="w-7 h-7 text-blue-600" />
+          </div>
+          <h3 className="text-2xl font-bold text-charcoal-900 mb-3">
+            Connect to 5,000+ Apps
+          </h3>
+          <p className="text-charcoal-600 leading-relaxed">
+            Send leads to your CRM, Slack, email, and any tool via webhooks. 
+            Integrates with Zapier, Make, and more.
+          </p>
+        </div>
+
+        {/* Feature 6 - Lead Management */}
+        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow">
+          <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-6">
+            <BarChart3 className="w-7 h-7 text-orange-600" />
+          </div>
+          <h3 className="text-2xl font-bold text-charcoal-900 mb-3">
+            Track Performance
+          </h3>
+          <p className="text-charcoal-600 leading-relaxed">
+            Real-time analytics with campaign grades. See CPM, CTR, conversions, 
+            and know what's working instantly.
           </p>
         </div>
       </div>

@@ -77,15 +77,19 @@ export default function Pricing() {
             </li>
             <li className="flex items-start gap-2">
               <Check className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-              <span className="text-charcoal-700">Instant Lead Ads</span>
+              <span className="text-charcoal-700">Google Sheets auto-sync</span>
             </li>
             <li className="flex items-start gap-2">
               <Check className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-              <span className="text-charcoal-700">Leads dashboard</span>
+              <span className="text-charcoal-700">Lead management dashboard</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+              <span className="text-charcoal-700">Performance analytics</span>
             </li>
             <li className="flex items-start gap-2">
               <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-400">No AI Agent</span>
+              <span className="text-gray-400">No AI Agent or Webhooks</span>
             </li>
           </ul>
 
@@ -133,11 +137,19 @@ export default function Pricing() {
             </li>
             <li className="flex items-start gap-2">
               <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
-              <span className="text-white">AI-generated copy + strategy</span>
+              <span className="text-white"><strong>Webhooks</strong> (5,000+ apps)</span>
             </li>
             <li className="flex items-start gap-2">
               <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
-              <span className="text-white">Everything in BASIC</span>
+              <span className="text-white">Google Sheets auto-sync</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
+              <span className="text-white">Templates + Lead management</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
+              <span className="text-white">Performance analytics</span>
             </li>
             <li className="flex items-start gap-2">
               <Check className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
@@ -154,10 +166,129 @@ export default function Pricing() {
         </div>
       </div>
 
-      <div className="text-center mt-12">
+      <div className="text-center mt-12 mb-16">
         <p className="text-charcoal-600">
           All plans include direct Facebook integration · Cancel anytime · No hidden fees
         </p>
+      </div>
+
+      {/* Feature Comparison Table */}
+      <div className="mt-20">
+        <h3 className="text-3xl font-bold text-charcoal-900 text-center mb-8">
+          Compare All Features
+        </h3>
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gradient-to-r from-purple-50 to-blue-50">
+                  <th className="text-left py-4 px-6 text-charcoal-900 font-bold">Feature</th>
+                  <th className="text-center py-4 px-6 text-charcoal-900 font-bold">FREE</th>
+                  <th className="text-center py-4 px-6 text-blue-600 font-bold">BASIC</th>
+                  <th className="text-center py-4 px-6 text-purple-600 font-bold">GROWTH</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-6 text-charcoal-700 font-medium">Campaigns per month</td>
+                  <td className="text-center py-4 px-6 text-charcoal-700">2</td>
+                  <td className="text-center py-4 px-6 text-charcoal-700">10</td>
+                  <td className="text-center py-4 px-6 text-charcoal-700 font-semibold">25</td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-6 text-charcoal-700 font-medium">Templates library (50+)</td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-blue-500 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-purple-600 inline" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-6 text-charcoal-700 font-medium">Lead management dashboard</td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-blue-500 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-purple-600 inline" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors bg-green-50">
+                  <td className="py-4 px-6 text-charcoal-700 font-medium">
+                    Google Sheets auto-sync
+                    <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">NEW</span>
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-blue-500 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-purple-600 inline" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-6 text-charcoal-700 font-medium">Performance analytics</td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-blue-500 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-purple-600 inline" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-6 text-charcoal-700 font-medium">AI Agent (smart creation)</td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-purple-600 inline" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors bg-blue-50">
+                  <td className="py-4 px-6 text-charcoal-700 font-medium">
+                    Webhooks (5,000+ apps)
+                    <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">NEW</span>
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-purple-600 inline" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-6 text-charcoal-700 font-medium">Priority support</td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <X className="w-5 h-5 text-gray-400 inline" />
+                  </td>
+                  <td className="text-center py-4 px-6">
+                    <Check className="w-5 h-5 text-purple-600 inline" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
   );

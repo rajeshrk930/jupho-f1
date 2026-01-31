@@ -37,11 +37,24 @@ export default function Hero() {
               See How It Works
             </a>
           </div>
-          <p className="mt-8 text-base text-white/90 font-medium">
-            <CheckCircle2 className="w-5 h-5 inline text-emerald-400 mr-1" /> No credit card required
-            <span className="mx-3">·</span>
-            <CheckCircle2 className="w-5 h-5 inline text-emerald-400 mr-1" /> Free plan available
-          </p>
+          <div className="mt-8 space-y-3">
+            <p className="text-base text-white/90 font-medium">
+              <CheckCircle2 className="w-5 h-5 inline text-emerald-400 mr-1" /> No credit card required
+              <span className="mx-3">·</span>
+              <CheckCircle2 className="w-5 h-5 inline text-emerald-400 mr-1" /> Free plan available
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-white/80">
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Auto-backup to Google Sheets
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Connect to 5,000+ apps
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 50+ proven templates
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
