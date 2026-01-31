@@ -23,7 +23,8 @@ import {
   ChevronRight,
   FileText,
   Target,
-  Lock
+  Lock,
+  Webhook
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
@@ -391,6 +392,28 @@ export function Sidebar() {
             <Settings size={18} className={pathname === '/settings' ? 'text-purple-600' : 'text-charcoal-400'} />
             {!isCollapsed && <span className="text-sm font-medium">Settings</span>}
           </Link>
+          {/* Webhooks (GROWTH only) */}
+          {user?.plan === 'GROWTH' && (
+            <Link
+              href="/settings/webhooks"
+              className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg transition-colors ${
+                pathname === '/settings/webhooks'
+                  ? 'bg-purple-50 text-purple-600'
+                  : 'text-charcoal-600 hover:bg-gray-50'
+              }`}
+              title={isCollapsed ? 'Webhooks' : undefined}
+            >
+              <Webhook size={18} className={pathname === '/settings/webhooks' ? 'text-purple-600' : 'text-charcoal-400'} />
+              {!isCollapsed && (
+                <div className="flex items-center gap-2 flex-1">
+                  <span className="text-sm font-medium">Webhooks</span>
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-md bg-purple-100 text-purple-700 border border-purple-200">
+                    NEW
+                  </span>
+                </div>
+              )}
+            </Link>
+          )}
           <a
             href="mailto:support@jupho.com"
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg text-charcoal-600 hover:bg-gray-50 transition-colors`}

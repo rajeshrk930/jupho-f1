@@ -28,6 +28,8 @@ model User {
   payments           Payment[]
   googleSheets       GoogleSheetsConnection?
   leadSubmissions    LeadSubmission[]
+  webhookEndpoints   WebhookEndpoint[]
+  agentTasks         AgentTask[]
 }
 
 model Payment {
@@ -128,6 +130,7 @@ model AgentTask {
   createdAt           DateTime            @default(now())
   completedAt         DateTime?
   updatedAt           DateTime            @updatedAt
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   generatedCreatives  GeneratedCreative[]
 
   @@index([userId])
@@ -211,4 +214,42 @@ model LeadSubmission {
   @@index([formId])
   @@index([syncedToSheets])
   @@index([submittedAt])
+}
+
+model WebhookEndpoint {
+  id          String             @id @default(uuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  url         String             // User's webhook URL
+  events      String[]           // ['campaign.created', 'campaign.completed', 'lead.captured']
+  secret      String             // Signing secret for HMAC verification
+  isActive    Boolean            @default(true)
+  description String?            // Optional user description
+  
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  deliveries  WebhookDelivery[]
+  
+  @@index([userId])
+  @@index([isActive])
+}
+
+model WebhookDelivery {
+  id           String          @id @default(uuid())
+  webhookId    String
+  webhook      WebhookEndpoint @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  
+  event        String          // 'campaign.created', 'campaign.completed', 'lead.captured'
+  payload      String          // JSON stringified event data
+  status       String          // 'pending', 'success', 'failed'
+  attempts     Int             @default(0)
+  lastError    String?
+  responseCode Int?            // HTTP status code from webhook URL
+  
+  createdAt    DateTime        @default(now())
+  deliveredAt  DateTime?
+  
+  @@index([webhookId, status])
+  @@index([createdAt])
 }

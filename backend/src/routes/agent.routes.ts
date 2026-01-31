@@ -5,6 +5,7 @@ import { AuthRequest } from '../middleware/auth';
 import { checkCampaignUsageLimit } from '../middleware/usageLimit';
 import { AgentService } from '../services/agent.service';
 import { IntelligentAnalysisService } from '../services/intelligentAnalysis.service';
+import { WebhookService } from '../services/webhook.service';
 import { upload } from '../middleware/upload';
 import { prisma } from '../lib/prisma';
 import { validateAgentScan, validateAgentObjective, validateAgentAudience, validateAgentBudget } from '../middleware/validation';
@@ -78,6 +79,15 @@ router.post('/scan', ...clerkAuth, validateAgentScan, checkCampaignUsageLimit('A
             businessProfile: JSON.stringify(analysis)
           }
         });
+
+        // Fire webhook: campaign.created
+        WebhookService.fireWebhooks(userId, 'campaign.created', {
+          taskId: task.id,
+          brandName: analysis.brandName,
+          industry: analysis.industry,
+          createdVia: 'AI_AGENT',
+          status: 'PENDING',
+        }).catch(err => console.error('[Webhooks] Error firing campaign.created:', err));
 
         // Step 4: Return success with extracted data
         return res.json({

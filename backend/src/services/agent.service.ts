@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma';
 import { FacebookService } from './facebook.service';
 import { ScraperService } from './scraper.service';
 import { MasterPromptService, CampaignStrategy } from './masterPrompt.service';
+import { WebhookService } from './webhook.service';
 import { mapFacebookError, extractFacebookError, isFacebookError } from '../utils/facebookErrorMapper';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -549,6 +550,22 @@ export class AgentService {
           })
         }
       });
+
+      // Fire webhook: campaign.completed
+      const businessProfile = task.businessProfile ? JSON.parse(task.businessProfile) : {};
+      WebhookService.fireWebhooks(userId, 'campaign.completed', {
+        taskId,
+        campaignId,
+        adId,
+        adSetId,
+        creativeId,
+        brandName: businessProfile.brandName || 'Unknown',
+        objective: strategy.objective,
+        budget: strategy.budget.dailyAmount,
+        conversionMethod,
+        leadFormId: task.leadFormId || null,
+        completedAt: new Date().toISOString(),
+      }).catch(err => console.error('[Webhooks] Error firing campaign.completed:', err));
 
       return {
         success: true,

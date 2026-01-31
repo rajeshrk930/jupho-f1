@@ -13,6 +13,7 @@ import agentRoutes from './routes/agent.routes';
 import templateRoutes from './routes/template.routes';
 import clerkRoutes from './routes/clerk.routes';
 import sheetsRoutes from './routes/sheets.routes';
+import webhookRoutes from './routes/webhook.routes';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/logger.middleware';
 import path from 'path';
@@ -182,6 +183,7 @@ app.use('/api/facebook', facebookRoutes);
 app.use('/api/agent', agentLimiter, agentRoutes); // Stricter limit for AI endpoints
 app.use('/api/templates', templateRoutes);
 app.use('/api/sheets', sheetsRoutes); // Google Sheets integration
+app.use('/api/webhooks', webhookRoutes); // User webhooks (GROWTH plan only)
 
 // Health check with deployment tracking
 app.get('/api/health', (req, res) => {
